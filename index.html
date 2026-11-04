@@ -621,7 +621,7 @@ footer { text-align: center; font-size: .85rem; color: var(--muted); display: fl
 const REGLAGES = {
   chapitresOuverts: {
     "3e-centrales": true,   // Les centrales électriques
-    "3e-puissance": false,  // La puissance électrique
+    "3e-puissance": true,   // La puissance électrique
     "3e-chimie": false,     // L'énergie chimique et ses conversions
     "tle-titrages": true    // Terminale : analyser un système par des méthodes chimiques (titrages)
   },
@@ -1166,8 +1166,8 @@ const CONTENU = {
                 explication: "La puissance s'exprime en watts : 2 000 W. 230 V est la tension, 50 Hz la fréquence." },
               { question: "Sur une lampe de TP, on lit : « 6 V – 1,8 W ». Que signifie « 6 V » ?", reponses: ["Sa puissance", "Sa tension nominale", "L'intensité qui la traverse", "L'énergie qu'elle consomme"], bonne: 1,
                 explication: "6 V est la tension d'un fonctionnement normal ; 1,8 W est sa puissance." },
-              { question: "Que représente la puissance d'un appareil ?", reponses: ["La tension à ses bornes", "La durée pendant laquelle il fonctionne", "L'énergie qu'il convertit chaque seconde", "Le prix de son électricité"], bonne: 2,
-                explication: "La puissance, c'est l'énergie convertie chaque seconde, en watts." }
+              { question: "Sur un chargeur de téléphone, on lit : « Sortie 5 V ⎓ 2 A – 10 W ». Quelle est sa puissance ?", reponses: ["5 W", "2 W", "10 W", "10 V"], bonne: 2,
+                explication: "La puissance est la valeur en watts : 10 W. Et 5 × 2 = 10 : c'est P = U × I !" }
             ] },
 
             { t: "h", texte: "2. Calculer une puissance : P = U × I" },
@@ -1455,17 +1455,6 @@ const CONTENU = {
             ]
           },
           { id: "qcm", type: "qcm-tableur", titre: "Défi QCM", desc: "8 questions tirées au hasard", n: 8 },
-          {
-            id: "chaine", type: "chaine", titre: "Les chaînes de la maison", desc: "Complète 3 chaînes, sans aide", n: 3,
-            chaines: [
-              { nom: "Ventilateur", elements: ["S:Réseau électrique", "F:énergie électrique", "C:Ventilateur", "F:énergie mécanique"] },
-              { nom: "Lampe à DEL", elements: ["S:Réseau électrique", "F:énergie électrique", "C:Lampe à DEL", "F:énergie lumineuse"] },
-              { nom: "Bouilloire électrique", elements: ["S:Réseau électrique", "F:énergie électrique", "C:Bouilloire", "F:énergie thermique"] },
-              { nom: "Téléphone en charge", elements: ["S:Réseau électrique", "F:énergie électrique", "C:Batterie du téléphone", "F:énergie chimique"] },
-              { nom: "Lampe du TP", elements: ["S:Générateur", "F:énergie électrique", "C:Lampe", "F:énergie lumineuse"] }
-            ],
-            distracteurs: ["énergie nucléaire", "énergie cinétique", "énergie chimique", "Alternateur", "Turbine", "énergie lumineuse"]
-          },
           {
             id: "calculs", type: "qcm", titre: "Calcule sans te tromper d'unité", desc: "6 calculs : puissance, énergie, coût", n: 6,
             questions: [
