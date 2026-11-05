@@ -386,7 +386,8 @@ details.panel summary { cursor: pointer; }
 
 /* TP : la paillasse */
 .bench { display: flex; flex-direction: column; gap: .4rem; }
-.bench-svg { display: block; width: 100%; max-width: 100%; height: auto; touch-action: none; user-select: none; -webkit-user-select: none; }
+/* Toutes les paillasses : la page défile si on glisse le doigt sur une zone vide ; un objet attrapé bloque le défilement (voir gererDefilement) */
+.bench-svg { display: block; width: 100%; max-width: 100%; height: auto; touch-action: manipulation; user-select: none; -webkit-user-select: none; }
 .bench-hint { font-size: .85rem; color: var(--muted); }
 .bench-hint .dot-b { display: inline-block; width: .7em; height: .7em; border-radius: 50%; border: 2px solid var(--ink); vertical-align: -.05em; }
 .b-table { fill: var(--bench-edge); transition: fill .25s; }
@@ -484,12 +485,15 @@ details.panel summary { cursor: pointer; }
 .trou:disabled { cursor: default; }
 
 /* Message de points */
+.maj-bandeau { position: fixed; left: 50%; transform: translateX(-50%); top: calc(.6rem + env(safe-area-inset-top, 0px)); z-index: 60; width: min(92vw, 26rem);
+  display: flex; align-items: center; gap: .7rem; padding: .6rem .8rem; border-radius: 12px; background: var(--accent); color: #fff; box-shadow: 0 4px 14px rgba(0,0,0,.25); font-size: .92rem; }
+.maj-bandeau span { flex: 1; }
+.maj-bandeau .btn { background: #fff; color: var(--accent); border-color: #fff; min-height: 2.4rem; }
 .toast { position: fixed; left: 50%; transform: translateX(-50%); bottom: calc(1rem + env(safe-area-inset-bottom, 0px)); background: var(--ink); color: var(--bg);
   padding: .6rem 1.1rem; border-radius: 999px; font-weight: 700; z-index: 20; box-shadow: 0 4px 18px rgba(0,0,0,.18); max-width: calc(100% - 32px); text-align: center; }
 footer { text-align: center; font-size: .85rem; color: var(--muted); display: flex; flex-direction: column; gap: .5rem; align-items: center; }
 .prof-toggle { display: inline-flex; gap: .4rem; align-items: center; font-weight: 400; background: var(--sun-soft); color: var(--sun-ink); padding: .35rem .7rem; border-radius: 999px; font-size: .85rem; }
 /* TP de chimie (terminale) : paillasse de chimie, loupe, courbes de titrage */
-.chim .bench-svg { touch-action: manipulation; }
 .c-obj { cursor: pointer; }
 .c-sel { fill: var(--accent-soft); stroke: var(--accent); stroke-width: 2; stroke-dasharray: 4 3; opacity: .9; }
 .c-verre { fill: var(--surface); fill-opacity: .55; stroke: var(--ink); stroke-width: 1.6; }
@@ -536,7 +540,12 @@ footer { text-align: center; font-size: .85rem; color: var(--muted); display: fl
 .bench.chim { position: relative; }
 .c-zoom-btns { position: absolute; left: 0; top: 0; z-index: 3; display: flex; flex-direction: column; align-items: center; gap: .3rem; padding: .35rem;
   background: var(--surface); border: 1.5px solid var(--accent); border-radius: 10px; box-shadow: 0 2px 8px rgba(0,0,0,.2); }
-.c-zoom-btns[hidden] { display: none; }
+.c-zoom-btns[hidden], .c-pres[hidden] { display: none; }
+/* Question posée juste à côté d'un objet de la paillasse (ex. : rincer ou remplir la burette) */
+.c-pres { position: absolute; left: 0; top: 0; z-index: 4; display: flex; flex-direction: column; gap: .35rem; padding: .45rem; width: 9.5rem;
+  background: var(--surface); border: 2px solid var(--accent); border-radius: 12px; box-shadow: 0 3px 10px rgba(0,0,0,.22); font-size: .85rem; line-height: 1.25; }
+.c-pres .btn { min-height: 2.3rem; padding: .3rem .5rem; font-size: .85rem; white-space: normal; }
+.c-pres .btn-link { align-self: center; }
 .c-zoom-btns > div { display: flex; gap: .3rem; }
 .c-zoom-btns .btn { white-space: nowrap; min-height: 2.2rem; }
 /* Bulle zoom sur la paillasse (ajustement au trait ou au zéro) */
@@ -2925,6 +2934,34 @@ const QUESTIONS = [
   $("btn-back").addEventListener("click", () => aller(parent(routeActuelle)));
   window.addEventListener("hashchange", rendre);
 
+  // ======================= Mise à jour de l'appli sur les téléphones =======================
+  // Le téléphone garde la page déjà chargée (onglet resté ouvert, appli posée sur l'écran d'accueil) et le navigateur
+  // la garde aussi un moment en cache. On compare donc la version de cette page avec le petit fichier version.json
+  // publié en même temps : à l'ouverture et à chaque retour sur l'onglet (au plus une fois par minute).
+  // Si une version plus récente est en ligne, un bandeau propose de mettre à jour. La progression (pseudo, points…) est conservée.
+  const VERSION_APPLI = "2026-11-05 00:13:59"; // remplacée par la date d'assemblage (assembler.py)
+  let derniereVerif = 0;
+  function verifierMaj() {
+    if (!/^https?:$/.test(location.protocol) || VERSION_APPLI.indexOf("__") === 0) return; // fichier ouvert sur l'ordinateur : rien à vérifier
+    if (Date.now() - derniereVerif < 60000) return;
+    derniereVerif = Date.now();
+    fetch("version.json?t=" + Date.now(), { cache: "no-store" }).then((r) => (r.ok ? r.json() : null)).then((d) => {
+      if (!d || typeof d.version !== "string" || d.version <= VERSION_APPLI || document.getElementById("maj-bandeau")) return;
+      const b = document.createElement("div");
+      b.id = "maj-bandeau"; b.className = "maj-bandeau"; b.setAttribute("role", "status");
+      b.innerHTML = `<span>Une nouvelle version de l'appli est disponible.</span><button type="button" class="btn btn-sm">Mettre à jour</button>`;
+      b.querySelector("button").onclick = () => {
+        b.querySelector("button").disabled = true;
+        // on recharge la page depuis le serveur (et pas depuis le cache du navigateur), puis on l'affiche
+        fetch(location.pathname, { cache: "reload" }).catch(() => {}).then(() => location.reload());
+      };
+      document.body.appendChild(b);
+    }).catch(() => {});
+  }
+  verifierMaj();
+  document.addEventListener("visibilitychange", () => { if (document.visibilityState === "visible") verifierMaj(); });
+  window.addEventListener("pageshow", (e) => { if (e.persisted) { derniereVerif = 0; verifierMaj(); } }); // page ressortie de la mémoire du navigateur
+
   function rendre() {
     const hh = location.hash.slice(1);
     const parts = hh ? hh.split("-") : [];
@@ -3710,6 +3747,21 @@ const QUESTIONS = [
     return t >= DUREE_HOCHE / 1000 ? 0 : 5 * Math.sin(t * 34) * (1 - t / (DUREE_HOCHE / 1000));
   }
 
+  // ----- Règles communes aux deux paillasses (3ème et terminale) -----
+  // Point du doigt (coordonnées de l'écran) → coordonnées de la paillasse
+  function versPaillasse(svg, cx, cy) { const p = svg.createSVGPoint(); p.x = cx; p.y = cy; return p.matrixTransform(svg.getScreenCTM().inverse()); }
+  // Téléphone : quand le doigt attrape quelque chose (objet, borne, fil), la page ne défile pas ;
+  // sur une zone vide de la paillasse, on fait défiler la page normalement.
+  // attrape(x, y, cible) : le doigt attrape-t-il quelque chose ? enCours() : un geste est-il en cours ?
+  function gererDefilement(svg, attrape, enCours) {
+    svg.addEventListener("touchstart", (e) => {
+      if (e.touches.length !== 1) return;
+      const t = e.touches[0], q = versPaillasse(svg, t.clientX, t.clientY);
+      if (attrape(q.x, q.y, e.target)) e.preventDefault();
+    }, { passive: false });
+    svg.addEventListener("touchmove", (e) => { if (enCours()) e.preventDefault(); }, { passive: false });
+  }
+
   function paillasse(el, surEvt) {
     const ns = "http://www.w3.org/2000/svg";
     el.innerHTML = `<div class="bench">
@@ -3926,7 +3978,7 @@ const QUESTIONS = [
     }
 
     // ---------- Doigt / souris ----------
-    const pt = (e) => { const p = svg.createSVGPoint(); p.x = e.clientX; p.y = e.clientY; const r = p.matrixTransform(svg.getScreenCTM().inverse()); return [r.x, r.y]; };
+    const pt = (e) => { const r = versPaillasse(svg, e.clientX, e.clientY); return [r.x, r.y]; };
     let geste = null;
     function zoneCommande(x, y) {
       for (let i = S.objets.length - 1; i >= 0; i--) {
@@ -3938,28 +3990,35 @@ const QUESTIONS = [
       }
       return null;
     }
-    svg.addEventListener("pointerdown", (e) => {
-      const [x, y] = pt(e);
-      const cible = e.target;
+    // Ce que le doigt attrape en (x, y) : le bouton de remise à zéro, une borne (pour tirer un fil), un fil (pour le retirer), un objet, ou rien.
+    function quoiSous(x, y, cible) {
+      if (cible.closest && cible.closest("#B-reset")) return { type: "reset" };
       // la borne la plus proche du doigt est prioritaire (les bornes sont petites)
       let borneProche = null, dB = 15;
       S.objets.forEach((o) => OBJETS[o.type].bornes.forEach((bb, k) => { const d = Math.hypot(o.x + bb[0] - x, o.y + bb[1] - y); if (d < dB) { dB = d; borneProche = o.id + ":" + k; } }));
-      const borne = borneProche ? { dataset: { borne: borneProche } } : null;
+      if (borneProche) return { type: "fil", de: borneProche };
       let fil = cible.closest && cible.closest("[data-fil]"), obj = cible.closest && cible.closest("[data-objet]");
       // chapitre 2 : un fil posé sur un bouton (NOTER, sélecteur, interrupteur, écran) ne doit pas empêcher de le toucher
       if (fil && S.elec) { const z = zoneCommande(x, y); if (z) { fil = null; obj = z.g; } }
-      const reset = cible.closest && cible.closest("#B-reset");
-      if (reset) { geste = { type: "reset" }; }
-      else if (borne) geste = { type: "fil", de: borne.dataset.borne, x, y, bouge: false };
-      else if (fil) geste = { type: "retirer", id: +fil.dataset.fil, x, y, bouge: false };
-      else if (obj) {
+      if (fil) return { type: "retirer", id: +fil.dataset.fil };
+      if (obj) {
         const o = parId(obj.dataset.objet);
-        if (o.type === "camera" && y - o.y > 14) { geste = null; return; }
+        if (o.type === "camera" && y - o.y > 14) return null; // la caméra s'attrape par sa poignée
+        return { type: "glisser", o };
+      }
+      return null;
+    }
+    svg.addEventListener("pointerdown", (e) => {
+      const [x, y] = pt(e), q = quoiSous(x, y, e.target);
+      if (!q) { geste = null; return; }
+      if (q.type === "reset") geste = q;
+      else if (q.type === "glisser") {
+        const o = q.o;
         geste = { type: "glisser", o, dx: x - o.x, dy: y - o.y, x, y, bouge: false, t0: performance.now() };
         // l'objet attrapé passe au premier plan
         if (o.type !== "camera") gP.appendChild(o.g);
         if (o.type === "turbine" && S.couple) gP.appendChild(objet("alternateur").g);
-      } else { geste = null; return; }
+      } else geste = Object.assign(q, { x, y, bouge: false });
       e.preventDefault();
       try { svg.setPointerCapture(e.pointerId); } catch (er) {}
     });
@@ -3998,8 +4057,7 @@ const QUESTIONS = [
       }
     }
     svg.addEventListener("pointerup", finGeste);
-    // Téléphone : pendant qu'on déplace un objet ou qu'on tire un fil, la page ne défile pas
-    svg.addEventListener("touchmove", (e) => { if (geste) e.preventDefault(); }, { passive: false });
+    gererDefilement(svg, (x, y, cible) => !!quoiSous(x, y, cible), () => !!geste);
     svg.addEventListener("pointercancel", () => { geste = null; majFils(); });
     svg.querySelector("#B-reset").addEventListener("keydown", (ev) => { if (ev.key === "Enter" || ev.key === " ") { ev.preventDefault(); charger(presetCourant); } });
 
@@ -4825,14 +4883,14 @@ const QUESTIONS = [
             <g class="c-aide"></g><g class="c-cables"></g><g class="c-objets"></g><g class="c-fx" pointer-events="none"></g><g class="c-zoom" pointer-events="none"></g></svg>
           <p class="bench-hint">Glisse un objet pour le déplacer. Touche un objet pour le prendre, puis touche l'endroit où l'utiliser.</p>
           ${M.montage ? `<div class="c-btns"><button class="btn btn-ghost btn-sm c-aide-btn" aria-expanded="false">Aide au montage</button></div><div class="c-aide-liste"></div>` : ""}
-          <div class="c-zoom-btns" hidden></div>
+          <div class="c-zoom-btns" hidden></div><div class="c-pres" hidden></div>
           <div class="c-main" aria-live="polite"></div>
           <div class="c-msg" aria-live="polite"></div>
           <div class="c-choix"></div>
           <div class="c-panneau"></div>
           <button class="btn-link c-reset">Recommencer la manipulation depuis le début</button>
         </div>`;
-      const svg = el.querySelector("svg"), gO = el.querySelector(".c-objets"), gC = el.querySelector(".c-cables"), gX = el.querySelector(".c-fx"), gA = el.querySelector(".c-aide"), gZ = el.querySelector(".c-zoom"), zB = el.querySelector(".c-zoom-btns");
+      const svg = el.querySelector("svg"), gO = el.querySelector(".c-objets"), gC = el.querySelector(".c-cables"), gX = el.querySelector(".c-fx"), gA = el.querySelector(".c-aide"), gZ = el.querySelector(".c-zoom"), zB = el.querySelector(".c-zoom-btns"), zP = el.querySelector(".c-pres");
       const zMain = el.querySelector(".c-main"), zMsg = el.querySelector(".c-msg"), zChoix = el.querySelector(".c-choix"), zPan = el.querySelector(".c-panneau");
       const zAideL = el.querySelector(".c-aide-liste"), bAide = el.querySelector(".c-aide-btn");
       let S;
@@ -4854,7 +4912,7 @@ const QUESTIONS = [
         S.bur = O("bur") || null;
         if (O("son")) S.sonde = { lieu: null, dessus: false, sale: null };
         recaler();
-        zMsg.innerHTML = ""; zChoix.innerHTML = "";
+        zMsg.innerHTML = ""; fermerChoix();
         dessinerTout(); panneau(); majMain(); majAide();
       }
       const O = (id) => S.objets[id];
@@ -5156,14 +5214,7 @@ const QUESTIONS = [
           zB.querySelectorAll("[data-za]").forEach((x) => x.onclick = () => { if (!occupe()) actions[x.dataset.za](); });
           zB.hidden = false; zB._pos = null;
         }
-        const rs = svg.getBoundingClientRect(), rp = zB.offsetParent ? zB.offsetParent.getBoundingClientRect() : rs;
-        const k = rs.width / BW, W = rs.width, H = rs.height, w = zB.offsetWidth, h = zB.offsetHeight;
-        let top = (cy + ZR + 15) * k;
-        if (top + h > H - 4) top = (cy - ZR - 6) * k - h;
-        top = Math.max(2, Math.min(H - h - 2, top)) + rs.top - rp.top;
-        const left = Math.max(4, Math.min(W - w - 4, cx * k - w / 2)) + rs.left - rp.left;
-        const pos = `${left.toFixed(0)}px, ${top.toFixed(0)}px`;
-        if (zB._pos !== pos) { zB._pos = pos; zB.style.transform = `translate(${pos})`; }
+        poserBoite(zB, cx, cy + ZR + 15, "dessous", null, cy - ZR - 6);
       }
       function dessinerZoom() {
         const z = zoomActif(); if (!z) { gZ.innerHTML = ""; majBoutonsZoom(null); return; }
@@ -5229,9 +5280,32 @@ const QUESTIONS = [
         on("[data-pg]", goutteAjust); on("[data-pr]", reaspirer); on("[data-pt]", validerAjust);
       }
       function majLoupe() { dessinerZoom(); }
-      function choix(question, options) {
-        zChoix.innerHTML = `<div class="c-choix-in"><strong>${esc(question)}</strong>${options.map((o, i) => `<button class="btn btn-ghost btn-sm" data-c="${i}">${esc(o[0])}</button>`).join("")}<button class="btn-link" data-c="-1">Annuler</button></div>`;
-        zChoix.querySelectorAll("[data-c]").forEach((b) => b.onclick = () => { const i = +b.dataset.c; zChoix.innerHTML = ""; if (i >= 0) options[i][1](); });
+      // Position (en pixels, dans la paillasse) d'une boîte posée sur la paillasse, à partir d'un point (x, y) en unités de la paillasse.
+      // cote = "droite" : à droite du point (à gauche de gx s'il n'y a pas la place) ; "dessous" : centrée sous le point (au-dessus de gy sinon).
+      function poserBoite(box, x, y, cote, gx, gy) {
+        const rs = svg.getBoundingClientRect(), rp = box.offsetParent ? box.offsetParent.getBoundingClientRect() : rs;
+        const k = rs.width / BW, W = rs.width, H = rs.height, w = box.offsetWidth, h = box.offsetHeight;
+        let left, top;
+        if (cote === "droite") { // à droite si ça tient, sinon à gauche, sinon du côté où il y a le plus de place
+          const d = x * k, g = gx * k - w;
+          left = d + w <= W - 4 ? d : g >= 4 ? g : (W - x * k > gx * k ? d : g);
+          top = y * k - h / 2;
+        }
+        else { left = x * k - w / 2; top = y * k; if (top + h > H - 4) top = gy * k - h; }
+        left = Math.max(4, Math.min(W - w - 4, left)) + rs.left - rp.left;
+        top = Math.max(2, Math.min(H - h - 2, top)) + rs.top - rp.top;
+        const pos = `${left.toFixed(0)}px, ${top.toFixed(0)}px`;
+        if (box._pos !== pos) { box._pos = pos; box.style.transform = `translate(${pos})`; }
+      }
+      // Choix (ex. : rincer ou remplir la burette). Avec pres : la question s'affiche juste à côté de cet objet, sur la paillasse.
+      function fermerChoix() { zChoix.innerHTML = ""; zP.hidden = true; zP.innerHTML = ""; zP._pos = null; }
+      function choix(question, options, pres) {
+        fermerChoix();
+        const html = `<strong>${esc(question)}</strong>${options.map((o, i) => `<button type="button" class="btn btn-ghost btn-sm" data-c="${i}">${esc(o[0])}</button>`).join("")}<button type="button" class="btn-link" data-c="-1">Annuler</button>`;
+        const zone = pres ? zP : zChoix;
+        zone.innerHTML = pres ? html : `<div class="c-choix-in">${html}</div>`;
+        zone.querySelectorAll("[data-c]").forEach((b) => b.onclick = () => { const i = +b.dataset.c; fermerChoix(); if (i >= 0) options[i][1](); });
+        if (pres) { zP.hidden = false; const o = pres, X = o.x + o.ax, Y = o.y + o.ay; poserBoite(zP, X + o.w + 8, Y + 60, "droite", X - 8); }
       }
 
       // ----- La burette -----
@@ -5408,7 +5482,7 @@ const QUESTIONS = [
       // ----- Toucher un objet -----
       function toucher(id, act) {
         if (occupe()) return;
-        zChoix.innerHTML = ""; S.dernier = id;
+        fermerChoix(); S.dernier = id;
         if (S.ajust) { message("Termine d'abord l'ajustement de la pipette au trait (sous la paillasse).", "err"); return; }
         const o = O(id), m = S.main && O(S.main);
         if (act === "etal") return etalonner();
@@ -5483,7 +5557,7 @@ const QUESTIONS = [
             if (m.contenu !== "soude") { message("La burette contient la solution titrante : la soude.", "err"); return; }
             if (!o.sur) { message("Fixe d'abord la burette dans la pince de la potence.", "err"); return; }
             if (o.rempli) { message("La burette est déjà remplie. Pour recommencer, vide-la d'abord (bouton sous la paillasse).", "err"); return; }
-            choix("Que fais-tu avec la soude ?", [["Rincer la burette avec un peu de soude", () => rincerBurette(m)], ["Remplir la burette avec la soude", () => remplirBurette(m)]]);
+            choix("Que fais-tu avec la soude ?", [["Rincer la burette", () => rincerBurette(m)], ["Remplir la burette", () => remplirBurette(m)]], o);
             return;
           }
           if (c === "becher" && o.role === "prelev") {
@@ -5645,7 +5719,7 @@ const QUESTIONS = [
       }
 
       // ----- Gestes : toucher ou glisser -----
-      const pt = (e) => { const p = svg.createSVGPoint(); p.x = e.clientX; p.y = e.clientY; return p.matrixTransform(svg.getScreenCTM().inverse()); };
+      const pt = (e) => versPaillasse(svg, e.clientX, e.clientY);
       let appui = null;
       svg.addEventListener("pointerdown", (e) => {
         const g = e.target.closest("[data-id]"); if (!g) return;
@@ -5673,10 +5747,8 @@ const QUESTIONS = [
         try { svg.releasePointerCapture(a.pid); } catch (er) { /* rien */ }
         if (a.bouge) { S.drag = null; deposer(O(a.id), a, pt(e)); } else toucher(a.id, a.act);
       });
-      // Téléphone : quand on attrape un objet, la page ne défile pas (ni vers le haut, ni vers le bas).
-      // Ailleurs sur la paillasse (zone vide), on peut toujours faire défiler la page.
-      svg.addEventListener("touchstart", (e) => { if (e.target.closest && e.target.closest("[data-id]")) e.preventDefault(); }, { passive: false });
-      svg.addEventListener("touchmove", (e) => { if (appui) e.preventDefault(); }, { passive: false });
+      // Téléphone : même règle que la paillasse de 3ème (objet attrapé : pas de défilement ; zone vide : la page défile)
+      gererDefilement(svg, (x, y, cible) => !!(cible.closest && cible.closest("[data-id]")), () => !!appui);
       // Glisser-déposer un objet qu'on prend en main (pipette, flacon, pissette, barreau…) sur une cible :
       // même effet que « toucher l'objet, puis toucher la cible ».
       function cibleSous(o, q) {
@@ -5690,7 +5762,7 @@ const QUESTIONS = [
       function lacherSur(o, c, a) {
         // l'objet garde sa place d'origine : il est dessiné là où on l'a lâché, puis l'animation le ramène chez lui
         o.ax = o.x - a.ox; o.ay = o.y - a.oy; o.x = a.ox; o.y = a.oy;
-        zChoix.innerHTML = ""; S.main = o.id; S.dernier = c.id;
+        fermerChoix(); S.main = o.id; S.dernier = c.id;
         agir(o, c);
         if (S.main === o.id) S.main = null; // après un glisser, rien ne reste en main
         if (!S.anims.length && (o.ax || o.ay)) suite([retour(o, 0.3)], () => { dessinerTout(); });
