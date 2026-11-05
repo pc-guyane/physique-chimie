@@ -75,6 +75,8 @@ button { font: inherit; cursor: pointer; color: inherit; }
 .btn-primary { background: var(--accent); color: var(--accent-ink); }
 .btn-ghost { background: transparent; color: var(--accent); border-color: var(--accent); }
 .btn-sm { min-height: 2.5rem; padding: .4rem .9rem; font-size: .95rem; }
+.nav-fin { display: flex; flex-direction: column; gap: .6rem; margin-top: 1.4rem; padding-top: 1rem; border-top: 1px solid var(--line, rgba(0,0,0,.12)); }
+.nav-fin .btn { width: 100%; text-decoration: none; }
 .btn-link { background: none; border: none; color: var(--muted); text-decoration: underline; padding: .25rem 0; font-size: .9rem; align-self: flex-start; }
 .btn:disabled { opacity: .45; cursor: not-allowed; }
 :focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
@@ -387,7 +389,10 @@ details.panel summary { cursor: pointer; }
 .bench-svg { display: block; width: 100%; max-width: 100%; height: auto; touch-action: none; user-select: none; -webkit-user-select: none; }
 .bench-hint { font-size: .85rem; color: var(--muted); }
 .bench-hint .dot-b { display: inline-block; width: .7em; height: .7em; border-radius: 50%; border: 2px solid var(--ink); vertical-align: -.05em; }
-.b-table { fill: var(--bench-edge); }
+.b-table { fill: var(--bench-edge); transition: fill .25s; }
+/* Signaux communs aux paillasses : tour rouge (action impossible), vert (action validée) */
+.bench.sig-ko .b-table { fill: var(--bad); }
+.bench.sig-ok .b-table { fill: var(--good); }
 .b-zone { fill: var(--bench); stroke: var(--surface); stroke-width: 1.5; stroke-dasharray: 2 5; }
 .b-reset { cursor: pointer; } .b-reset rect { fill: var(--surface); stroke: var(--line); }
 .b-reset path { fill: none; stroke: var(--ink); stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
@@ -526,6 +531,27 @@ footer { text-align: center; font-size: .85rem; color: var(--muted); display: fl
 .c-btns { display: flex; flex-wrap: wrap; gap: .4rem; align-items: center; }
 .c-loupe { width: 120px; height: auto; border-radius: 10px; background: var(--bg); border: 1px solid var(--line); }
 .c-menisque { fill: none; stroke: var(--ink); stroke-width: 2.4; }
+.c-pan-1 { grid-template-columns: 1fr; }
+/* Boutons d'ajustement à côté de la bulle zoom */
+.bench.chim { position: relative; }
+.c-zoom-btns { position: absolute; left: 0; top: 0; z-index: 3; display: flex; flex-direction: column; align-items: center; gap: .3rem; padding: .35rem;
+  background: var(--surface); border: 1.5px solid var(--accent); border-radius: 10px; box-shadow: 0 2px 8px rgba(0,0,0,.2); }
+.c-zoom-btns[hidden] { display: none; }
+.c-zoom-btns > div { display: flex; gap: .3rem; }
+.c-zoom-btns .btn { white-space: nowrap; min-height: 2.2rem; }
+/* Bulle zoom sur la paillasse (ajustement au trait ou au zéro) */
+.c-z-fond { fill: var(--surface); filter: drop-shadow(0 2px 4px rgba(0,0,0,.25)); }
+.c-z-bord { fill: none; stroke: var(--accent); stroke-width: 2.5; }
+.c-z-verre { fill: var(--bg); }
+.c-z-paroi { stroke: var(--ink); stroke-width: 2; }
+.c-z-trait { stroke: var(--bad); stroke-width: 2.4; }
+.c-z-grad { stroke: var(--ink); stroke-width: 1.2; } .c-z-grad.zero { stroke-width: 2; }
+.c-z-t { font-size: 8.5px; fill: var(--ink); font-family: var(--f-body); font-weight: 700; }
+.c-z-info { font-size: 8px; fill: var(--ink); font-family: var(--f-body); font-weight: 700; paint-order: stroke; stroke: var(--surface); stroke-width: 3px; }
+.c-z-legende { font-size: 8px; fill: var(--accent); font-family: var(--f-body); font-weight: 700; paint-order: stroke; stroke: var(--surface); stroke-width: 3px; }
+.c-z-cible { fill: none; stroke: var(--accent); stroke-width: 1.8; stroke-dasharray: 3 2; }
+.c-z-lien { stroke: var(--accent); stroke-width: 1.5; stroke-dasharray: 3 2; }
+
 .c-doc { gap: .4rem; } .c-doc p { margin: 0; }
 .c-chart { max-width: 26rem; background: var(--surface); border: 1px solid var(--line); border-radius: 12px; width: 100%; }
 .c-pt { fill: var(--accent); } .c-pt.d { fill: var(--sun-ink); } .c-pt.s1 { fill: #3B6FD9; r: 5; } .c-pt.s2 { fill: #D9443A; r: 5; }
@@ -1940,7 +1966,7 @@ const CONTENU = {
                     { id: "eau", texte: "Remplis la fiole jaugée d'eau distillée à moitié environ : prends la pissette et touche la fiole." },
                     { id: "pipette", texte: "Verse un peu d'esprit de sel dans le bécher de prélèvement, fixe le pipeteur sur la pipette de 5,0 mL, aspire et ajuste au trait de jauge, goutte à goutte." },
                     { id: "acide", texte: "Verse les 5,0 mL d'esprit de sel dans l'eau de la fiole." },
-                    { id: "trait", texte: "Complète à la pissette (aux trois quarts, puis jusqu'au col), puis ajuste le bas du ménisque sur le trait de jauge, goutte à goutte (loupe sous la paillasse)." },
+                    { id: "trait", texte: "Complète à la pissette (aux trois quarts, puis jusqu'au col), puis ajuste le bas du ménisque sur le trait de jauge, goutte à goutte (loupe sur la paillasse)." },
                     { id: "homog", texte: "Bouche la fiole et retourne-la pour homogénéiser : touche la fiole." }
                   ],
                   questions: [
@@ -3485,6 +3511,19 @@ const QUESTIONS = [
     $("btn-note").onclick = () => resultat({ titre: typeExam + " · ta note", score: notes.reduce((s, n) => s + n, 0), total, points: notes.reduce((s, n) => s + n, 0) * 6, note: true, ctx });
   }
 
+  // ======================= Bas de page commun (Cours, TP) =======================
+  // « Étape suivante » (une fois l'étape terminée, ou en mode prof) + « Retour au menu du chapitre » (toujours).
+  // suiv (facultatif) : { href, txt } pour imposer la suite (ex. : TP 2 de terminale) ; extra : liens en plus.
+  function navFin(niv, ch, rub, termine, suiv, extra) {
+    const ri = RUBRIQUES.findIndex((r) => r.id === rub);
+    const nx = RUBRIQUES.slice(ri + 1).find((r) => rubriqueDispo(ch, r.id));
+    const nomSuite = (r) => r.id === "tp" ? "Passer au TP" : r.id === "entrainement" ? "Passer à l'entraînement" : "Passer à l'étape « " + r.nom + " »";
+    let lien = "";
+    if (suiv) lien = `<a class="btn btn-primary" href="#${suiv.href}">${esc(suiv.txt)}</a>`;
+    else if ((termine || modeProf()) && nx) lien = `<a class="btn btn-primary" href="#c-${niv}-${ch.id}-${nx.id}">${nomSuite(nx)} ›</a>`;
+    return `<nav class="nav-fin" aria-label="Suite">${lien}${extra || ""}<a class="btn btn-ghost" href="#c-${niv}-${ch.id}">Retour au menu du chapitre</a></nav>`;
+  }
+
   // ======================= Cours interactif =======================
   function vueCours(niv, ch) {
     const cle = `${niv}-${ch.id}-cours`, p = profil();
@@ -3509,12 +3548,15 @@ const QUESTIONS = [
       <div class="skills"><strong>Compétences travaillées</strong><ul>${ch.cours.competences.map((c, i) => { const ok = compFaite(i); return `<li id="comp${i}"${ok ? ' class="fait"' : ""}><span class="ck">${ok ? SVG.check : ""}</span><span class="ct">${esc(c)}</span></li>`; }).join("")}</ul></div>
       <div class="level-line" id="cours-prog"></div>
       <article class="cours">${html}</article>
-      <button class="btn btn-primary" id="btn-fin-cours"></button>`;
+      <button class="btn btn-primary" id="btn-fin-cours"></button>
+      <div id="cours-nav"></div>`;
     const maj = () => {
       const n = exemples.filter((k) => reussis.has(k)).length;
       $("cours-prog").innerHTML = `Exemples réussis <i><b style="width:${Math.round(100 * n / exemples.length)}%"></b></i>${n}/${exemples.length}`;
       const b = $("btn-fin-cours"), tout = n === exemples.length;
       b.disabled = !tout || fait(cle); b.textContent = fait(cle) ? "Cours terminé" : tout ? "Terminer le cours" : "Réussis tous les exemples pour terminer";
+      b.hidden = !!fait(cle);
+      $("cours-nav").innerHTML = navFin(niv, ch, "cours", !!fait(cle));
     };
     const reussir = (k) => {
       if (!reussis.has(k)) {
@@ -3652,6 +3694,22 @@ const QUESTIONS = [
   const virg = (x) => String(x).replace(".", ",");
   const DEBIT = (n) => ["fermé", "faible", "moyen", "fort"][n];
 
+  // ----- Signaux communs à toutes les paillasses (3ème et terminale) -----
+  // Le tour de la paillasse devient rouge environ 2 s (action impossible) ou vert un court instant (action validée).
+  function signalPaillasse(bench, genre) {
+    if (!bench || (genre !== "ok" && genre !== "ko")) return;
+    bench.classList.remove("sig-ok", "sig-ko"); void bench.offsetWidth;
+    bench.classList.add("sig-" + genre);
+    clearTimeout(bench._sig); bench._sig = setTimeout(() => bench.classList.remove("sig-" + genre), genre === "ko" ? 2000 : 900);
+  }
+  // L'objet concerné par un refus « hoche » de gauche à droite : décalage horizontal amorti pendant 0,6 s
+  const DUREE_HOCHE = 600;
+  function decalHoche(h, id) {
+    if (!h || h.id !== id) return 0;
+    const t = (performance.now() - h.t0) / 1000;
+    return t >= DUREE_HOCHE / 1000 ? 0 : 5 * Math.sin(t * 34) * (1 - t / (DUREE_HOCHE / 1000));
+  }
+
   function paillasse(el, surEvt) {
     const ns = "http://www.w3.org/2000/svg";
     el.innerHTML = `<div class="bench">
@@ -3753,7 +3811,7 @@ const QUESTIONS = [
     }
     const objet = (type) => S.objets.find((o) => o.type === type);
     const parId = (id) => S.objets.find((o) => o.id === id);
-    function placer(o) { o.g.setAttribute("transform", `translate(${o.x.toFixed(1)} ${o.y.toFixed(1)})`); }
+    function placer(o) { o.g.setAttribute("transform", `translate(${(o.x + decalHoche(S.hoche, o.id)).toFixed(1)} ${o.y.toFixed(1)})`); }
     function borneXY(ref) { const [id, k] = ref.split(":"); const o = parId(id); const b = OBJETS[o.type].bornes[+k]; return [o.x + b[0], o.y + b[1]]; }
     function borner(o) {
       const bas = OBJETS[o.type].bornes.length ? 24 : 16;
@@ -3780,9 +3838,12 @@ const QUESTIONS = [
       // bornes reliées : pastille pleine
       gP.querySelectorAll(".b-borne").forEach((b) => b.classList.toggle("lie", S.fils.some((f) => f.a === b.dataset.borne || f.b === b.dataset.borne)));
     }
-    function bulle(o, texte, duree) {
+    // genre (facultatif) : "ko" = action impossible (tour rouge + l'objet hoche) ; "ok" = action validée (tour vert)
+    function bulle(o, texte, duree, genre) {
       S.bulle = { id: o ? o.id : null, texte, fin: S.t + (duree || 3.2) };
       dessinerBulle();
+      if (genre) signalPaillasse(el.querySelector(".bench"), genre);
+      if (genre === "ko" && o) S.hoche = { id: o.id, t0: performance.now() };
     }
     function dessinerBulle() {
       const b = S.bulle;
@@ -3827,38 +3888,38 @@ const QUESTIONS = [
     }
     function noter(o) {
       const l = o.lecture || {};
-      if (o.mode === "OFF") return bulle(o, "Le multimètre est éteint : touche le bouton rond.", 2.4);
-      if (!l.branche) return bulle(o, "Le multimètre n'est relié à aucun générateur.", 2.4);
-      if (l.mauvais) return bulle(o, "La valeur saute autour de 0 : ce réglage ne convient pas. Essaie l'autre réglage.", 3);
-      if (Math.abs(l.u) < 0.05) return bulle(o, "Aucune tension : le générateur ne fonctionne pas.", 2.4);
+      if (o.mode === "OFF") return bulle(o, "Le multimètre est éteint : touche le bouton rond.", 2.4, "ko");
+      if (!l.branche) return bulle(o, "Le multimètre n'est relié à aucun générateur.", 2.4, "ko");
+      if (l.mauvais) return bulle(o, "La valeur saute autour de 0 : ce réglage ne convient pas. Essaie l'autre réglage.", 3, "ko");
+      if (Math.abs(l.u) < 0.05) return bulle(o, "Aucune tension : le générateur ne fonctionne pas.", 2.4, "ko");
       const r = objet("robinet");
       surEvt("mesure", { u: Math.round(Math.abs(l.u) * 100) / 100, mode: o.mode, debit: r ? r.niveau : null, gen: l.gen });
-      bulle(o, "Mesure notée : " + Math.abs(l.u).toFixed(2).replace(".", ",") + " V", 1.6);
+      bulle(o, "Mesure notée : " + Math.abs(l.u).toFixed(2).replace(".", ",") + " V", 1.6, "ok");
     }
 
 
     // NOTER sur le multimètre complet (chapitre 2) : la mesure n'est notée que si le branchement est correct
     function noter2(o) {
       const l = o.lecture || {}, E = S.el;
-      if (o.mode === "OFF") return bulle(o, "Le multimètre est éteint : touche le bouton rond pour choisir un réglage.", 2.6);
+      if (o.mode === "OFF") return bulle(o, "Le multimètre est éteint : touche le bouton rond pour choisir un réglage.", 2.6, "ko");
       if (!E) return;
       const n = (ref) => E.n(ref), allumees = S.objets.filter((x) => x.type === "ampoule" && E.lampes[x.id].lit);
       if (o.mode === "V") {
         const nc = n(o.id + ":0"), nv = n(o.id + ":1");
         const lp = S.objets.find((x) => x.type === "ampoule" && ((n(x.id + ":0") === nc && n(x.id + ":1") === nv) || (n(x.id + ":0") === nv && n(x.id + ":1") === nc)));
-        if (!lp) return bulle(o, Math.abs(l.aff || 0) > 0.05 ? "Pour mesurer la tension d'une lampe, branche le voltmètre directement à ses bornes : un fil de COM vers une borne de la lampe, un fil de V vers l'autre borne." : "Le voltmètre n'est branché aux bornes d'aucune lampe. Il se branche en dérivation : bornes COM et V.", 4);
-        if (!E.lampes[lp.id].lit) return bulle(o, "La lampe " + lp.nomL + " est éteinte : ferme l'interrupteur avant de mesurer.", 2.8);
+        if (!lp) return bulle(o, Math.abs(l.aff || 0) > 0.05 ? "Pour mesurer la tension d'une lampe, branche le voltmètre directement à ses bornes : un fil de COM vers une borne de la lampe, un fil de V vers l'autre borne." : "Le voltmètre n'est branché aux bornes d'aucune lampe. Il se branche en dérivation : bornes COM et V.", 4, "ko");
+        if (!E.lampes[lp.id].lit) return bulle(o, "La lampe " + lp.nomL + " est éteinte : ferme l'interrupteur avant de mesurer.", 2.8, "ko");
         const v = Math.round(Math.abs(l.aff) * 100) / 100;
         surEvt("mesure2", { lampe: lp.nomL, g: "U", v });
-        return bulle(o, "Mesure notée : U = " + virg(v.toFixed(2)) + " V aux bornes de " + lp.nomL + "." + (l.aff < 0 ? " Le signe − veut dire que COM et V sont inversés : on note la valeur sans le signe." : ""), 3.4);
+        return bulle(o, "Mesure notée : U = " + virg(v.toFixed(2)) + " V aux bornes de " + lp.nomL + "." + (l.aff < 0 ? " Le signe − veut dire que COM et V sont inversés : on note la valeur sans le signe." : ""), 3.4, "ok");
       }
       // réglages ampèremètre
-      if (!o.fusible) return bulle(o, "Le fusible a fondu : touche le multimètre pour le changer.", 2.6);
-      if (l.over) return bulle(o, "L'écran affiche « 1. » : l'intensité dépasse le calibre 200 mA. Tourne le bouton sur 10 A.", 3.4);
-      if (Math.abs(l.i || 0) < 0.005) return bulle(o, "Aucun courant ne traverse l'ampèremètre. Il se branche en série, sur les bornes COM et A, interrupteur fermé.", 3.6);
-      if (allumees.length !== 1) return bulle(o, allumees.length ? "Une seule lampe à la fois dans le circuit, pour savoir à quelle lampe correspond la mesure." : "Aucune lampe n'est allumée.", 3);
+      if (!o.fusible) return bulle(o, "Le fusible a fondu : touche le multimètre pour le changer.", 2.6, "ko");
+      if (l.over) return bulle(o, "L'écran affiche « 1. » : l'intensité dépasse le calibre 200 mA. Tourne le bouton sur 10 A.", 3.4, "ko");
+      if (Math.abs(l.i || 0) < 0.005) return bulle(o, "Aucun courant ne traverse l'ampèremètre. Il se branche en série, sur les bornes COM et A, interrupteur fermé.", 3.6, "ko");
+      if (allumees.length !== 1) return bulle(o, allumees.length ? "Une seule lampe à la fois dans le circuit, pour savoir à quelle lampe correspond la mesure." : "Aucune lampe n'est allumée.", 3, "ko");
       const lp = allumees[0], Il = Math.abs(E.lampes[lp.id].I);
-      if (Math.abs(Math.abs(l.i) - Il) > 0.05 * Il) return bulle(o, "L'ampèremètre ne mesure pas le courant qui traverse " + lp.nomL + " : place-le en série avec la lampe.", 3.2);
+      if (Math.abs(Math.abs(l.i) - Il) > 0.05 * Il) return bulle(o, "L'ampèremètre ne mesure pas le courant qui traverse " + lp.nomL + " : place-le en série avec la lampe.", 3.2, "ko");
       const v = Math.abs(l.aff) / (o.mode === "mA" ? 1000 : 1);
       surEvt("mesure2", { lampe: lp.nomL, g: "I", v, cal: o.mode });
       bulle(o, "Mesure notée : I = " + (o.mode === "mA" ? virg(Math.abs(l.aff).toFixed(1)) + " mA, soit " + virg(v.toFixed(4).replace(/0+$/, "")) + " A" : virg(v.toFixed(2)) + " A") + " pour " + lp.nomL + "." + (l.aff < 0 ? " (Signe − : les fils de A et de COM sont inversés.)" : ""), 3.6);
@@ -3922,7 +3983,7 @@ const QUESTIONS = [
         if (!g.bouge) { const [id, k] = g.de.split(":"); const o = parId(id), D = OBJETS[o.type]; bulle(o, "Borne" + (D.noms ? " " + D.noms[+k] : "") + " : tire un fil depuis cette borne jusqu'à une autre borne.", 2.6); majFils(); return; }
         let best = null, dmin = 22;
         S.objets.forEach((o) => OBJETS[o.type].bornes.forEach((b, k) => { const ref = o.id + ":" + k; if (ref === g.de) return; const d = Math.hypot(o.x + b[0] - x, o.y + b[1] - y); if (d < dmin) { dmin = d; best = ref; } }));
-        if (best && ajouterFil(g.de, best)) { S.tFil = S.t; const [ida] = g.de.split(":"), [idb] = best.split(":"); if (ida === idb) bulle(parId(ida), "Attention : ce fil relie directement les deux bornes du même objet.", 2.6); }
+        if (best && ajouterFil(g.de, best)) { S.tFil = S.t; const [ida] = g.de.split(":"), [idb] = best.split(":"); if (ida === idb) bulle(parId(ida), "Attention : ce fil relie directement les deux bornes du même objet.", 2.6, "ko"); }
         majFils(); return;
       }
       if (g.type === "retirer") { if (!g.bouge) { S.fils = S.fils.filter((f) => f.id !== g.id); majFils(); bulle(null, "Fil retiré", 1); } return; }
@@ -3932,11 +3993,13 @@ const QUESTIONS = [
         // l'alternateur s'accroche à l'axe de la turbine s'il est assez près
         const t = objet("turbine"), a = objet("alternateur");
         if (t && a && !S.couple && (o === a || o === t) && Math.hypot(a.x - (t.x + 60), a.y + 23 - (t.y + 30)) < 30) {
-          accrocher(); placer(a); majFils(); bulle(a, "Clac ! L'alternateur est accroché à l'axe de la turbine.", 2); surEvt("accroche", {});
+          accrocher(); placer(a); majFils(); bulle(a, "Clac ! L'alternateur est accroché à l'axe de la turbine.", 2, "ok"); surEvt("accroche", {});
         }
       }
     }
     svg.addEventListener("pointerup", finGeste);
+    // Téléphone : pendant qu'on déplace un objet ou qu'on tire un fil, la page ne défile pas
+    svg.addEventListener("touchmove", (e) => { if (geste) e.preventDefault(); }, { passive: false });
     svg.addEventListener("pointercancel", () => { geste = null; majFils(); });
     svg.querySelector("#B-reset").addEventListener("keydown", (ev) => { if (ev.key === "Enter" || ev.key === " ") { ev.preventDefault(); charger(presetCourant); } });
 
@@ -4086,7 +4149,7 @@ const QUESTIONS = [
       return x;
     }
     function dire(cle, o, texte, duree) { // message d'erreur : seulement quand l'erreur apparaît
-      S.dits[cle] = true; bulle(o, texte, duree || 4.5); surEvt("erreur", { cle });
+      S.dits[cle] = true; bulle(o, texte, duree || 4.5, "ko"); surEvt("erreur", { cle });
     }
     function etapeElec(dt) {
       S.t += dt;
@@ -4126,8 +4189,8 @@ const QUESTIONS = [
         if (t0 < 20 && o.tj >= 20 && !o.run.fait) {
           o.run.fait = true;
           const E20 = Math.round(o.E - P * (o.tj - 20));
-          if (o.run.mixte) bulle(o, "Pendant ces 20 s, il n'y avait pas une seule et même lampe dans le circuit. Remets le joulemètre à zéro (touche son écran) et recommence.", 5);
-          else { bulle(o, "20 s : le joulemètre indique " + E20 + " J pour la lampe " + o.run.lampe + ". C'est noté !", 4); surEvt("joule20", { lampe: o.run.lampe, E: E20 }); }
+          if (o.run.mixte) bulle(o, "Pendant ces 20 s, il n'y avait pas une seule et même lampe dans le circuit. Remets le joulemètre à zéro (touche son écran) et recommence.", 5, "ko");
+          else { bulle(o, "20 s : le joulemètre indique " + E20 + " J pour la lampe " + o.run.lampe + ". C'est noté !", 4, "ok"); surEvt("joule20", { lampe: o.run.lampe, E: E20 }); }
         }
       });
     }
@@ -4245,6 +4308,7 @@ const QUESTIONS = [
       if (S.elec) etapeElec(dt); else etape(dt);
       S.objets.forEach(majObjet); majEffets();
       if (S.bulle && S.t > S.bulle.fin) { S.bulle = null; gB.innerHTML = ""; }
+      if (S.hoche) { const oh = parId(S.hoche.id), fini = performance.now() - S.hoche.t0 > DUREE_HOCHE; if (fini) S.hoche = null; if (oh) placer(oh); }
       accEvt += dt;
       if (accEvt > 0.25 && S.elec) { accEvt = 0; surEvt("etat", diagElec()); }
       if (accEvt > 0.25) {
@@ -4338,7 +4402,9 @@ const QUESTIONS = [
         <div class="stack" style="margin-top:.7rem"><p>${esc(tp.enClasse.objectif)}</p><ul>${tp.enClasse.materiel.map((m) => `<li>${esc(m)}</li>`).join("")}</ul>
         <div class="safety"><strong>Sécurité</strong><ul>${tp.enClasse.securite.map((m) => `<li>${esc(m)}</li>`).join("")}</ul></div></div></details>
       <div class="otabs" id="otabs" role="tablist"></div>
-      <div class="stack" id="tp-zone"></div>`;
+      <div class="stack" id="tp-zone"></div>
+      <div id="tp-nav"></div>`;
+    const majNav = () => { $("tp-nav").innerHTML = navFin(niv, ch, "tp", !!fait(cle)); };
 
     function onglets() {
       $("otabs").innerHTML = O.map((o, i) => {
@@ -4587,10 +4653,10 @@ const QUESTIONS = [
       if (!conclFaite()) { const n = tp.conclusion.textes.filter((x, k) => rep.concl[k]).length + (rep.concl.chaine ? 1 : 0); z.innerHTML = `<div class="level-line">Conclusion complétée <i><b style="width:${Math.round(100 * n / (NC + 1))}%"></b></i>${n}/${NC + 1}</div>`; return; }
       z.innerHTML = `<div class="retenir"><strong class="lbl">Ma fiche bilan</strong><ul>${tp.conclusion.textes.map((x) => `<li>${esc(x.texte.replace(/\[|\]/g, ""))}</li>`).join("")}</ul></div>
         <button class="btn btn-primary" id="btn-tp" ${fait(cle) ? "disabled" : ""}>${fait(cle) ? "TP terminé" : "J'ai terminé le TP"}</button>`;
-      $("btn-tp").onclick = () => { enregistrer(cle, 40, true, true); onglets(); fin(); toast("TP terminé : direction Cayenne pour l'entraînement !"); };
+      $("btn-tp").onclick = () => { enregistrer(cle, 40, true, true); onglets(); fin(); majNav(); toast("TP terminé : direction Cayenne pour l'entraînement !"); };
     }
 
-    function afficher() { onglets(); if (actif >= NC) afficherConclusion(); else afficherObjectif(); }
+    function afficher() { onglets(); majNav(); if (actif >= NC) afficherConclusion(); else afficherObjectif(); }
     afficher();
   }
   // ======================= TP de chimie (terminale) : la paillasse de chimie et les laboratoires =======================
@@ -4756,16 +4822,17 @@ const QUESTIONS = [
       el.innerHTML = `<div class="bench chim">
           <svg class="bench-svg" viewBox="0 0 ${BW} ${BH}" role="group" aria-label="Paillasse de chimie : glisse un objet pour le déplacer ; touche-le pour le prendre, puis touche l'endroit où l'utiliser">
             <rect x="3" y="4" width="${BW - 6}" height="${BH - 8}" rx="14" class="b-table"/><rect x="7" y="9" width="${BW - 14}" height="${BH - 18}" rx="10" class="b-zone"/>
-            <g class="c-aide"></g><g class="c-cables"></g><g class="c-objets"></g><g class="c-fx" pointer-events="none"></g></svg>
+            <g class="c-aide"></g><g class="c-cables"></g><g class="c-objets"></g><g class="c-fx" pointer-events="none"></g><g class="c-zoom" pointer-events="none"></g></svg>
           <p class="bench-hint">Glisse un objet pour le déplacer. Touche un objet pour le prendre, puis touche l'endroit où l'utiliser.</p>
           ${M.montage ? `<div class="c-btns"><button class="btn btn-ghost btn-sm c-aide-btn" aria-expanded="false">Aide au montage</button></div><div class="c-aide-liste"></div>` : ""}
+          <div class="c-zoom-btns" hidden></div>
           <div class="c-main" aria-live="polite"></div>
           <div class="c-msg" aria-live="polite"></div>
           <div class="c-choix"></div>
           <div class="c-panneau"></div>
           <button class="btn-link c-reset">Recommencer la manipulation depuis le début</button>
         </div>`;
-      const svg = el.querySelector("svg"), gO = el.querySelector(".c-objets"), gC = el.querySelector(".c-cables"), gX = el.querySelector(".c-fx"), gA = el.querySelector(".c-aide");
+      const svg = el.querySelector("svg"), gO = el.querySelector(".c-objets"), gC = el.querySelector(".c-cables"), gX = el.querySelector(".c-fx"), gA = el.querySelector(".c-aide"), gZ = el.querySelector(".c-zoom"), zB = el.querySelector(".c-zoom-btns");
       const zMain = el.querySelector(".c-main"), zMsg = el.querySelector(".c-msg"), zChoix = el.querySelector(".c-choix"), zPan = el.querySelector(".c-panneau");
       const zAideL = el.querySelector(".c-aide-liste"), bAide = el.querySelector(".c-aide-btn");
       let S;
@@ -4819,7 +4886,13 @@ const QUESTIONS = [
         majAide();
       }
 
-      function message(txt, genre) { zMsg.className = "c-msg " + (genre || "info"); zMsg.innerHTML = txt ? `<strong>${genre === "err" ? "Attention" : genre === "ok" ? "Bien" : "Info"}</strong><span>${esc(txt)}</span>` : ""; }
+      function message(txt, genre) {
+        zMsg.className = "c-msg " + (genre || "info"); zMsg.innerHTML = txt ? `<strong>${genre === "err" ? "Attention" : genre === "ok" ? "Bien" : "Info"}</strong><span>${esc(txt)}</span>` : "";
+        if (!txt) return;
+        // signaux communs : tour rouge + l'objet en main (ou touché) hoche si c'est refusé ; tour vert si c'est validé
+        if (genre === "err") { S.refus = true; signalPaillasse(el.querySelector(".bench"), "ko"); const id = S.main || S.dernier; if (id && O(id)) S.hoche = { id, t0: performance.now() }; }
+        else if (genre === "ok") signalPaillasse(el.querySelector(".bench"), "ok");
+      }
       const nomObjet = (o) => ({ flacon: "le flacon de " + (o.l1 || "").toLowerCase(), pissette: "la pissette d'eau distillée", pipette: `la pipette jaugée de ${fx(o.vol || 0, 1)} mL`, pipeteur: "le pipeteur",
         becher: o.role === "titrage" ? "le bécher de titrage" : o.role === "poubelle" ? "le bécher poubelle" : o.role === "prelev" ? "le bécher de prélèvement" : "le bécher de " + NOMS[o.contenu],
         barreau: "le barreau aimanté", sonde: kind === "cond" ? "la cellule du conductimètre" : "la sonde du pH-mètre", eprouvette: "l'éprouvette graduée de 250 mL", bidon: "le bidon d'eau distillée",
@@ -4832,7 +4905,7 @@ const QUESTIONS = [
       }
 
       // ----- Animations -----
-      function anime(d, f, fin) { S.anims.push({ t0: S.t, d, f, fin }); }
+      function anime(d, f, fin, bur) { S.anims.push({ t0: S.t, d, f, fin, bur: !!bur }); } // bur : animation de la burette (la loupe du zéro reste affichée)
       function suite(etapes, fin) { // étapes : [durée, f(p)] jouées l'une après l'autre
         const e = etapes.shift(); if (!e) { if (fin) fin(); return; }
         anime(e[0], e[1], () => suite(etapes, fin));
@@ -4845,11 +4918,66 @@ const QUESTIONS = [
       const pause = (d) => [d, () => {}];
       function tourner(o, a, d) { let s = null; return [d || 0.3, (p) => { if (s == null) s = o.rot; o.rot = s + (a - s) * lisse(p); }]; }
       function jet(x1, y1, x2, y2, coul, epais, courbe) { S.fx.push({ x1, y1, x2, y2, coul, w: epais || 2.4, c: courbe || 0 }); }
+      // Becs verseurs (coordonnées dans le dessin de l'objet) : le liquide sort de là, quelle que soit l'inclinaison.
+      const BEC = { flacon: [31, 4], pissette: [30, 4], eprouvette: [20, 1], bidon: [36, 5] };
+      function rotPt(o, lx, ly, rot) { // point du dessin, une fois l'objet tourné de rot degrés autour de son centre
+        const a = (rot == null ? o.rot : rot) * Math.PI / 180, cx = o.w / 2, cy = o.h / 2, dx = lx - cx, dy = ly - cy;
+        return [cx + dx * Math.cos(a) - dy * Math.sin(a), cy + dx * Math.sin(a) + dy * Math.cos(a)];
+      }
+      // bec utilisé : à droite du goulot (objet penché vers la droite) ou, en miroir, à gauche (penché vers la gauche)
+      const becLocal = (o) => o.miroir ? [o.w - BEC[o.type][0], BEC[o.type][1]] : BEC[o.type];
+      const bec = (o) => { const [lx, ly] = becLocal(o), [x, y] = rotPt(o, lx, ly); return [o.x + o.ax + x, o.y + o.ay + y]; };
+      // Où placer un objet qui verse : son bec, penché de rot degrés, doit arriver en (X, Y).
+      // haut : ouverture du récipient visé (l'objet reste entièrement au-dessus, jamais dedans).
+      // miroir permis : s'il n'y a pas la place à gauche du récipient, l'objet passe à droite et se penche vers la gauche.
+      // Renvoie [x, y, angle] ; l'objet entier (une fois penché) reste dans la paillasse.
+      function posPour(o, rot, X, Y, haut, miroirPermis) {
+        const essai = (miroir) => {
+          const r = miroir ? -rot : rot, lx = miroir ? o.w - BEC[o.type][0] : BEC[o.type][0], [bx, by] = rotPt(o, lx, BEC[o.type][1], r);
+          const a = r * Math.PI / 180, C = Math.abs(Math.cos(a)), Sn = Math.abs(Math.sin(a)), hw = (o.w * C + o.h * Sn) / 2, hh = (o.w * Sn + o.h * C) / 2;
+          let x = X - bx, y = Y - by;
+          if (haut != null && y + o.h / 2 + hh > haut - 2) y = haut - 2 - o.h / 2 - hh; // tout l'objet au-dessus de l'ouverture
+          const cx = x + o.w / 2, tient = cx - hw >= 2 && cx + hw <= BW - 2;
+          x = Math.max(2 + hw, Math.min(BW - 2 - hw, cx)) - o.w / 2;
+          y = Math.max(2 + hh, Math.min(BH - 2 - hh, y + o.h / 2)) - o.h / 2;
+          return { x, y, r, miroir, tient };
+        };
+        let e = essai(false);
+        if (!e.tient && miroirPermis) { const m = essai(true); if (m.tient) e = m; }
+        o.miroir = e.miroir;
+        return [e.x, e.y, e.r];
+      }
+      // verser en filet depuis le bec de m jusqu'au point (x2, y2) : départ presque horizontal, arrivée verticale
+      const filet = (m, x2, y2, coul, epais) => { const [x1, y1] = bec(m); if (y2 > y1) S.fx.push({ x1, y1, x2, y2, coul, w: epais || 2.6, chute: true }); };
       function goutte(x, y, ymax, coul) { S.gouttes.push({ x, y, v: 20, ymax, coul: coul || COUL.eau }); }
       function surface(b) { return b.y + b.h - 2 - Math.min(b.h - 8, (b.V / b.Vmax) * (b.h - 8)); }
 
       // ----- Dessins -----
-      function liquide(x, y, w, h, coul, op) { return h > 0.2 ? `<rect x="${x}" y="${(y - h).toFixed(1)}" width="${w}" height="${h.toFixed(1)}" fill="${coul}" opacity="${op || 0.75}"/>` : ""; }
+      function liquide(x, y, w, h, coul, op, clip) { return h > 0.2 ? `<rect x="${x}" y="${(y - h).toFixed(1)}" width="${w}" height="${h.toFixed(1)}" fill="${coul}" opacity="${op || 0.75}"${clip ? ` clip-path="url(#${clip})"` : ""}/>` : ""; }
+      // Liquide d'un récipient qui peut se pencher (flacon, éprouvette, pissette, bidon) : sa surface reste horizontale
+      // et il garde la même quantité. Intérieur = rectangle (ix0, iy0)–(ix1, iy1) du dessin ; hliq = hauteur du liquide, objet droit.
+      function liquidePenche(o, ix0, iy0, ix1, iy1, hliq, coul, op, formeClip) {
+        if (hliq <= 0.2) return "";
+        const cx = o.w / 2, cy = o.h / 2, a = (o.rot || 0) * Math.PI / 180, co = Math.cos(a), si = Math.sin(a);
+        const A = (ix1 - ix0) * Math.min(hliq, iy1 - iy0);
+        // coins de l'intérieur, une fois tourné (repère centré sur l'objet, axe vertical vers le bas)
+        const poly = [[ix0, iy0], [ix1, iy0], [ix1, iy1], [ix0, iy1]].map(([x, y]) => [(x - cx) * co - (y - cy) * si, (x - cx) * si + (y - cy) * co]);
+        const aire = (c) => { // aire de l'intérieur sous la ligne horizontale v = c
+          const out = [];
+          poly.forEach((p, i) => {
+            const q = poly[(i + 1) % poly.length], pin = p[1] >= c, qin = q[1] >= c;
+            if (pin) out.push(p);
+            if (pin !== qin) { const t = (c - p[1]) / (q[1] - p[1]); out.push([p[0] + t * (q[0] - p[0]), c]); }
+          });
+          let s2 = 0; out.forEach((p, i) => { const q = out[(i + 1) % out.length]; s2 += p[0] * q[1] - q[0] * p[1]; });
+          return Math.abs(s2) / 2;
+        };
+        let lo = Math.min(...poly.map((p) => p[1])), hi = Math.max(...poly.map((p) => p[1]));
+        for (let k = 0; k < 32; k++) { const m = (lo + hi) / 2; if (aire(m) > A) lo = m; else hi = m; }
+        const c = (lo + hi) / 2, id = "cll-" + o.id + "-" + (el.id || "b"), D = Math.max(...[[ix0, iy0], [ix1, iy0], [ix1, iy1], [ix0, iy1]].map(([x, y]) => Math.hypot(x - cx, y - cy))) + 2; // D : coin de l'intérieur le plus éloigné du centre
+        return `<clipPath id="${id}">${formeClip || `<rect x="${ix0}" y="${iy0}" width="${ix1 - ix0}" height="${iy1 - iy0}"/>`}</clipPath>
+          <g clip-path="url(#${id})" pointer-events="none"><rect x="${(cx - D).toFixed(1)}" y="${(cy + c).toFixed(2)}" width="${(2 * D).toFixed(1)}" height="${(D - c).toFixed(1)}" fill="${coul}" opacity="${op || 0.75}" transform="rotate(${(-(o.rot || 0)).toFixed(1)} ${cx} ${cy})"/></g>`;
+      }
       function couleurBecher(o) { if (o.contenu) return COUL[o.contenu]; if (o.echant && kind === "ph") return COUL.jusD; return COUL.eau; }
       function pipGeo(o) { const L = o.h, bh = o.vol >= 20 ? 26 : o.vol >= 10 ? 22 : 16, by = L * 0.48; return { L, bh, by, yT: L * 0.13, yBt: by - bh / 2, yBb: by + bh / 2 }; }
       function pipY(o, f) { // niveau du liquide (fraction du volume nominal) → ordonnée locale
@@ -4862,11 +4990,11 @@ const QUESTIONS = [
         const t = o.type; let g = "";
         if (t === "flacon") {
           g = `<rect x="15" y="0" width="14" height="8" rx="2" class="c-bouchon"/><rect x="13" y="7" width="18" height="10" class="c-verre"/>
-            <path d="M4 22q0-6 9-6h18q9 0 9 6v38a4 4 0 01-4 4H8a4 4 0 01-4-4z" class="c-verre"/>${liquide(5, 63, 34, 30, COUL[o.contenu])}
+            <path d="M4 22q0-6 9-6h18q9 0 9 6v38a4 4 0 01-4 4H8a4 4 0 01-4-4z" class="c-verre"/>${liquidePenche(o, 5, 17, 39, 63, 30, COUL[o.contenu], 0.75, `<path d="M5 22q0-5 8-5h1v-9h16v9h1q8 0 8 5v38a3 3 0 01-3 3H8a3 3 0 01-3-3z"/>`)}
             <rect x="5" y="28" width="34" height="20" rx="2" class="c-etiq"/><text x="22" y="37" class="c-etiq-t" text-anchor="middle">${esc(o.l1)}</text><text x="22" y="45" class="c-etiq-p" text-anchor="middle">${esc(o.l2)}</text>
             ${o.danger ? `<g transform="translate(30 50)"><path d="M6 0l6 6-6 6-6-6z" class="c-danger"/><text x="6" y="9" text-anchor="middle" class="c-danger-t">!</text></g>` : ""}`;
         } else if (t === "pissette") {
-          g = `<path d="M18 14L30 4" class="c-tube"/><path d="M14 12h8v6h-8z" class="c-bouchon"/><path d="M6 24q0-6 6-6h12q6 0 6 6v34a4 4 0 01-4 4H10a4 4 0 01-4-4z" class="c-verre"/>${liquide(7, 61, 22, 26, COUL.eau)}
+          g = `<path d="M18 14L30 4" class="c-tube"/><path d="M14 12h8v6h-8z" class="c-bouchon"/><path d="M6 24q0-6 6-6h12q6 0 6 6v34a4 4 0 01-4 4H10a4 4 0 01-4-4z" class="c-verre"/>${liquidePenche(o, 7, 19, 29, 61, 26, COUL.eau, 0.75, `<path d="M7 24q0-5 5-5h12q5 0 5 5v34a3 3 0 01-3 3H10a3 3 0 01-3-3z"/>`)}
             <text x="18" y="46" class="c-etiq-p" text-anchor="middle">EAU</text>`;
         } else if (t === "pipette") {
           const G = pipGeo(o), yl = o.niv > 0 ? pipY(o, o.niv) : null, cid = "clp-" + o.id, enAjust = S.ajust && S.ajust.pip === o.id;
@@ -4886,7 +5014,8 @@ const QUESTIONS = [
           if (o.barreau) { const a = S.angle, cx = o.w / 2, cy = o.h - 6, dx = 9 * Math.cos(a); bar = `<line x1="${(cx - dx).toFixed(1)}" y1="${cy}" x2="${(cx + dx).toFixed(1)}" y2="${cy}" class="c-barreau-v"/>`; }
           if (o.role === "titrage" && agite()) { const a = S.angle; rem = `<path d="M${o.w / 2 - 14} ${o.h - 18}q14 ${(6 * Math.sin(a)).toFixed(1)} 28 0" class="c-remous"/>`; }
           const tache = o.libre > 0.001 ? `<ellipse cx="${o.w / 2}" cy="${o.h - 10}" rx="${(10 + 10 * Math.min(1, o.libre)).toFixed(1)}" ry="4" fill="#ffffff" opacity=".55"/>` : "";
-          g = `${liquide(3, o.h - 2, o.w - 6, hl, c, o.echant && kind === "ph" ? 0.7 : 0.75)}${tache}${rem}${bar}<path d="M0 0h4v${o.h - 4}a4 4 0 004 4h${o.w - 16}a4 4 0 004-4V0h4" class="c-verre-o"/><rect x="0" y="-6" width="${o.w}" height="${o.h + 6}" fill="transparent"/>`;
+          const clb = "clb-" + o.id + "-" + (el.id || "b");
+          g = `<clipPath id="${clb}"><path d="M4.9 -8V${o.h - 4}a3.1 3.1 0 003.1 3.1h${o.w - 16}a3.1 3.1 0 003.1-3.1V-8z"/></clipPath>${liquide(4, o.h - 0.9, o.w - 8, hl, c, o.echant && kind === "ph" ? 0.7 : 0.75, clb)}${tache}${rem}${bar}<path d="M0 0h4v${o.h - 4}a4 4 0 004 4h${o.w - 16}a4 4 0 004-4V0h4" class="c-verre-o"/><rect x="0" y="-6" width="${o.w}" height="${o.h + 6}" fill="transparent"/>`;
         } else if (t === "potence") {
           g = `<rect x="0" y="300" width="80" height="12" rx="3" class="c-potence"/><rect x="6" y="0" width="5" height="302" class="c-potence"/><rect x="6" y="36" width="40" height="5" class="c-potence"/>
             <rect x="44" y="31" width="5" height="15" rx="1.5" class="c-potence"/><rect x="51" y="31" width="5" height="15" rx="1.5" class="c-potence"/><circle cx="20" cy="38.5" r="4" class="c-bouton"/>
@@ -4912,10 +5041,10 @@ const QUESTIONS = [
             ${kind === "cond" ? `<text x="48" y="58" class="c-boitier-t" text-anchor="middle">Conductimètre</text>` :
               `<g data-act="etal" class="c-btn"><rect x="8" y="46" width="44" height="18" rx="4"/><text x="30" y="58" text-anchor="middle">ÉTAL</text></g><text x="72" y="58" class="c-boitier-t" text-anchor="middle">${S.cap.etal === 2 ? "étalonné" : S.cap.etal === 1 ? "pH 7 ok" : ""}</text>`}`;
         } else if (t === "eprouvette") {
-          g = `${liquide(3, o.h - 6, o.w - 6, (o.V / 250) * (o.h - 12), COUL.eau)}<path d="M2 0v${o.h - 6}h18V0" class="c-verre-o"/><rect x="-4" y="${o.h - 6}" width="30" height="6" rx="2" class="c-verre"/><rect x="-4" y="0" width="30" height="${o.h}" fill="transparent"/>
+          g = `${liquidePenche(o, 3, 0, 19, o.h - 6, (o.V / 250) * (o.h - 12), COUL.eau)}<path d="M2 0v${o.h - 6}h18V0" class="c-verre-o"/><rect x="-4" y="${o.h - 6}" width="30" height="6" rx="2" class="c-verre"/><rect x="-4" y="0" width="30" height="${o.h}" fill="transparent"/>
             ${[50, 100, 150, 200, 250].map((v) => `<line x1="14" x2="20" y1="${(o.h - 6 - (v / 250) * (o.h - 12)).toFixed(1)}" y2="${(o.h - 6 - (v / 250) * (o.h - 12)).toFixed(1)}" class="c-grad"/>`).join("")}`;
         } else if (t === "bidon") {
-          g = `<path d="M6 10h24v-6h10v6h4a4 4 0 014 4v40a4 4 0 01-4 4H6a4 4 0 01-4-4V14a4 4 0 014-4z" class="c-verre"/>${liquide(3, 56, 44, 36, COUL.eau)}<text x="25" y="40" class="c-etiq-p" text-anchor="middle">EAU DIST.</text>`;
+          g = `<path d="M6 10h24v-6h10v6h4a4 4 0 014 4v40a4 4 0 01-4 4H6a4 4 0 01-4-4V14a4 4 0 014-4z" class="c-verre"/>${liquidePenche(o, 3, 11, 47, 56, 36, COUL.eau, 0.75, `<path d="M6 11h25v-6h8v6h5a3 3 0 013 3v40a3 3 0 01-3 3H6a3 3 0 01-3-3V14a3 3 0 013-3z"/>`)}<text x="25" y="40" class="c-etiq-p" text-anchor="middle">EAU DIST.</text>`;
         } else if (t === "fiole") {
           const k = o.Vf >= 500 ? 1 : 0.66, fr = o.V / o.Vf, cid = "clf-" + o.id;
           const yv = (f) => f <= 0.96 ? 240 - (f / 0.96) * 106 : 134 - (f - 0.96) * 2250;
@@ -4944,7 +5073,7 @@ const QUESTIONS = [
         const [x, y] = posSonde(), tenu = S.main === "son";
         const corps = kind === "cond" ? `<rect x="0" y="0" width="12" height="${o.h - 14}" rx="3" class="c-sonde"/><rect x="1" y="${o.h - 14}" width="10" height="14" rx="1" class="c-cellule"/>`
           : `<rect x="1" y="0" width="10" height="${o.h - 12}" rx="3" class="c-sonde"/><ellipse cx="6" cy="${o.h - 7}" rx="5" ry="7" class="c-bulbe"/>`;
-        return `<g class="c-obj sonde${tenu ? " tenu" : ""}" data-id="son" transform="translate(${x.toFixed(1)} ${y.toFixed(1)})">${tenu ? `<rect x="-5" y="-5" width="22" height="${o.h + 10}" rx="5" class="c-sel"/>` : ""}${corps}<rect x="-10" y="-4" width="32" height="${o.h + 8}" fill="transparent"/></g>`;
+        return `<g class="c-obj sonde${tenu ? " tenu" : ""}" data-id="son" transform="translate(${(x + decalHoche(S.hoche, "son")).toFixed(1)} ${y.toFixed(1)})">${tenu ? `<rect x="-5" y="-5" width="22" height="${o.h + 10}" rx="5" class="c-sel"/>` : ""}${corps}<rect x="-10" y="-4" width="32" height="${o.h + 8}" fill="transparent"/></g>`;
       }
       const etiquette = (o) => ({ pissette: "Pissette", pipette: "Pipette", pipeteur: "Pipeteur", becher: o.role === "titrage" ? "Bécher" : o.role === "poubelle" ? "Poubelle" : o.role === "prelev" ? "Prélèvement" : o.contenu === "t7" ? "Tampon pH 7" : "Tampon pH 4",
         barreau: "Barreau", eprouvette: "Éprouvette", fiole: o.contenu === "jusD" ? "Jus dilué" : o.label ? "" : "Fiole jaugée", burette: "Burette", potence: "Potence", agitateur: "Agitateur" })[o.type] || "";
@@ -4956,18 +5085,19 @@ const QUESTIONS = [
           const tenu = S.main === id, lev = tenu && !o.ax && !o.ay ? 3 : 0, glisse = S.drag && S.drag.id === id;
           const rot = o.rot ? ` rotate(${o.rot.toFixed(1)} ${o.w / 2} ${o.h / 2})` : "";
           const lab = o.sur || glisse || o.ax || o.ay ? "" : etiquette(o);
-          s += `<g class="c-obj ${o.type}${tenu ? " tenu" : ""}${glisse ? " glisse" : ""}" data-id="${id}" transform="translate(${(o.x + o.ax).toFixed(1)} ${(o.y + o.ay - lev).toFixed(1)})${rot}">${tenu ? `<rect x="-5" y="-5" width="${o.w + 10}" height="${o.h + 10}" rx="7" class="c-sel"/>` : ""}${dessin(o)}
+          s += `<g class="c-obj ${o.type}${tenu ? " tenu" : ""}${glisse ? " glisse" : ""}" data-id="${id}" transform="translate(${(o.x + o.ax + decalHoche(S.hoche, id)).toFixed(1)} ${(o.y + o.ay - lev).toFixed(1)})${rot}">${tenu ? `<rect x="-5" y="-5" width="${o.w + 10}" height="${o.h + 10}" rx="7" class="c-sel"/>` : ""}${dessin(o)}
             ${lab ? `<text x="${o.w / 2}" y="${o.type === "potence" ? o.h + 11 : o.h + 11}" class="b-nom" text-anchor="middle">${esc(lab)}</text>` : ""}</g>`;
         });
         s += dessinSonde();
         gO.innerHTML = s;
+        dessinerZoom();
         const so = O("son"), ca = O("cap");
         if (so && ca) { const [x, y] = posSonde(); gC.innerHTML = `<path d="M${ca.x + ca.ax + 48} ${ca.y + ca.ay + 70} C${ca.x + 48} ${ca.y + 120} ${x + 6} ${y - 50} ${x + 6} ${y}" class="c-cable"/>`; }
         dessinerFx();
       }
       function dessinerFx() {
         let s = "";
-        S.fx.forEach((j) => { const mx = (j.x1 + j.x2) / 2 + j.c, my = j.c ? Math.min(j.y1, j.y2) - Math.abs(j.c) : (j.y1 + j.y2) / 2; s += `<path d="M${j.x1.toFixed(1)} ${j.y1.toFixed(1)}Q${mx.toFixed(1)} ${my.toFixed(1)} ${j.x2.toFixed(1)} ${j.y2.toFixed(1)}" stroke="${j.coul}" stroke-width="${j.w}" class="c-jet"/>`; });
+        S.fx.forEach((j) => { const mx = j.chute ? j.x2 : (j.x1 + j.x2) / 2 + j.c, my = j.chute ? j.y1 : j.c ? Math.min(j.y1, j.y2) - Math.abs(j.c) : (j.y1 + j.y2) / 2; s += `<path d="M${j.x1.toFixed(1)} ${j.y1.toFixed(1)}Q${mx.toFixed(1)} ${my.toFixed(1)} ${j.x2.toFixed(1)} ${j.y2.toFixed(1)}" stroke="${j.coul}" stroke-width="${j.w}" class="c-jet"/>`; });
         S.gouttes.forEach((d) => { s += `<ellipse cx="${d.x.toFixed(1)}" cy="${d.y.toFixed(1)}" rx="2.2" ry="3" fill="${d.coul}" class="c-goutte"/>`; });
         gX.innerHTML = s;
       }
@@ -4995,50 +5125,99 @@ const QUESTIONS = [
       }
 
       // ----- Panneau sous la paillasse : burette, fiole, pipette -----
-      function loupe(niveau, centre, cfg) {
-        // cfg : { k (px par mL), trait (volume du trait ; rien pour une burette), coul, etroit }
-        const H = 140, k = cfg.k || 60, sens = cfg.trait != null ? -1 : 1, y = (v) => H / 2 + (v - centre) * k * sens;
-        let s = "";
-        if (cfg.trait == null) {
-          const v0 = Math.floor((centre - 1.3) * 10) / 10;
-          for (let v = v0; v <= centre + 1.3; v = Math.round((v + 0.1) * 10) / 10) {
-            const yy = y(v), maj = Math.abs(v - Math.round(v)) < 1e-6;
-            s += `<line x1="${maj ? 30 : 40}" x2="62" y1="${yy.toFixed(1)}" y2="${yy.toFixed(1)}" class="c-grad"/>${maj ? `<text x="26" y="${(yy + 4).toFixed(1)}" class="c-grad-t" text-anchor="end">${Math.round(v)}</text>` : ""}`;
-          }
-        } else {
-          const yt = y(cfg.trait);
-          if (yt < 4) s += `<text x="65" y="14" class="c-grad-t" text-anchor="middle">↑ trait plus haut</text>`;
-          else if (yt > H - 4) s += `<text x="65" y="${H - 6}" class="c-grad-t" text-anchor="middle">↓ trait plus bas</text>`;
-          else s += `<line x1="22" x2="98" y1="${yt.toFixed(1)}" y2="${yt.toFixed(1)}" class="c-jauge vif"/><text x="100" y="${(yt + 4).toFixed(1)}" class="c-grad-t">trait</text>`;
-        }
-        const yl = y(niveau), coul = cfg.coul || COUL.eau, lw = cfg.etroit ? 18 : 40, lx = 60 - lw / 2;
-        const liq = `<rect x="${lx}" y="${Math.max(0, yl).toFixed(1)}" width="${lw}" height="${Math.max(0, H - yl).toFixed(1)}" fill="${coul}" opacity=".9"/>`;
-        const men = yl > -10 && yl < H + 10 ? `<path d="M${lx} ${(yl - 4).toFixed(1)}q${lw / 2} ${(lw / 3.5).toFixed(1)} ${lw} 0" class="c-menisque"/>` : "";
-        return `<svg class="c-loupe" viewBox="0 0 130 ${H}" role="img" aria-label="Loupe"><rect x="${lx}" y="0" width="${lw}" height="${H}" class="c-verre"/>${liq}${men}${s}</svg>`;
+      // ----- Bulle zoom (sur la paillasse, seulement pendant un ajustement) -----
+      // Le trait (ou le zéro) reste fixe au centre de la bulle : c'est le niveau du liquide qui bouge.
+      // Une goutte = 0,05 mL = 7,5 px dans la bulle. Le bas du ménisque est exactement au niveau du liquide.
+      const ZR = 50, ZK = 150, GOUTTE = 0.05;
+      const nGouttes = (a, b) => a + Math.floor(Math.random() * (b - a + 1)); // départ : un nombre entier de gouttes au-dessus du trait
+      const r2 = (x) => Math.round(x * 100) / 100;
+      function zoomActif() {
+        if (S.ajust) { const p = O(S.ajust.pip), G = pipGeo(p); return { genre: "pip", o: p, ax: 9, ay: G.yT, niveau: p.niv * p.vol, trait: p.vol, tube: 26, coul: COUL[S.ajust.contenu] || COUL.eau, nom: "trait de jauge" }; }
+        const ailleurs = !!(S.main || S.drag || S.anims.some((a) => !a.bur)); // l'élève fait autre chose : la loupe s'efface pour ne rien cacher
+        const F = fioleEnCours();
+        if (F && !ailleurs) { const k = F.Vf >= 500 ? 1 : 0.66; return { genre: "fio", o: F, ax: 45 * k, ay: 134 * k - 0.04 * 2250 * k, niveau: F.V, trait: F.Vf, tube: 40, coul: F.contenu === "acide" ? "#E9EFC4" : F.contenu ? COUL.jusD : COUL.eau, nom: "trait de jauge" }; }
+        const b = S.bur;
+        if (b && b.sur && b.rempli && !b.pret && !ailleurs) return { genre: "bur", o: b, ax: 12, ay: 12, niveau: b.r, trait: 0, tube: 32, coul: COUL.soude, nom: "zéro" };
+        return null;
       }
-      const loupeBurette = () => loupe(S.bur.r, Math.max(-0.4, Math.min(24.6, S.bur.r)), { coul: COUL.soude });
-      const loupeFiole = (F) => loupe(F.V, Math.min(F.Vf, F.V + 0.9), { trait: F.Vf, k: F.Vf >= 500 ? 60 : 110 });
-      const loupePipette = (p) => { const v = p.niv * p.vol; return loupe(v, Math.max(v - 0.2, p.vol - 0.3), { trait: p.vol, k: 160, etroit: true, coul: COUL[S.ajust.contenu] }); };
+      // Boutons d'ajustement posés juste sous la bulle (au-dessus s'il n'y a pas la place) : les mêmes que sous la paillasse.
+      let zBgenre = null;
+      function majBoutonsZoom(z, cx, cy) {
+        if (!z) { if (!zB.hidden) { zB.hidden = true; zB.innerHTML = ""; zB._pos = null; } zBgenre = null; return; }
+        if (zBgenre !== z.genre) {
+          zBgenre = z.genre;
+          const B = (t, a, p) => `<button type="button" class="btn ${p ? "btn-primary" : "btn-ghost"} btn-xs" data-za="${a}">${t}</button>`;
+          zB.innerHTML = z.genre === "pip" ? `<div>${B("1 goutte", "pg")}${B("Réaspirer", "pr")}</div><div>${B("Ménisque sur le trait ✓", "pt", 1)}</div>`
+            : z.genre === "fio" ? `<div>${B("Petit jet", "jet")}${B("1 goutte", "goutte")}</div><div>${B("Ménisque sur le trait ✓", "trait", 1)}</div>`
+            : `<div>${B("1 goutte", "v1")}${B("0,2 mL", "v2")}${B("0,5 mL", "v5")}</div><div>${B("Le zéro est fait ✓", "zero", 1)}</div>`;
+          const actions = { pg: goutteAjust, pr: reaspirer, pt: validerAjust, v1: () => verser(0.05), v2: () => verser(0.2), v5: () => verser(0.5), zero,
+            jet: () => { const F = fioleEnCours(); if (F) remplirFiole(F, F.Vf >= 500 ? 1 : 0.5); }, goutte: () => { const F = fioleEnCours(); if (F) remplirFiole(F, 0.05); },
+            trait: () => { const F = fioleEnCours(); if (F) verifierTrait(F); } };
+          zB.querySelectorAll("[data-za]").forEach((x) => x.onclick = () => { if (!occupe()) actions[x.dataset.za](); });
+          zB.hidden = false; zB._pos = null;
+        }
+        const rs = svg.getBoundingClientRect(), rp = zB.offsetParent ? zB.offsetParent.getBoundingClientRect() : rs;
+        const k = rs.width / BW, W = rs.width, H = rs.height, w = zB.offsetWidth, h = zB.offsetHeight;
+        let top = (cy + ZR + 15) * k;
+        if (top + h > H - 4) top = (cy - ZR - 6) * k - h;
+        top = Math.max(2, Math.min(H - h - 2, top)) + rs.top - rp.top;
+        const left = Math.max(4, Math.min(W - w - 4, cx * k - w / 2)) + rs.left - rp.left;
+        const pos = `${left.toFixed(0)}px, ${top.toFixed(0)}px`;
+        if (zB._pos !== pos) { zB._pos = pos; zB.style.transform = `translate(${pos})`; }
+      }
+      function dessinerZoom() {
+        const z = zoomActif(); if (!z) { gZ.innerHTML = ""; majBoutonsZoom(null); return; }
+        const o = z.o, Ax = o.x + o.ax + z.ax, Ay = o.y + o.ay + z.ay;
+        let cx = Ax + 26 + 2 * ZR <= BW - 4 ? Ax + 26 + ZR : Ax - 26 - ZR;
+        cx = Math.max(ZR + 4, Math.min(BW - ZR - 4, cx));
+        const cy = Math.max(ZR + 8, Math.min(BH - ZR - 18, Ay));
+        // ordonnée dans la bulle : volume → y (le trait est en 0) ; burette : graduations vers le bas
+        const yv = (v) => (z.genre === "bur" ? (v - z.trait) : (z.trait - v)) * ZK;
+        const yl = yv(z.niveau), w = z.tube, xg = -w / 2, xd = w / 2, M = 6; // M : creux du ménisque
+        let liq = "", men = "", info = "";
+        if (yl < -ZR - M) { liq = `<rect x="${xg}" y="${-ZR}" width="${w}" height="${2 * ZR}" fill="${z.coul}"/>`; info = "▲ plus haut"; }
+        else if (yl > ZR + M) info = "▼ plus bas";
+        else {
+          liq = `<path d="M${xg} ${(yl - M).toFixed(1)}Q0 ${(yl + M).toFixed(1)} ${xd} ${(yl - M).toFixed(1)}V${ZR}H${xg}z" fill="${z.coul}"/>`;
+          men = `<path d="M${xg} ${(yl - M).toFixed(1)}Q0 ${(yl + M).toFixed(1)} ${xd} ${(yl - M).toFixed(1)}" class="c-menisque"/>`;
+        }
+        let grad = "";
+        if (z.genre === "bur") {
+          for (let k = 0; k <= 4; k++) { const y = k * 0.1 * ZK; if (y > ZR) break; grad += `<line x1="${xd - (k ? 8 : 14)}" x2="${xd}" y1="${y}" y2="${y}" class="c-z-grad${k ? "" : " zero"}"/><text x="${xd + 3}" y="${y + 3.5}" class="c-z-t">${k ? "0," + k : "0"}</text>`; }
+          for (let k = 1; k <= 7; k++) { const y = (k - 0.5) * 0.1 * ZK; if (y < ZR) grad += `<line x1="${xd - 5}" x2="${xd}" y1="${y}" y2="${y}" class="c-z-grad"/>`; }
+        } else grad = `<line x1="${xg - 6}" x2="${xd + 6}" y1="0" y2="0" class="c-z-trait"/><text x="${xd + 8}" y="3.5" class="c-z-t">trait</text>`;
+        const clip = "clz-" + (el.id || "b");
+        gZ.innerHTML = `<g class="c-zoom-in">
+          <circle cx="${Ax}" cy="${Ay}" r="9" class="c-z-cible"/><line x1="${Ax + (cx > Ax ? 9 : -9)}" y1="${Ay}" x2="${cx + (cx > Ax ? -ZR : ZR)}" y2="${cy}" class="c-z-lien"/>
+          <g transform="translate(${cx.toFixed(1)} ${cy.toFixed(1)})"><clipPath id="${clip}"><circle r="${ZR}"/></clipPath>
+            <circle r="${ZR + 3}" class="c-z-fond"/>
+            <g clip-path="url(#${clip})"><rect x="${xg}" y="${-ZR}" width="${w}" height="${2 * ZR}" class="c-z-verre"/>${liq}${men}
+              <line x1="${xg}" x2="${xg}" y1="${-ZR}" y2="${ZR}" class="c-z-paroi"/><line x1="${xd}" x2="${xd}" y1="${-ZR}" y2="${ZR}" class="c-z-paroi"/>${grad}
+              ${info ? `<text x="0" y="${info[0] === "▲" ? -ZR + 22 : ZR - 16}" class="c-z-info" text-anchor="middle">ménisque</text><text x="0" y="${info[0] === "▲" ? -ZR + 32 : ZR - 6}" class="c-z-info" text-anchor="middle">${info}</text>` : ""}</g>
+            <circle r="${ZR}" class="c-z-bord"/><text x="0" y="${ZR + 12}" class="c-z-legende" text-anchor="middle">loupe : ${z.nom}</text></g></g>`;
+        majBoutonsZoom(z, cx, cy);
+      }
       const fioleEnCours = () => S.ordre.map(O).find((o) => o.type === "fiole" && o.mode);
       function panneau() {
         let h = "";
         const F = fioleEnCours();
         if (S.ajust) {
           const p = O(S.ajust.pip);
-          h += `<div class="c-pan c-pan-vif"><div class="c-pan-l" data-l="pip">${loupePipette(p)}</div>
-            <div class="c-pan-r"><strong>Ajuster au trait de jauge de la pipette</strong><span class="small muted">Le liquide est monté au-dessus du trait. Avec la molette du pipeteur, fais-le redescendre goutte à goutte : le bas du ménisque doit être exactement sur le trait.</span>
+          h += `<div class="c-pan c-pan-1 c-pan-vif">
+            <div class="c-pan-r"><strong>Ajuster au trait de jauge de la pipette</strong><span class="small muted">Le liquide est monté au-dessus du trait. Avec la molette du pipeteur, fais-le redescendre goutte à goutte en regardant la loupe sur la paillasse : le bas du ménisque doit être pile sur le trait.</span>
             <div class="c-btns"><button class="btn btn-ghost btn-sm" data-pg>1 goutte</button><button class="btn-link" data-pr>Réaspirer</button></div>
             <button class="btn btn-primary btn-sm" data-pt>Le ménisque est sur le trait</button></div></div>`;
         } else if (F) {
-          h += `<div class="c-pan c-pan-vif"><div class="c-pan-l" data-l="fio">${loupeFiole(F)}</div>
-            <div class="c-pan-r"><strong>Compléter la fiole au trait de jauge</strong><span class="small muted">Le bas du ménisque doit être sur le trait. Termine goutte à goutte.</span>
+          h += `<div class="c-pan c-pan-1 c-pan-vif">
+            <div class="c-pan-r"><strong>Compléter la fiole au trait de jauge</strong><span class="small muted">Regarde la loupe sur la paillasse : le bas du ménisque doit être pile sur le trait. Termine goutte à goutte.</span>
             <div class="c-btns"><button class="btn btn-ghost btn-sm" data-jet>Petit jet (${F.Vf >= 500 ? "1 mL" : "0,5 mL"})</button><button class="btn btn-ghost btn-sm" data-goutte>1 goutte</button></div>
             <button class="btn btn-primary btn-sm" data-trait>Le ménisque est sur le trait</button></div></div>`;
         }
         if (S.bur) {
           const b = S.bur, sb = sousBurette();
-          h += `<div class="c-pan"><div class="c-pan-l" data-l="bur">${b.rempli ? loupeBurette() : `<p class="small muted">La burette est vide.</p>`}</div>
-            <div class="c-pan-r"><strong>Robinet de la burette</strong><span class="small muted">${!b.sur ? "La burette n'est pas encore fixée sur la potence." : sb ? `Elle verse dans ${esc(nomObjet(sb))}.` : "Aucun bécher sous la burette !"}</span>
+          const etatB = !b.rempli ? " La burette est vide." : !b.pret ? " Fais le zéro en regardant la loupe sur la paillasse : le bas du ménisque pile sur la graduation 0." : ` Volume versé : ${fx(b.r, 2)} mL.`;
+          h += `<div class="c-pan c-pan-1${b.rempli && !b.pret && b.sur ? " c-pan-vif" : ""}">
+            <div class="c-pan-r"><strong>Robinet de la burette</strong><span class="small muted">${!b.sur ? "La burette n'est pas encore fixée sur la potence." : sb ? `Elle verse dans ${esc(nomObjet(sb))}.` : "Aucun bécher sous la burette !"}${b.sur ? esc(etatB) : ""}</span>
             <div class="c-btns">${[[0.05, "1 goutte"], [0.2, "0,2 mL"], [0.5, "0,5 mL"], [1, "1 mL"], [2, "2 mL"]].map(([v, l]) => `<button class="btn btn-ghost btn-sm" data-v="${v}" ${b.rempli ? "" : "disabled"}>${l}</button>`).join("")}</div>
             <div class="c-btns"><button class="btn btn-primary btn-sm" data-zero ${b.rempli && !b.pret ? "" : "disabled"}>Le zéro est fait</button><button class="btn-link" data-vider ${b.rempli ? "" : "disabled"}>Vider la burette</button></div></div></div>`;
         }
@@ -5049,12 +5228,7 @@ const QUESTIONS = [
         on("[data-jet]", () => remplirFiole(F, F.Vf >= 500 ? 1 : 0.5)); on("[data-goutte]", () => remplirFiole(F, 0.05)); on("[data-trait]", () => verifierTrait(F));
         on("[data-pg]", goutteAjust); on("[data-pr]", reaspirer); on("[data-pt]", validerAjust);
       }
-      function majLoupe() {
-        const lp = zPan.querySelector('[data-l="pip"]'), lf = zPan.querySelector('[data-l="fio"]'), lb = zPan.querySelector('[data-l="bur"]'), F = fioleEnCours();
-        if (lp && S.ajust) lp.innerHTML = loupePipette(O(S.ajust.pip));
-        if (lf && F) lf.innerHTML = loupeFiole(F);
-        if (lb && S.bur && S.bur.rempli) lb.innerHTML = loupeBurette();
-      }
+      function majLoupe() { dessinerZoom(); }
       function choix(question, options) {
         zChoix.innerHTML = `<div class="c-choix-in"><strong>${esc(question)}</strong>${options.map((o, i) => `<button class="btn btn-ghost btn-sm" data-c="${i}">${esc(o[0])}</button>`).join("")}<button class="btn-link" data-c="-1">Annuler</button></div>`;
         zChoix.querySelectorAll("[data-c]").forEach((b) => b.onclick = () => { const i = +b.dataset.c; zChoix.innerHTML = ""; if (i >= 0) options[i][1](); });
@@ -5088,15 +5262,15 @@ const QUESTIONS = [
             if (!sondeDans(cible)) message(`Place ${kind === "cond" ? "la cellule" : "la sonde"} dans le bécher pour suivre la mesure : ce volume n'est pas mesuré.`, "err");
           }
           if (b.r >= 24.999) message("La burette est presque vide.", "info");
-          majLoupe();
-        });
+          majLoupe(); panneau();
+        }, true);
       }
       function zero() {
         const b = S.bur;
         if (b.malRincee) { message("Ta burette n'avait pas été rincée avec la soude : il restait de l'eau dedans, la soude est un peu diluée et Vₑ serait faux. Vide la burette, rince-la avec un peu de soude, puis remplis-la.", "err"); return; }
         if (b.bulle) { message("Il reste une bulle d'air sous le robinet. Chasse-la en ouvrant le robinet en grand (0,5 mL ou plus) au-dessus du bécher poubelle, puis refais le zéro.", "err"); return; }
-        if (b.r < -0.025) { message("Le bas du ménisque est encore au-dessus de la graduation 0 : laisse couler quelques gouttes dans le bécher poubelle.", "err"); return; }
-        if (b.r > 0.025) { message("Tu as dépassé le zéro. Remplis à nouveau la burette avec la soude, puis recommence l'ajustement goutte à goutte.", "err"); return; }
+        if (b.r < -0.004) { const n = Math.round(-b.r / GOUTTE); message(`Pas encore : le bas du ménisque est au-dessus de la graduation 0${n <= 3 ? " (encore " + (n > 1 ? n + " gouttes" : "une goutte") + ")" : ""}. Regarde la loupe et laisse couler goutte à goutte dans le bécher poubelle.`, "err"); return; }
+        if (b.r > 0.004) { message("Tu as dépassé le zéro : le bas du ménisque est sous la graduation 0. Remplis à nouveau la burette avec la soude, puis recommence l'ajustement goutte à goutte.", "err"); return; }
         b.r = 0; b.pret = true; message("Burette prête : le bas du ménisque est sur le zéro et il n'y a plus de bulle.", "ok");
         ctx.evt("burettePrete"); dessinerTout(); panneau();
       }
@@ -5110,7 +5284,7 @@ const QUESTIONS = [
           message("La burette est vide.", "info"); panneau();
         });
       }
-      function flaconSurBurette(f, apres) { const b = S.bur; suite([vers(f, b.x - 30, b.y - 62, 0.4), tourner(f, 55, 0.25)], apres); }
+      function flaconSurBurette(f, apres) { const b = S.bur, [x, y, r] = posPour(f, 105, b.x + 12, b.y - 6, b.y, true); suite([vers(f, x, y, 0.4), tourner(f, r, 0.25)], apres); }
       function rendreFlacon(f, fin) { suite([tourner(f, 0, 0.2), retour(f, 0.35)], fin); }
       function rincerBurette(f) {
         const b = S.bur, sb = sousBurette();
@@ -5118,7 +5292,7 @@ const QUESTIONS = [
         if (sb.role === "titrage") { message("On rince au-dessus du bécher poubelle, jamais au-dessus du bécher de titrage.", "err"); return; }
         const t = pointe();
         flaconSurBurette(f, () => suite([
-          [0.6, () => jet(b.x + 10, b.y - 44, b.x + 12, b.y + 4, COUL.soude, 2.4, 6)],
+          [0.6, () => filet(f, b.x + 12, b.y + 4, COUL.soude, 2.4)],
           [0.8, () => { jet(t.x, t.y, t.x, surface(sb), COUL.soude, 2.2); sb.V += 0.06; }]
         ], () => { b.rinceSoude = true; message("Burette rincée avec un peu de soude : les dernières gouttes d'eau sont parties dans le bécher poubelle.", "ok"); rendreFlacon(f, () => { dessinerTout(); panneau(); }); }));
       }
@@ -5126,15 +5300,15 @@ const QUESTIONS = [
         const b = S.bur, sb = sousBurette();
         if (sb && sb.role === "titrage") { message("On remplit la burette avec le bécher poubelle dessous, jamais au-dessus du bécher de titrage.", "err"); return; }
         if (!sb) { message("Place d'abord le bécher poubelle sous la burette : on remplit robinet fermé, mais un bécher doit être dessous pour la suite.", "err"); return; }
-        const r0 = -Math.round((0.6 + Math.random() * 0.8) * 100) / 100;
+        const r0 = -r2(GOUTTE * nGouttes(12, 28)); // au-dessus du zéro, d'un nombre entier de gouttes
         b.malRincee = !b.rinceSoude;
         flaconSurBurette(f, () => {
           b.rempli = true; b.r = 25.8; b.c = b.malRincee ? D.c2 * 0.97 : D.c2; b.bulle = true; b.pret = false; panneau();
-          anime(1.2, (p) => { b.r = 25.8 + (r0 - 25.8) * p; jet(b.x + 10, b.y - 44, b.x + 12, b.y + 4, COUL.soude, 2.6, 6); majLoupe(); }, () => {
+          anime(1.2, (p) => { b.r = 25.8 + (r0 - 25.8) * p; filet(f, b.x + 12, b.y + 4, COUL.soude); majLoupe(); }, () => {
             b.r = r0;
             message(b.malRincee ? "Burette remplie… mais elle n'avait pas été rincée avec la soude." : "Burette remplie au-dessus du zéro. Une bulle d'air est restée sous le robinet.", b.malRincee ? "err" : "info");
             rendreFlacon(f, () => { dessinerTout(); panneau(); });
-          });
+          }, true);
         });
       }
 
@@ -5142,30 +5316,30 @@ const QUESTIONS = [
       function aspirer(p, src) {
         const cx = src.x + src.w / 2 - 9, ty = src.type === "fiole" ? src.y + src.h * 0.62 - p.h : src.y + src.h - 10 - p.h;
         S.ajust = { pip: p.id, src: src.id, contenu: src.contenu };
-        const vMax = (p.vol + 0.2 + Math.random() * 0.3) / p.vol;
+        const vMax = r2(p.vol + GOUTTE * nGouttes(4, 9)) / p.vol; // au-dessus du trait, d'un nombre entier de gouttes
         suite([vers(p, cx, ty, 0.45), [1.0, (q) => { p.niv = vMax * q; }]], () => {
           src.V = Math.max(0, src.V - p.vol);
-          message("Le liquide est monté au-dessus du trait de jauge. Ajuste maintenant au trait, goutte à goutte (loupe sous la paillasse).", "info");
+          message("Le liquide est monté au-dessus du trait de jauge. Ajuste maintenant au trait, goutte à goutte, en regardant la loupe sur la paillasse.", "info");
           panneau(); dessinerTout();
         });
         panneau();
       }
       function goutteAjust() {
         const p = O(S.ajust.pip), src = O(S.ajust.src);
-        p.niv = Math.max(0, p.niv - 0.05 / p.vol);
+        p.niv = Math.max(0, r2(p.niv * p.vol - GOUTTE)) / p.vol;
         goutte(p.x + p.ax + 9, p.y + p.ay + p.h, src.type === "fiole" ? src.y + src.h * 0.8 : surface(src), COUL[S.ajust.contenu]);
         dessinerTout(); majLoupe();
       }
       function reaspirer() {
-        const p = O(S.ajust.pip), v = (p.vol + 0.15 + Math.random() * 0.25) / p.vol, n0 = p.niv;
+        const p = O(S.ajust.pip), v = r2(p.vol + GOUTTE * nGouttes(3, 6)) / p.vol, n0 = p.niv;
         anime(0.6, (q) => { p.niv = n0 + (v - n0) * q; majLoupe(); }, () => message("Tu as réaspiré un peu de liquide : recommence l'ajustement au trait.", "info"));
       }
       function validerAjust() {
         const p = O(S.ajust.pip), vol = p.niv * p.vol;
-        if (vol > p.vol + 0.025) { message("Pas encore : le bas du ménisque est au-dessus du trait. Fais descendre encore quelques gouttes.", "err"); return; }
-        if (vol < p.vol - 0.025) { message("Le ménisque est descendu sous le trait : la pipette ne contient plus le bon volume. Réaspire, puis recommence l'ajustement.", "err"); return; }
+        if (vol > p.vol + 0.004) { const n = Math.round((vol - p.vol) / GOUTTE); message(`Pas encore : le bas du ménisque est au-dessus du trait${n <= 3 ? " (encore " + (n > 1 ? n + " gouttes" : "une goutte") + ")" : ""}. Regarde la loupe et fais descendre goutte à goutte.`, "err"); return; }
+        if (vol < p.vol - 0.004) { message("Le ménisque est descendu sous le trait : la pipette ne contient plus le bon volume. Réaspire, puis recommence l'ajustement.", "err"); return; }
         p.niv = 1; p.contenu = S.ajust.contenu; p.pret = true; S.ajust = null;
-        message(`Pipette ajustée au trait : elle contient exactement ${fx(p.vol, 1)} mL. Touche maintenant le récipient où la verser.`, "ok");
+        message(`Pipette ajustée au trait : elle contient exactement ${fx(p.vol, 1)} mL. Glisse-la dans le récipient où la verser (ou touche-la, puis touche ce récipient).`, "ok");
         ctx.evt("ajuste", { vol: p.vol });
         suite([retour(p, 0.35)], () => { dessinerTout(); majMain(); });
         panneau();
@@ -5173,7 +5347,12 @@ const QUESTIONS = [
       function viderPipette(p, cible, fin) {
         const cx = cible.x + cible.w / 2 - 9, ty = cible.type === "fiole" ? cible.y + 4 - p.h * 0.5 : cible.y + 16 - p.h;
         const vol = p.vol; let fait = 0;
-        suite([vers(p, cx, ty, 0.45), [1.1, (q) => { p.niv = 1 - q; const dv = vol * q - fait; fait = vol * q; cible.V += dv; }], pause(0.25), retour(p, 0.35)], () => {
+        const coul = COUL[p.contenu] || COUL.eau;
+        suite([vers(p, cx, ty, 0.45), [1.1, (q) => {
+          p.niv = 1 - q; const dv = vol * q - fait; fait = vol * q; cible.V += dv;
+          // filet entre la pointe de la pipette et la surface du liquide du bécher
+          if (cible.type === "becher") { const px = p.x + p.ax + 9, py = p.y + p.ay + p.h, sy = surface(cible); if (sy > py + 1) jet(px, py, px, sy, coul, 1.6); }
+        }], pause(0.25), retour(p, 0.35)], () => {
           p.niv = 0; const c = p.contenu; p.contenu = null; p.pret = false; S.main = null; fin(c); dessinerTout(); majMain(); panneau();
         });
       }
@@ -5187,8 +5366,8 @@ const QUESTIONS = [
         dessinerTout(); majLoupe();
       }
       function verifierTrait(F) {
-        if (F.V < F.Vf - 0.03) { message("Pas encore : le bas du ménisque est sous le trait de jauge. Termine goutte à goutte.", "err"); return; }
-        if (F.V > F.Vf + 0.03) { F.rate = true; F.mode = false; message("Le bas du ménisque est au-dessus du trait : il y a trop d'eau. Il faut recommencer la dilution (touche « Recommencer la manipulation »).", "err"); panneau(); return; }
+        if (F.V < F.Vf - 0.004) { const n = Math.round((F.Vf - F.V) / GOUTTE); message(`Pas encore : le bas du ménisque est sous le trait de jauge${n <= 3 ? " (encore " + (n > 1 ? n + " gouttes" : "une goutte") + ")" : ""}. Regarde la loupe et termine goutte à goutte.`, "err"); return; }
+        if (F.V > F.Vf + 0.004) { F.rate = true; F.mode = false; message("Le bas du ménisque est au-dessus du trait : il y a trop d'eau. Il faut recommencer la dilution (touche « Recommencer la manipulation »).", "err"); panneau(); return; }
         F.mode = false; F.ok = true; message("Fiole ajustée au trait de jauge. Bouche-la et retourne-la plusieurs fois pour homogénéiser : touche la fiole.", "ok");
         ctx.evt("trait"); panneau(); dessinerTout();
       }
@@ -5200,9 +5379,10 @@ const QUESTIONS = [
       }
 
       // ----- La pissette : jets d'eau distillée -----
-      function pissetteVers(p, tx, ty, d, pendant, fin) {
-        const px = Math.max(4, tx - 44), py = Math.max(4, ty - 34);
-        suite([vers(p, px, py, 0.35), tourner(p, 25, 0.15), [d, (q) => { jet(px + 32, py + 4, tx, ty, COUL.eau, 2, -10); if (pendant) pendant(q); }], tourner(p, 0, 0.15), retour(p, 0.35)], fin);
+      // (tx, ty) : où arrive l'eau ; haut : ordonnée de l'ouverture du récipient (la pissette reste au-dessus, jamais dedans)
+      function pissetteVers(p, tx, ty, d, pendant, fin, haut) {
+        const [px, py] = posPour(p, 25, tx - 24, Math.min(ty, haut == null ? ty : haut) - 18, haut == null ? null : haut);
+        suite([vers(p, px, py, 0.35), tourner(p, 25, 0.15), [d, (q) => { const [sx, sy] = bec(p); jet(sx, sy, tx, ty, COUL.eau, 2, -8); if (pendant) pendant(q); }], tourner(p, 0, 0.15), retour(p, 0.35)], fin);
       }
       function rincerSonde(p) {
         const so = O("son"), pou = O("pou"), [x, y] = posSonde();
@@ -5228,13 +5408,21 @@ const QUESTIONS = [
       // ----- Toucher un objet -----
       function toucher(id, act) {
         if (occupe()) return;
-        zChoix.innerHTML = "";
+        zChoix.innerHTML = ""; S.dernier = id;
         if (S.ajust) { message("Termine d'abord l'ajustement de la pipette au trait (sous la paillasse).", "err"); return; }
         const o = O(id), m = S.main && O(S.main);
         if (act === "etal") return etalonner();
         if (!m) return toucherVide(o);
         if (S.main === id) { S.main = null; dessinerTout(); majMain(); return; }
-        utiliser(m, o); dessinerTout(); majMain(); panneau();
+        agir(m, o);
+      }
+      // Utiliser l'objet en main sur un autre objet. Après une action réussie (verser, prélever…), l'objet n'est plus sélectionné ;
+      // si l'action est refusée, il reste en main (il hoche et le tour de la paillasse devient rouge).
+      function agir(m, o) {
+        S.refus = false;
+        utiliser(m, o);
+        if (!S.refus && S.main === m.id) S.main = null;
+        dessinerTout(); majMain(); panneau();
       }
       const PRENABLES = ["flacon", "pissette", "pipette", "pipeteur", "barreau", "sonde", "eprouvette"];
       function toucherVide(o) {
@@ -5258,7 +5446,7 @@ const QUESTIONS = [
         const rien = () => message(`Ça ne sert à rien de mettre ${nomObjet(m)} sur ${nomObjet(o)}.`, "err");
         if ((t === "pipeteur" && c === "pipette") || (t === "pipette" && c === "pipeteur")) {
           const p = t === "pipeteur" ? o : m, q = t === "pipeteur" ? m : o;
-          suite([vers(q, p.x - 2, p.y - 24, 0.4)], () => { p.pipeteur = true; q.cache = true; q.ax = 0; q.ay = 0; S.main = p.id; message("Le pipeteur est fixé en haut de la pipette.", "ok"); dessinerTout(); majMain(); });
+          suite([vers(q, p.x - 2, p.y - 24, 0.4)], () => { p.pipeteur = true; q.cache = true; q.ax = 0; q.ay = 0; S.main = null; message("Le pipeteur est fixé en haut de la pipette.", "ok"); dessinerTout(); majMain(); });
           return;
         }
         if (t === "pipette") {
@@ -5270,7 +5458,7 @@ const QUESTIONS = [
           if (!m.pret && source) {
             if (!m.pipeteur) { message("On ne pipette jamais à la bouche ! Fixe d'abord le pipeteur sur la pipette.", "err"); return; }
             if (o.V < m.vol + 5) { message("Il n'y a pas assez de liquide ici : verse d'abord un peu de solution dans le bécher de prélèvement.", "err"); return; }
-            S.main = m.id; aspirer(m, o); return;
+            S.main = null; aspirer(m, o); return;
           }
           if (m.pret && c === "becher" && o.role === "poubelle") { viderPipette(m, o, () => message("Pipette vidée dans le bécher poubelle.", "info")); return; }
           if (m.pret && c === "becher" && o.role === "titrage") {
@@ -5302,8 +5490,8 @@ const QUESTIONS = [
             if (m.contenu === "soude") { message("Ici, on prélève la solution à diluer, pas la soude.", "err"); return; }
             if (m.contenu === "acide" && !S.epi) { message("Produit corrosif : mets les gants et les lunettes avant d'ouvrir ce flacon.", "err"); return; }
             if (o.V > 0) { message("Le bécher de prélèvement contient déjà assez de liquide.", "info"); return; }
-            const tx = o.x - 26, ty = o.y - 50;
-            suite([vers(m, tx, ty, 0.4), tourner(m, 60, 0.25), [0.9, (q) => { jet(tx + 40, ty + 18, o.x + o.w / 2, surface(o), COUL[m.contenu], 3, 4); o.V = 30 * q; o.contenu = m.contenu; }], tourner(m, 0, 0.2), retour(m, 0.35)], () => {
+            const [tx, ty, r] = posPour(m, 105, o.x + o.w / 2, o.y - 6, o.y, true);
+            suite([vers(m, tx, ty, 0.4), tourner(m, r, 0.25), [0.9, (q) => { filet(m, o.x + o.w / 2, surface(o), COUL[m.contenu], 3); o.V = 30 * q; o.contenu = m.contenu; }], tourner(m, 0, 0.2), retour(m, 0.35)], () => {
               S.main = null; message(`Un peu ${m.contenu === "acide" ? "d'esprit de sel" : "de jus"} versé dans le bécher de prélèvement : tu peux y pipeter.`, "ok"); ctx.evt("becherPrelev"); dessinerTout(); majMain();
             });
             return;
@@ -5329,7 +5517,7 @@ const QUESTIONS = [
             if (o.role === "titrage") {
               if (o.V + 10 > o.Vmax) { message("Le bécher est assez rempli.", "err"); return; }
               const v0 = o.V;
-              pissetteVers(m, o.x + o.w / 2, surface(o), 0.7, (q) => { o.V = v0 + 10 * q; }, () => { o.V = v0 + 10; o.eauAj += 10; message(`Un jet d'eau distillée (environ 10 mL) : ${fx(o.V, 0)} mL dans le bécher. L'eau ne change pas la quantité de matière à titrer.`, "info"); ctx.evt("eau", { V: o.V }); });
+              pissetteVers(m, o.x + o.w / 2, surface(o), 0.7, (q) => { o.V = v0 + 10 * q; }, () => { o.V = v0 + 10; o.eauAj += 10; message(`Un jet d'eau distillée (environ 10 mL) : ${fx(o.V, 0)} mL dans le bécher. L'eau ne change pas la quantité de matière à titrer.`, "info"); ctx.evt("eau", { V: o.V }); }, o.y);
               return;
             }
             return rien();
@@ -5348,8 +5536,8 @@ const QUESTIONS = [
               message("Verse d'abord le prélèvement (pipette ajustée) dans la fiole, puis complète avec l'eau.", "err"); return;
             }
             if (F.V < 0.7 * F.Vf) { pissetteVers(m, bx, by, 1.0, (q) => { F.V = v0 + (F.Vf * 0.75 - v0) * q; }, () => { F.V = F.Vf * 0.75; message("Fiole remplie aux trois quarts : on mélange un peu, puis on complète jusqu'au trait (touche encore la fiole avec la pissette).", "info"); }); return; }
-            const cible = Math.round((F.Vf - (F.Vf >= 500 ? 2.4 + Math.random() * 1.2 : 0.7 + Math.random() * 0.8)) * 100) / 100;
-            pissetteVers(m, bx, by, 0.9, (q) => { F.V = v0 + (cible - v0) * q; }, () => { F.V = cible; F.mode = true; message("Tu as complété jusqu'au bas du col. Termine au trait de jauge avec la loupe ci-dessous.", "info"); panneau(); dessinerTout(); });
+            const cible = r2(F.Vf - GOUTTE * (F.Vf >= 500 ? nGouttes(48, 72) : nGouttes(14, 30))); // sous le trait, d'un nombre entier de gouttes
+            pissetteVers(m, bx, by, 0.9, (q) => { F.V = v0 + (cible - v0) * q; }, () => { F.V = cible; F.mode = true; message("Tu as complété jusqu'au bas du col. Termine au trait de jauge en regardant la loupe sur la paillasse.", "info"); panneau(); dessinerTout(); });
             return;
           }
           return rien();
@@ -5360,11 +5548,19 @@ const QUESTIONS = [
           return rien();
         }
         if (t === "eprouvette") {
-          if (c === "bidon") { suite([vers(m, o.x - 10, o.y - 110, 0.35), [0.8, (q) => { m.V = 200 * q; jet(o.x + 10, o.y - 6, o.x + 1, o.y - 106, COUL.eau, 3, -8); }], retour(m, 0.35)], () => { m.V = 200; message("Éprouvette remplie : 200 mL d'eau distillée.", "ok"); dessinerTout(); majMain(); }); return; }
+          if (c === "bidon") {
+            // l'éprouvette se pose à gauche du bidon ; le bidon se soulève, se penche et verse par son bouchon
+            const ex = Math.max(4, o.x - m.w - 30), ey = Math.max(4, Math.min(BH - m.h - 4, o.y + o.h - m.h));
+            const [bx, by] = posPour(o, -100, ex + m.w / 2 + 3, ey - 6, ey);
+            const surfE = () => m.y + m.ay + m.h - 6 - (m.V / 250) * (m.h - 12);
+            suite([vers(m, ex, ey, 0.35), vers(o, bx, by, 0.35), tourner(o, -100, 0.3), [0.9, (q) => { m.V = 200 * q; filet(o, m.x + m.ax + m.w / 2, surfE(), COUL.eau, 3); }], tourner(o, 0, 0.25), retour(o, 0.3), retour(m, 0.35)],
+              () => { m.V = 200; message("Éprouvette remplie : 200 mL d'eau distillée.", "ok"); dessinerTout(); majMain(); });
+            return;
+          }
           if (c === "becher" && o.role === "titrage") {
             if (!m.V) { message("L'éprouvette est vide : remplis-la au bidon d'eau distillée.", "err"); return; }
-            const tx = o.x - 18, ty = o.y - 90, v0 = o.V;
-            suite([vers(m, tx, ty, 0.4), tourner(m, 60, 0.25), [1.0, (q) => { m.V = 200 * (1 - q); o.V = v0 + 200 * q; jet(tx + 26, ty + 10, o.x + o.w / 2, surface(o), COUL.eau, 3, 4); }], tourner(m, 0, 0.2), retour(m, 0.35)], () => {
+            const [tx, ty, r] = posPour(m, 110, o.x + o.w / 2, o.y - 6, o.y, true), v0 = o.V;
+            suite([vers(m, tx, ty, 0.4), tourner(m, r, 0.25), [1.0, (q) => { m.V = 200 * (1 - q); o.V = v0 + 200 * q; filet(m, o.x + o.w / 2, surface(o), COUL.eau, 3); }], tourner(m, 0, 0.2), retour(m, 0.35)], () => {
               o.V = v0 + 200; o.eauAj += 200; m.V = 0; S.main = null; message(`Environ 200 mL d'eau ajoutés : ${fx(o.V, 0)} mL dans le bécher.`, "ok"); ctx.evt("eau", { V: o.V }); dessinerTout(); majMain();
             });
             return;
@@ -5412,6 +5608,10 @@ const QUESTIONS = [
           S.anims.forEach((a) => { const p = Math.min(1, (S.t - a.t0) / a.d); a.f(p); (p < 1 ? encore : finis).push(a); });
           S.anims = encore; finis.forEach((a) => a.fin && a.fin());
           if (!S.anims.length) S.fx = [];
+          if (!S.anims.length && S.rentrer) {
+            const r = O(S.rentrer); S.rentrer = null;
+            if (r && !r.cache && (r.ax || r.ay) && !(S.ajust && S.ajust.pip === r.id)) suite([retour(r, 0.3)]);
+          }
           redessiner = true;
         }
         if (S.gouttes.length) { S.gouttes.forEach((d) => { d.v += 600 * dt; d.y += d.v * dt; }); S.gouttes = S.gouttes.filter((d) => d.y < d.ymax); redessiner = true; }
@@ -5439,6 +5639,7 @@ const QUESTIONS = [
             ctx.evt("point", { V: at.V, y: val, agite: ag, eauAvant: S.eauAvant });
           } else if (!sondeDans(b)) S.attente = null;
         }
+        if (S.hoche) { redessiner = true; if (performance.now() - S.hoche.t0 > DUREE_HOCHE) S.hoche = null; }
         if (redessiner && !S.drag) dessinerTout();
         requestAnimationFrame(boucle);
       }
@@ -5466,14 +5667,39 @@ const QUESTIONS = [
         o.x = Math.max(4, Math.min(BW - o.w - 4, appui.ox + dx)); o.y = Math.max(4, Math.min(BH - o.h - 4, appui.oy + dy));
         recaler(); dessinerTout();
       });
-      svg.addEventListener("pointerup", () => {
+      svg.addEventListener("pointerup", (e) => {
         if (!appui) return;
         const a = appui; appui = null;
         try { svg.releasePointerCapture(a.pid); } catch (er) { /* rien */ }
-        if (a.bouge) { S.drag = null; deposer(O(a.id)); } else toucher(a.id, a.act);
+        if (a.bouge) { S.drag = null; deposer(O(a.id), a, pt(e)); } else toucher(a.id, a.act);
       });
+      // Téléphone : quand on attrape un objet, la page ne défile pas (ni vers le haut, ni vers le bas).
+      // Ailleurs sur la paillasse (zone vide), on peut toujours faire défiler la page.
+      svg.addEventListener("touchstart", (e) => { if (e.target.closest && e.target.closest("[data-id]")) e.preventDefault(); }, { passive: false });
+      svg.addEventListener("touchmove", (e) => { if (appui) e.preventDefault(); }, { passive: false });
+      // Glisser-déposer un objet qu'on prend en main (pipette, flacon, pissette, barreau…) sur une cible :
+      // même effet que « toucher l'objet, puis toucher la cible ».
+      function cibleSous(o, q) {
+        const cands = S.ordre.map(O).filter((x) => x !== o && !x.cache && x.type !== "sonde" && x.type !== "potence").reverse();
+        const dans = (x, px, py) => px > x.x - 4 && px < x.x + x.w + 4 && py > x.y - 8 && py < x.y + x.h + 4;
+        // d'abord sous le doigt (là où l'élève vise), sinon sous le bas de l'objet (pointe de la pipette, fond du flacon…)
+        const pts = q ? [[q.x, q.y]] : []; pts.push([o.x + o.w / 2, o.y + o.h - 2]);
+        for (const [px, py] of pts) { const c = cands.find((x) => dans(x, px, py)); if (c) return c; }
+        return null;
+      }
+      function lacherSur(o, c, a) {
+        // l'objet garde sa place d'origine : il est dessiné là où on l'a lâché, puis l'animation le ramène chez lui
+        o.ax = o.x - a.ox; o.ay = o.y - a.oy; o.x = a.ox; o.y = a.oy;
+        zChoix.innerHTML = ""; S.main = o.id; S.dernier = c.id;
+        agir(o, c);
+        if (S.main === o.id) S.main = null; // après un glisser, rien ne reste en main
+        if (!S.anims.length && (o.ax || o.ay)) suite([retour(o, 0.3)], () => { dessinerTout(); });
+        else S.rentrer = o.id; // s'il n'a pas été rangé par l'action, il rentrera chez lui à la fin des animations
+        majMain();
+      }
       svg.addEventListener("pointercancel", () => { if (appui && appui.bouge) { S.drag = null; deposer(O(appui.id)); } appui = null; });
-      function deposer(o) {
+      function deposer(o, a, q) {
+        if (a && PRENABLES.includes(o.type) && o.type !== "sonde") { const c = cibleSous(o, q); if (c) return lacherSur(o, c, a); }
         const pot = O("pot"), agi = O("agi"), cx = o.x + o.w / 2, bas = o.y + o.h;
         if (o.type === "potence") message("Potence posée. Glisse maintenant la burette dans sa pince.", "info");
         else if (o.type === "burette" && pot && Math.abs(cx - (pot.x + 50)) < 34 && Math.abs(o.y - (pot.y + 30)) < 90) { o.sur = "pot"; message("Burette fixée dans la pince de la potence.", "ok"); }
@@ -5611,7 +5837,8 @@ const QUESTIONS = [
           const inner = `<span class="ico">${SVG.titrages}</span><span class="txt"><span class="t">${esc(l.titre)}</span><span class="s">${esc(l.sousTitre)}</span><span class="s">${ok ? "Terminé" : open ? "À faire" : "Termine d'abord le TP " + i}</span></span><span class="go">${ok ? SVG.check : open ? "›" : SVG.lock}</span>`;
           return open ? `<a class="card" href="#c-${niv}-${ch.id}-tp-${l.id}">${inner}</a>` : `<div class="card" aria-disabled="true" style="opacity:.55">${inner}</div>`;
         }).join("")}</div>
-        <p class="note">Les deux TP se font dans l'ordre. L'étape TP du chapitre est validée quand les deux sont terminés.</p>`;
+        <p class="note">Les deux TP se font dans l'ordre. L'étape TP du chapitre est validée quand les deux sont terminés.</p>
+        ${navFin(niv, ch, "tp", !!fait(cle))}`;
     }
 
     function vueLabo(niv, ch, lab, cle, cleL) {
@@ -5635,7 +5862,13 @@ const QUESTIONS = [
           <div class="safety"><strong>Sécurité</strong><ul>${lab.enClasse.securite.map((m) => `<li>${esc(m)}</li>`).join("")}</ul></div></div></details>
         <div class="otabs" id="otabs" role="tablist" style="grid-template-columns:repeat(${NC + 1},1fr)"></div>
         <div class="stack" id="tp-zone"></div>
-        <a class="btn-link" href="#c-${niv}-${ch.id}-tp">Retour au choix des TP</a>`;
+        <div id="tp-nav"></div>`;
+      // Bas de page : TP suivant (si ce TP est terminé et l'autre pas encore), sinon l'entraînement ; retour au choix des TP ; retour au menu
+      const majNav = () => {
+        const LL = ch.tp.labos, i = LL.indexOf(lab), suivant = LL.slice(i + 1).concat(LL.slice(0, i)).find((l) => !fait(cleL(l)));
+        const suiv = fait(ck) && suivant && !fait(cle) ? { href: `c-${niv}-${ch.id}-tp-${suivant.id}`, txt: `Passer au ${suivant.titre} ›` } : null;
+        $("tp-nav").innerHTML = navFin(niv, ch, "tp", !!fait(cle), suiv, `<a class="btn btn-ghost" href="#c-${niv}-${ch.id}-tp">Retour au choix des TP</a>`);
+      };
 
       function onglets() {
         $("otabs").innerHTML = O.map((o, i) => {
@@ -5653,7 +5886,7 @@ const QUESTIONS = [
           actif = i; afficher(); $("otabs").scrollIntoView({ behavior: "smooth", block: "start" });
         });
       }
-      function afficher() { if (B) { B.stop(); B = null; } onglets(); if (actif >= NC) afficherConclusion(); else afficherObjectif(); }
+      function afficher() { if (B) { B.stop(); B = null; } onglets(); majNav(); if (actif >= NC) afficherConclusion(); else afficherObjectif(); }
 
       function afficherObjectif() {
         const o = O[actif];
@@ -6062,7 +6295,6 @@ const QUESTIONS = [
         const C = lab.conclusion, n = (rep.concl.calc ? 1 : 0) + (rep.concl.val ? 1 : 0) + C.textes.filter((x, k) => rep.concl[k]).length, tot = 2 + C.textes.length;
         const v = $("ccw-val"); if (v && rep.concl.calc && !rep.concl.val && v.textContent.indexOf("Fais d'abord") >= 0) validation(v, rep.ve || VeVrai);
         if (n < tot) { z.innerHTML = `<div class="level-line">Conclusion complétée <i><b style="width:${Math.round(100 * n / tot)}%"></b></i>${n}/${tot}</div>`; return; }
-        const autres = ch.tp.labos.filter((l) => l.id !== lab.id);
         z.innerHTML = `<div class="retenir"><strong class="lbl">Ma fiche bilan</strong><ul>${C.textes.map((x) => `<li>${esc(x.texte.replace(/\[|\]/g, ""))}</li>`).join("")}</ul></div>
           <button class="btn btn-primary" id="btn-tp" ${fait(ck) ? "disabled" : ""}>${fait(ck) ? "TP terminé" : "J'ai terminé ce TP"}</button>`;
         $("btn-tp").onclick = () => {
@@ -6070,8 +6302,7 @@ const QUESTIONS = [
           const tous = ch.tp.labos.every((l) => fait(cleL(l)));
           if (tous) { enregistrer(cle, 20, true, true); toast("Les deux TP sont terminés : l'entraînement est débloqué !"); }
           else toast("TP terminé : le TP suivant est débloqué");
-          onglets(); fin();
-          if (!tous && autres.length) z.insertAdjacentHTML("beforeend", `<a class="btn btn-ghost" href="#c-${niv}-${ch.id}-tp-${autres[0].id}">Passer au ${esc(autres[0].titre)}</a>`);
+          onglets(); fin(); majNav();
         };
       }
       afficher();
