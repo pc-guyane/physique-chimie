@@ -1,12 +1,11 @@
-<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1"></head><body>
+<!doctype html><html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Appli Physique-Chimie</title>
-<meta name="claude:viewport-fit-sides" content="cover">
 <meta name="robots" content="noindex, nofollow">
 <style>
 /* Layout : une colonne façon appli de téléphone ; barre du haut (retour + score) ; grandes cartes tactiles */
 :root {
   --bg: #F2F6F4; --surface: #FFFFFF; --ink: #11302B; --muted: #55706A; --line: #D5E2DD;
-  --accent: #0E7C6B; --accent-ink: #FFFFFF; --accent-soft: #DDF0EB;
+  --accent: #0E7C6B; --accent-ink: #FFFFFF; --accent-soft: #DDF0EB; --blue-soft: #E1EEFB;
   --sun-soft: #FFF1C7; --sun-ink: #6B4A00; --sun: #F2B705;
   --good: #1E7F3A; --good-soft: #DDF3E3; --bad: #B9322A; --bad-soft: #FBE1DE;
   --water: #3B8FD9; --metal: #8A9A96;
@@ -20,7 +19,7 @@
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
     --bg: #0D1B19; --surface: #142725; --ink: #E3EFEB; --muted: #9DB5AE; --line: #24403B;
-    --accent: #34C2AA; --accent-ink: #062420; --accent-soft: #173A35;
+    --accent: #34C2AA; --accent-ink: #062420; --accent-soft: #173A35; --blue-soft: #14324D;
     --sun-soft: #3A2F0B; --sun-ink: #FFD66B; --sun: #FFD24A;
     --good: #5BD27E; --good-soft: #12321D; --bad: #FF8A7F; --bad-soft: #3A1714;
     --water: #63A9EA; --metal: #7D8F8A;
@@ -31,7 +30,7 @@
 }
 :root[data-theme="dark"] {
   --bg: #0D1B19; --surface: #142725; --ink: #E3EFEB; --muted: #9DB5AE; --line: #24403B;
-  --accent: #34C2AA; --accent-ink: #062420; --accent-soft: #173A35;
+  --accent: #34C2AA; --accent-ink: #062420; --accent-soft: #173A35; --blue-soft: #14324D;
   --sun-soft: #3A2F0B; --sun-ink: #FFD66B; --sun: #FFD24A;
   --good: #5BD27E; --good-soft: #12321D; --bad: #FF8A7F; --bad-soft: #3A1714;
   --water: #63A9EA; --metal: #7D8F8A;
@@ -268,28 +267,15 @@ tr:last-child td { border-bottom: none; }
 .safety { background: var(--bad-soft); border-radius: 12px; padding: .8rem 1rem; display: flex; flex-direction: column; gap: .3rem; }
 .safety strong { color: var(--bad); }
 .tp ul, .tp ol { margin: 0; padding-left: 1.3rem; display: flex; flex-direction: column; gap: .3rem; }
-.field { display: flex; flex-direction: column; gap: .35rem; }
-.sim { background: var(--surface); border: 1px solid var(--line); border-radius: var(--r); padding: .8rem; display: flex; flex-direction: column; gap: .8rem; }
-.sim svg { width: 100%; height: auto; display: block; background: var(--bg); border-radius: 10px; }
-.seg { display: flex; flex-wrap: wrap; gap: .35rem; }
-.seg button { flex: 1 1 auto; padding: .45rem .6rem; border-radius: 10px; border: 2px solid var(--line); background: var(--bg); font-size: .9rem; font-weight: 700; color: var(--ink); }
-.seg button[aria-pressed="true"] { border-color: var(--accent); background: var(--accent-soft); }
+
 .ctl { display: flex; flex-direction: column; gap: .35rem; }
-.ctl-lbl { font-size: .85rem; font-weight: 700; color: var(--muted); display: flex; justify-content: space-between; font-variant-numeric: tabular-nums; }
+
 input[type="range"] { width: 100%; accent-color: var(--accent); height: 2rem; }
 .mes-table { min-width: 0; font-variant-numeric: tabular-nums; }
 .chart text { fill: var(--muted); font-size: 11px; font-family: var(--f-body); }
 
-
 /* Laboratoire du TP */
-.mtabs { display: grid; grid-template-columns: repeat(5, 1fr); gap: .4rem; }
-.mtab { display: flex; flex-direction: column; align-items: center; gap: .2rem; padding: .5rem .2rem; border-radius: 12px; border: 2px solid var(--line); background: var(--surface); color: var(--ink); min-width: 0; }
-.mtab .mnum { width: 1.9rem; height: 1.9rem; border-radius: 50%; display: grid; place-items: center; background: var(--accent-soft); color: var(--accent); font-family: var(--f-display); font-weight: 700; }
-.mtab .mnum svg { width: 1rem; height: 1rem; }
-.mtab .mlbl { font-size: .7rem; font-weight: 700; color: var(--muted); white-space: nowrap; }
-.mtab.cur { border-color: var(--accent); background: var(--accent-soft); }
-.mtab.done .mnum { background: var(--good-soft); color: var(--good); }
-.mtab[aria-disabled="true"] { opacity: .5; }
+
 .mission h3 { margin-top: -.2rem; }
 .tasks { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: .5rem; }
 .task { display: grid; grid-template-columns: 1.6rem 1fr; gap: .55rem; align-items: start; }
@@ -298,29 +284,9 @@ input[type="range"] { width: 100%; accent-color: var(--accent); height: 2rem; }
 .task.ok .tick { border-color: var(--good); background: var(--good-soft); }
 .task.ok > span:last-child { color: var(--muted); }
 .task .btn { margin-top: .4rem; display: flex; }
-.sim-top { display: flex; justify-content: space-between; align-items: center; gap: .5rem; }
-.sim-title { font-family: var(--f-display); font-size: 1.1rem; }
-.sim-btns { display: flex; gap: .35rem; }
-.icon-btn { width: 2.4rem; height: 2.4rem; border-radius: 10px; border: 2px solid var(--line); background: var(--bg); color: var(--ink); font-size: 1rem; display: grid; place-items: center; }
-.lab-cv { width: 100%; aspect-ratio: 360 / 250; display: block; border-radius: 10px; touch-action: pan-y; cursor: pointer; }
-.lab-cv2 { width: 100%; aspect-ratio: 360 / 150; display: block; border-radius: 10px; border: 1px solid var(--line); }
-.info-bulle { background: var(--bg); border-radius: 10px; padding: .6rem .8rem; font-size: .95rem; min-height: 3rem; }
-.info-bulle strong { color: var(--accent); }
-.info-bulle.defi { background: var(--sun-soft); color: var(--sun-ink); }
-.info-bulle.defi strong { color: var(--sun-ink); }
-.chk { display: flex; gap: .5rem; align-items: flex-start; font-weight: 400; font-size: .95rem; }
-.chk input { width: 1.2rem; height: 1.2rem; margin-top: .15rem; accent-color: var(--accent); flex: none; }
-.gauge-row { display: flex; align-items: center; gap: .5rem; }
-.gauge { flex: 1; height: 10px; border-radius: 99px; background: var(--line); overflow: hidden; display: block; }
-.gauge i { display: block; height: 100%; background: var(--good); }
-.row-mini { display: flex; flex-wrap: wrap; gap: .5rem; align-items: center; }
-.sim-zone { border-top: 1px solid var(--line); padding-top: .7rem; display: flex; flex-direction: column; gap: .5rem; }
+
 #L-sankey { width: 100%; height: auto; }
-.tiles { display: grid; grid-template-columns: repeat(3, 1fr); gap: .4rem; }
-.tile { background: var(--sun-soft); border-radius: 10px; padding: .45rem .5rem; display: flex; flex-direction: column; gap: .1rem; min-width: 0; }
-.tile span { font-size: .72rem; color: var(--muted); line-height: 1.2; }
-.tile b { font-family: var(--f-display); font-size: 1.1rem; font-variant-numeric: tabular-nums; color: var(--ink); }
-.tile.ok { background: var(--accent-soft); } .tile.ko { background: var(--bad-soft); }
+
 details.panel summary { cursor: pointer; }
 
 /* Menu des étapes du chapitre : chemin façon sélection de niveaux */
@@ -492,7 +458,7 @@ details.panel summary { cursor: pointer; }
 .toast { position: fixed; left: 50%; transform: translateX(-50%); bottom: calc(1rem + env(safe-area-inset-bottom, 0px)); background: var(--ink); color: var(--bg);
   padding: .6rem 1.1rem; border-radius: 999px; font-weight: 700; z-index: 20; box-shadow: 0 4px 18px rgba(0,0,0,.18); max-width: calc(100% - 32px); text-align: center; }
 footer { text-align: center; font-size: .85rem; color: var(--muted); display: flex; flex-direction: column; gap: .5rem; align-items: center; }
-.prof-toggle { display: inline-flex; gap: .4rem; align-items: center; font-weight: 400; background: var(--sun-soft); color: var(--sun-ink); padding: .35rem .7rem; border-radius: 999px; font-size: .85rem; }
+
 /* TP de chimie (terminale) : paillasse de chimie, loupe, courbes de titrage */
 .c-obj { cursor: pointer; }
 .c-sel { fill: var(--accent-soft); stroke: var(--accent); stroke-width: 2; stroke-dasharray: 4 3; opacity: .9; }
@@ -533,14 +499,13 @@ footer { text-align: center; font-size: .85rem; color: var(--muted); display: fl
 .c-pan { display: grid; grid-template-columns: 120px 1fr; gap: .7rem; align-items: start; background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: .6rem; }
 .c-pan-r { display: flex; flex-direction: column; gap: .45rem; min-width: 0; }
 .c-btns { display: flex; flex-wrap: wrap; gap: .4rem; align-items: center; }
-.c-loupe { width: 120px; height: auto; border-radius: 10px; background: var(--bg); border: 1px solid var(--line); }
+
 .c-menisque { fill: none; stroke: var(--ink); stroke-width: 2.4; }
 .c-pan-1 { grid-template-columns: 1fr; }
 /* Boutons d'ajustement à côté de la bulle zoom */
 .bench.chim { position: relative; }
 .c-zoom-btns { position: absolute; left: 0; top: 0; z-index: 3; display: flex; flex-direction: column; align-items: center; gap: .3rem; padding: .35rem;
   background: var(--surface); border: 1.5px solid var(--accent); border-radius: 10px; box-shadow: 0 2px 8px rgba(0,0,0,.2); }
-.c-zoom-btns[hidden], .c-pres[hidden] { display: none; }
 /* Question posée juste à côté d'un objet de la paillasse (ex. : rincer ou remplir la burette) */
 .c-pres { position: absolute; left: 0; top: 0; z-index: 4; display: flex; flex-direction: column; gap: .35rem; padding: .45rem; width: 9.5rem;
   background: var(--surface); border: 2px solid var(--accent); border-radius: 12px; box-shadow: 0 3px 10px rgba(0,0,0,.22); font-size: .85rem; line-height: 1.25; }
@@ -626,8 +591,73 @@ footer { text-align: center; font-size: .85rem; color: var(--muted); display: fl
 .il-blanc { fill: #FFFFFF; stroke: var(--ink); stroke-width: .8; } .il-sonde { fill: var(--ink); } .il-cable { fill: none; stroke: var(--ink); stroke-width: 1.4; opacity: .7; }
 .il-lcd { fill: var(--lcd); } .il-lcd-t { font: 700 10px var(--f-lcd); fill: var(--lcd-ink); }
 .il-leg text { font: 9.5px var(--f-body); fill: var(--ink); } .il-leg line { stroke: var(--muted); stroke-width: 1; }
+/* ----- Page d'une classe : chapitre 0 + tuiles des thèmes (accordéon) ----- */
+.card.ch0 { border: 2px solid var(--sun); }
+.card.ch0 .ico { background: var(--sun-soft); color: var(--sun-ink); font-family: var(--f-display); font-size: 1.6rem; font-weight: 700; }
+.card.ch0.off { border-color: var(--line); }
+.tuiles { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .7rem; }
+.tuile { min-width: 0; border-radius: var(--r); background: var(--surface); border: 1px solid var(--line); border-top: 5px solid var(--c); overflow: hidden; }
+.tuile.ouverte { grid-column: 1 / -1; box-shadow: 0 6px 18px rgba(0, 0, 0, .08); }
+.t-tete, .tuile.vide { width: 100%; display: flex; flex-direction: column; align-items: flex-start; gap: .4rem; padding: .85rem .8rem .8rem; text-align: left; color: var(--ink); position: relative; min-height: 8.2rem; }
+.t-tete { background: none; border: 0; font: inherit; cursor: pointer; padding-right: 2.2rem; }
+.tuile.ouverte .t-tete { min-height: 0; flex-direction: row; align-items: center; flex-wrap: wrap; column-gap: .7rem; }
+.t-ico { width: 2.6rem; height: 2.6rem; border-radius: 12px; display: grid; place-items: center; background: var(--c); color: #fff; flex: none; }
+.t-ico svg { width: 1.45rem; height: 1.45rem; }
+.t-nom { font-family: var(--f-display); font-size: 1.02rem; line-height: 1.2; font-weight: 600; }
+.tuile.ouverte .t-nom { flex: 1; min-width: 8rem; font-size: 1.12rem; }
+.t-info { font-size: .82rem; color: var(--muted); }
+.tuile.ouverte .t-info { width: 100%; padding-left: 3.3rem; margin-top: -.3rem; }
+.t-fl { position: absolute; right: .7rem; top: .8rem; color: var(--c); font-size: 1.5rem; line-height: 1; transition: transform .2s; }
+.tuile.ouverte .t-fl { transform: rotate(90deg); }
+.tuile.vide { cursor: default; opacity: .65; background: transparent; border-style: dashed; border-top: 5px dashed var(--line); } .tuile.vide .t-ico { background: var(--line); color: var(--muted); }
+.tuile.fermee .t-ico { opacity: .55; }
+.t-liste { display: flex; flex-direction: column; gap: .45rem; padding: 0 .8rem .85rem; animation: t-ouvre .25s ease-out; }
+@keyframes t-ouvre { from { opacity: 0; transform: translateY(-6px); } }
+.t-chap { display: grid; grid-template-columns: 2.3rem 1fr auto; align-items: center; gap: .65rem; padding: .4rem .75rem .4rem .4rem; border-radius: 14px;
+  background: var(--bg); border: 2px solid var(--line); color: var(--ink); text-decoration: none; min-height: 3rem; }
+a.t-chap:hover { border-color: var(--c); }
+.t-chap .n { width: 2.3rem; height: 2.3rem; border-radius: 50%; display: grid; place-items: center; background: var(--c); color: #fff; }
+.t-chap .n svg { width: 1.15rem; height: 1.15rem; }
+.t-chap .t { min-width: 0; font-size: .95rem; line-height: 1.2; }
+.t-chap .p { font-size: .8rem; color: var(--muted); font-variant-numeric: tabular-nums; }
+.t-chap.fait .n { background: var(--good); }
+.t-chap.ferme { opacity: .6; } .t-chap.ferme .n { background: var(--muted); }
+.card.defi .ico, .card.rappel .ico { background: var(--sun-soft); color: var(--sun-ink); font-family: var(--f-display); font-size: 1.6rem; font-weight: 700; }
+/* ----- Chapitre 0 : rappel de cours (tableau de conversion interactif) ----- */
+.o-revoir { align-self: flex-start; display: inline-flex; gap: .4rem; align-items: center; }
+.o-revoir svg { width: 1.1rem; height: 1.1rem; }
+.o-onglets { display: flex; flex-wrap: wrap; gap: .4rem; }
+.o-question { margin: 0; font-size: 1.05rem; }
+.o-tableau { border-collapse: collapse; width: 100%; min-width: 0; table-layout: fixed; font-variant-numeric: tabular-nums; }
+.o-tableau th, .o-tableau td { border: 1px solid var(--line); text-align: center; padding: .45rem 0; position: relative; vertical-align: middle; }
+.o-tableau thead th { background: var(--bg); font-size: .9rem; }
+.o-tableau tbody th, .o-tableau thead th:first-child { font-size: .8rem; font-weight: 700; color: var(--muted); padding: .3rem 0; width: 1.3rem; }
+.o-tableau td { font-family: var(--f-display); font-size: 1.25rem; font-weight: 700; }
+.o-tableau .dep { background: var(--blue-soft); } .o-tableau .arr { background: var(--good-soft); }
+.o-tableau td i { font-style: normal; color: var(--bad); }
+.o-virg { position: absolute; right: -.2rem; bottom: .15rem; color: var(--bad); font-size: 1.4rem; line-height: 1; }
+.o-resultat { margin: 0; font-size: 1.15rem; }
+.o-regles { border-collapse: collapse; width: 100%; min-width: 0; font-size: .92rem; } .o-regles td, .o-regles th { border-bottom: 1px solid var(--line); padding: .45rem .35rem; text-align: left; }
+/* ----- Chapitre 0 : jeux chronométrés ----- */
+.o-jeu { display: flex; flex-direction: column; gap: .8rem; }
+.o-haut { display: flex; justify-content: space-between; align-items: center; gap: .5rem; }
+.o-haut b { font-variant-numeric: tabular-nums; }
+.o-vies { color: var(--bad); letter-spacing: .1em; } .o-vies span { opacity: .25; }
+.o-barre { height: 10px; border-radius: 99px; background: var(--line); overflow: hidden; }
+.o-barre i { display: block; height: 100%; width: 100%; background: var(--accent); transition: width .1s linear; }
+.o-enonce { font-family: var(--f-display); font-size: 1.3rem; line-height: 1.3; margin: 0; text-align: center; overflow-wrap: anywhere; }
+.o-vf { display: grid; grid-template-columns: 1fr 1fr; gap: .7rem; }
+.o-vf .btn { font-size: 1.15rem; padding: 1rem .5rem; border: 2px solid; }
+.o-vrai { background: var(--good-soft); color: var(--good); border-color: var(--good); }
+.o-faux { background: var(--bad-soft); color: var(--bad); border-color: var(--bad); }
+.o-vf .btn.good { box-shadow: 0 0 0 4px var(--good); } .o-vf .btn.bad { box-shadow: 0 0 0 4px var(--bad); }
+.o-jeu.flash-ok .o-carte { animation: o-ok .45s; } .o-jeu.flash-ko .o-carte { animation: o-ko .45s; }
+@keyframes o-ok { 50% { box-shadow: 0 0 0 6px var(--good-soft); } }
+@keyframes o-ko { 25% { transform: translateX(-6px); } 75% { transform: translateX(6px); } }
+#o-stop { align-self: center; }
 @media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }
 </style>
+</head><body>
 
 <div class="app">
   <header class="topbar">
@@ -651,10 +681,17 @@ footer { text-align: center; font-size: .85rem; color: var(--muted); display: fl
 // ============================================================
 //  RÉGLAGES DU PROFESSEUR
 //  Pour ouvrir un chapitre à tes élèves : mets true. Pour le fermer : false.
-//  Puis remets ce fichier en ligne (avec les autres).
+//  Puis publie avec le raccourci « 2 - Publier en ligne ».
 // ============================================================
 const REGLAGES = {
   chapitresOuverts: {
+    // Chapitre 0 « Unités, conversions et puissances de 10 » (un par niveau, calcul mental)
+    "5e-outils": true,      // 5ème : chapitre 0
+    "4e-outils": true,      // 4ème : chapitre 0
+    "3e-outils": true,      // 3ème : chapitre 0
+    "2nde-outils": true,    // 2nde : chapitre 0
+    "1re-outils": true,     // 1ère : chapitre 0
+    "tle-outils": true,     // Terminale : chapitre 0
     "3e-centrales": true,   // Les centrales électriques
     "3e-puissance": true,   // La puissance électrique
     "3e-chimie": false,     // L'énergie chimique et ses conversions
@@ -662,9 +699,9 @@ const REGLAGES = {
   },
   // Score minimum (en %) pour débloquer l'exercice suivant
   seuilReussite: 50,
-  // Mode prof : il s'ouvre avec le lien secret  …/appli.html#prof-TONCODE
+  // Mode prof : il s'ouvre avec le lien secret  …/#prof-TONCODE  (raccourci « 1 - Ouvrir en mode prof »).
   // Ici, on ne garde que l'« empreinte » du code (illisible) : le code n'apparaît jamais en clair.
-  // Pour changer de code : lance  python3 changer_code_prof.py  (il remplace cette ligne).
+  // Pour changer de code : raccourci « 3 - Changer le code prof » (il remplace cette ligne).
   empreinteProf: "02e2edef2ea80253e9e95a9bd5b964c930e68ba417e026d9deaba867c13fa372",
   // Ne pas mettre true dans la version en ligne : tout serait débloqué pour tout le monde.
   modeProf: false
@@ -702,11 +739,49 @@ const CONTENU = {
     { id: "tle",  nom: "Terminale", groupe: "Lycée",   actif: false }
   ],
 
+  // THÈMES DES PROGRAMMES OFFICIELS (cycle 4 : programme 2020 ; lycée : programmes 2019).
+  // Chaque chapitre indique son thème (theme: "…"). Un thème sans chapitre s'affiche « En préparation ».
+  // « groupe » sert au lycée à séparer la spécialité physique-chimie et l'enseignement scientifique.
+  themes: (() => {
+    const cycle4 = [
+      { id: "matiere", titre: "Organisation et transformations de la matière" },
+      { id: "mouvement", titre: "Mouvement et interactions" },
+      { id: "energie", titre: "L'énergie et ses conversions" },
+      { id: "signaux", titre: "Des signaux pour observer et communiquer" }
+    ];
+    const spe = (g) => [
+      { id: "matiere", titre: "Constitution et transformations de la matière", groupe: g },
+      { id: "mouvement", titre: "Mouvement et interactions", groupe: g },
+      { id: "energie", titre: "L'énergie : conversions et transferts", groupe: g },
+      { id: "ondes", titre: "Ondes et signaux", groupe: g }
+    ];
+    const SPE = "Spécialité physique-chimie", ES = "Enseignement scientifique";
+    return {
+      "5e": cycle4, "4e": cycle4, "3e": cycle4,
+      "2nde": [
+        { id: "matiere", titre: "Constitution et transformations de la matière" },
+        { id: "mouvement", titre: "Mouvement et interactions" },
+        { id: "ondes", titre: "Ondes et signaux" }
+      ],
+      "1re": spe(SPE).concat([
+        { id: "histoire", titre: "Une longue histoire de la matière", groupe: ES },
+        { id: "soleil", titre: "Le Soleil, notre source d'énergie", groupe: ES },
+        { id: "terre", titre: "La Terre, un astre singulier", groupe: ES },
+        { id: "son", titre: "Son et musique, porteurs d'information", groupe: ES }
+      ]),
+      "tle": spe(SPE).concat([
+        { id: "climat", titre: "Science, climat et société", groupe: ES },
+        { id: "futur", titre: "Le futur des énergies", groupe: ES },
+        { id: "vivant", titre: "Une histoire du vivant", groupe: ES }
+      ])
+    };
+  })(),
+
   chapitres: {
     "3e": [
       // ==================================================================
       {
-        id: "centrales",
+        id: "centrales", theme: "energie",
         titre: "Les centrales électriques",
         resume: "Comment produit-on l'électricité ?",
         qcm: "Les centrales électriques",
@@ -1116,7 +1191,7 @@ const CONTENU = {
       //  Les coûts sont calculés à partir de PRIX_KWH (en haut de ce fichier, d'après une facture EDF Guyane de 2026).
       // ==================================================================
       {
-        id: "puissance",
+        id: "puissance", theme: "energie",
         titre: "La puissance électrique",
         resume: "Watts, kilowattheures et facture d'électricité",
         qcm: "La puissance électrique",
@@ -1552,7 +1627,7 @@ const CONTENU = {
           }
         ]
       },
-      { id: "chimie", titre: "L'énergie chimique et ses conversions", resume: "Combustions, piles et batteries", qcm: "L'énergie chimique et ses conversions",
+      { id: "chimie", theme: "energie", titre: "L'énergie chimique et ses conversions", resume: "Combustions, piles et batteries", qcm: "L'énergie chimique et ses conversions",
         entrainement: [{ id: "qcm", type: "qcm-tableur", titre: "Défi QCM", desc: "8 questions tirées au hasard", n: 8 }] }
     ],
     "tle": [
@@ -1562,7 +1637,7 @@ const CONTENU = {
       // Notations (les questions n'acceptent pas d'indices HTML) : solution titrée c₁ et V₁ ; solution titrante c₂ ; Vₑ = volume versé à l'équivalence.
       // Pas de TP pour l'instant (étape « Bientôt ») : le TP pilote de titrage pourra venir ici.
       {
-        id: "titrages",
+        id: "titrages", theme: "matiere",
         titre: "Analyser un système par des méthodes chimiques",
         resume: "Titrages avec suivi pH-métrique et conductimétrique",
 
@@ -1827,7 +1902,8 @@ const CONTENU = {
                     { id: "becher", texte: "Verse un peu de jus pressé dans le bécher de prélèvement (prends le flacon, puis touche le bécher). On ne pipette jamais dans le flacon." },
                     { id: "pipette", texte: "Fixe le pipeteur sur la pipette de 10,0 mL, aspire le jus dans le bécher de prélèvement, puis ajuste le bas du ménisque sur le trait de jauge, goutte à goutte." },
                     { id: "jus", texte: "Verse les 10,0 mL de jus dans la fiole jaugée de 100,0 mL." },
-                    { id: "trait", texte: "Complète avec la pissette (aux trois quarts, puis jusqu'au col), puis ajuste au trait de jauge goutte à goutte." },
+                    { id: "melange", texte: "Complète avec la pissette jusqu'aux deux tiers, puis bouche la fiole, retourne-la pour homogénéiser et enlève le bouchon (touche la fiole)." },
+                    { id: "trait", texte: "Complète avec la pissette jusqu'au bas du col, puis ajuste le bas du ménisque sur le trait de jauge, goutte à goutte (loupe sur la paillasse)." },
                     { id: "homog", texte: "Bouche la fiole et retourne-la pour homogénéiser : touche la fiole." }
                   ],
                   questions: [
@@ -1840,7 +1916,7 @@ const CONTENU = {
                         explication: "La pipette jaugée n'est précise que si le bas du ménisque est exactement sur le trait." }
                     ] }
                   ],
-                  retenir: "Pour une dilution précise : bécher de prélèvement, pipette jaugée avec pipeteur ajustée au trait, fiole jaugée complétée au trait (bas du ménisque sur le trait, regardé en face), puis homogénéisation."
+                  retenir: "Pour une dilution précise : bécher de prélèvement, pipette jaugée avec pipeteur ajustée au trait, fiole jaugée remplie aux deux tiers et homogénéisée, puis complétée au trait (bas du ménisque sur le trait, regardé en face), et homogénéisée à nouveau."
                 },
                 {
                   id: "p3", competence: "Réaliser", onglet: "Étalonner", titre: "Étalonner le pH-mètre", banc: "etal",
@@ -1975,7 +2051,8 @@ const CONTENU = {
                     { id: "eau", texte: "Remplis la fiole jaugée d'eau distillée à moitié environ : prends la pissette et touche la fiole." },
                     { id: "pipette", texte: "Verse un peu d'esprit de sel dans le bécher de prélèvement, fixe le pipeteur sur la pipette de 5,0 mL, aspire et ajuste au trait de jauge, goutte à goutte." },
                     { id: "acide", texte: "Verse les 5,0 mL d'esprit de sel dans l'eau de la fiole." },
-                    { id: "trait", texte: "Complète à la pissette (aux trois quarts, puis jusqu'au col), puis ajuste le bas du ménisque sur le trait de jauge, goutte à goutte (loupe sur la paillasse)." },
+                    { id: "melange", texte: "Complète à la pissette jusqu'aux deux tiers, puis bouche la fiole, retourne-la pour homogénéiser et enlève le bouchon (touche la fiole)." },
+                    { id: "trait", texte: "Complète à la pissette jusqu'au bas du col, puis ajuste le bas du ménisque sur le trait de jauge, goutte à goutte (loupe sur la paillasse)." },
                     { id: "homog", texte: "Bouche la fiole et retourne-la pour homogénéiser : touche la fiole." }
                   ],
                   questions: [
@@ -2201,7 +2278,8 @@ const CONTENU = {
 
 </script>
 <script>
-// Fichier généré automatiquement par convertir_questions.py : ne pas modifier à la main.
+// Banque du « Défi QCM » (une entrée par question ; « chapitre » = champ qcm du chapitre dans 03_contenu.html).
+// Les fiches « création d'un chapitre » y ajoutent leurs questions (fiche_chapitre.py --injecter).
 const QUESTIONS = [
  {
   "id": "C1-01",
@@ -2799,7 +2877,26 @@ const QUESTIONS = [
     lock: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 018 0v4"/></svg>',
     etoile: '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2l2.9 6.3 6.9.7-5.2 4.6 1.5 6.8L12 17l-6.1 3.4 1.5-6.8L2.2 9l6.9-.7z"/></svg>',
     titrages: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 3h6M10 3v6l-5 10a2 2 0 002 3h10a2 2 0 002-3l-5-10V3M7 15h10"/></svg>',
-    check: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12l5 5 9-10"/></svg>'
+    check: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12l5 5 9-10"/></svg>',
+    outils: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 17L17 3l4 4L7 21H3z"/><path d="M7 13l2 2M10 10l2 2M13 7l2 2"/></svg>'
+  };
+  // Icônes des thèmes des programmes (même dessin pour un même thème à tous les niveaux)
+  const ic = (d) => `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${d}</svg>`;
+  const COULEURS_THEMES = { matiere: "#7B5EA7", mouvement: "#2F7FC1", energie: "#D9850B", signaux: "#0E8C7E", ondes: "#0E8C7E",
+    histoire: "#7B5EA7", soleil: "#D9850B", terre: "#3E8E41", son: "#C2477A", climat: "#2F7FC1", futur: "#B08A00", vivant: "#3E8E41", autres: "#55706A" };
+  const ICONES_THEMES = {
+    matiere: ic('<circle cx="12" cy="12" r="2"/><ellipse cx="12" cy="12" rx="10" ry="4"/><ellipse cx="12" cy="12" rx="10" ry="4" transform="rotate(60 12 12)"/><ellipse cx="12" cy="12" rx="10" ry="4" transform="rotate(120 12 12)"/>'),
+    mouvement: ic('<circle cx="16" cy="12" r="4"/><path d="M2 9h7M4 12h6M2 15h7"/>'),
+    energie: ic('<path d="M13 2L4 14h7l-1 8 9-12h-7z"/>'),
+    signaux: ic('<path d="M2 12h3l2-6 3 12 3-9 2 6 2-3h5"/>'),
+    ondes: ic('<path d="M2 12c2-5 4-5 6 0s4 5 6 0 4-5 6 0 2 3 2 3"/>'),
+    histoire: ic('<circle cx="12" cy="12" r="2"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="10" stroke-dasharray="2 3"/>'),
+    soleil: ic('<circle cx="12" cy="12" r="4"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M4.9 19.1L7 17M17 7l2.1-2.1"/>'),
+    terre: ic('<circle cx="12" cy="12" r="9"/><path d="M5 8c3 0 3 3 6 3s2 4 4 4M14 3c-1 2 1 4 3 4s3 2 4 3"/>'),
+    son: ic('<path d="M9 18V5l11-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="17" cy="16" r="3"/>'),
+    climat: ic('<path d="M14 14V4a2 2 0 00-4 0v10a4 4 0 104 0z"/><path d="M12 9v7"/>'),
+    futur: ic('<path d="M12 12V22M12 12L5 8M12 12l7-4M12 12V3"/><circle cx="12" cy="12" r="1.5"/>'),
+    vivant: ic('<path d="M5 19c0-9 6-14 15-14 0 9-5 15-14 15"/><path d="M5 19l8-8"/>')
   };
 
   // ======================= Outils =======================
@@ -2887,6 +2984,10 @@ const QUESTIONS = [
   const niveau = (id) => CONTENU.niveaux.find((n) => n.id === id);
   const chapitres = (niv) => CONTENU.chapitres[niv] || [];
   const chapitre = (niv, id) => chapitres(niv).find((c) => c.id === id);
+  const themes = (niv) => (CONTENU.themes || {})[niv] || [];
+  const theme = (niv, id) => themes(niv).find((t) => t.id === id);
+  // Chapitres d'un thème (sans le chapitre 0, qui est commun à tout le niveau)
+  const chapitresDu = (niv, th) => chapitres(niv).filter((c) => c.type !== "outils" && c.theme === th);
   // Un niveau s'affiche s'il est actif, en mode prof, ou dès qu'un de ses chapitres est ouvert dans REGLAGES.
   const niveauVisible = (n) => n.actif || modeProf() || Object.entries(REGLAGES.chapitresOuverts || {}).some(([k, v]) => v && k.startsWith(n.id + "-"));
   // Au lycée, le dernier exercice de l'entraînement est « type bac » ; au collège, « type brevet ».
@@ -2926,10 +3027,12 @@ const QUESTIONS = [
   // ======================= Navigation =======================
   let routeActuelle = [];
   function aller(hh) { if (location.hash.slice(1) === hh) rendre(); else location.hash = hh; }
+  // Page « parente » (flèche en haut à gauche) : accueil ← classe (tuiles des thèmes) ← chapitre ← étape ← activité
   function parent(parts) {
-    if (parts.length <= 1) return "";
-    if (parts[0] === "c" && parts.length === 3) return "n-" + parts[1];
-    return parts.slice(0, -1).join("-");
+    const [k, niv] = parts;
+    if (k === "c" && parts.length === 3) return "n-" + niv; // un chapitre revient à la page de sa classe
+    if (k === "c" && parts.length > 3) return parts.slice(0, -1).join("-");
+    return "";
   }
   $("btn-back").addEventListener("click", () => aller(parent(routeActuelle)));
   window.addEventListener("hashchange", rendre);
@@ -2939,7 +3042,7 @@ const QUESTIONS = [
   // la garde aussi un moment en cache. On compare donc la version de cette page avec le petit fichier version.json
   // publié en même temps : à l'ouverture et à chaque retour sur l'onglet (au plus une fois par minute).
   // Si une version plus récente est en ligne, un bandeau propose de mettre à jour. La progression (pseudo, points…) est conservée.
-  const VERSION_APPLI = "2026-11-05 00:13:59"; // remplacée par la date d'assemblage (assembler.py)
+  const VERSION_APPLI = "2026-11-05 22:39:04"; // remplacée par la date d'assemblage (assembler.py)
   let derniereVerif = 0;
   function verifierMaj() {
     if (!/^https?:$/.test(location.protocol) || VERSION_APPLI.indexOf("__") === 0) return; // fichier ouvert sur l'ordinateur : rien à vérifier
@@ -2972,13 +3075,14 @@ const QUESTIONS = [
     window.scrollTo(0, 0);
     if (parts.length === 0) return vueNiveaux();
     if (!etat.pseudo) return vuePseudo();
-    if (parts[0] === "n") return vueChapitres(parts[1]);
+    if (parts[0] === "n") return vueNiveau(parts[1]);
     if (parts[0] !== "c") return vueNiveaux();
     const [, niv, chId, rub, actId] = parts;
     const ch = chapitre(niv, chId);
     if (!ch) return vueNiveaux();
     if (!ouvert(niv, chId)) return vueFerme(niv, ch);
     $("brand").textContent = ch.titre;
+    if (ch.type === "outils") return OUTILS.vue(niv, ch, rub, actId);
     if (!rub) return vueMenu(niv, ch);
     const ri = RUBRIQUES.findIndex((r) => r.id === rub);
     if (ri < 0 || !rubriqueDispo(ch, rub)) return vueMenu(niv, ch);
@@ -2999,6 +3103,7 @@ const QUESTIONS = [
   // ======================= Vues de navigation =======================
   function vueNiveaux() {
     $("brand").textContent = "Physique-Chimie";
+    $("btn-back").hidden = true; // page d'accueil : pas de retour possible
     const groupes = ["Collège", "Lycée"].map((g) => {
       const items = CONTENU.niveaux.filter((n) => n.groupe === g).map((n) => niveauVisible(n)
         ? `<a class="niv" href="#n-${n.id}"><span class="n">${esc(n.nom)}</span><span class="badge ok">Disponible</span></a>`
@@ -3023,17 +3128,56 @@ const QUESTIONS = [
       etat.pseudo = v; profil(); sauver(); rendre();
     });
   }
-  function vueChapitres(niv) {
+  // Page d'une classe : le chapitre 0 en tête, puis une grille de TUILES, une par thème du programme (aucun ordre imposé :
+  // chaque prof suit sa propre progression, c'est l'ouverture des chapitres qui guide l'élève).
+  // Toucher une tuile l'ouvre sur place (accordéon) et montre ses chapitres ; une seule tuile ouverte à la fois.
+  const tuileOuverte = {}; // par classe : le thème ouvert (retrouvé au retour d'un chapitre)
+  function vueNiveau(niv) {
     const n = niveau(niv); if (!n || !niveauVisible(n)) return vueNiveaux();
     $("brand").textContent = "Physique-Chimie · " + n.nom;
-    const cartes = chapitres(niv).map((ch) => {
-      if (!ouvert(niv, ch.id)) return `<div class="card off" aria-disabled="true"><span class="ico">${SVG.lock}</span><span class="txt"><span class="t">${esc(ch.titre)}</span><span class="s">Ton professeur ouvrira ce chapitre plus tard.</span></span><span class="badge">Fermé</span></div>`;
-      const dispo = RUBRIQUES.filter((r) => rubriqueDispo(ch, r.id));
-      const faites = Math.min(dispo.length, nbEtapesFaites(niv, ch));
-      return `<a class="card" href="#c-${niv}-${ch.id}"><span class="ico">${SVG[ch.id] || SVG.puissance}</span><span class="txt"><span class="t">${esc(ch.titre)}</span>
-        <span class="level-line"><i><b style="width:${Math.round(100 * faites / dispo.length)}%"></b></i>${faites}/${dispo.length}</span></span><span class="go" aria-hidden="true">›</span></a>`;
-    }).join("");
-    view.innerHTML = `<div class="head"><span class="kicker">${esc(n.nom)}</span><h2>Bonjour ${esc(etat.pseudo)}</h2><p class="muted">Choisis un chapitre ouvert par ton professeur.</p></div><div class="cards">${cartes}</div>`;
+    const avancement = (ch) => { const dispo = RUBRIQUES.filter((r) => rubriqueDispo(ch, r.id)); return [Math.min(dispo.length, nbEtapesFaites(niv, ch)), dispo.length]; };
+    const ligneChapitre = (ch) => {
+      if (!ouvert(niv, ch.id)) return `<div class="t-chap ferme" aria-disabled="true"><span class="n">${SVG.lock}</span><span class="t">${esc(ch.titre)}</span><span class="p">Fermé</span></div>`;
+      const [f, t] = avancement(ch), fini = f >= t;
+      return `<a class="t-chap${fini ? " fait" : ""}" href="#c-${niv}-${ch.id}"><span class="n">${fini ? SVG.check : SVG[ch.id] || SVG.etoile}</span><span class="t">${esc(ch.titre)}</span><span class="p">${fini ? "Terminé" : f + "/" + t}</span></a>`;
+    };
+    const tuile = (t, chs) => {
+      const nbOuv = chs.filter((c) => ouvert(niv, c.id)).length;
+      const info = !chs.length ? "Bientôt" : nbOuv ? `${nbOuv} chapitre${nbOuv > 1 ? "s" : ""} ouvert${nbOuv > 1 ? "s" : ""}` : "Pas encore ouvert";
+      const ico = `<span class="t-ico" aria-hidden="true">${ICONES_THEMES[t.id] || SVG.etoile}</span>`;
+      if (!chs.length) return `<div class="tuile vide" style="--c:${COULEURS_THEMES[t.id] || "var(--muted)"}" aria-disabled="true">${ico}<span class="t-nom">${esc(t.titre)}</span><span class="t-info">${info}</span></div>`;
+      return `<div class="tuile${nbOuv ? "" : " fermee"}" data-th="${t.id}" style="--c:${COULEURS_THEMES[t.id] || "var(--accent)"}">
+          <button type="button" class="t-tete" aria-expanded="false">${ico}<span class="t-nom">${esc(t.titre)}</span><span class="t-info">${info}</span><span class="t-fl" aria-hidden="true">›</span></button>
+          <div class="t-liste" hidden>${chs.map(ligneChapitre).join("")}</div></div>`;
+    };
+    // le chapitre 0, commun à toute la classe
+    const ch0 = chapitres(niv).find((c) => c.type === "outils");
+    const carte0 = !ch0 ? "" : ouvert(niv, ch0.id)
+      ? `<a class="card ch0" href="#c-${niv}-${ch0.id}"><span class="ico">0</span><span class="txt"><span class="t">${esc(ch0.titre)}</span><span class="s">${esc(OUTILS.resume(niv, ch0))}</span></span><span class="go" aria-hidden="true">›</span></a>`
+      : `<div class="card ch0 off" aria-disabled="true"><span class="ico">0</span><span class="txt"><span class="t">${esc(ch0.titre)}</span><span class="s">Ton professeur l'ouvrira bientôt.</span></span><span class="badge">Fermé</span></div>`;
+    // les thèmes, groupés au lycée (spécialité / enseignement scientifique) ; les chapitres sans thème à part
+    const groupes = [];
+    themes(niv).forEach((t) => { const g = t.groupe || ""; let G = groupes.find((x) => x.g === g); if (!G) groupes.push(G = { g, l: [] }); G.l.push(t); });
+    const orphelins = chapitres(niv).filter((c) => c.type !== "outils" && !theme(niv, c.theme));
+    const html = groupes.map((G) => `<div class="stack">${G.g ? `<span class="group-title">${esc(G.g)}</span>` : ""}<div class="tuiles">${G.l.map((t) => tuile(t, chapitresDu(niv, t.id))).join("")}</div></div>`).join("")
+      + (orphelins.length ? `<div class="tuiles">${tuile({ id: "autres", titre: "Autres chapitres" }, orphelins)}</div>` : "");
+    view.innerHTML = `<div class="head"><span class="kicker">${esc(n.nom)}</span><h2>Bonjour ${esc(etat.pseudo)}</h2><p class="muted">Choisis un thème pour voir ses chapitres.</p></div>
+      ${carte0 ? `<div class="cards">${carte0}</div>` : ""}${themes(niv).length && !groupes[0].g ? `<span class="group-title">Les thèmes du programme</span>` : ""}${html}`;
+    // accordéon : une seule tuile ouverte à la fois
+    function ouvrir(el, oui) {
+      el.classList.toggle("ouverte", oui); el.querySelector(".t-liste").hidden = !oui; el.querySelector(".t-tete").setAttribute("aria-expanded", oui);
+    }
+    view.querySelectorAll(".tuile[data-th]").forEach((el) => {
+      el.querySelector(".t-tete").onclick = () => {
+        const oui = !el.classList.contains("ouverte");
+        view.querySelectorAll(".tuile.ouverte").forEach((x) => ouvrir(x, false));
+        ouvrir(el, oui); tuileOuverte[niv] = oui ? el.dataset.th : null;
+        if (oui) setTimeout(() => { const r = el.getBoundingClientRect(); if (r.bottom > innerHeight) el.scrollIntoView({ behavior: "smooth", block: "nearest" }); }, 60);
+      };
+    });
+    view.querySelectorAll(".tuile.vide").forEach((el) => { el.onclick = () => toast("Les chapitres de ce thème sont en préparation"); });
+    const deja = tuileOuverte[niv] && view.querySelector(`.tuile[data-th="${tuileOuverte[niv]}"]`);
+    if (deja) ouvrir(deja, true);
   }
   function vueFerme(niv, ch) {
     view.innerHTML = `<div class="panel"><h2>${esc(ch.titre)}</h2><p>Ce chapitre n'est pas encore ouvert. Ton professeur l'ouvrira quand vous le commencerez en classe.</p><a class="btn btn-primary" href="#n-${niv}">Voir les chapitres ouverts</a></div>`;
@@ -3109,16 +3253,16 @@ const QUESTIONS = [
     sauver();
     const gain = enregistrer(cle, o.points != null ? o.points : o.score * 10, reussi, false);
     const msg = pct === 100 ? "Sans faute, bravo !" : pct >= 75 ? "Très bien joué !" : reussi ? "Réussi, continue !"
-      : dejaFait ? "Moins bien que ta meilleure tentative, mais ta validation est conservée." : "Pas encore : rejoue pour débloquer la suite.";
+      : dejaFait ? "Moins bien que ta meilleure tentative, mais ta validation est conservée." : o.ctx.libre ? "Pas encore : rejoue pour réussir ce défi." : "Pas encore : rejoue pour débloquer la suite.";
     const gains = gain > 0 ? ["+" + gain + " points"] : [];
     if (ancien != null && pct > ancien) gains.push("Nouveau record");
-    if (reussi && !dejaFait) gains.push(o.ctx.dernier ? "Étape terminée" : "Jeu suivant débloqué");
+    if (reussi && !dejaFait) gains.push(o.ctx.libre ? "Défi réussi" : o.ctx.dernier ? "Étape terminée" : "Jeu suivant débloqué");
     view.innerHTML = `<div class="score"><span class="muted small">${esc(o.titre)}</span><div class="big">${o.score}<small> / ${o.total}</small></div>
       <h2>${msg}</h2>${gains.length ? `<div class="gains">${gains.map((g) => `<span class="chip sun">${esc(g)}</span>`).join("")}</div>` : ""}
       ${meilleurTxt ? `<p class="small muted">Ta meilleure tentative reste enregistrée : ${esc(meilleurTxt)}.</p>` : ""}
-      ${!valide ? `<p class="small muted">Il faut au moins ${seuil()} % pour débloquer la suite.</p>` : ""}</div>
+      ${!valide ? `<p class="small muted">Il faut au moins ${seuil()} % pour ${o.ctx.libre ? "réussir ce défi" : "débloquer la suite"}.</p>` : ""}</div>
       ${o.revoir && o.revoir.length ? `<h3>À revoir</h3><div class="stack">${o.revoir.map((r) => `<div class="review-item"><span>${esc(r.q)}</span><span class="ans">${esc(r.a)}</span>${r.e ? `<span class="muted small">${esc(r.e)}</span>` : ""}</div>`).join("")}</div>` : ""}
-      <div class="row"><button class="btn btn-ghost" id="btn-rejouer">Rejouer (nouvelle version)</button>${valide ? `<a class="btn btn-primary" href="#${o.ctx.suivant}">${o.ctx.dernier ? "Retour au chapitre" : "Jeu suivant"}</a>` : ""}</div>`;
+      <div class="row"><button class="btn btn-ghost" id="btn-rejouer">Rejouer (nouvelle version)</button>${valide || o.ctx.libre ? `<a class="btn btn-primary" href="#${o.ctx.suivant}">${o.ctx.libSuite || (o.ctx.dernier ? "Retour au chapitre" : "Jeu suivant")}</a>` : ""}</div>`;
     $("btn-rejouer").onclick = () => rendre();
   }
 
@@ -3561,6 +3705,32 @@ const QUESTIONS = [
     return `<nav class="nav-fin" aria-label="Suite">${lien}${extra || ""}<a class="btn btn-ghost" href="#c-${niv}-${ch.id}">Retour au menu du chapitre</a></nav>`;
   }
 
+  // ======================= Pages de TP communes (3ème et terminale) =======================
+  // Onglets des objectifs (+ onglet « Conclure »), carte de mission d'un objectif, badge « Réussi ».
+  function htmlOnglets(O, actif, objFait, ouvert, conclOk) {
+    const NC = O.length;
+    return O.map((o, i) => {
+      const ok = objFait(o), open = ouvert(i);
+      return `<button class="otab${i === actif ? " cur" : ""}${ok ? " done" : ""}" role="tab" aria-selected="${i === actif}" data-i="${i}" ${open ? "" : 'aria-disabled="true"'}>
+        <span class="onum">${ok ? SVG.check : open ? i + 1 : SVG.lock}</span><span class="olbl">${esc(o.onglet || o.competence)}</span></button>`;
+    }).join("") + `<button class="otab concl${actif === NC ? " cur" : ""}${conclOk ? " done" : ""}" role="tab" aria-selected="${actif === NC}" data-i="${NC}" ${ouvert(NC) ? "" : 'aria-disabled="true"'}>
+        <span class="onum">${conclOk ? SVG.check : ouvert(NC) ? SVG.etoile : SVG.lock}</span><span class="olbl">Conclure</span></button>`;
+  }
+  function brancherOnglets(NC, ouvert, choisir) {
+    $("otabs").querySelectorAll(".otab").forEach((b) => b.onclick = () => {
+      const i = +b.dataset.i;
+      if (!ouvert(i)) { toast(i === NC ? "Réussis d'abord tous les objectifs" : "Réussis d'abord l'objectif précédent"); return; }
+      choisir(i); $("otabs").scrollIntoView({ behavior: "smooth", block: "start" });
+    });
+  }
+  function htmlMission(o, i, st, ok) {
+    const tache = (t) => { const fait = !!st.t[t.id]; return `<li class="task${fait ? " ok" : ""}"><span class="tick">${fait ? SVG.check : ""}</span><span>${esc(t.texte)}</span></li>`; };
+    return `<div class="ex-head"><span class="kicker">Objectif ${i + 1} · ${esc(o.competence)}</span>${ok ? '<span class="badge ok">Réussi</span>' : ""}</div>
+      <h3>${esc(o.titre)}</h3><p class="tag" style="align-self:flex-start">${esc(o.notion)}</p><p>${esc(o.but)}</p>
+      ${o.taches.length ? `<ul class="tasks">${o.taches.map(tache).join("")}</ul>` : ""}`;
+  }
+  function marquerReussi(x) { if (!x) return; x.classList.add("reussi"); const b = x.querySelector(".badge"); b.textContent = "Réussi"; b.classList.add("ok"); }
+
   // ======================= Cours interactif =======================
   function vueCours(niv, ch) {
     const cle = `${niv}-${ch.id}-cours`, p = profil();
@@ -3635,8 +3805,6 @@ const QUESTIONS = [
     tp: '<path class="i-fond" d="M19 5h10M21 5v12L9 38a3 3 0 0 0 2.6 4.5h24.8A3 3 0 0 0 39 38L27 17V5z"/><path class="i-liquide" d="M14.5 29h19l5 8.6a2.4 2.4 0 0 1-2 3.6H11.5a2.4 2.4 0 0 1-2-3.6z"/><circle class="i-bulle" cx="21" cy="35" r="2"/><circle class="i-bulle" cx="27" cy="32" r="1.5"/><circle class="i-bulle" cx="25" cy="23" r="1.6"/>',
     entrainement: '<path class="i-grue" d="M12 43V9M12 9h30M12 9l-6 0M12 16l7-7M12 23l7-7M12 30l7-7M12 37l7-7M19 9v34"/><path class="i-trait" d="M36 9v12"/><rect class="i-brique" x="31" y="21" width="10" height="6" rx="1"/><rect class="i-brique" x="26" y="37" width="9" height="6" rx="1"/><rect class="i-brique" x="35" y="37" width="9" height="6" rx="1"/><rect class="i-brique" x="30.5" y="31" width="9" height="6" rx="1"/><path class="i-trait" d="M4 43h42"/>'
   };
-  const ICONE_CADENAS = '<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 018 0v4"/></svg>';
-  const ICONE_ETOILE = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2l2.9 6.3 6.9.7-5.2 4.6 1.5 6.8L12 17l-6.1 3.4 1.5-6.8L2.2 9l6.9-.7z"/></svg>';
   const PALMIER = (x, y, k) => `<g class="m-palmier" transform="translate(${x.toFixed(0)} ${y.toFixed(0)}) scale(${k})"><path class="m-tronc" d="M0 0q3-18 -2-34"/>
     <path class="m-palme" d="M-2-34q-16-6-24 4q12-6 24-4zM-2-34q16-8 24 2q-12-5-24-2zM-2-34q-6-14-18-14q10 4 18 14zM-2-34q8-14 18-12q-11 2-18 12z"/></g>`;
 
@@ -3645,7 +3813,7 @@ const QUESTIONS = [
     const sousTitre = { verrou: "Bloqué", prep: "Bientôt", ouvert: "À faire", fait: "Terminé" };
     const noeuds = RUBRIQUES.map((r, i) => {
       const e = etats[i];
-      const badge = e === "fait" ? `<span class="m-badge etoile">${ICONE_ETOILE}</span>` : (e === "verrou" || e === "prep") ? `<span class="m-badge cadenas">${ICONE_CADENAS}</span>` : "";
+      const badge = e === "fait" ? `<span class="m-badge etoile">${SVG.etoile}</span>` : (e === "verrou" || e === "prep") ? `<span class="m-badge cadenas">${SVG.lock}</span>` : "";
       const inner = `<span class="m-pastille"><svg viewBox="0 0 48 48" aria-hidden="true">${ICONES_ETAPES[r.id]}</svg>${badge}</span>
         <span class="m-nom">${esc(r.nom)}</span><span class="m-sous">Niveau ${i + 1} · ${sousTitre[e]}</span>`;
       const label = `Niveau ${i + 1}, ${r.nom} : ${sousTitre[e].toLowerCase()}`;
@@ -4465,20 +4633,8 @@ const QUESTIONS = [
     const majNav = () => { $("tp-nav").innerHTML = navFin(niv, ch, "tp", !!fait(cle)); };
 
     function onglets() {
-      $("otabs").innerHTML = O.map((o, i) => {
-        const ok = objFait(o), open = ongletOuvert(i);
-        return `<button class="otab${i === actif ? " cur" : ""}${ok ? " done" : ""}" role="tab" aria-selected="${i === actif}" data-i="${i}" ${open ? "" : 'aria-disabled="true"'}>
-          <span class="onum">${ok ? SVG.check : open ? i + 1 : SVG.lock}</span><span class="olbl">${esc(o.competence)}</span></button>`;
-      }).join("") + (() => {
-        const open = ongletOuvert(NC), ok = !!fait(cle);
-        return `<button class="otab concl${actif === NC ? " cur" : ""}${ok ? " done" : ""}" role="tab" aria-selected="${actif === NC}" data-i="${NC}" ${open ? "" : 'aria-disabled="true"'}>
-          <span class="onum">${ok ? SVG.check : open ? SVG.etoile : SVG.lock}</span><span class="olbl">Conclure</span></button>`;
-      })();
-      $("otabs").querySelectorAll(".otab").forEach((b) => b.onclick = () => {
-        const i = +b.dataset.i;
-        if (!ongletOuvert(i)) { toast(i === NC ? "Réussis les 4 objectifs pour conclure" : "Réussis d'abord l'objectif précédent"); return; }
-        actif = i; afficher(); $("otabs").scrollIntoView({ behavior: "smooth", block: "start" });
-      });
+      $("otabs").innerHTML = htmlOnglets(O, actif, objFait, ongletOuvert, !!fait(cle));
+      brancherOnglets(NC, ongletOuvert, (i) => { actif = i; afficher(); });
     }
 
     // ---------- Un objectif ----------
@@ -4491,13 +4647,7 @@ const QUESTIONS = [
       L.charger(MONTAGES[o.id]);
       extra(); questions(); retenir();
     }
-    function carteObjectif() {
-      const o = O[actif], st = rep.obj[o.id];
-      const tache = (t) => { const ok = !!st.t[t.id]; return `<li class="task${ok ? " ok" : ""}"><span class="tick">${ok ? SVG.check : ""}</span><span>${esc(t.texte)}</span></li>`; };
-      $("o-carte").innerHTML = `<div class="ex-head"><span class="kicker">Objectif ${actif + 1} · ${esc(o.competence)}</span>${objFait(o) ? '<span class="badge ok">Réussi</span>' : ""}</div>
-        <h3>${esc(o.titre)}</h3><p class="tag" style="align-self:flex-start">${esc(o.notion)}</p><p>${esc(o.but)}</p>
-        <ul class="tasks">${o.taches.map(tache).join("")}</ul>`;
-    }
+    function carteObjectif() { const o = O[actif]; $("o-carte").innerHTML = htmlMission(o, actif, rep.obj[o.id], objFait(o)); }
     function extra() {
       const o = O[actif], box = $("o-extra");
       if (o.id[0] === "w") return extraW(box, o);
@@ -4698,14 +4848,13 @@ const QUESTIONS = [
       C.textes.forEach((x, k) => {
         const el = $("ctw" + k);
         if (rep.concl[k]) { el.innerHTML = `<p class="trous-texte">${esc(x.texte.replace(/\[|\]/g, ""))}</p>`; return; }
-        widgetTrous(el, x.texte, x.pieges, () => { rep.concl[k] = true; sauver(); enregistrer(cle + "-concl" + k, 5, false, true); marquer($("ct" + k)); fin(); });
+        widgetTrous(el, x.texte, x.pieges, () => { rep.concl[k] = true; sauver(); enregistrer(cle + "-concl" + k, 5, false, true); marquerReussi($("ct" + k)); fin(); });
       });
       const elc = $("ctw-ch"), chn = C.chaine;
       if (rep.concl.chaine) { elc.innerHTML = `<p class="qtext">${esc(chn.nom)}</p>${legendeChaine}${chaineHTML(chn.elements, { perte: chn.perte })}`; marquerDefilement(elc); }
-      else widgetChaine(elc, chn, { mode: "essais", trous: chn.trous, distracteurs: chn.distracteurs, nbDistracteurs: 3, perte: chn.perte }, () => { rep.concl.chaine = true; sauver(); enregistrer(cle + "-concl-chaine", 10, false, true); marquer($("ct-ch")); fin(); });
+      else widgetChaine(elc, chn, { mode: "essais", trous: chn.trous, distracteurs: chn.distracteurs, nbDistracteurs: 3, perte: chn.perte }, () => { rep.concl.chaine = true; sauver(); enregistrer(cle + "-concl-chaine", 10, false, true); marquerReussi($("ct-ch")); fin(); });
       fin();
     }
-    function marquer(x) { if (!x) return; x.classList.add("reussi"); const b = x.querySelector(".badge"); b.textContent = "Réussi"; b.classList.add("ok"); }
     function fin() {
       const z = $("c-fin"); if (!z) return;
       if (!conclFaite()) { const n = tp.conclusion.textes.filter((x, k) => rep.concl[k]).length + (rep.concl.chaine ? 1 : 0); z.innerHTML = `<div class="level-line">Conclusion complétée <i><b style="width:${Math.round(100 * n / (NC + 1))}%"></b></i>${n}/${NC + 1}</div>`; return; }
@@ -4726,6 +4875,23 @@ const QUESTIONS = [
     const fx = (x, d) => (Math.round(x * 10 ** d) / 10 ** d).toFixed(d).replace(".", ",").replace("-", "−");
     const lireNombre = (s) => parseFloat(String(s).replace(/\s| /g, "").replace(",", ".").replace("−", "-"));
     const lisse = (p) => (p < 0.5 ? 2 * p * p : 1 - 2 * (1 - p) * (1 - p));
+    // Texte d'une étiquette, ajusté pour tenir dans un cadre (x, y, w, h) : retour à la ligne entre les mots,
+    // puis taille réduite si besoin. lignes : [{ t: texte, fs: taille, cls: classe }]. Largeur d'un caractère ≈ 0,6 × taille.
+    function texteAjuste(lignes, x, y, w, h) {
+      for (let k = 1; k >= 0.55; k -= 0.05) {
+        const blocs = lignes.map((l) => {
+          const fs = l.fs * k, maxC = Math.max(1, Math.floor(w / (fs * 0.6))), out = [];
+          String(l.t).split(" ").forEach((m) => { const d = out[out.length - 1]; if (d != null && (d + " " + m).length <= maxC) out[out.length - 1] = d + " " + m; else out.push(m); });
+          return { l, fs, out };
+        });
+        const H = blocs.reduce((a, b) => a + b.out.length * b.fs * 1.12, 0);
+        if (H <= h && blocs.every((b) => b.out.every((t) => t.length * b.fs * 0.6 <= w)) || k < 0.6) {
+          let yy = y + (h - H) / 2;
+          return blocs.map((b) => b.out.map((t) => { yy += b.fs * 1.12; return `<text x="${(x + w / 2).toFixed(1)}" y="${(yy - b.fs * 0.25).toFixed(1)}" class="${b.l.cls}" style="font-size:${b.fs.toFixed(2)}px" text-anchor="middle">${esc(t)}</text>`; }).join("")).join("");
+        }
+      }
+      return "";
+    }
 
     // ---------- 1. Le modèle chimique ----------
     const KW = 1e-14;
@@ -4839,37 +5005,37 @@ const QUESTIONS = [
         { id: "pou", type: "becher", role: "poubelle", V: 0, x: 14, y: 296 },
         { id: "pip", type: "pipette", vol: 10, x: 98, y: 30 }, { id: "pir", type: "pipeteur", x: 96, y: 196 },
         { id: "fio", type: "fiole", Vf: 100, x: 196, y: 120 }] },
-      "titrage-ph": { h: 440, montage: true, etal: true, objets: [
+      "titrage-ph": { h: 460, montage: true, etal: true, objets: [
         { id: "fs", type: "flacon", contenu: "soude", l1: "Soude", l2: "0,100 mol/L", x: 10, y: 10 },
         { id: "fj", type: "fiole", Vf: 100, contenu: "jusD", V: 100, ok: true, homog: true, x: 60, y: 6 },
         { id: "pis", type: "pissette", x: 10, y: 96 },
         { id: "bar", type: "barreau", x: 18, y: 186 },
-        { id: "pip", type: "pipette", vol: 20, x: 72, y: 196 }, { id: "pir", type: "pipeteur", x: 100, y: 200 },
+        { id: "pip", type: "pipette", vol: 20, x: 86, y: 196 }, { id: "pir", type: "pipeteur", x: 118, y: 200 },
         { id: "cap", type: "capteur", x: 228, y: 10 }, { id: "son", type: "sonde", x: 306, y: 96 },
         { id: "bur", type: "burette", x: 196, y: 150 },
         { id: "pot", type: "potence", x: 240, y: 116 },
         { id: "bt", type: "becher", role: "titrage", V: 0, Vmax: 100, x: 8, y: 290 },
-        { id: "pou", type: "becher", role: "poubelle", V: 0, x: 8, y: 366 },
+        { id: "pou", type: "becher", role: "poubelle", V: 0, x: 8, y: 376 },
         { id: "agi", type: "agitateur", x: 124, y: 398 }] },
-      "titrage-cond": { h: 346, objets: [
+      "titrage-cond": { h: 368, objets: [
         { id: "fs", type: "flacon", contenu: "soude", l1: "Soude", l2: "0,100 mol/L", x: 12, y: 20 },
         { id: "fj", type: "fiole", Vf: 100, contenu: "S", V: 100, ok: true, homog: true, label: "Solution S", x: 60, y: 14 },
         { id: "pis", type: "pissette", x: 14, y: 196 },
-        { id: "pip", type: "pipette", vol: 20, x: 196, y: 96 },
-        { id: "pir", type: "pipeteur", x: 66, y: 200 },
+        { id: "pip", type: "pipette", vol: 20, x: 202, y: 96 },
+        { id: "pir", type: "pipeteur", x: 74, y: 200 },
         { id: "pot", type: "potence", x: 110, y: 14 }, { id: "bur", type: "burette", sur: "pot" },
         { id: "agi", type: "agitateur", sur: "pot" },
-        { id: "pou", type: "becher", role: "poubelle", V: 0, sur: "agi" }, { id: "bt", type: "becher", role: "titrage", V: 0, Vmax: 400, x: 12, y: 270 },
-        { id: "bar", type: "barreau", x: 226, y: 126 },
+        { id: "pou", type: "becher", role: "poubelle", V: 0, sur: "agi" }, { id: "bt", type: "becher", role: "titrage", V: 0, Vmax: 400, x: 12, y: 284 },
+        { id: "bar", type: "barreau", x: 242, y: 126 },
         { id: "cap", type: "capteur", x: 222, y: 20 }, { id: "son", type: "sonde", x: 304, y: 100 },
-        { id: "epr", type: "eprouvette", x: 226, y: 196 }, { id: "bid", type: "bidon", x: 268, y: 270 }] },
+        { id: "epr", type: "eprouvette", x: 240, y: 196 }, { id: "bid", type: "bidon", x: 268, y: 300 }] },
       dilution: { h: 380, eauDabord: true, objets: [
         { id: "epi", type: "epi", x: 14, y: 16 },
-        { id: "fl", type: "flacon", contenu: "acide", l1: "Esprit de sel", l2: "w 23 % · d 1,11", danger: true, x: 16, y: 76 },
+        { id: "fl", type: "flacon", contenu: "acide", l1: "Esprit de sel", l2: "w\u00a0=\u00a023\u00a0% d\u00a0=\u00a01,11", danger: true, x: 16, y: 76 },
         { id: "bp", type: "becher", role: "prelev", V: 0, x: 14, y: 168 },
-        { id: "pis", type: "pissette", x: 90, y: 214 },
+        { id: "pis", type: "pissette", x: 96, y: 214 },
         { id: "pou", type: "becher", role: "poubelle", V: 0, x: 14, y: 296 },
-        { id: "pip", type: "pipette", vol: 5, x: 98, y: 30 }, { id: "pir", type: "pipeteur", x: 132, y: 220 },
+        { id: "pip", type: "pipette", vol: 5, x: 98, y: 30 }, { id: "pir", type: "pipeteur", x: 152, y: 220 },
         { id: "fio", type: "fiole", Vf: 500, x: 196, y: 70 }] }
     };
 
@@ -4905,7 +5071,7 @@ const QUESTIONS = [
           if (o.type === "becher") Object.assign(x, { V: o.V || 0, Vmax: o.Vmax || 100, nAf: 0, nCl: 0, nNa: 0, libre: 0, pKa: [], echant: false, barreau: false, eauAj: 0 });
           if (o.type === "pipette") Object.assign(x, { pipeteur: false, contenu: null, niv: 0, pret: false });
           if (o.type === "eprouvette") x.V = 0;
-          if (o.type === "fiole") Object.assign(x, { V: o.V || 0, contenu: o.contenu || null, mode: false, ok: !!o.ok, homog: !!o.homog, rate: false });
+          if (o.type === "fiole") Object.assign(x, { V: o.V || 0, contenu: o.contenu || null, mode: false, ok: !!o.ok, homog: !!o.homog, rate: false, melange: o.ok ? "fait" : null, bouche: false });
           if (o.type === "burette") Object.assign(x, { rempli: false, r: 0, c: D.c2, rinceSoude: false, malRincee: false, bulle: false, pret: false });
           S.objets[o.id] = x; S.ordre.push(o.id);
         });
@@ -5049,7 +5215,7 @@ const QUESTIONS = [
         if (t === "flacon") {
           g = `<rect x="15" y="0" width="14" height="8" rx="2" class="c-bouchon"/><rect x="13" y="7" width="18" height="10" class="c-verre"/>
             <path d="M4 22q0-6 9-6h18q9 0 9 6v38a4 4 0 01-4 4H8a4 4 0 01-4-4z" class="c-verre"/>${liquidePenche(o, 5, 17, 39, 63, 30, COUL[o.contenu], 0.75, `<path d="M5 22q0-5 8-5h1v-9h16v9h1q8 0 8 5v38a3 3 0 01-3 3H8a3 3 0 01-3-3z"/>`)}
-            <rect x="5" y="28" width="34" height="20" rx="2" class="c-etiq"/><text x="22" y="37" class="c-etiq-t" text-anchor="middle">${esc(o.l1)}</text><text x="22" y="45" class="c-etiq-p" text-anchor="middle">${esc(o.l2)}</text>
+            <rect x="5" y="23" width="34" height="26" rx="2" class="c-etiq"/>${texteAjuste([{ t: o.l1, fs: 7.5, cls: "c-etiq-t" }, { t: o.l2, fs: 5.8, cls: "c-etiq-p" }], 6.5, 24, 31, 24)}
             ${o.danger ? `<g transform="translate(30 50)"><path d="M6 0l6 6-6 6-6-6z" class="c-danger"/><text x="6" y="9" text-anchor="middle" class="c-danger-t">!</text></g>` : ""}`;
         } else if (t === "pissette") {
           g = `<path d="M18 14L30 4" class="c-tube"/><path d="M14 12h8v6h-8z" class="c-bouchon"/><path d="M6 24q0-6 6-6h12q6 0 6 6v34a4 4 0 01-4 4H10a4 4 0 01-4-4z" class="c-verre"/>${liquidePenche(o, 7, 19, 29, 61, 26, COUL.eau, 0.75, `<path d="M7 24q0-5 5-5h12q5 0 5 5v34a3 3 0 01-3 3H10a3 3 0 01-3-3z"/>`)}
@@ -5113,7 +5279,7 @@ const QUESTIONS = [
             <path d="M38 0v134C10 140 0 160 0 186c0 30 20 54 45 54s45-24 45-54c0-26-10-46-38-52V0" class="c-verre-o"/>
             <line x1="32" x2="58" y1="${yv(1)}" y2="${yv(1)}" class="c-jauge${o.mode ? " vif" : ""}"/><text x="45" y="214" class="c-etiq-t${k < 1 ? " gros" : ""}" text-anchor="middle">${fx(o.Vf, 1)} mL</text>
             ${o.label ? `<text x="45" y="196" class="c-etiq-t${k < 1 ? " gros" : ""}" text-anchor="middle">${esc(o.label)}</text>` : ""}
-            ${o.homog ? `<rect x="36" y="-8" width="18" height="10" rx="2" class="c-bouchon"/>` : ""}<rect x="0" y="0" width="90" height="240" fill="transparent"/></g>`;
+            ${o.homog || o.bouche ? `<rect x="36" y="-8" width="18" height="10" rx="2" class="c-bouchon"/>` : ""}<rect x="0" y="0" width="90" height="240" fill="transparent"/></g>`;
         } else if (t === "epi") {
           g = `<path d="M4 12q0-8 12-8h24q12 0 12 8v4q0 10-11 10-7 0-9-6h-4q-2 6-9 6-11 0-11-10z" class="${S.epi ? "c-epi on" : "c-epi"}"/><text x="28" y="40" class="c-boitier-t" text-anchor="middle">${S.epi ? "portés ✓" : "gants, lunettes"}</text><rect x="0" y="0" width="56" height="44" fill="transparent"/>`;
         }
@@ -5445,6 +5611,15 @@ const QUESTIONS = [
         F.mode = false; F.ok = true; message("Fiole ajustée au trait de jauge. Bouche-la et retourne-la plusieurs fois pour homogénéiser : touche la fiole.", "ok");
         ctx.evt("trait"); panneau(); dessinerTout();
       }
+      // Aux deux tiers : on bouche, on retourne la fiole 2 ou 3 fois, puis on enlève le bouchon pour compléter au trait
+      function melangerDeuxTiers(F) {
+        F.bouche = true; F.melange = "en cours"; dessinerTout();
+        suite([pause(0.3), vers(F, F.x, F.y - 16, 0.25), tourner(F, 170, 0.4), tourner(F, 0, 0.4), tourner(F, 170, 0.4), tourner(F, 0, 0.4), retour(F, 0.25), pause(0.25)], () => {
+          F.bouche = false; F.melange = "fait";
+          message("Fiole bouchée, retournée, puis débouchée : le mélange est homogène. Complète maintenant avec la pissette jusqu'au bas du col, puis au trait de jauge.", "ok");
+          ctx.evt("melange"); dessinerTout();
+        });
+      }
       function homogeneiser(F) {
         F.homog = true;
         suite([vers(F, F.x, F.y - 16, 0.25), tourner(F, 170, 0.4), tourner(F, 0, 0.4), tourner(F, 170, 0.4), tourner(F, 0, 0.4), retour(F, 0.25)], () => {
@@ -5506,6 +5681,7 @@ const QUESTIONS = [
           message(o.on ? (ok ? "Agitation en marche." : "L'agitateur tourne, mais aucun bécher avec un barreau aimanté n'est posé dessus : rien n'est agité.") : "Agitation arrêtée.", o.on && !ok ? "err" : "info");
         } else if (o.type === "becher") message(o.role === "titrage" ? `Bécher de titrage : ${fx(o.V, 0)} mL environ.${M.montage && !o.sur ? " Glisse-le sur l'agitateur, sous la burette." : ""}` : o.role === "poubelle" ? "Le bécher poubelle recueille les rinçages et les purges." : o.role === "prelev" ? "Bécher de prélèvement : on y verse un peu de solution, puis on pipette dedans." : "Bécher de " + NOMS[o.contenu] + ".", "info");
         else if (o.type === "fiole") {
+          if (o.melange === "attente") return melangerDeuxTiers(o);
           if (o.ok && !o.homog) return homogeneiser(o);
           message(o.homog && o.contenu ? `La fiole contient ${NOMS[o.contenu]} : tu peux y pipeter directement.` : `Fiole jaugée de ${fx(o.Vf, 1)} mL.`, "info");
         } else if (o.type === "epi") { S.epi = true; message("Gants et lunettes portés : tu peux manipuler l'acide concentré.", "ok"); ctx.evt("epi"); }
@@ -5609,7 +5785,8 @@ const QUESTIONS = [
               }
               message("Verse d'abord le prélèvement (pipette ajustée) dans la fiole, puis complète avec l'eau.", "err"); return;
             }
-            if (F.V < 0.7 * F.Vf) { pissetteVers(m, bx, by, 1.0, (q) => { F.V = v0 + (F.Vf * 0.75 - v0) * q; }, () => { F.V = F.Vf * 0.75; message("Fiole remplie aux trois quarts : on mélange un peu, puis on complète jusqu'au trait (touche encore la fiole avec la pissette).", "info"); }); return; }
+            if (F.V < 0.6 * F.Vf) { pissetteVers(m, bx, by, 1.0, (q) => { F.V = v0 + (F.Vf * 2 / 3 - v0) * q; }, () => { F.V = r2(F.Vf * 2 / 3); F.melange = "attente"; S.main = null; message("Fiole remplie aux deux tiers. Avant de compléter : bouche la fiole et homogénéise (pose la pissette, puis touche la fiole).", "info"); dessinerTout(); majMain(); }); return; }
+            if (F.melange === "attente") { message("Homogénéise d'abord : bouche la fiole et retourne-la (pose la pissette, puis touche la fiole). Ensuite seulement, tu complèteras jusqu'au trait.", "err"); return; }
             const cible = r2(F.Vf - GOUTTE * (F.Vf >= 500 ? nGouttes(48, 72) : nGouttes(14, 30))); // sous le trait, d'un nombre entier de gouttes
             pissetteVers(m, bx, by, 0.9, (q) => { F.V = v0 + (cible - v0) * q; }, () => { F.V = cible; F.mode = true; message("Tu as complété jusqu'au bas du col. Termine au trait de jauge en regardant la loupe sur la paillasse.", "info"); panneau(); dessinerTout(); });
             return;
@@ -5922,6 +6099,8 @@ const QUESTIONS = [
       const T = rep.tirage, Dk = DONNEES[kind], VeVrai = Dk.Ve(T);
       const O = lab.objectifs, NC = O.length;
       O.forEach((o) => { rep.obj[o.id] = rep.obj[o.id] || { t: {}, q: [] }; });
+      // Étape « homogénéiser aux deux tiers » ajoutée le 05/11/2026 : une dilution déjà réussie avant reste réussie
+      O.forEach((o) => { const t = rep.obj[o.id].t; if (t.trait && !t.melange && o.taches.some((x) => x.id === "melange")) t.melange = true; });
       const objFait = (o) => o.taches.every((t) => rep.obj[o.id].t[t.id]) && o.questions.every((q, k) => rep.obj[o.id].q.indexOf(k) >= 0);
       const ongletOuvert = (i) => modeProf() || O.slice(0, i).every(objFait);
       let actif = O.findIndex((o, i) => !objFait(o) && ongletOuvert(i)); if (actif < 0) actif = NC;
@@ -5943,20 +6122,8 @@ const QUESTIONS = [
       };
 
       function onglets() {
-        $("otabs").innerHTML = O.map((o, i) => {
-          const ok = objFait(o), open = ongletOuvert(i);
-          return `<button class="otab${i === actif ? " cur" : ""}${ok ? " done" : ""}" role="tab" aria-selected="${i === actif}" data-i="${i}" ${open ? "" : 'aria-disabled="true"'}>
-            <span class="onum">${ok ? SVG.check : open ? i + 1 : SVG.lock}</span><span class="olbl">${esc(o.onglet || o.competence)}</span></button>`;
-        }).join("") + (() => {
-          const open = ongletOuvert(NC), ok = !!fait(ck);
-          return `<button class="otab concl${actif === NC ? " cur" : ""}${ok ? " done" : ""}" role="tab" aria-selected="${actif === NC}" data-i="${NC}" ${open ? "" : 'aria-disabled="true"'}>
-            <span class="onum">${ok ? SVG.check : open ? SVG.etoile : SVG.lock}</span><span class="olbl">Conclure</span></button>`;
-        })();
-        $("otabs").querySelectorAll(".otab").forEach((b) => b.onclick = () => {
-          const i = +b.dataset.i;
-          if (!ongletOuvert(i)) { toast(i === NC ? "Réussis d'abord tous les objectifs" : "Réussis d'abord l'objectif précédent"); return; }
-          actif = i; afficher(); $("otabs").scrollIntoView({ behavior: "smooth", block: "start" });
-        });
+        $("otabs").innerHTML = htmlOnglets(O, actif, objFait, ongletOuvert, !!fait(ck));
+        brancherOnglets(NC, ongletOuvert, (i) => { actif = i; afficher(); });
       }
       function afficher() { if (B) { B.stop(); B = null; } onglets(); majNav(); if (actif >= NC) afficherConclusion(); else afficherObjectif(); }
 
@@ -5968,13 +6135,7 @@ const QUESTIONS = [
         if (o.banc) { essai = { points: [], eauAvant: null }; B = banc($("o-banc"), o.banc, { kind, tirage: T, evt: evenement }); }
         extra(); questions(); retenir();
       }
-      function carte() {
-        const o = O[actif], st = rep.obj[o.id];
-        const tache = (t) => { const ok = !!st.t[t.id]; return `<li class="task${ok ? " ok" : ""}"><span class="tick">${ok ? SVG.check : ""}</span><span>${esc(t.texte)}</span></li>`; };
-        $("o-carte").innerHTML = `<div class="ex-head"><span class="kicker">Objectif ${actif + 1} · ${esc(o.competence)}</span>${objFait(o) ? '<span class="badge ok">Réussi</span>' : ""}</div>
-          <h3>${esc(o.titre)}</h3><p class="tag" style="align-self:flex-start">${esc(o.notion)}</p><p>${esc(o.but)}</p>
-          ${o.taches.length ? `<ul class="tasks">${o.taches.map(tache).join("")}</ul>` : ""}`;
-      }
+      function carte() { const o = O[actif]; $("o-carte").innerHTML = htmlMission(o, actif, rep.obj[o.id], objFait(o)); }
       function cocher(id) {
         const o = O[actif], st = rep.obj[o.id];
         if (st.t[id] || !o.taches.some((t) => t.id === id)) return;
@@ -6025,7 +6186,7 @@ const QUESTIONS = [
       function evenement(type, d) {
         if (actif >= NC) return;
         const o = O[actif], S = B ? B.etat() : null;
-        const map = { etal7: "etal7", etal4: "etal4", epi: "epi", eauFiole: "eau", acideFiole: "acide", jusFiole: "jus", trait: "trait", homog: "homog", burettePrete: "burette", monte: "monte", becherPrelev: "becher", ajuste: "pipette" };
+        const map = { etal7: "etal7", etal4: "etal4", epi: "epi", eauFiole: "eau", acideFiole: "acide", jusFiole: "jus", trait: "trait", homog: "homog", melange: "melange", burettePrete: "burette", monte: "monte", becherPrelev: "becher", ajuste: "pipette" };
         if (map[type]) cocher(map[type]);
         if (type === "rinceSonde" && rep.obj[o.id].t.etal7) cocher("rince");
         if (type === "prelever") cocher("prelever");
@@ -6293,11 +6454,10 @@ const QUESTIONS = [
         C.textes.forEach((x, k) => {
           const el = $("ctw" + k);
           if (rep.concl[k]) { el.innerHTML = `<p class="trous-texte">${esc(x.texte.replace(/\[|\]/g, ""))}</p>`; return; }
-          widgetTrous(el, x.texte, x.pieges, () => { rep.concl[k] = true; sauver(); enregistrer(ck + "-concl" + k, 5, false, true); marquer($("ct" + k)); fin(); });
+          widgetTrous(el, x.texte, x.pieges, () => { rep.concl[k] = true; sauver(); enregistrer(ck + "-concl" + k, 5, false, true); marquerReussi($("ct" + k)); fin(); });
         });
         fin();
       }
-      function marquer(x) { if (!x) return; x.classList.add("reussi"); const b = x.querySelector(".badge"); b.textContent = "Réussi"; b.classList.add("ok"); }
       function calculPH(el, Ve) {
         const R = resultats(Ve), pr = (v, r) => Math.abs(v - r) <= 0.03 * Math.abs(r);
         rep.cg = rep.cg || {}; if (rep.concl.calc) rep.cg.n = 5;
@@ -6313,14 +6473,14 @@ const QUESTIONS = [
           { consigne: "Concentration en masse Cₘ d'acide citrique dans le jus pressé (M = 192,1 g·mol⁻¹).", formule: "Cₘ = c × M.", nom: "Cₘ", unite: "g/L", val: () => R.Cm,
             aide: (v) => pr(v, R.cj / 192.1) ? "C'est une multiplication : Cₘ = c × M." : pr(v, R.c1 * 192.1) ? "Utilise c (jus pressé), pas c₁ (jus dilué)." : "Multiplie c par la masse molaire M.", corrige: () => `Cₘ = ${fx(R.cj, 3)} × 192,1 ≈ ${fx(R.Cm, 0)} g·L⁻¹` }
         ];
-        calculsGuides(el, etapes, rep.cg, () => { if (!rep.concl.calc) { rep.concl.calc = true; sauver(); enregistrer(ck + "-calc", 10, false, true); marquer($("cc-calc")); } fin(); });
+        calculsGuides(el, etapes, rep.cg, () => { if (!rep.concl.calc) { rep.concl.calc = true; sauver(); enregistrer(ck + "-calc", 10, false, true); marquerReussi($("cc-calc")); } fin(); });
       }
       function bonus(el, Ve) {
         const R = resultats(Ve), m = R.Cm * 0.20;
         if (rep.concl.bonus) { el.innerHTML = `<p class="small">Dans un verre de 20 cL de jus pur : m = Cₘ × V ≈ ${fx(R.Cm, 0)} × 0,20 ≈ <b>${fx(m, 1)} g</b> d'acide citrique.</p>`; return; }
         questionNombre(el, { question: "Maïlys boit un verre de 20 cL de jus pur. Quelle masse d'acide citrique contient-il ?", unite: "g", reponse: m, tol: 0.04,
           explication: `m = Cₘ × V = ${fx(R.Cm, 0)} g·L⁻¹ × 0,20 L ≈ ${fx(m, 1)} g. (20 cL = 0,20 L.)`, aide: "Convertis 20 cL en litres (0,20 L), puis multiplie par Cₘ.",
-          erreurs: [{ v: R.Cm * 20, aide: "20 cL ne font pas 20 L : convertis en litres (20 cL = 0,20 L)." }, { v: R.Cm * 2, aide: "20 cL = 0,20 L (et non 2 L)." }] }, () => { rep.concl.bonus = true; sauver(); enregistrer(ck + "-bonus", 5, false, true); marquer($("cc-bonus")); });
+          erreurs: [{ v: R.Cm * 20, aide: "20 cL ne font pas 20 L : convertis en litres (20 cL = 0,20 L)." }, { v: R.Cm * 2, aide: "20 cL = 0,20 L (et non 2 L)." }] }, () => { rep.concl.bonus = true; sauver(); enregistrer(ck + "-bonus", 5, false, true); marquerReussi($("cc-bonus")); });
       }
       function champ(id, lab2, unite) { return `<div class="calc-in"><label class="small" for="${id}">${lab2}</label><input type="text" id="${id}" inputmode="decimal" autocomplete="off"><span class="u">${unite}</span></div>`; }
       function calculCond(el, Ve) {
@@ -6334,7 +6494,7 @@ const QUESTIONS = [
           const a = lireNombre($("cc-a").value), b = lireNombre($("cc-b").value), fb = el.querySelector(".fbz");
           if (isNaN(a) || isNaN(b)) { fb.innerHTML = `<p class="error">Écris un nombre dans chaque case.</p>`; return; }
           const pr = (x, ref) => Math.abs(x - ref) <= 0.03 * Math.abs(ref), okA = pr(a, R.cS), okB = pr(b, R.c);
-          if (okA && okB) { rep.concl.calc = true; sauver(); enregistrer(ck + "-calc", 10, false, true); el.querySelector("[data-v]").disabled = true; fb.innerHTML = corr; marquer($("cc-calc")); fin(); }
+          if (okA && okB) { rep.concl.calc = true; sauver(); enregistrer(ck + "-calc", 10, false, true); el.querySelector("[data-v]").disabled = true; fb.innerHTML = corr; marquerReussi($("cc-calc")); fin(); }
           else fb.innerHTML = `<div class="feedback ko"><strong>${okA || okB ? "Un résultat juste sur 2" : "Pas encore"}</strong><span>${esc((okA ? "" : "c(S) = c₂ × Vₑ ÷ V₁. ") + (okB ? "" : pr(b, R.c / 100) ? "c : n'oublie pas le facteur de dilution 100." : "c = 100 × c(S)."))}</span></div>`;
         };
       }
@@ -6358,7 +6518,7 @@ const QUESTIONS = [
         if (rep.concl.val) { el.innerHTML = `<div class="feedback ok"><strong>Validé</strong><span>${esc(q.explication)}</span></div><div class="feedback ok"><span>${esc(q2.explication)}</span></div>`; return; }
         el.innerHTML = `<div class="stack" id="vq1"></div><div class="stack" id="vq2"></div>`;
         let ok1 = false, ok2 = false;
-        const fini = () => { if (ok1 && ok2) { rep.concl.val = true; sauver(); enregistrer(ck + "-val", 10, false, true); marquer($("cc-val")); fin(); } };
+        const fini = () => { if (ok1 && ok2) { rep.concl.val = true; sauver(); enregistrer(ck + "-val", 10, false, true); marquerReussi($("cc-val")); fin(); } };
         monterExemple($("vq1"), { type: "qcm", variantes: [q] }, () => { ok1 = true; fini(); });
         monterExemple($("vq2"), { type: "qcm", variantes: [q2] }, () => { ok2 = true; fini(); });
       }
@@ -6381,8 +6541,641 @@ const QUESTIONS = [
     }
     return { vueLabos, _test: { pHeq, sigma, DONNEES, tangentes, modele, pointsIdeaux, cEtiquette } };
   })();
+  // ======================= Chapitre 0 : unités, conversions et puissances de 10 (tout de tête) =======================
+  // Un chapitre 0 par niveau, avec 3 parties au plus. Les questions ne sont pas écrites une par une :
+  // des « générateurs » les fabriquent au hasard (valeurs, unités, contextes), avec des distracteurs
+  // tirés des erreurs courantes (mauvais sens de conversion, décalage d'un rang, oubli d'un préfixe…).
+  // Chaque partie se joue de 3 façons : Échauffement, Contre la montre, Vrai ou faux éclair ; plus un Grand défi mélangé.
+  // Pour ouvrir le chapitre 0 d'un niveau aux élèves : "3e-outils": true dans REGLAGES (02_markup_reglages.html).
+  const OUTILS = (() => {
+    // ---------- 1. Des nombres exacts : valeur = m × 10^e (m entier), pour éviter les erreurs d'arrondi ----------
+    const SUP = { "-": "⁻", 0: "⁰", 1: "¹", 2: "²", 3: "³", 4: "⁴", 5: "⁵", 6: "⁶", 7: "⁷", 8: "⁸", 9: "⁹" };
+    const puiss = (n) => "10" + String(n).split("").map((c) => SUP[c]).join("");
+    const NB = " "; // espace insécable
+    function N(m, e) { m = Math.round(m); if (m === 0) return { m: 0, e: 0 }; while (m % 10 === 0) { m /= 10; e++; } return { m, e }; }
+    function lire(s) { const [a, b = ""] = String(s).split("."); return N(parseInt(a + b, 10), -b.length); } // "3.5" → 35 × 10⁻¹
+    const decale = (x, k) => N(x.m, x.e + k);
+    const ordre = (x) => x.e + String(Math.abs(x.m)).length - 1; // x = a × 10^ordre, 1 ≤ a < 10
+    function dec(x) { // écriture décimale à la française : 3 500 ; 0,045
+      let s = String(Math.abs(x.m)), ent, frac = "";
+      if (x.e >= 0) ent = s + "0".repeat(x.e);
+      else { const k = -x.e; s = s.padStart(k + 1, "0"); ent = s.slice(0, s.length - k); frac = s.slice(s.length - k); }
+      return (x.m < 0 ? "−" : "") + ent.replace(/\B(?=(\d{3})+(?!\d))/g, NB) + (frac ? "," + frac : "");
+    }
+    function sci(x) { const n = ordre(x); return dec(N(x.m, x.e - n)) + NB + "×" + NB + puiss(n); }
+    const ecrire = (x) => (x.m && (ordre(x) >= 9 || ordre(x) <= -5) ? sci(x) : dec(x)); // très grand ou très petit : notation scientifique
+    const pick = (t) => t[hasard(0, t.length - 1)];
+    const minus = (t) => (/^[A-ZÀ-Ý][a-zà-ÿ ]/.test(t) ? t.charAt(0).toLowerCase() + t.slice(1) : t); // « Si pH… » → « si pH… » en milieu de phrase
+    const nz = (a, b) => { let x; do x = hasard(a, b); while (x === 0); return x; }; // exposant non nul
+    // Garde les distracteurs différents de la bonne réponse et entre eux ; complète si besoin
+    function trois(bonne, cands, secours) {
+      const vus = new Set([bonne]), out = [];
+      const zero = /10⁰/.test(bonne); // pas de « 10⁰ » comme piège (déroutant), sauf si c'est la réponse
+      cands.concat(secours || []).forEach((c) => { if (c != null && !vus.has(c) && (zero || !/10⁰/.test(c)) && out.length < 3) { vus.add(c); out.push(c); } });
+      return out;
+    }
+
+    // ---------- 2. Les grandeurs et leurs unités ----------
+    const G = {
+      longueur: { n: "la longueur", u: "mètre", s: "m", app: "une règle ou un mètre ruban" },
+      masse: { n: "la masse", u: "kilogramme", s: "kg", app: "une balance" },
+      volume: { n: "le volume", u: "litre", s: "L", app: "une éprouvette graduée", note: "On utilise aussi le mètre cube (m³)." },
+      duree: { n: "la durée", u: "seconde", s: "s", app: "un chronomètre" },
+      temperature: { n: "la température", u: "degré Celsius", s: "°C", app: "un thermomètre" },
+      intensite: { n: "l'intensité du courant électrique", u: "ampère", s: "A", app: "un ampèremètre" },
+      tension: { n: "la tension électrique", u: "volt", s: "V", app: "un voltmètre" },
+      resistance: { n: "la résistance électrique", u: "ohm", s: "Ω", app: "un ohmmètre" },
+      puissance: { n: "la puissance", u: "watt", s: "W", app: "un wattmètre" },
+      energie: { n: "l'énergie", u: "joule", s: "J", app: "un joulemètre" },
+      vitesse: { n: "la vitesse", u: "mètre par seconde", s: "m/s", app: "un cinémomètre (radar)" },
+      poids: { n: "le poids", u: "newton", s: "N", app: "un dynamomètre" },
+      force: { n: "la valeur d'une force", u: "newton", s: "N", app: "un dynamomètre" },
+      frequence: { n: "la fréquence", u: "hertz", s: "Hz" },
+      massevol: { n: "la masse volumique", u: "kilogramme par mètre cube", s: "kg/m³" },
+      qmat: { n: "la quantité de matière", u: "mole", s: "mol" },
+      cmass: { n: "la concentration en masse", u: "gramme par litre", s: "g/L" },
+      cmol: { n: "la concentration en quantité de matière", u: "mole par litre", s: "mol/L" },
+      mmol: { n: "la masse molaire", u: "gramme par mole", s: "g/mol" },
+      pression: { n: "la pression", u: "pascal", s: "Pa", app: "un manomètre" },
+      tempK: { n: "la température absolue", u: "kelvin", s: "K" },
+      charge: { n: "la charge électrique", u: "coulomb", s: "C" },
+      dB: { n: "le niveau d'intensité sonore", u: "décibel", s: "dB", app: "un sonomètre" },
+      isonore: { n: "l'intensité sonore", u: "watt par mètre carré", s: "W/m²" },
+      conductivite: { n: "la conductivité", u: "siemens par mètre", s: "S/m", app: "un conductimètre" },
+      absorbance: { n: "l'absorbance", u: "", s: "", app: "un spectrophotomètre" },
+      ph: { n: "le pH", u: "", s: "", app: "un pH-mètre" },
+      activite: { n: "l'activité d'une source radioactive", u: "becquerel", s: "Bq", app: "un compteur Geiger" },
+      capacite: { n: "la capacité d'un condensateur", u: "farad", s: "F" }
+    };
+    const unite = (g) => (g.s ? `${g.u} (${g.s})` : "sans unité");
+    const plur = (u) => u.replace(/^(\S+)/, (w) => (/[sxz]$/.test(w) ? w : w + "s")); // degré Celsius → degrés Celsius
+    const FEM = /^(seconde|mole|minute|heure|tonne)/;
+    const le = (u) => (/^[aeiouéè]/i.test(u) ? "l'" : FEM.test(u) ? "la " : "le ") + u;
+    const du = (u) => (/^[aeiouéè]/i.test(u) ? "de l'" : FEM.test(u) ? "de la " : "du ") + u;
+    const de = (n) => (/^le /.test(n) ? n.replace(/^le /, "du ") : "de " + n); // de + le volume → du volume
+    const sgn = (n) => String(n).replace("-", "−");
+    const sg = (n) => (n < 0 ? `(−${-n})` : String(n)); // exposant négatif entre parenthèses dans un calcul
+    const NOMS_U = { km: "kilomètre", m: "mètre", cm: "centimètre", mm: "millimètre", "µm": "micromètre", nm: "nanomètre", t: "tonne", kg: "kilogramme", g: "gramme",
+      mg: "milligramme", L: "litre", mL: "millilitre", cL: "centilitre", "m³": "mètre cube", hL: "hectolitre", min: "minute", s: "seconde", ms: "milliseconde", h: "heure", "°C": "degré Celsius",
+      V: "volt", A: "ampère", mA: "milliampère", W: "watt", kW: "kilowatt", MW: "mégawatt", kWh: "kilowattheure", J: "joule", N: "newton", "Ω": "ohm", "km/h": "kilomètre par heure",
+      "m/s": "mètre par seconde", Hz: "hertz", kHz: "kilohertz", hPa: "hectopascal", Pa: "pascal", bar: "bar", "g/L": "gramme par litre", "mol/L": "mole par litre", mol: "mole",
+      "µs": "microseconde", dB: "décibel", "W/m²": "watt par mètre carré", eV: "électronvolt", "g/mol": "gramme par mole", "µS/cm": "microsiemens par centimètre", Bq: "becquerel",
+      "µF": "microfarad", "µA": "microampère", "kΩ": "kiloohm", "MΩ": "mégaohm", GW: "gigawatt", MJ: "mégajoule", kJ: "kilojoule", Wh: "wattheure", kN: "kilonewton", "kg/m³": "kilogramme par mètre cube",
+      "g/cm³": "gramme par centimètre cube", "mg/L": "milligramme par litre", "mg/mL": "milligramme par millilitre", "mol/m³": "mole par mètre cube", kPa: "kilopascal", K: "kelvin", C: "coulomb",
+      "S/m": "siemens par mètre", "mS/cm": "millisiemens par centimètre", F: "farad", nF: "nanofarad", mmol: "millimole", "µmol": "micromole", MHz: "mégahertz", "dm³": "décimètre cube", "cm³": "centimètre cube", mV: "millivolt", "mmol/L": "millimole par litre", kV: "kilovolt", "mol·L⁻¹·s⁻¹": "mole par litre et par seconde", "UA": "unité astronomique" };
+    const nomU = (s) => (NOMS_U[s] ? `${s} (${NOMS_U[s]})` : s);
+
+    // ---------- 3. Générateurs : partie « Unités » ----------
+    // Chaque générateur rend { q (énoncé), a (bonne réponse), d (3 distracteurs), e (explication), vf (affirmation, {} = réponse) }
+    const autres = (P, g, f) => melanger(P.grandeurs.map((k) => G[k]).filter((x) => x !== g && f(x)));
+    function uUnite(diff, P) {
+      const g = G[pick(P.grandeurs)];
+      return { q: `Quelle est l'unité ${de(g.n)} ?`, a: unite(g), d: trois(unite(g), autres(P, g, (x) => x.s !== g.s).map(unite), ["seconde (s)", "mètre (m)", "gramme (g)"]),
+        e: g.s ? `${cap(g.n)} s'exprime en ${plur(g.u)} (${g.s}). ${g.note || ""}` : `${cap(g.n)} est un nombre sans unité.`, vf: `L'unité ${de(g.n)} : {}.` };
+    }
+    function uGrandeur(diff, P) {
+      const cands = P.grandeurs.map((k) => G[k]).filter((g) => g.s && P.grandeurs.filter((k) => G[k].s === g.s).length === 1);
+      const g = pick(cands);
+      return { q: `Quelle grandeur s'exprime en ${plur(g.u)} (${g.s}) ?`, a: cap(g.n), d: trois(cap(g.n), autres(P, g, (x) => x.s !== g.s).map((x) => cap(x.n))),
+        e: `${cap(le(g.u))} (${g.s}) est l'unité ${de(g.n)}.`, vf: `{} s'exprime en ${plur(g.u)} (${g.s}).` };
+    }
+    function uSymbole(diff, P) {
+      const g = pick(P.grandeurs.map((k) => G[k]).filter((x) => x.s && x.s.length <= 4));
+      const syms = autres(P, g, (x) => x.s && x.s !== g.s).map((x) => x.s).concat(["W", "V", "g", "K", "m"]);
+      if (Math.random() < 0.5) return { q: `Quel est le symbole ${du(g.u)} ?`, a: g.s, d: trois(g.s, syms), e: `${cap(le(g.u))} se note ${g.s}.`, vf: `Le symbole ${du(g.u)} est {}.` };
+      const fa = autres(P, g, (x) => x.s && x.s !== g.s).map((x) => x.u);
+      return { q: `Que signifie le symbole d'unité « ${g.s} » ?`, a: g.u, d: trois(g.u, fa, ["gramme", "mètre", "seconde"]), e: `${g.s} est le symbole ${du(g.u)}, unité ${de(g.n)}.`, vf: `Le symbole « ${g.s} » désigne l'unité : {}.` };
+    }
+    function uAppareil(diff, P) {
+      const g = pick(P.grandeurs.map((k) => G[k]).filter((x) => x.app));
+      const apps = autres(P, g, (x) => x.app).map((x) => x.app).concat(["un thermomètre", "une balance", "un chronomètre", "un voltmètre"]);
+      return { q: `Quel appareil permet de mesurer ${g.n} ?`, a: cap(g.app), d: trois(cap(g.app), apps.map(cap)), e: `On mesure ${g.n} avec ${g.app}.`, vf: `{} permet de mesurer ${g.n}.` };
+    }
+    function uAdaptee(diff, P) {
+      const [objet, bonne, ...mauvaises] = pick(P.contextes);
+      return { q: `Quelle unité est la mieux adaptée pour exprimer ${objet} ?`, a: nomU(bonne), d: trois(nomU(bonne), melanger(mauvaises).map(nomU)),
+        e: `Pour ${objet}, on utilise le plus souvent ${le(NOMS_U[bonne] || bonne)} (${bonne}).`, vf: `Pour exprimer ${objet}, l'unité la mieux adaptée est : {}.` };
+    }
+    // Unités (avec préfixes) de chaque grandeur, pour « laquelle est une unité de… » et « trouve l'intrus »
+    const UNITES_DE = { longueur: ["km", "m", "cm", "mm", "µm", "nm"], masse: ["t", "kg", "g", "mg"], volume: ["m³", "L", "mL", "cL", "dm³", "cm³"], duree: ["h", "min", "s", "ms"],
+      temperature: ["°C"], intensite: ["A", "mA", "µA"], tension: ["V", "mV", "kV"], resistance: ["Ω", "kΩ", "MΩ"], puissance: ["W", "kW", "MW", "GW"], energie: ["J", "kJ", "MJ", "kWh", "Wh"],
+      vitesse: ["m/s", "km/h"], poids: ["N", "kN"], force: ["N", "kN"], frequence: ["Hz", "kHz", "MHz"], massevol: ["kg/m³", "g/cm³"], qmat: ["mol", "mmol", "µmol"], cmass: ["g/L", "mg/L", "mg/mL"],
+      cmol: ["mol/L", "mmol/L", "mol/m³"], mmol: ["g/mol"], pression: ["Pa", "hPa", "kPa", "bar"], tempK: ["K"], charge: ["C"], dB: ["dB"], isonore: ["W/m²"], conductivite: ["S/m", "mS/cm", "µS/cm"],
+      activite: ["Bq"], capacite: ["F", "µF", "nF"] };
+    // Au collège, on ne garde que les unités courantes (pas de µm, nm, GW…)
+    const COURANTES = new Set(["km", "m", "cm", "mm", "t", "kg", "g", "mg", "m³", "L", "mL", "cL", "h", "min", "s", "°C", "A", "mA", "V", "mV", "kV", "W", "kW", "MW", "J", "kJ", "kWh", "Wh", "N", "m/s", "km/h", "Ω", "kΩ"]);
+    const unitesDe = (P, k) => (UNITES_DE[k] || []).filter((u) => !P.college || COURANTES.has(u));
+    function unitesAutres(P, g) { const mien = new Set(UNITES_DE[P.grandeurs.find((k) => G[k] === g)] || []); return melanger([].concat(...P.grandeurs.filter((k) => G[k] !== g).map((k) => unitesDe(P, k)))).filter((u) => !mien.has(u)); }
+    function uFamille(diff, P) {
+      const k = pick(P.grandeurs.filter((x) => unitesDe(P, x).length)), g = G[k], a = nomU(pick(unitesDe(P, k)));
+      return { q: `Laquelle de ces unités est une unité ${de(g.n)} ?`, a, d: trois(a, unitesAutres(P, g).map(nomU)), e: `Unités ${de(g.n)} : ${unitesDe(P, k).join(", ")}.`, vf: `{} est une unité ${de(g.n)}.` };
+    }
+    function uRelation(diff, P) {
+      const [q, a, d, e] = pick(P.relations);
+      return { q, a, d: trois(a, melanger(d)), e, vf: q.replace("…", " {}.").replace(/ \?$/, " : {}.") };
+    }
+
+    // ---------- 4. Générateurs : partie « Conversions » ----------
+    // Collège : tableau de conversion, facteurs 10, 100 ou 1 000 seulement (unités courantes, nombres simples).
+    // Lycée : on remplace le préfixe par sa puissance de 10 (25 mL = 25 × 10⁻³ L).
+    // Familles d'unités : [symbole, exposant de 10 par rapport à l'unité de base]
+    const FAM = {
+      longueur: [["km", 3], ["hm", 2], ["dam", 1], ["m", 0], ["dm", -1], ["cm", -2], ["mm", -3], ["µm", -6], ["nm", -9]],
+      masse: [["t", 6], ["kg", 3], ["g", 0], ["mg", -3], ["µg", -6]],
+      volume: [["m³", 3], ["L", 0], ["dL", -1], ["cL", -2], ["mL", -3], ["µL", -6]],
+      puissance: [["GW", 9], ["MW", 6], ["kW", 3], ["W", 0]],
+      energie: [["MJ", 6], ["kJ", 3], ["J", 0]],
+      wh: [["kWh", 3], ["Wh", 0]],
+      intensite: [["A", 0], ["mA", -3]],
+      tension: [["kV", 3], ["V", 0], ["mV", -3]],
+      frequence: [["MHz", 6], ["kHz", 3], ["Hz", 0]],
+      pression: [["kPa", 3], ["hPa", 2], ["Pa", 0]],
+      duree: [["s", 0], ["ms", -3], ["µs", -6]],
+      qmat: [["mol", 0], ["mmol", -3], ["µmol", -6]],
+      cmol: [["mol/L", 0], ["mmol/L", -3]],
+      cmass: [["g/L", 0], ["mg/L", -3]]
+    };
+    // Valeurs simples : entiers d'abord, puis une seule décimale (1,5 ; 2,5…)
+    const VALEURS = [["1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "12", "15", "20", "25", "50"], ["0.5", "1.5", "2.5", "3.5", "4.5", "7.5"], ["0.2", "0.25", "12.5", "0.8", "125"]];
+    const valeur = (diff) => lire(pick([].concat(...VALEURS.slice(0, diff))));
+    const facteur = (k) => dec(N(1, Math.abs(k)));
+    function couple(P) { // deux unités de la même famille, assez proches
+      for (let essai = 0; essai < 50; essai++) {
+        const [fam, liste] = pick(Object.entries(P.familles));
+        const us = FAM[fam].filter(([s]) => liste.includes(s));
+        const [u1, e1] = pick(us), [u2, e2] = pick(us.filter(([s]) => s !== u1));
+        if (e1 !== e2 && Math.abs(e1 - e2) <= P.maxK) return { u1, u2, k: e1 - e2 };
+      }
+      return { u1: "km", u2: "m", k: 3 };
+    }
+    // Collège : « 2,5 km = … m »
+    function cTableau(diff, P) {
+      for (let essai = 0; essai < 40; essai++) {
+        const { u1, u2, k } = couple(P), x = valeur(diff), r = decale(x, k);
+        if (ordre(r) > 5 || ordre(r) < -3) continue; // pas plus de 3 chiffres après la virgule, pas de nombre géant
+        const f = (y) => dec(y) + NB + u2;
+        const e = k > 0 ? `1 ${u1} = ${facteur(k)} ${u2} : on multiplie par ${facteur(k)}.` : `1 ${u2} = ${facteur(k)} ${u1} : on divise par ${facteur(k)}.`;
+        return { q: `${dec(x)} ${u1} = … ${u2}`, a: f(r), d: trois(f(r), [decale(x, -k)].concat(melanger([decale(r, 1), decale(r, -1), decale(r, k > 0 ? -1 : 1)])).map(f)), e, vf: `${dec(x)} ${u1} = {}` };
+      }
+      return cDuree(diff, P);
+    }
+    // Collège : « Pour convertir des km en m, on… »
+    function cQuelCalcul(diff, P) {
+      const { u1, u2, k } = couple(P), op = (kk) => (kk > 0 ? "multiplie par " : "divise par ") + facteur(kk);
+      const a = op(k), autres = [op(-k), (k > 0 ? "multiplie par " : "divise par ") + facteur(Math.abs(k) === 3 ? 2 : 3), (k > 0 ? "divise par " : "multiplie par ") + facteur(Math.abs(k) === 1 ? 2 : 1)];
+      return { q: `Pour convertir des ${u1} en ${u2}, on…`, a, d: trois(a, autres, ["multiplie par 10", "divise par 100"]),
+        e: k > 0 ? `${u2} est plus petit que ${u1} : le nombre devient plus grand, on ${a}.` : `${u2} est plus grand que ${u1} : le nombre devient plus petit, on ${a}.`, vf: `Pour convertir des ${u1} en ${u2}, on {}.` };
+    }
+    // Durées (collège) : la base 60, sans piège compliqué
+    function cDuree(diff, P) {
+      const nb = (x) => dec(lire(String(+x.toPrecision(10))));
+      const types = [
+        () => { const h = pick(diff === 1 ? [1, 2, 3] : [1, 2, 3, 0.5]); return [`${nb(h)} h = … min`, h * 60, "min", [h * 100, h * 10, h * 6], "1 h = 60 min : on multiplie par 60."]; },
+        () => { const m = pick([1, 2, 3, 5, 10]); return [`${m} min = … s`, m * 60, "s", [m * 100, m * 10, m * 6], "1 min = 60 s : on multiplie par 60."]; },
+        () => { const m = pick([60, 120, 180, 30]); return [`${m} min = … h`, m / 60, "h", [m / 100, m / 10, m * 60], "60 min = 1 h : on divise par 60."]; }
+      ].slice(0, P.durees || 2);
+      const [q, r, u, faux, e] = pick(types)();
+      const f = (y) => nb(y) + NB + u;
+      return { q, a: f(r), d: trois(f(r), faux.map(f)), e, vf: q.replace(/…\s\S+$/, "{}") };
+    }
+    // Lycée : « 25 mL = … L » → 25 × 10⁻³ L
+    function cPuissance(diff, P) {
+      const { u1, u2, k } = couple(P), x = lire(pick(VALEURS[0].slice(1).concat(diff > 1 ? VALEURS[1] : [])));
+      const f = (kk) => (kk ? `${dec(x)}${NB}×${NB}${puiss(kk)} ${u2}` : null);
+      return { q: `${dec(x)} ${u1} = … ${u2}`, a: f(k), d: trois(f(k), [f(-k), f(k + 3), f(k - 3), f(k + 1), f(k - 1), f(k + 2)]),
+        e: `1 ${u1} = ${puiss(k)} ${u2} : on remplace et on écrit ${f(k)}.`, vf: `${dec(x)} ${u1} = {}` };
+    }
+    // Lycée : « 1 mL = … L »
+    function cFacteur(diff, P) {
+      const { u1, u2, k } = couple(P), f = (kk) => (kk ? `${puiss(kk)} ${u2}` : null);
+      return { q: `1 ${u1} = … ${u2}`, a: f(k), d: trois(f(k), [f(-k), f(k + 3), f(k - 3), f(k + 1), f(k - 1), f(k + 2)]), e: `1 ${u1} = ${puiss(k)} ${u2}.`, vf: `1 ${u1} = {}` };
+    }
+
+    // ---------- 5. Générateurs : « × 10, × 100, × 1 000 » (collège) et « Puissances de 10 » (lycée) ----------
+    function pFoisDiv(diff) {
+      const x = valeur(diff), k = pick([1, 2, 3]), fois = Math.random() < 0.5;
+      const r = decale(x, fois ? k : -k), f = dec(N(1, k));
+      if (ordre(r) < -3) return pFoisDiv(diff);
+      return { q: `${dec(x)} ${fois ? "×" : "÷"} ${f} = …`, a: dec(r), d: trois(dec(r), [dec(decale(x, fois ? -k : k)), dec(decale(r, 1)), dec(decale(r, -1)), dec(decale(r, 2))]),
+        e: `${fois ? "Multiplier" : "Diviser"} par ${f} : la virgule se décale de ${k} rang${k > 1 ? "s" : ""} vers la ${fois ? "droite" : "gauche"}.`, vf: `${dec(x)} ${fois ? "×" : "÷"} ${f} = {}` };
+    }
+    function pQuelFacteur(diff) {
+      const x = valeur(Math.min(2, diff)), k = pick([1, 2, 3]), fois = Math.random() < 0.5, r = decale(x, fois ? k : -k);
+      const opts = ["10", "100", dec(N(1, 3))], a = opts[k - 1];
+      return { q: `${dec(x)} ${fois ? "×" : "÷"} … = ${dec(r)}`, a, d: trois(a, opts.concat(["0,1"])),
+        e: `La virgule s'est décalée de ${k} rang${k > 1 ? "s" : ""} : c'est ${fois ? "× " : "÷ "}${a}.`, vf: `${dec(x)} ${fois ? "×" : "÷"} {} = ${dec(r)}` };
+    }
+    function pVirgule() {
+      const k = pick([1, 2, 3]), fois = Math.random() < 0.5, f = dec(N(1, k));
+      const txt = (n, sens) => `${n} rang${n > 1 ? "s" : ""} vers la ${sens}`;
+      const a = txt(k, fois ? "droite" : "gauche");
+      return { q: `Pour ${fois ? "multiplier" : "diviser"} par ${f}, la virgule se déplace de…`, a, d: trois(a, [txt(k, fois ? "gauche" : "droite"), txt(k === 3 ? 2 : k + 1, fois ? "droite" : "gauche"), txt(k === 1 ? 2 : 1, fois ? "gauche" : "droite")]),
+        e: `${f} a ${k} zéro${k > 1 ? "s" : ""} : ${a}.`, vf: `Pour ${fois ? "multiplier" : "diviser"} par ${f}, la virgule se déplace de {}.` };
+    }
+    function p10VersDec(diff) {
+      const n = pick(diff === 1 ? [1, 2, 3, 6] : [1, 2, 3, 6, -1, -2, -3]);
+      const a = dec(N(1, n));
+      return { q: `${puiss(n)} = …`, a, d: trois(a, [dec(N(1, -n)), dec(N(1, n + 1)), dec(N(1, n - 1)), n > 0 ? String(10 * n) : "−" + String(-10 * n)]),
+        e: n >= 0 ? `${puiss(n)} = 1 suivi de ${n} zéro${n > 1 ? "s" : ""}.` : `${puiss(n)} = 1 ÷ ${dec(N(1, -n))} = ${a}.`, vf: `${puiss(n)} = {}` };
+    }
+    function pDecVers10(diff) {
+      const n = pick(diff === 1 ? [2, 3, 6] : [2, 3, 6, -1, -2, -3]);
+      const a = puiss(n);
+      return { q: `${dec(N(1, n))} = …`, a, d: trois(a, [puiss(-n), puiss(n + 1), puiss(n - 1), puiss(n - 2), puiss(n + 2)]),
+        e: n > 0 ? `On compte les zéros : ${n}, donc ${a}.` : `Le 1 est au ${-n === 1 ? "1er" : -n + "e"} rang après la virgule, donc ${a}.`, vf: `${dec(N(1, n))} = {}` };
+    }
+    function pProduit(diff) {
+      const a = nz(diff === 1 ? 1 : -3, 6), b = nz(diff === 1 ? 1 : -3, 4);
+      const r = puiss(a + b), b2 = b < 0 ? `(${puiss(b)})` : puiss(b);
+      return { q: `${puiss(a)} × ${b2} = …`, a: r, d: trois(r, [puiss(a * b), puiss(a - b), puiss(a + b + 1), puiss(a + b - 1), puiss(a + b + 2), puiss(a + b - 2)]),
+        e: `On additionne les exposants : ${sg(a)} + ${sg(b)} = ${sgn(a + b)}.`, vf: `${puiss(a)} × ${b2} = {}` };
+    }
+    function pQuotient(diff) {
+      const a = nz(diff === 1 ? 3 : -2, 6), b = nz(1, diff === 1 ? a - 1 : 3);
+      const r = puiss(a - b);
+      return { q: `${puiss(a)} ÷ ${puiss(b)} = …`, a: r, d: trois(r, [puiss(a + b), puiss(b - a), puiss(a - b + 1), puiss(a - b - 1), puiss(a - b + 2)]),
+        e: `On soustrait les exposants : ${sg(a)} − ${sg(b)} = ${sgn(a - b)}.`, vf: `${puiss(a)} ÷ ${puiss(b)} = {}` };
+    }
+    const PREFIXES = [["giga", "G", 9], ["méga", "M", 6], ["kilo", "k", 3], ["hecto", "h", 2], ["centi", "c", -2], ["milli", "m", -3], ["micro", "µ", -6], ["nano", "n", -9]];
+    function pPrefixe(diff, P) {
+      const L = PREFIXES.filter((p) => P.prefixes.includes(p[1])), [nom, s, n] = pick(L);
+      const fac = (k) => `× ${puiss(k)}`;
+      if (Math.random() < 0.5) return { q: `Le préfixe ${nom} (${s}) signifie…`, a: fac(n), d: trois(fac(n), [fac(-n), fac(n + 3), fac(n - 3), fac(n + 1)]),
+        e: `${cap(nom)} (${s}) = ${puiss(n)} : par exemple 1 ${s}m = ${puiss(n)} m.`, vf: `Le préfixe ${nom} (${s}) signifie {}.` };
+      const a = `${nom} (${s})`;
+      return { q: `Quel préfixe correspond à ${puiss(n)} ?`, a, d: trois(a, melanger(L.filter((p) => p[1] !== s)).concat(melanger(PREFIXES)).map((p) => `${p[0]} (${p[1]})`)),
+        e: `${puiss(n)} : c'est ${nom} (${s}).`, vf: `${puiss(n)} correspond au préfixe {}.` };
+    }
+    function pFois10n(diff) {
+      const x = lire(pick(["2", "3", "4", "5", "6", "7", "8", "9", "1.5", "2.5"].slice(0, diff === 1 ? 8 : 10))), n = nz(diff === 1 ? 1 : -3, 4), r = decale(x, n);
+      return { q: `${dec(x)} × ${puiss(n)} = …`, a: dec(r), d: trois(dec(r), [dec(decale(r, 1)), dec(decale(r, -1)), dec(decale(x, -n)), dec(decale(r, 2))]),
+        e: `Multiplier par ${puiss(n)} : la virgule se décale de ${Math.abs(n)} rang${Math.abs(n) > 1 ? "s" : ""} vers la ${n > 0 ? "droite" : "gauche"}.`, vf: `${dec(x)} × ${puiss(n)} = {}` };
+    }
+    function pSci(diff) {
+      const m = pick([2, 3, 4, 5, 6, 7, 8, 9, 15, 25, 35, 45, 75]), x = N(m, diff === 1 ? hasard(1, 3) : nz(-3, 4)), a = sci(x), n = ordre(x);
+      const brut = m >= 10 ? `${m}${NB}×${NB}${puiss(x.e)}` : null;
+      return { q: `Écris ${dec(x)} en notation scientifique.`, a, d: trois(a, [brut, sci(decale(x, 1)), sci(decale(x, -1)), n ? `${dec(N(x.m, x.e - n))}${NB}×${NB}${puiss(-n)}` : null, sci(decale(x, 2)), sci(decale(x, -2))]),
+        e: `Notation scientifique : a × 10ⁿ avec a entre 1 et 10. Ici ${a}.`, vf: `En notation scientifique, ${dec(x)} = {}` };
+    }
+    function pProduitSci(diff) {
+      const [a, b] = pick([[2, 3], [2, 4], [3, 3], [2, 2], [4, 2], [3, 2]]), p = nz(diff === 1 ? 1 : -4, 5), q = nz(diff === 1 ? 1 : -4, 4);
+      const r = N(a * b, p + q), f = (m, e) => `${m}${NB}×${NB}${puiss(e)}`;
+      return { q: `(${f(a, p)}) × (${f(b, q)}) = …`, a: sci(r), d: trois(sci(r), [sci(N(a * b, p * q)), sci(N(a + b, p + q)), sci(decale(r, 1)), sci(decale(r, -1)), sci(decale(r, 2)), sci(decale(r, -2))]),
+        e: `On multiplie les nombres (${a} × ${b} = ${a * b}) et on additionne les exposants (${sg(p)} + ${sg(q)} = ${sgn(p + q)}).`, vf: `(${f(a, p)}) × (${f(b, q)}) = {}` };
+    }
+    function pPH() {
+      const p = hasard(1, 13), u = "mol·L⁻¹";
+      if (Math.random() < 0.5) return { q: `[H₃O⁺] = ${puiss(-p)} ${u}. pH = ?`, a: String(p), d: trois(String(p), ["−" + p, String(14 - p), puiss(-p), String(p + 1)]), e: `pH = −log [H₃O⁺] = −log ${puiss(-p)} = ${p}.`, vf: `Si [H₃O⁺] = ${puiss(-p)} ${u}, le pH vaut {}.` };
+      return { q: `pH = ${p}. [H₃O⁺] = ?`, a: `${puiss(-p)} ${u}`, d: trois(`${puiss(-p)} ${u}`, [`${puiss(p)} ${u}`, `${p} ${u}`, `${puiss(-(14 - p))} ${u}`, `${puiss(1 - p)} ${u}`]), e: `[H₃O⁺] = 10^(−pH) = ${puiss(-p)} ${u}.`, vf: `Si pH = ${p}, [H₃O⁺] = {}` };
+    }
+
+    // ---------- 6. Le programme de chaque niveau (3 parties au plus) ----------
+    // On reste à l'essentiel : au collège, × 10, × 100, × 1 000 et le tableau de conversion ; au lycée, les puissances de 10.
+    const C4 = (extra) => [
+      ["la masse d'un régime de bananes", "kg", "mg", "t", "L"], ["la longueur d'une pirogue sur le Maroni", "m", "mm", "km", "kg"], ["la distance entre Cayenne et Kourou", "km", "mm", "cm", "L"],
+      ["le volume d'eau d'une bouteille", "L", "m³", "kg", "km"], ["le volume d'une cuillère de sirop", "mL", "m³", "hL", "kg"], ["la masse d'un comprimé de paracétamol", "mg", "kg", "t", "L"],
+      ["la température de l'eau d'une crique", "°C", "kg", "s", "m"], ["l'épaisseur d'une feuille de papier", "mm", "km", "m", "L"], ["la masse d'une fusée Ariane 6 au décollage", "t", "g", "mg", "mL"],
+      ["la durée d'un match de football", "min", "ms", "°C", "kg"], ["la hauteur d'un fromager (arbre géant)", "m", "mm", "km", "L"], ["la masse d'un grain de riz", "mg", "kg", "t", "L"],
+      ["la durée d'une récréation", "min", "ms", "°C", "km"], ["la masse d'un camion grumier", "t", "mg", "g", "mL"], ["la durée du trajet Cayenne–Saint-Laurent en voiture", "h", "s", "ms", "km"],
+      ["la longueur d'une fourmi-manioc", "mm", "km", "m", "kg"], ["le volume d'un verre de jus de maracudja", "cL", "m³", "hL", "kg"], ["la température d'un malade qui a de la fièvre", "°C", "kg", "s", "L"],
+      ["la masse d'un colibri", "g", "t", "kg", "L"]].concat(extra || []);
+    const UNITES_COLLEGE = { college: true, id: "unites", titre: "Les unités", desc: "Grandeurs, unités, symboles et appareils de mesure", gens: [uUnite, uGrandeur, uSymbole, uAppareil, uAdaptee, uFamille] };
+    const CALCULS_COLLEGE = { id: "calculs", titre: "× 10, × 100, × 1 000", desc: "Multiplier et diviser de tête", gens: [pFoisDiv, pFoisDiv, pQuelFacteur, pVirgule] };
+    const UNITES_LYCEE = { id: "unites", titre: "Les unités", gens: [uUnite, uGrandeur, uSymbole, uAppareil, uAdaptee, uRelation, uFamille] };
+    const PUISSANCES_LYCEE = { id: "puissances", titre: "Les puissances de 10", desc: "10ⁿ, produits, quotients, préfixes, notation scientifique",
+      gens: [p10VersDec, pDecVers10, pProduit, pQuotient, pPrefixe, pFois10n, pSci, pProduitSci], prefixes: ["G", "M", "k", "m", "µ", "n"] };
+    const OBJ_COLLEGE = { chrono: 6, eclair: 8, defi: 8 }, OBJ_LYCEE = { chrono: 8, eclair: 10, defi: 10 };
+    const NIV = {
+      "5e": { college: true, objectifs: OBJ_COLLEGE, parties: [
+        Object.assign({}, UNITES_COLLEGE, { grandeurs: ["longueur", "masse", "volume", "duree", "temperature"], contextes: C4() }),
+        { id: "conversions", titre: "Les conversions", desc: "Longueurs, masses, volumes et durées", gens: [cTableau, cTableau, cQuelCalcul, cDuree], maxK: 3, durees: 2,
+          familles: { longueur: ["km", "m", "cm", "mm"], masse: ["kg", "g", "mg"], volume: ["L", "cL", "mL"] } },
+        CALCULS_COLLEGE] },
+      "4e": { college: true, objectifs: OBJ_COLLEGE, parties: [
+        Object.assign({}, UNITES_COLLEGE, { grandeurs: ["longueur", "masse", "volume", "duree", "temperature", "intensite", "tension", "vitesse"],
+          contextes: C4([["la tension d'une pile plate", "V", "A", "kg", "kV"], ["la vitesse d'une pirogue à moteur", "km/h", "km", "h", "kg"]]) }),
+        { id: "conversions", titre: "Les conversions", desc: "Longueurs, masses, volumes, durées, courant", gens: [cTableau, cTableau, cQuelCalcul, cDuree], maxK: 3, durees: 3,
+          familles: { longueur: ["km", "m", "cm", "mm"], masse: ["kg", "g", "mg"], volume: ["L", "cL", "mL"], intensite: ["A", "mA"] } },
+        CALCULS_COLLEGE] },
+      "3e": { college: true, objectifs: OBJ_COLLEGE, parties: [
+        Object.assign({}, UNITES_COLLEGE, { grandeurs: ["masse", "volume", "duree", "intensite", "tension", "resistance", "puissance", "energie", "vitesse", "poids"],
+          contextes: [["la puissance électrique du barrage de Petit-Saut", "MW", "mW", "kWh", "V"], ["l'énergie consommée par une maison en un mois", "kWh", "kW", "W", "V"],
+            ["la puissance d'une lampe LED", "W", "kWh", "V", "MW"], ["le poids d'un sac de riz", "N", "kg", "g", "L"], ["la masse d'un sac de riz", "kg", "N", "mg", "L"],
+            ["la résistance d'un conducteur ohmique", "Ω", "A", "V", "W"], ["la tension d'une prise de courant", "V", "A", "W", "Ω"], ["la vitesse d'une voiture sur la route de Kourou", "km/h", "km", "h", "N"],
+            ["l'intensité du courant dans une diode", "mA", "kA", "V", "W"], ["la durée de la nuit à Cayenne", "h", "ms", "°C", "km"]],
+          relations: [["P = U × I. Si U est en volts et I en ampères, P est en…", "W", ["J", "kWh", "Ω"], "P = U × I : des volts × des ampères donnent des watts."],
+            ["E = P × t. Si P est en kilowatts et t en heures, E est en…", "kWh", ["kW", "J", "kW/h"], "Kilowatts × heures = kilowattheures (kWh)."],
+            ["U = R × I. Si R est en ohms et I en ampères, U est en…", "V", ["W", "A", "Ω"], "Ohms × ampères = volts (loi d'Ohm)."]],
+          gens: UNITES_COLLEGE.gens.concat([uRelation]) }),
+        { id: "conversions", titre: "Les conversions", desc: "Puissance, énergie, courant, masses, durées", gens: [cTableau, cTableau, cQuelCalcul, cDuree], maxK: 3, durees: 3,
+          familles: { puissance: ["kW", "W"], energie: ["kJ", "J"], wh: ["kWh", "Wh"], intensite: ["A", "mA"], masse: ["kg", "g"], longueur: ["km", "m", "cm", "mm"] } },
+        CALCULS_COLLEGE] },
+      "2nde": { objectifs: OBJ_LYCEE, parties: [
+        Object.assign({}, UNITES_LYCEE, { desc: "Unités du Système international, concentration, pression", grandeurs: ["longueur", "masse", "duree", "qmat", "cmass", "force", "frequence", "pression", "tension", "intensite"],
+          contextes: [["la taille d'une cellule", "µm", "km", "m", "kg"], ["la pression atmosphérique", "hPa", "N", "kg", "mL"], ["la concentration en sucre d'un jus de goyave", "g/L", "g", "mol", "L"],
+            ["la fréquence d'un son audible", "Hz", "dB", "s", "m"], ["la masse d'un grain de sable", "mg", "t", "kg", "L"], ["la distance Terre–Lune", "km", "mm", "µm", "kg"],
+            ["le poids d'un élève", "N", "kg", "g", "Pa"], ["la masse d'un satellite lancé de Kourou", "t", "mg", "g", "N"]],
+          relations: [["Cm = m / V. Si m est en grammes et V en litres, Cm est en…", "g/L", ["g·L", "L/g", "mol/L"], "Des grammes divisés par des litres donnent des g/L."],
+            ["f = 1 / T. Si T est en secondes, f est en…", "Hz", ["s", "m", "dB"], "1 / s = Hz (hertz)."]] }),
+        { id: "conversions", titre: "Les conversions", desc: "On remplace le préfixe par sa puissance de 10", gens: [cPuissance, cPuissance, cFacteur], maxK: 6,
+          familles: { longueur: ["km", "m", "cm", "mm", "µm", "nm"], masse: ["kg", "g", "mg"], volume: ["L", "mL", "µL"], cmass: ["g/L", "mg/L"], frequence: ["kHz", "Hz"], pression: ["hPa", "Pa"] } },
+        PUISSANCES_LYCEE] },
+      "1re": { objectifs: OBJ_LYCEE, parties: [
+        Object.assign({}, UNITES_LYCEE, { desc: "Matière, énergie, ondes et son", grandeurs: ["qmat", "cmol", "mmol", "energie", "puissance", "frequence", "dB", "force", "tension"],
+          contextes: [["la longueur d'onde d'une lumière visible", "nm", "km", "Hz", "J"], ["le niveau sonore d'un concert", "dB", "Hz", "W", "s"], ["la masse molaire du glucose", "g/mol", "g", "mol", "g/L"],
+            ["la fréquence d'une note de musique", "Hz", "dB", "s", "W"], ["la concentration d'une solution de sulfate de cuivre", "mol/L", "mol", "g", "L"]],
+          relations: [["n = m / M. Si m est en g et M en g/mol, n est en…", "mol", ["g", "mol/g", "g²/mol"], "g ÷ g/mol = mol."],
+            ["c = n / V. Si n est en mol et V en L, c est en…", "mol/L", ["mol·L", "L/mol", "g/L"], "Des moles divisées par des litres donnent des mol/L."],
+            ["E = P × Δt. Si P est en W et Δt en s, E est en…", "J", ["W", "Wh", "W/s"], "Watts × secondes = joules."]] }),
+        { id: "conversions", titre: "Les conversions", desc: "On remplace le préfixe par sa puissance de 10", gens: [cPuissance, cPuissance, cFacteur], maxK: 6,
+          familles: { energie: ["MJ", "kJ", "J"], qmat: ["mol", "mmol"], cmol: ["mol/L", "mmol/L"], longueur: ["m", "mm", "µm", "nm"], volume: ["L", "mL"], puissance: ["MW", "kW", "W"] } },
+        PUISSANCES_LYCEE] },
+      "tle": { objectifs: OBJ_LYCEE, parties: [
+        Object.assign({}, UNITES_LYCEE, { desc: "Concentrations, conductivité, pH, énergie", grandeurs: ["cmol", "conductivite", "qmat", "mmol", "ph", "absorbance", "energie", "puissance", "pression"],
+          contextes: [["la concentration en ions oxonium d'un jus de maracudja", "mol/L", "g", "mol", "L"], ["la quantité de matière d'acide dans une prise d'essai", "mmol", "kg", "mol/L", "L"]],
+          relations: [["c = n / V. Si n est en mol et V en L, c est en…", "mol/L", ["mol·L", "L/mol", "g/L"], "Des moles divisées par des litres donnent des mol/L."],
+            ["La constante d'équilibre K est…", "sans unité", ["en mol/L", "en mol²/L²", "en s⁻¹"], "K est un nombre sans unité."],
+            ["A = ε × ℓ × c. L'absorbance A est…", "sans unité", ["en mol/L", "en m", "en L·mol⁻¹"], "L'absorbance est un nombre sans unité."]] }),
+        { id: "conversions", titre: "Les conversions", desc: "On remplace le préfixe par sa puissance de 10", gens: [cPuissance, cPuissance, cFacteur], maxK: 6,
+          familles: { cmol: ["mol/L", "mmol/L"], qmat: ["mol", "mmol", "µmol"], volume: ["L", "mL"], energie: ["kJ", "J"], masse: ["g", "mg"] } },
+        Object.assign({}, PUISSANCES_LYCEE, { desc: "Puissances de 10, préfixes et pH", gens: PUISSANCES_LYCEE.gens.concat([pPH]) })] }
+    };
+
+    // Le chapitre 0 de chaque niveau est ajouté en tête de la liste des chapitres
+    Object.keys(NIV).forEach((niv) => {
+      const L = CONTENU.chapitres[niv] = CONTENU.chapitres[niv] || [];
+      if (!L.some((c) => c.id === "outils")) L.unshift({ id: "outils", type: "outils", titre: "Unités, conversions et puissances de 10" });
+    });
+
+    // ---------- 7. Tirage des questions ----------
+    function question(niv, partie, diff) {
+      const P = NIV[niv].parties.find((p) => p.id === partie);
+      const Q = pick(P.gens)(diff, P);
+      Q.partie = P.titre;
+      return Q;
+    }
+    // Une série sans doublon d'énoncé
+    function serie(niv, parties, n, diff) {
+      const vus = new Set(), out = [];
+      for (let essai = 0; out.length < n && essai < n * 30; essai++) {
+        const Q = question(niv, pick(parties), typeof diff === "function" ? diff(out.length) : diff);
+        if (vus.has(Q.q) || Q.d.length < 3) continue;
+        vus.add(Q.q); out.push(Q);
+      }
+      return out;
+    }
+    const versQCM = (Q) => ({ question: Q.q, reponses: [Q.a].concat(Q.d), bonne: 0, explication: Q.e, notion: Q.partie });
+
+    // ---------- 8. Les pages ----------
+    const MODES = [
+      { id: "echauffement", titre: "Échauffement", desc: "10 questions, sans chrono, avec la correction" },
+      { id: "chrono", titre: "Contre la montre", desc: "Un maximum de bonnes réponses avant la fin du temps" },
+      { id: "eclair", titre: "Vrai ou faux éclair", desc: "Réponds avant la fin de la barre · 3 vies" }
+    ];
+    const objectif = (niv, mode) => NIV[niv].objectifs[mode];
+    const cleDe = (niv, partie, mode) => `${niv}-outils-${partie}${mode ? "-" + mode : ""}`;
+    const record = (cle) => profil().records[cle];
+    function resume(niv) { return NIV[niv] ? NIV[niv].parties.map((p) => p.titre).join(" · ") + " · tout de tête !" : ""; }
+
+    function vue(niv, ch, partie, mode) {
+      const cfg = NIV[niv];
+      if (!cfg) return aller("n-" + niv);
+      if (partie === "defi") return jeu(niv, ch, null, "defi");
+      if (partie === "cours") return vueRappel(niv);
+      const P = cfg.parties.find((p) => p.id === partie);
+      if (!P) return vueAccueil(niv, ch, cfg);
+      if (!mode) return vuePartie(niv, ch, P);
+      if (!MODES.some((m) => m.id === mode)) return aller(`c-${niv}-outils-${P.id}`);
+      if (mode === "echauffement") return jeuQCM(serie(niv, [P.id], 10, (i) => (i < 5 ? 1 : 2)).map(versQCM), `${P.titre} · Échauffement`,
+        { cle: cleDe(niv, P.id, mode), ch, suivant: `c-${niv}-outils-${P.id}`, dernier: true, libre: true, libSuite: "Retour aux défis" });
+      return jeu(niv, ch, P, mode);
+    }
+    function vueAccueil(niv, ch, cfg) {
+      const cartes = cfg.parties.map((P, i) => {
+        const faits = MODES.filter((m) => fait(cleDe(niv, P.id, m.id))).length;
+        return `<a class="card${faits === MODES.length ? " done" : ""}" href="#c-${niv}-outils-${P.id}"><span class="ico">${faits === MODES.length ? SVG.check : i + 1}</span>
+          <span class="txt"><span class="t">${esc(P.titre)}</span><span class="s">${esc(P.desc)}</span>
+          <span class="level-line"><i><b style="width:${Math.round(100 * faits / MODES.length)}%"></b></i>${faits}/${MODES.length}</span></span><span class="go" aria-hidden="true">›</span></a>`;
+      }).join("");
+      const rec = record(cleDe(niv, "defi")), okD = fait(cleDe(niv, "defi"));
+      view.innerHTML = `<div class="head"><span class="kicker">Chapitre 0</span><h2>Unités, conversions et puissances de 10</h2>
+          <p class="muted">Les outils du physicien, à travailler souvent. Tout se fait de tête : pas de calculatrice, pas de brouillon !</p></div>
+        <a class="card rappel" href="#c-${niv}-outils-cours"><span class="ico">${ICONE_LIVRE}</span>
+          <span class="txt"><span class="t">Rappel de cours</span><span class="s">${cfg.college ? "Le tableau de conversion et les calculs avec 10, 100, 1 000" : "Les puissances de 10, les préfixes et le tableau de conversion"}</span></span><span class="go" aria-hidden="true">›</span></a>
+        <div class="cards">${cartes}</div>
+        <a class="card defi${okD ? " done" : ""}" href="#c-${niv}-outils-defi"><span class="ico">${okD ? SVG.check : SVG.etoile}</span>
+          <span class="txt"><span class="t">Le grand défi</span><span class="s">Les trois parties mélangées, de plus en plus dur · 3 vies${rec != null ? ` · record ${rec}` : ""}</span></span><span class="go" aria-hidden="true">›</span></a>
+        <p class="note">Les questions sont tirées au hasard : rejoue autant que tu veux, elles changent à chaque fois.</p>`;
+    }
+    function vuePartie(niv, ch, P) {
+      const cartes = MODES.map((m, i) => {
+        const cle = cleDe(niv, P.id, m.id), rec = record(cle), ok = fait(cle);
+        const info = m.id === "echauffement" ? (rec != null ? `meilleur score ${rec} %` : `au moins ${seuil()} % pour réussir`)
+          : `objectif ${objectif(niv, m.id)} bonnes réponses${rec != null ? ` · record ${rec}` : ""}`;
+        return `<a class="card${ok ? " done" : ""}" href="#c-${niv}-outils-${P.id}-${m.id}"><span class="ico">${ok ? SVG.check : i + 1}</span>
+          <span class="txt"><span class="t">${m.titre}</span><span class="s">${m.desc}</span><span class="s">${info}</span></span>${ok ? '<span class="badge ok">Réussi</span>' : '<span class="go" aria-hidden="true">›</span>'}</a>`;
+      }).join("");
+      view.innerHTML = `<div class="head"><span class="kicker">Chapitre 0</span><h2>${esc(P.titre)}</h2><p class="muted">${esc(P.desc)}. Tout se fait de tête.</p></div>
+        <a class="btn btn-ghost btn-sm o-revoir" href="#c-${niv}-outils-cours">${ICONE_LIVRE} Revoir le rappel de cours</a><div class="cards">${cartes}</div>`;
+    }
+
+    // ---------- 9. Le rappel de cours ----------
+    const ICONE_LIVRE = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5a2 2 0 012-2h13v16H6a2 2 0 00-2 2zM4 5v16M8 7h7M8 11h7"/></svg>';
+    // Tableau de conversion : colonnes de gauche (grandes unités) à droite (petites) ; exposant de 10 de chaque colonne
+    const TABLEAUX = {
+      longueur: { nom: "Longueurs", cols: ["km", "hm", "dam", "m", "dm", "cm", "mm"], base: 3, courantes: ["km", "m", "cm", "mm"] },
+      masse: { nom: "Masses", cols: ["kg", "hg", "dag", "g", "dg", "cg", "mg"], base: 3, courantes: ["kg", "g", "mg"] },
+      volume: { nom: "Volumes", cols: ["hL", "daL", "L", "dL", "cL", "mL"], base: 2, courantes: ["L", "dL", "cL", "mL"] }
+    };
+    // Un exemple au hasard : 2,5 km → m (au plus 3 colonnes d'écart, tous les chiffres dans le tableau)
+    function exempleTableau(fam) {
+      const T = TABLEAUX[fam], ex = (i) => T.base - i;
+      for (let essai = 0; essai < 80; essai++) {
+        const i1 = hasard(0, T.cols.length - 1), i2 = hasard(0, T.cols.length - 1);
+        if (i1 === i2 || Math.abs(i1 - i2) > 3 || !T.courantes.includes(T.cols[i1]) || !T.courantes.includes(T.cols[i2])) continue; // unités courantes seulement
+        const x = lire(pick(["1", "2", "3", "4", "5", "6", "7", "8", "9", "12", "15", "25", "45", "0.5", "1.5", "2.5", "3.5", "7.5"]));
+        const X = decale(x, ex(i1)), haut = ordre(X), bas = X.e; // positions (exposants) des chiffres du nombre
+        const lo = Math.min(bas, ex(i1), ex(i2)), hi = Math.max(haut, ex(i1), ex(i2));
+        if (hi > ex(0) || lo < ex(T.cols.length - 1)) continue;
+        return { T, x, i1, i2, r: decale(x, ex(i1) - ex(i2)), X, ex };
+      }
+    }
+    // Une ligne du tableau : les chiffres de X, la virgule après la colonne « unite » ; ajout = zéros ajoutés pour atteindre cette colonne
+    function ligneTableau(E, iu, cls) {
+      const { T, X, ex } = E, ch = String(Math.abs(X.m)), haut = ordre(X), eu = ex(iu);
+      return T.cols.map((u, i) => {
+        const p = ex(i); let c = "";
+        if (p <= haut && p >= X.e) c = ch[haut - p];
+        else if ((p > haut && p <= eu) || (p < X.e && p >= eu)) c = `<i>0</i>`; // zéro ajouté
+        const v = i === iu && p > X.e ? "," : "";
+        return `<td class="${i === iu ? cls : ""}">${c}${v ? `<b class="o-virg">,</b>` : ""}</td>`;
+      }).join("");
+    }
+    function vueRappel(niv) {
+      const college = !!NIV[niv].college;
+      const avecTableau = (titre) => `<div class="panel stack"><h3>${titre}</h3>
+          <p>Chaque colonne vaut <strong>10 fois plus</strong> que celle de droite.</p>
+          <div class="methode"><strong class="lbl">Méthode</strong><ol>
+            <li>J'écris le nombre : <strong>le chiffre des unités</strong> va dans la colonne de l'unité de départ.</li>
+            <li>Je place <strong>la virgule</strong> juste après la colonne de l'unité d'arrivée.</li>
+            <li>Je complète avec des <strong>zéros</strong> si des colonnes sont vides.</li></ol></div>
+          <div class="o-onglets" role="tablist">${Object.entries(TABLEAUX).map(([k, T], i) => `<button class="btn btn-sm ${i ? "btn-ghost" : "btn-primary"}" data-fam="${k}" role="tab">${T.nom}</button>`).join("")}</div>
+          <div id="o-tab"></div>
+          <button class="btn btn-primary" id="o-autre">Un autre exemple</button></div>`;
+      const facteurs = `<div class="panel stack"><h3>Multiplier ou diviser par 10, 100, 1 000</h3>
+          <p>On compte les zéros : c'est le nombre de rangs dont la virgule se déplace. Multiplier : vers la droite →. Diviser : ← vers la gauche.</p>
+          <div class="table-wrap"><table class="o-regles"><thead><tr><th>Calcul</th><th>Virgule</th><th>Exemple</th></tr></thead><tbody>
+            <tr><td>× 10</td><td>1 rang →</td><td>3,5 × 10 = 35</td></tr>
+            <tr><td>× 100</td><td>2 rangs →</td><td>3,5 × 100 = 350</td></tr>
+            <tr><td>× 1 000</td><td>3 rangs →</td><td>3,5 × 1 000 = 3 500</td></tr>
+            <tr><td>÷ 10</td><td>← 1 rang</td><td>47 ÷ 10 = 4,7</td></tr>
+            <tr><td>÷ 100</td><td>← 2 rangs</td><td>47 ÷ 100 = 0,47</td></tr>
+            <tr><td>÷ 1 000</td><td>← 3 rangs</td><td>47 ÷ 1 000 = 0,047</td></tr></tbody></table></div>
+          <p class="small muted">Pas de virgule ? Elle est cachée à droite du nombre : 47 = 47,0. On ajoute des zéros quand il manque des chiffres.</p></div>`;
+      const puissances = `<div class="panel stack"><h3>Les puissances de 10</h3>
+          <div class="table-wrap"><table class="o-regles"><tbody>
+            <tr><td>10³ = 1 000</td><td>1 suivi de 3 zéros</td></tr>
+            <tr><td>10⁰ = 1</td><td></td></tr>
+            <tr><td>10⁻³ = 0,001</td><td>le 1 est au 3e rang après la virgule</td></tr></tbody></table></div>
+          <div class="retenir"><strong class="lbl">Les deux règles</strong><ul>
+            <li>10ᵃ × 10ᵇ = 10ᵃ⁺ᵇ : on <strong>additionne</strong> les exposants (10² × 10³ = 10⁵).</li>
+            <li>10ᵃ ÷ 10ᵇ = 10ᵃ⁻ᵇ : on <strong>soustrait</strong> les exposants (10⁶ ÷ 10² = 10⁴).</li></ul></div>
+          <p><strong>Notation scientifique</strong> : a × 10ⁿ avec un seul chiffre (non nul) avant la virgule. 4 500 = 4,5 × 10³ ; 0,03 = 3 × 10⁻².</p></div>
+        <div class="panel stack"><h3>Les préfixes</h3>
+          <div class="table-wrap"><table class="o-regles"><thead><tr><th>Préfixe</th><th>Symbole</th><th>Puissance</th><th>Exemple</th></tr></thead><tbody>
+            ${[["giga", "G", 9, "1 GW = 10⁹ W"], ["méga", "M", 6, "1 MJ = 10⁶ J"], ["kilo", "k", 3, "1 km = 10³ m"], ["hecto", "h", 2, "1 hPa = 10² Pa"], ["centi", "c", -2, "1 cm = 10⁻² m"], ["milli", "m", -3, "1 mL = 10⁻³ L"], ["micro", "µ", -6, "1 µm = 10⁻⁶ m"], ["nano", "n", -9, "1 nm = 10⁻⁹ m"]]
+              .map(([n, s, k, e]) => `<tr><td>${n}</td><td><strong>${s}</strong></td><td>${puiss(k)}</td><td>${e}</td></tr>`).join("")}</tbody></table></div>
+          <div class="methode"><strong class="lbl">Pour convertir</strong><p>On remplace le préfixe par sa puissance de 10 : 25 mL = 25 × 10⁻³ L ; 3 km = 3 × 10³ m.</p></div>
+          <div id="o-exp"></div><button class="btn btn-ghost" id="o-exp-btn">Un autre exemple</button></div>`;
+      const retenir = `<div class="retenir"><strong class="lbl">À retenir aussi</strong><ul>
+          <li>1 L = 1 dm³ et 1 mL = 1 cm³.</li>
+          <li>Les durées ne suivent pas le tableau : 1 h = 60 min et 1 min = 60 s.</li>
+          ${niv === "3e" ? "<li>kilo (k) = × 1 000 : 1 kW = 1 000 W ; 1 kWh = 1 000 Wh ; 1 kJ = 1 000 J.</li>" : ""}</ul></div>`;
+      view.innerHTML = `<div class="head"><span class="kicker">Chapitre 0 · Rappel de cours</span><h2>${college ? "Convertir et calculer avec 10, 100, 1 000" : "Puissances de 10 et conversions"}</h2>
+          <p class="muted">Lis, puis entraîne-toi : tout se fait de tête.</p></div>
+        ${college ? facteurs + avecTableau("Le tableau de conversion") + retenir : puissances + avecTableau("Le tableau de conversion (rappel du collège)")}
+        <a class="btn btn-primary" href="#c-${niv}-outils">Aller aux exercices</a>`;
+      // tableau interactif : un exemple au hasard, avec la ligne « départ » et la ligne « arrivée »
+      let fam = "longueur";
+      function dessinerTableau() {
+        const E = exempleTableau(fam), u1 = E.T.cols[E.i1], u2 = E.T.cols[E.i2], n = Math.abs(E.i1 - E.i2), droite = E.i2 > E.i1;
+        $("o-tab").innerHTML = `<p class="o-question">Convertir <strong>${dec(E.x)} ${u1}</strong> en <strong>${u2}</strong></p>
+          <div class="table-wrap"><table class="o-tableau"><thead><tr><th aria-label="Ligne"></th>${E.T.cols.map((u, i) => `<th class="${i === E.i1 ? "dep" : i === E.i2 ? "arr" : ""}">${u}</th>`).join("")}</tr></thead>
+          <tbody><tr><th>1</th>${ligneTableau(E, E.i1, "dep")}</tr><tr><th>2</th>${ligneTableau(E, E.i2, "arr")}</tr></tbody></table></div>
+          <p class="small"><strong>Ligne 1</strong> : j'écris ${dec(E.x)} ${u1} (virgule après la colonne ${u1}). <strong>Ligne 2</strong> : je déplace la virgule après la colonne ${u2} et je complète avec des zéros.</p>
+          <p class="o-resultat">${dec(E.x)} ${u1} = <strong>${dec(E.r)} ${u2}</strong></p>
+          <p class="small muted">De ${u1} à ${u2} : ${n} colonne${n > 1 ? "s" : ""} vers la ${droite ? "droite, on multiplie" : "gauche, on divise"} par ${dec(N(1, n))}.${college ? "" : ` Avec les puissances : ${dec(E.x)} ${u1} = ${dec(E.x)} × ${puiss(E.ex(E.i1) - E.ex(E.i2))} ${u2}.`}</p>`;
+      }
+      view.querySelectorAll("[data-fam]").forEach((b) => b.onclick = () => {
+        fam = b.dataset.fam;
+        view.querySelectorAll("[data-fam]").forEach((x) => { x.classList.toggle("btn-primary", x === b); x.classList.toggle("btn-ghost", x !== b); });
+        dessinerTableau();
+      });
+      $("o-autre").onclick = dessinerTableau;
+      dessinerTableau();
+      if (!college) {
+        const P = NIV[niv].parties.find((p) => p.id === "conversions");
+        const montrer = () => { const Q = cPuissance(2, P); $("o-exp").innerHTML = `<p class="o-resultat">${esc(Q.q.replace("…", "?"))}</p><p>${esc(Q.e)}</p>`; };
+        $("o-exp-btn").onclick = montrer; montrer();
+      }
+    }
+
+    // ---------- 10. Les jeux chronométrés : Contre la montre, Vrai ou faux éclair, Grand défi ----------
+    function jeu(niv, ch, P, mode) {
+      const titre = mode === "defi" ? "Le grand défi" : `${P.titre} · ${MODES.find((m) => m.id === mode).titre}`;
+      const cle = cleDe(niv, P ? P.id : "defi", mode === "defi" ? null : mode), but = objectif(niv, mode), retour = P ? `c-${niv}-outils-${P.id}` : `c-${niv}-outils`;
+      const parties = P ? [P.id] : NIV[niv].parties.map((p) => p.id);
+      const DUREE = NIV[niv].college ? 90 : 60, DMAX = NIV[niv].college ? 2 : 3; // temps du chrono (s) et difficulté maximale
+      const tEclair = (score) => 1000 * Math.max(4, 9 - 0.2 * score), T_DEFI = 20000;
+      const regle = { chrono: `Tu as ${DUREE} secondes. Réponds juste à un maximum de questions : une erreur fait perdre du temps. Objectif : ${but} bonnes réponses.`,
+        eclair: `Vrai ou faux ? Réponds avant que la barre se vide. Elle va de plus en plus vite. Tu as 3 vies. Objectif : ${but} bonnes réponses.`,
+        defi: `Questions des trois parties, de plus en plus difficiles, 20 secondes chacune. Tu as 3 vies. Objectif : ${but} bonnes réponses.` }[mode];
+      view.innerHTML = `<div class="head"><span class="kicker">Chapitre 0</span><h2>${esc(titre)}</h2><p class="muted">${esc(regle)}</p></div>
+        <div class="panel o-pret"><p><strong>Pas de calculatrice, pas de brouillon : tout de tête !</strong></p><button class="btn btn-primary" id="o-go">Je suis prêt, c'est parti !</button></div>`;
+      $("o-go").onclick = demarrer;
+
+      function demarrer() {
+        let score = 0, vies = 3, fini = false, t0 = performance.now(), limite = 0, Q = null, attente = false;
+        const rates = [], vus = new Set();
+        view.innerHTML = `<div class="o-jeu" id="o-jeu"><div class="o-haut"><span class="chip" id="o-info"></span><span class="chip sun">Score <b id="o-s">0</b></span></div>
+          <div class="o-barre"><i id="o-b"></i></div><div class="panel o-carte" id="o-q"></div><button class="btn btn-ghost btn-sm" id="o-stop">Arrêter</button></div>`;
+        const root = $("o-jeu");
+        $("o-stop").onclick = () => terminer();
+        const diff = () => Math.min(DMAX, 1 + Math.floor(score / 5));
+        function nouvelle() {
+          for (let k = 0; k < 30; k++) { Q = question(niv, pick(parties), diff()); if (!vus.has(Q.q) && Q.d.length === 3) break; }
+          vus.add(Q.q);
+          if (mode === "eclair") {
+            Q.vrai = Math.random() < 0.5; Q.prop = Q.vrai ? Q.a : pick(Q.d);
+            $("o-q").innerHTML = `<p class="o-enonce">${esc(Q.vf.replace("{}", Q.prop))}</p><div class="o-vf"><button class="btn o-faux" data-v="0">Faux</button><button class="btn o-vrai" data-v="1">Vrai</button></div><div class="fbz"></div>`;
+            $("o-q").querySelectorAll("[data-v]").forEach((b) => b.onclick = () => repondre((b.dataset.v === "1") === Q.vrai, b));
+            limite = performance.now() + tEclair(score);
+          } else {
+            const ordre = melanger([Q.a].concat(Q.d));
+            $("o-q").innerHTML = `<p class="o-enonce">${esc(Q.q)}</p><div class="options">${ordre.map((r, i) => `<button class="opt" data-r="${i}"><span class="l">${"ABCD"[i]}</span><span>${esc(r)}</span></button>`).join("")}</div><div class="fbz"></div>`;
+            $("o-q").querySelectorAll("[data-r]").forEach((b) => b.onclick = () => repondre(ordre[+b.dataset.r] === Q.a, b));
+            if (mode === "defi") limite = performance.now() + T_DEFI;
+          }
+          attente = false;
+        }
+        function repondre(ok, bouton) {
+          if (attente || fini) return;
+          attente = true;
+          $("o-q").querySelectorAll("button").forEach((b) => { b.disabled = true; });
+          if (mode !== "eclair") $("o-q").querySelectorAll("[data-r]").forEach((b) => { if (b.querySelector("span:last-child").textContent === Q.a) b.classList.add("good"); });
+          if (bouton) bouton.classList.add(ok ? "good" : "bad");
+          if (ok) { score++; $("o-s").textContent = score; }
+          else {
+            if (mode !== "chrono") vies--;
+            const juste = mode === "eclair" ? Q.vf.replace("{}", Q.a) : Q.a;
+            rates.push({ q: mode === "eclair" ? Q.vf.replace("{}", Q.prop) + (Q.vrai ? " (c'était vrai)" : " (c'était faux)") : Q.q, a: juste, e: Q.e });
+            $("o-q").querySelector(".fbz").innerHTML = `<div class="feedback ko"><strong>${bouton ? "Raté" : "Trop tard"}</strong><span>${esc(mode === "eclair" ? (Q.vrai ? "C'était vrai : " : "C'était faux : ") + minus(juste) : "Réponse : " + juste)}</span></div>`;
+          }
+          root.classList.remove("flash-ok", "flash-ko"); void root.offsetWidth; root.classList.add(ok ? "flash-ok" : "flash-ko");
+          majInfo();
+          setTimeout(() => { if (fini || !document.body.contains(root)) return; if (vies <= 0) terminer(); else nouvelle(); }, ok ? 450 : 1600);
+        }
+        function majInfo() {
+          $("o-info").innerHTML = mode === "chrono" ? `Temps <b>${Math.max(0, Math.ceil(DUREE - (performance.now() - t0) / 1000))}</b> s`
+            : `Vies <b class="o-vies">${"♥".repeat(Math.max(0, vies))}<span>${"♥".repeat(3 - Math.max(0, vies))}</span></b>`;
+        }
+        // horloge : barre de temps, fin du chrono, réponse trop tardive
+        const horloge = setInterval(() => {
+          if (fini || !document.body.contains(root)) { clearInterval(horloge); return; }
+          const now = performance.now();
+          if (mode === "chrono") {
+            const r = 1 - (now - t0) / (DUREE * 1000); $("o-b").style.width = Math.max(0, 100 * r) + "%"; majInfo();
+            if (r <= 0) terminer();
+          } else if (!attente) {
+            const tot = mode === "defi" ? T_DEFI : tEclair(score), r = (limite - now) / tot;
+            $("o-b").style.width = Math.max(0, 100 * r) + "%";
+            if (r <= 0) repondre(false, null);
+          }
+        }, 100);
+        majInfo(); nouvelle();
+
+        function terminer() {
+          if (fini) return; fini = true; clearInterval(horloge);
+          const p = profil(), ancien = p.records[cle], reussi = score >= but, deja = fait(cle);
+          p.records[cle] = Math.max(ancien || 0, score); sauver();
+          const gain = enregistrer(cle, score * (mode === "eclair" ? 2 : 3), reussi, false);
+          const gains = (gain > 0 ? ["+" + gain + " points"] : []).concat(ancien != null && score > ancien ? ["Nouveau record"] : []).concat(reussi && !deja ? ["Défi réussi"] : []);
+          const msg = reussi ? (score >= but * 1.5 ? "Impressionnant !" : "Objectif atteint, bravo !") : score >= but * 0.6 ? "Presque ! Encore un essai ?" : "Continue de t'entraîner\u00a0: ça vient vite\u00a0!";
+          view.innerHTML = `<div class="score"><span class="muted small">${esc(titre)}</span><div class="big">${score}<small> bonne${score > 1 ? "s" : ""} réponse${score > 1 ? "s" : ""}</small></div>
+              <h2>${msg}</h2>${gains.length ? `<div class="gains">${gains.map((g) => `<span class="chip sun">${esc(g)}</span>`).join("")}</div>` : ""}
+              <p class="small muted">Objectif : ${but}${ancien != null || score ? ` · record : ${Math.max(ancien || 0, score)}` : ""}</p></div>
+            ${rates.length ? `<h3>À revoir</h3><div class="stack">${rates.slice(-6).map((r) => `<div class="review-item"><span>${esc(r.q)}</span><span class="ans">${esc(r.a)}</span>${r.e ? `<span class="muted small">${esc(r.e)}</span>` : ""}</div>`).join("")}</div>` : ""}
+            <div class="row"><button class="btn btn-ghost" id="btn-rejouer">Rejouer</button><a class="btn btn-primary" href="#${retour}">Retour aux défis</a></div>`;
+          $("btn-rejouer").onclick = () => rendre();
+        }
+      }
+    }
+
+    return { vue, resume, _test: { NIV, question, serie, dec, sci, N, lire } };
+  })();
 
   rendre();
 })();
 </script>
+
 </body></html>
