@@ -699,6 +699,51 @@ a.t-chap:hover { border-color: var(--c); }
 @keyframes o-ko { 25% { transform: translateX(-6px); } 75% { transform: translateX(6px); } }
 #o-stop { align-self: center; }
 @media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }
+
+/* TP d'optique (2nde) : banc d'optique et spectromètre, « dans le noir » (mêmes couleurs en mode clair et sombre) */
+.o-noir { fill: #111A24; }
+.o-nom { font: 700 9.5px var(--f-body); fill: #B8C7D3; pointer-events: none; paint-order: stroke; stroke: #111A24; stroke-width: 3px; stroke-linejoin: round; }
+.o-nom-c, .o-btn text.o-nom-c { font: 700 9.5px var(--f-body); fill: #22303A; pointer-events: none; } .o-btn text.o-nom-c.fort { font-size: 11px; }
+.o-petit { font: 700 7.5px var(--f-body); fill: #22303A; pointer-events: none; } .o-petit.c { fill: #E8EEF2; }
+.o-plateau-m { fill: #182330; stroke: #3A4B5C; stroke-dasharray: 3 4; }
+.o-rail { fill: #5C6B78; } .o-grad { stroke: #D5DEE6; stroke-width: 1; }
+.o-emplacement { fill: none; stroke: #5D7286; stroke-dasharray: 3 3; }
+.o-plateau { fill: #2A3846; stroke: #8FA2B3; stroke-width: 1.5; }
+.o-btn { cursor: pointer; } .o-btn rect { fill: #E9EEF2; stroke: #8FA2B3; } .o-btn text { font: 700 14px var(--f-body); fill: #15202B; }
+.o-btn rect.o-alim, .o-alim { fill: #D8DFE5; stroke: #8FA2B3; stroke-width: 1.5; }
+.o-support { fill: #3A4B5C; stroke: #8FA2B3; }
+.o-boitier { fill: #C9D3DB; stroke: #6B7C8C; stroke-width: 1.5; } .o-boitier.support { fill: #2A3846; }
+.o-ampoule { fill: #3A4B5C; stroke: #8FA2B3; } .o-ampoule.on { fill: #FFF6D8; }
+.o-fenetre { fill: #0B0F14; }
+.o-faisceau { fill: #FFFBEA; opacity: .8; }
+.o-ray { mix-blend-mode: screen; }
+.o-obj { cursor: grab; } .o-obj.tenu { opacity: .85; }
+.o-plaque { fill: #8C9AA6; stroke: #E0E7EC; stroke-width: 1; } .o-trou { fill: #0B0F14; }
+.o-verre { fill: #9CC8E8; fill-opacity: .35; stroke: #BFE0F5; stroke-width: 1.5; }
+.o-ecran { fill: #F4F6F7; stroke: #8FA2B3; }
+.o-bulbe { fill: #3A4B5C; fill-opacity: .4; stroke: #C9D3DB; stroke-width: 1.5; }
+.o-filament { fill: none; stroke: #6B7C8C; stroke-width: 1.6; stroke-linejoin: round; }
+.o-cable { fill: none; stroke: #4F6273; stroke-width: 2.5; }
+.o-lcd { font: 700 13px var(--f-lcd); fill: var(--lcd-ink); }
+.o-led { fill: #5C6B78; } .o-led.on { fill: #3DDC84; }
+.o-laser { stroke: #FF2A1A; stroke-width: 2; }
+.o-laser-b { fill: #2B3640; stroke: #8FA2B3; }
+.o-tube { fill: #E7EEF3; fill-opacity: .25; stroke: #C9D3DB; stroke-width: 1.2; }
+.o-fibre { fill: none; stroke: #F2B705; stroke-width: 3; stroke-linecap: round; }
+.o-embout { fill: #E9EEF2; stroke: #6B7C8C; } .o-capteur { fill: #F2B705; }
+.o-ecranvue, .o-ordi { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: .6rem; display: flex; flex-direction: column; gap: .35rem; }
+.o-ordi-t { display: flex; justify-content: space-between; gap: .5rem; flex-wrap: wrap; }
+.o-fv-svg { width: 100%; height: auto; display: block; } .o-fv-fond { fill: #1B2430; } .o-fv-l { font: 700 9px var(--f-body); fill: #B8C7D3; }
+.o-plot { width: 100%; height: auto; display: block; touch-action: pan-y; cursor: ew-resize; user-select: none; -webkit-user-select: none; }
+.o-ordi-fond { fill: #0F1720; } .o-ax { stroke: #8FA2B3; } .o-axt { font: 8.5px var(--f-body); fill: #B8C7D3; } .o-grille { stroke: #2A3846; stroke-width: 1; }
+.o-courbe { fill: none; stroke: #F4F6F7; stroke-width: 1.4; stroke-linejoin: round; }
+.o-curseur { stroke: #F2B705; stroke-width: 1.2; stroke-dasharray: 3 2; } .o-curseur-p, .o-curseur-e { fill: #F2B705; } .o-curseur-t { font: 700 9px var(--f-body); fill: #15202B; }
+.o-ctrl { display: flex; gap: .35rem; flex-wrap: wrap; align-items: center; }
+.o-statut.ok { color: var(--good); font-weight: 700; } .o-statut.ko { color: var(--bad); font-weight: 700; }
+.o-signal { color: var(--muted); } .o-signal.bon { color: var(--good); font-weight: 700; }
+.o-mys { display: flex; flex-direction: column; gap: .3rem; }
+.o-mys label { display: flex; gap: .5rem; align-items: center; }
+.o-just { width: 100%; min-height: 6.5rem; font: inherit; padding: .5rem; border-radius: 10px; border: 1px solid var(--line); background: var(--surface); color: var(--ink); box-sizing: border-box; }
 </style>
 </head><body>
 
@@ -741,7 +786,7 @@ const REGLAGES = {
     "4e-intensite": false,  // 4ème : l'intensité du courant électrique (cours + TP)
     "4e-tension": false,    // 4ème : la tension électrique (cours + TP)
     "4e-ohm": false,        // 4ème : la résistance et la loi d'Ohm (cours + TP)
-    "2nde-spectre": false,  // 2nde : le spectre de la lumière (rappel, cours, entraînement ; TP plus tard)
+    "2nde-spectre": false,  // 2nde : le spectre de la lumière (rappel, cours, TP « Le laboratoire des lumières », entraînement)
     "tle-titrages": true    // Terminale : analyser un système par des méthodes chimiques (titrages)
   },
   // Score minimum (en %) pour débloquer l'exercice suivant
@@ -3017,7 +3062,7 @@ const CONTENU = {
       // 2nde – thème « Ondes et signaux », partie 2 « Vision et image » (programme 2019) :
       // vitesse de la lumière ; lumière blanche, lumière colorée ; dispersion par un prisme (qualitatif) ;
       // longueur d'onde ; spectres d'émission continus (origine thermique) et de raies.
-      // Lois de Snell-Descartes et lentilles minces : chapitre suivant. TP d'optique (spectroscope) : plus tard.
+      // Lois de Snell-Descartes et lentilles minces : chapitre suivant. TP « Le laboratoire des lumières » : banc d'optique et spectromètre (08_optique.js).
       // Les spectres sont dessinés par spectreSVG / spectreDe (en haut de ce fichier).
       // ==================================================================
       {
@@ -3151,7 +3196,132 @@ const CONTENU = {
           ]
         },
 
-        // ======================== 3. ENTRAÎNEMENT ========================
+        // ======================== 3. TP : « Le laboratoire des lumières » (banc d'optique + spectromètre, 08_optique.js) ========================
+        // Capacité expérimentale du programme : produire et exploiter des spectres d'émission obtenus à l'aide d'un système dispersif
+        // et d'un analyseur de spectre. Option notée au journal : TP en deux séances (objectifs 1-2, puis 3-4), ou objectif 4 en évaluation.
+        tp: {
+          titre: "Le laboratoire des lumières",
+          intro: "Tu es en stage dans un laboratoire d'astrophysique en Guyane. Avant d'analyser la lumière de la nébuleuse d'Orion, tu dois apprendre à te servir des instruments : le prisme, puis le spectromètre. Chaque objectif réussi débloque le suivant.",
+          finTP: "TP terminé : tu es prêt pour analyser la lumière des étoiles !",
+          enClasse: {
+            objectif: "Produire et exploiter des spectres d'émission avec un système dispersif (prisme) et un analyseur de spectre (spectromètre relié à un ordinateur). Option : le TP peut se faire en deux séances (objectifs 1 et 2, puis 3 et 4) ; l'objectif 4 peut aussi servir d'évaluation.",
+            materiel: ["Une lampe de lumière blanche, une fente, une lentille convergente, un prisme sur plateau tournant, un écran blanc (banc d'optique)", "Une lampe à incandescence et un générateur réglable 0 – 12 V", "Des lampes spectrales (sodium, mercure, hydrogène) et leur alimentation", "Un laser rouge de classe 2 (650 nm)", "Un spectromètre à fibre optique relié à un ordinateur (à défaut : un spectroscope à main à réseau)", "Un tube à gaz « mystère » (néon, hélium…)"],
+            securite: ["On ne regarde jamais le faisceau d'un laser et on ne le dirige jamais vers quelqu'un.", "On ne regarde pas directement une lampe spectrale : celle au mercure émet des ultraviolets.", "Les lampes spectrales et la lampe à incandescence deviennent brûlantes : on les éteint et on les laisse refroidir avant de les manipuler.", "On fait le noir dans la salle, mais on range son sac et sa chaise pour pouvoir circuler."]
+          },
+          objectifs: [
+            {
+              id: "s1", competence: "Réaliser", titre: "Décomposer la lumière blanche",
+              notion: "Cours, partie 2 : la dispersion par un prisme",
+              but: "Monte le banc d'optique : la lampe éclaire une fente, la lentille rend le faisceau fin, le prisme disperse la lumière. Tourne le prisme pour que le spectre arrive sur l'écran.",
+              taches: [
+                { id: "monte", texte: "Allume la lampe, puis place sur le banc la fente et la lentille, dans le bon ordre (le faisceau doit être fin), et le prisme sur le plateau tournant." },
+                { id: "spectre", texte: "Pose l'écran sur son support, puis tourne le prisme (↺ ↻) jusqu'à obtenir un spectre net et entier sur l'écran." }
+              ],
+              questions: [
+                { type: "qcm", variantes: [
+                  { question: "Le prisme a-t-il « fabriqué » les couleurs observées sur l'écran ?", reponses: ["Non : il sépare les radiations déjà contenues dans la lumière blanche", "Oui : le verre colore la lumière", "Oui : chaque face du prisme a sa couleur", "Non : les couleurs viennent de l'écran"], bonne: 0,
+                    explication: "La lumière blanche est polychromatique : le prisme ne fait que séparer (disperser) les radiations qu'elle contient." }
+                ] },
+                { type: "qcm", variantes: [
+                  { question: "Quelle radiation le prisme dévie-t-il le plus ?", reponses: ["Le violet", "Le rouge", "Le vert", "Elles sont toutes déviées de la même façon"], bonne: 0,
+                    explication: "Le violet est le plus dévié, le rouge le moins dévié : c'est pour cela qu'elles se séparent." }
+                ] },
+                { type: "qcm", variantes: [
+                  { question: "Sans la fente, le centre du spectre paraît blanc. Pourquoi ?", reponses: ["Le faisceau est large : les couleurs se superposent", "La lampe n'est pas assez chaude", "Le prisme est mal tourné", "L'écran absorbe les couleurs"], bonne: 0,
+                    explication: "Avec un faisceau large, les couleurs dispersées se recouvrent et redonnent du blanc. La fente donne un faisceau fin, donc un spectre bien séparé." }
+                ] }
+              ],
+              retenir: "Un prisme disperse la lumière blanche : il sépare les radiations qu'elle contient, du rouge (le moins dévié) au violet (le plus dévié). La lumière blanche est polychromatique."
+            },
+            {
+              id: "s2", competence: "Analyser", titre: "Le spectre d'un corps chaud",
+              notion: "Cours, partie 4 : le spectre d'un corps chaud",
+              but: "Le filament de la lampe est un corps chaud : plus la tension est grande, plus il est chaud. Avec le spectromètre, observe son spectre à 3 V, à 6 V et à 12 V.",
+              taches: [
+                { id: "fibre", texte: "Règle le générateur sur 3 V (bouton +), puis approche le bout de la fibre optique de la fenêtre de la lampe : le spectre s'affiche sur l'ordinateur." },
+                { id: "basse", texte: "À 3 V : place le curseur là où la courbe commence à monter, du côté violet (à gauche), et touche NOTER." },
+                { id: "haute", texte: "Recommence à 6 V, puis à 12 V. Observe aussi la couleur du filament." }
+              ],
+              questions: [
+                { type: "qcm", variantes: [
+                  { question: "D'après ton tableau, quand la température du filament augmente, son spectre…", reponses: ["s'étend vers le violet (vers les petites longueurs d'onde)", "s'étend vers le rouge", "devient un spectre de raies", "ne change pas"], bonne: 0,
+                    explication: "Plus le filament est chaud, plus le début de son spectre se déplace vers le violet : sa lumière devient plus blanche." }
+                ] },
+                { type: "qcm", variantes: [
+                  { question: "Dans la constellation d'Orion, bien visible depuis la Guyane, Bételgeuse est rouge et Rigel est bleu-blanc. Quelle étoile a la surface la plus chaude ?", reponses: ["Rigel", "Bételgeuse", "Elles ont la même température", "On ne peut pas le savoir avec la lumière"], bonne: 0,
+                    explication: "Un spectre riche en bleu et en violet correspond à une température plus élevée : Rigel est plus chaude que Bételgeuse." },
+                  { question: "Une coulée de lave est rouge sombre, un filament de lampe est jaune-blanc. Lequel est le plus chaud ?", reponses: ["Le filament", "La lave", "Ils ont la même température", "On ne peut pas savoir"], bonne: 0,
+                    explication: "Le spectre du filament s'étend plus loin vers le violet : il est plus chaud (environ 2 500 °C contre 1 100 °C pour la lave)." }
+                ] },
+                { type: "vraifaux", variantes: [
+                  { affirmation: "Le spectre du filament d'une lampe est un spectre de raies.", vrai: false, explication: "C'est un spectre continu d'origine thermique : la courbe ne présente pas de pics séparés." }
+                ] }
+              ],
+              retenir: "Un corps chaud émet un spectre continu d'origine thermique. Plus sa température est élevée, plus son spectre s'enrichit vers le violet et plus sa lumière paraît blanche."
+            },
+            {
+              id: "s3", competence: "Mesurer", titre: "Spectres de raies et longueur d'onde",
+              notion: "Cours, parties 3 et 5 : longueur d'onde, spectres de raies",
+              but: "Glisse une lampe spectrale sur le support, allume l'alimentation et attends qu'elle chauffe. Avec le curseur, mesure la longueur d'onde de ses raies. Termine avec le laser.",
+              taches: [
+                { id: "sodium", texte: "Lampe au sodium : mesure la longueur d'onde de sa raie la plus intense (curseur au sommet du pic, puis NOTER)." },
+                { id: "mercure", texte: "Lampe au mercure : mesure au moins 2 raies. Pour changer de lampe : éteins l'alimentation et attends qu'elle refroidisse." },
+                { id: "hydrogene", texte: "Lampe à hydrogène : mesure au moins 2 raies." },
+                { id: "laser", texte: "Laser : place la fibre dans son faisceau et mesure sa longueur d'onde." }
+              ],
+              questions: [
+                { type: "qcm", variantes: [
+                  { question: "Le spectre du laser ne contient qu'un seul pic, très fin. Sa lumière est…", reponses: ["monochromatique", "polychromatique", "blanche", "ultraviolette"], bonne: 0,
+                    explication: "Une seule radiation, donc une seule longueur d'onde : la lumière du laser est monochromatique." }
+                ] },
+                { type: "qcm", variantes: [
+                  { question: "La raie la plus intense du sodium est vers 589 nm. Quelle est sa couleur ?", reponses: ["Jaune-orangé", "Bleue", "Violette", "Infrarouge, donc invisible"], bonne: 0,
+                    explication: "589 nm est entre 570 et 620 nm : jaune-orangé. C'est la couleur des vieux lampadaires." },
+                  { question: "Une raie de l'hydrogène est à 656 nm. En mètres, cela fait…", reponses: ["6,56 × 10⁻⁷ m", "6,56 × 10⁻⁹ m", "6,56 × 10⁷ m", "6,56 × 10⁻⁶ m"], bonne: 0,
+                    explication: "656 nm = 656 × 10⁻⁹ m = 6,56 × 10⁻⁷ m. C'est une raie rouge." }
+                ] },
+                { type: "qcm", variantes: [
+                  { question: "Pourquoi ne faut-il jamais regarder le faisceau d'un laser ?", reponses: ["Sa lumière est très concentrée : elle peut abîmer la rétine", "Il émet des rayons X", "Il est trop chaud", "Sa lumière est invisible"], bonne: 0,
+                    explication: "Toute la puissance du laser est concentrée dans un faisceau très fin : dans l'œil, elle peut brûler la rétine." }
+                ] }
+              ],
+              retenir: "Un gaz excité émet un spectre de raies. Chaque raie est une radiation monochromatique, caractérisée par sa longueur d'onde λ (en nm). Les raies d'un élément sont toujours aux mêmes longueurs d'onde."
+            },
+            {
+              id: "s4", competence: "Valider", titre: "Enquête : l'enseigne mystère",
+              notion: "Cours, partie 5 : identifier un élément grâce à son spectre",
+              but: "Un commerçant de Cayenne veut réparer son enseigne lumineuse. Quel gaz contient son tube ? Mesure ses raies, compare-les aux spectres de référence et justifie ta réponse. Chaque élève a un tube tiré au hasard : celui de ton voisin n'est peut-être pas le même !",
+              taches: [
+                { id: "raies", texte: "Pose le tube mystère sur le support, allume-le et mesure au moins 3 raies différentes." }
+              ],
+              questions: [
+                { type: "mystere" },
+                { type: "qcm", variantes: [
+                  { question: "Le spectre d'un tube contient toutes les raies du néon et toutes celles de l'hélium. Le tube contient…", reponses: ["un mélange de néon et d'hélium", "seulement du néon", "seulement de l'hélium", "un nouvel élément chimique"], bonne: 0,
+                    explication: "Chaque élément présent ajoute ses propres raies : on retrouve les raies des deux gaz, c'est un mélange." }
+                ] }
+              ],
+              retenir: "Pour identifier un élément, on compare les longueurs d'onde des raies mesurées avec celles des spectres de référence : l'élément est présent si toutes ses raies se retrouvent dans le spectre étudié."
+            }
+          ],
+          conclusion: {
+            programme: "Le programme (2nde)",
+            attendus: [
+              "Décrire et expliquer qualitativement le phénomène de dispersion de la lumière par un prisme.",
+              "Produire et exploiter des spectres d'émission obtenus à l'aide d'un système dispersif et d'un analyseur de spectre.",
+              "Caractériser le spectre du rayonnement émis par un corps chaud.",
+              "Caractériser un rayonnement monochromatique par sa longueur d'onde dans le vide ou dans l'air.",
+              "Exploiter un spectre de raies."
+            ],
+            textes: [
+              { obj: "s1", attendu: "La dispersion", texte: "Un [prisme] disperse la lumière blanche : il sépare ses radiations, du rouge, le moins dévié, au [violet], le plus dévié.", pieges: ["miroir", "vert"] },
+              { obj: "s2", attendu: "Le spectre d'un corps chaud", texte: "Un corps chaud émet un spectre [continu]. Plus sa température est [élevée], plus son spectre s'étend vers le violet.", pieges: ["de raies", "basse"] },
+              { obj: "s3", attendu: "Les spectres de raies", texte: "Un gaz excité émet un spectre de [raies]. Chaque raie est une radiation [monochromatique], caractérisée par sa longueur d'onde en [nanomètres].", pieges: ["polychromatique", "kilomètres"] },
+              { obj: "s4", attendu: "Identifier un élément", texte: "Les raies d'un élément chimique sont sa [signature] : on compare les [longueurs d'onde] mesurées aux spectres de référence pour identifier les éléments présents.", pieges: ["couleur", "températures"] }
+            ]
+          }
+        },
+        // ======================== 4. ENTRAÎNEMENT ========================
         entrainement: [
           { id: "couleurs", type: "relier", titre: "Couleur et longueur d'onde", desc: "Relie chaque radiation à son domaine ou à sa couleur", n: 5, paires: [
             ["λ = 420 nm", "violet"],
@@ -5407,7 +5577,7 @@ const QUESTIONS = [
   // la garde aussi un moment en cache. On compare donc la version de cette page avec le petit fichier version.json
   // publié en même temps : à l'ouverture et à chaque retour sur l'onglet (au plus une fois par minute).
   // Si une version plus récente est en ligne, un bandeau propose de mettre à jour. La progression (pseudo, points…) est conservée.
-  const VERSION_APPLI = "2026-11-08 17:45:08"; // remplacée par la date d'assemblage (assembler.py)
+  const VERSION_APPLI = "2026-11-08 19:24:05"; // remplacée par la date d'assemblage (assembler.py)
   let derniereVerif = 0;
   function verifierMaj() {
     if (!/^https?:$/.test(location.protocol) || VERSION_APPLI.indexOf("__") === 0) return; // fichier ouvert sur l'ordinateur : rien à vérifier
@@ -7361,6 +7531,567 @@ const QUESTIONS = [
       compteurs: () => { const jm = objet("joulemetre"); return { Ein: S.Ein, Ej: jm ? jm.E : 0 }; }
     };
   }
+  // ======================= TP d'optique (2nde) : banc d'optique et spectromètre =======================
+  // Deux paillasses « dans le noir » (on fait le noir dans la salle pour observer les spectres) :
+  //  - mode "prisme" : lampe de lumière blanche, banc gradué (fente, lentille), prisme sur un plateau tournant, écran.
+  //    Sous la paillasse : l'écran vu de face (spectre net, flou ou décalé selon le montage).
+  //  - mode "spectro" : une source (lampe à incandescence + générateur réglable, ou lampe spectrale / laser + alimentation)
+  //    et la fibre optique d'un spectromètre. Sous la paillasse : l'ordinateur (intensité en fonction de λ, curseur, NOTER).
+  // Les raies viennent des données du cours (SPECTRES_ELEMENTS, 03_contenu.html) ; le filament suit la loi de Planck.
+  // Gestes : glisser un objet ; toucher un objet pour lire son rôle ; toucher un bouton pour le commander.
+  // Événements envoyés au TP (08_tp.js) : "etat" (4 fois par seconde) et "noter" (bouton NOTER de l'ordinateur ;
+  // la réponse { ok, msg } du TP s'affiche sous la courbe).
+  const OPTIQUE = (() => {
+    const W = 330, H = 346, X0 = 10, Y0 = 12, X1 = 320, Y1 = 336;
+    const LMIN = 380, LMAX = 780, NL = LMAX - LMIN + 1;
+    const f1 = (v) => (+v).toFixed(1);
+    const rad = (d) => d * Math.PI / 180;
+
+    // ---------- Objets ----------
+    const OBJ = {
+      fente:    { nom: "Fente", w: 14, h: 44, role: "Une plaque percée d'une fente très fine : elle ne laisse passer qu'un fin pinceau de lumière. Elle se place juste devant la lampe." },
+      lentille: { nom: "Lentille", w: 16, h: 48, role: "Une lentille convergente, déjà réglée par le professeur. Placée après la fente, elle donne un faisceau fin et un spectre net." },
+      prisme:   { nom: "Prisme", w: 40, h: 36, role: "Un prisme en verre : il dévie la lumière, et chaque radiation un peu différemment. Pose-le sur le plateau tournant." },
+      ecran:    { nom: "Écran", w: 10, h: 50, role: "Un écran blanc. Pose-le sur son support, là où arrive la lumière qui sort du prisme." },
+      lampeNa:  { nom: "Lampe au sodium", etiq: "Sodium", court: "Na", w: 30, h: 64, gaz: ["Sodium"], role: "Lampe spectrale : du sodium gazeux excité par une décharge électrique. Glisse-la sur le support, puis allume l'alimentation." },
+      lampeHg:  { nom: "Lampe au mercure", etiq: "Mercure", court: "Hg", w: 30, h: 64, gaz: ["Mercure"], uv: true, role: "Lampe spectrale au mercure. Elle émet aussi des ultraviolets : on ne la regarde jamais directement." },
+      lampeH:   { nom: "Lampe à hydrogène", etiq: "Hydrogène", court: "H", w: 30, h: 64, gaz: ["Hydrogène"], role: "Lampe spectrale : de l'hydrogène gazeux excité par une décharge électrique." },
+      mystere:  { nom: "Tube mystère", etiq: "Tube mystère", court: "?", w: 30, h: 64, role: "Le tube de l'enseigne lumineuse : quel gaz contient-il ? Mesure ses raies pour le découvrir." },
+      laser:    { nom: "Laser rouge", etiq: "Laser", court: "laser", w: 48, h: 26, laser: true, role: "Un laser de classe 2. On ne regarde jamais le faisceau et on ne le dirige jamais vers quelqu'un." }
+    };
+    const estSource = (t) => /^lampe|^mystere|^laser/.test(t);
+
+    // ---------- Géométrie ----------
+    // Mode prisme (vue de dessus) : axe du banc à y = 80
+    const AXE = 80, SORTIE = 56, RAIL = { x: 64, x2: 214 }, SLOTS = { r1: 98, r2: 152 };
+    const P = { x: 240, y: AXE }, BETA = 62, DIST_E = 118, ROT_OK = 15, ROT0 = -20, PAS_ROT = 5;
+    const E = { x: P.x + DIST_E * Math.cos(rad(BETA)), y: P.y + DIST_E * Math.sin(rad(BETA)) };
+    const BT_G = { x: 208, y: 110, w: 28, h: 22 }, BT_D = { x: 244, y: 110, w: 28, h: 22 };
+    // Mode spectro : boîtier de la source (centre SUP), fenêtre de sortie A, spectromètre, alimentation
+    const SUP = { x: 62, y: 80 }, A = { x: 104, y: 80 }, SPEC = { x: 192, y: 22, w: 100, h: 44 }, ANCRE = { x: 208, y: 66 };
+    const ALIM = { x: 20, y: 138, w: 92, h: 56 };
+    const PLATEAU_Y = 240; // haut du plateau de matériel
+
+    // ---------- Spectres ----------
+    const tempFil = (U) => 900 + 160 * U; // filament : 3 V ≈ 1 400 K (rouge sombre), 12 V ≈ 2 800 K (jaune-blanc)
+    const planck = (l, T) => Math.pow(l, -5) / (Math.exp(1.4388e7 / (l * T)) - 1);
+    const LASER = 650, SIG_RAIE = 2.2, SIG_LASER = 0.9;
+    const raiesDe = (gaz) => [].concat(...gaz.map((n) => SPECTRES_ELEMENTS[n])).map((r) => Array.isArray(r) ? r : [r, 1]);
+    const cache = {};
+    // Intensité relative (0 à 1) pour chaque λ entier de 380 à 780 nm. src : { kind: "incand", U } | { kind: "raies", gaz } | { kind: "laser" }
+    function donnees(src) {
+      const cle = JSON.stringify(src);
+      if (cache[cle]) return cache[cle];
+      const d = new Float32Array(NL);
+      if (src.kind === "incand") {
+        const T = tempFil(src.U), m = planck(LMAX, T); // en dessous de 2 900 K, le maximum du filament est dans l'infrarouge
+        for (let i = 0; i < NL; i++) d[i] = planck(LMIN + i, T) / m;
+      } else {
+        const R = src.kind === "laser" ? [[LASER, 1]] : raiesDe(src.gaz), s = src.kind === "laser" ? SIG_LASER : SIG_RAIE;
+        let m = 0;
+        for (let i = 0; i < NL; i++) { const l = LMIN + i; let v = 0; R.forEach(([c, k]) => { v += k * Math.exp(-0.5 * Math.pow((l - c) / s, 2)); }); d[i] = v; if (v > m) m = v; }
+        for (let i = 0; i < NL; i++) d[i] /= m;
+      }
+      return (cache[cle] = d);
+    }
+    const val = (d, l) => { const i = Math.max(0, Math.min(NL - 1, Math.round(l) - LMIN)); return d[i]; };
+    // début du spectre d'un corps chaud (côté violet) : là où la courbe atteint 5 % de son maximum
+    const debutSpectre = (U) => { const d = donnees({ kind: "incand", U }); for (let i = 0; i < NL; i++) if (d[i] >= 0.05) return LMIN + i; return LMAX; };
+    // raies repérables d'une source (centre, hauteur relative)
+    function pics(src) {
+      if (src.kind === "laser") return [LASER];
+      const d = donnees(src);
+      return raiesDe(src.gaz).map(([c]) => c).filter((c) => val(d, c) >= 0.2);
+    }
+    const rgbDe = (s) => s.match(/\d+/g).map(Number);
+    // Couleur perçue d'une source (pour la lueur sur la paillasse)
+    function couleurSource(src) {
+      let r = 0, g = 0, b = 0;
+      if (src.kind === "incand") {
+        const T = tempFil(src.U), R = planck(640, T), G = planck(550, T) * 0.92, B = planck(460, T) * 0.85, m = Math.max(R, G, B);
+        return `rgb(${Math.round(255 * R / m)},${Math.round(255 * Math.pow(G / m, 0.75))},${Math.round(255 * Math.pow(B / m, 0.6))})`;
+      }
+      const R0 = src.kind === "laser" ? [[LASER, 1]] : raiesDe(src.gaz);
+      R0.forEach(([c, k]) => { const [x, y, z] = rgbDe(couleurLambda(c, "raie")); r += x * k; g += y * k; b += z * k; });
+      const m = Math.max(r, g, b) || 1;
+      return `rgb(${Math.round(255 * r / m)},${Math.round(255 * g / m)},${Math.round(255 * b / m)})`;
+    }
+    const nmX = (l) => 36 + (l - LMIN) * 272 / 400; // abscisse sur l'écran de l'ordinateur
+    const xNm = (x) => LMIN + (x - 36) * 400 / 272;
+    let grad = ""; for (let l = LMIN; l <= LMAX; l += 10) grad += `<stop offset="${((l - LMIN) / 400).toFixed(3)}" stop-color="${couleurLambda(l)}"/>`;
+
+    // ======================= La paillasse =======================
+    function banc(el, surEvt) {
+      el.innerHTML = `<div class="bench optique">
+          <svg class="bench-svg" viewBox="0 0 ${W} ${H}" role="group" aria-label="Paillasse d'optique : glisse les objets, touche les boutons pour les commander">
+            <defs><clipPath id="O-clip"><rect x="${X0}" y="${Y0}" width="${X1 - X0}" height="${Y1 - Y0}" rx="9"/></clipPath>
+</defs>
+            <rect x="3" y="4" width="${W - 6}" height="${H - 8}" rx="14" class="b-table"/>
+            <rect x="${X0 - 3}" y="${Y0 - 3}" width="${X1 - X0 + 6}" height="${Y1 - Y0 + 6}" rx="10" class="o-noir"/>
+            <g class="o-dessin"></g><g class="o-bulles" pointer-events="none"></g>
+          </svg>
+          <p class="bench-hint">La salle est dans le noir. Glisse les objets ; touche un objet pour lire son rôle ; touche les boutons pour les commander.</p>
+          <div class="o-vue"></div>
+        </div>`;
+      const bench = el.querySelector(".bench"), svg = el.querySelector("svg"), gD = el.querySelector(".o-dessin"), gB = el.querySelector(".o-bulles"), vue = el.querySelector(".o-vue");
+      let S = null, M = null, opts = {}, geste = null;
+
+      function charger(montage, o) {
+        M = montage; opts = o || {};
+        S = { mode: M.mode, t: 0, objets: [], lampe: false, rot: ROT0, U: 0, alim: false, chauffe: 0, chaudJusqua: -1, fibre: { x: 206, y: 196 }, lambda: 589, bulle: null, hoche: null, msg: null, tPlot: 0 };
+        if (M.mode === "prisme") {
+          [["fente", 34, 262], ["lentille", 96, 258], ["prisme", 150, 266], ["ecran", 236, 256]].forEach(([t, x, y]) => S.objets.push({ id: t, type: t, x, y, place: null }));
+        } else if (M.plateau) {
+          M.plateau.forEach((t, k) => { const D = OBJ[t]; S.objets.push({ id: t, type: t, x: 30 + k * 70 + (t === "laser" ? -6 : 0), y: t === "laser" ? 284 : 258, place: null, w: D.w, h: D.h }); });
+        }
+        vue.innerHTML = M.mode === "prisme"
+          ? `<div class="o-ecranvue"><strong class="small">L'écran, vu de face</strong><div class="o-fv"></div><p class="small o-statut" aria-live="polite"></p></div>`
+          : `<div class="o-ordi"><div class="o-ordi-t"><strong class="small">Ordinateur : logiciel du spectromètre</strong><span class="o-signal small"></span></div>
+              <svg class="o-plot" viewBox="0 0 320 176" role="img" aria-label="Intensité de la lumière reçue en fonction de la longueur d'onde"></svg>
+              <p class="small o-lect" aria-live="polite"></p>
+              <div class="o-ctrl"><button class="btn btn-ghost btn-sm" data-c="-5" aria-label="Curseur : 5 nm à gauche">◀◀</button><button class="btn btn-ghost btn-sm" data-c="-1" aria-label="Curseur : 1 nm à gauche">◀</button><button class="btn btn-ghost btn-sm" data-c="1" aria-label="Curseur : 1 nm à droite">▶</button><button class="btn btn-ghost btn-sm" data-c="5" aria-label="Curseur : 5 nm à droite">▶▶</button><button class="btn btn-primary btn-sm" data-c="noter">NOTER</button></div>
+              <p class="small o-statut" aria-live="polite"></p>
+              ${M.source === "incand" ? `<p class="small muted">Le logiciel ramène toujours le haut de la courbe à 100 %. Glisse le doigt sur la courbe pour déplacer le curseur.</p>` : `<p class="small muted">Glisse le doigt sur la courbe pour déplacer le curseur, puis place-le au sommet d'un pic.</p>`}</div>`;
+        if (M.mode !== "prisme") brancherOrdi();
+        dessiner(); statut();
+      }
+      const parId = (id) => S.objets.find((o) => o.id === id);
+      const surSupport = () => S.objets.find((o) => o.place === "sup");
+      const dim = (o) => OBJ[o.type];
+
+      // ---------- Bulles et signaux ----------
+      function bulle(texte, o, duree, genre) {
+        S.bulle = { texte, o: o ? o.id : null, fin: S.t + (duree || 3.2) };
+        if (genre) signalPaillasse(bench, genre);
+        if (genre === "ko" && o) S.hoche = { id: o.id, t0: performance.now() };
+        dessinerBulle();
+      }
+      function dessinerBulle() {
+        const b = S.bulle;
+        if (!b || S.t > b.fin) { gB.innerHTML = ""; return; }
+        const mots = b.texte.split(" "), lignes = [""];
+        mots.forEach((m) => { if ((lignes[lignes.length - 1] + " " + m).length > 36) lignes.push(m); else lignes[lignes.length - 1] = (lignes[lignes.length - 1] + " " + m).trim(); });
+        const w = 206, h = 12 + lignes.length * 13, o = b.o ? parId(b.o) : null;
+        const ox = o ? (o.vx != null ? o.vx : o.x) : 0, oy = o ? (o.vy != null ? o.vy : o.y) : 0;
+        let x = o ? ox + dim(o).w / 2 - w / 2 : W / 2 - w / 2, y = o ? oy - h - 8 : Y0 + 8;
+        if (y < Y0) y = Math.min(Y1 - h, (o ? oy + dim(o).h : 0) + 10);
+        x = Math.max(X0, Math.min(X1 - w, x));
+        gB.innerHTML = `<g transform="translate(${f1(x)} ${f1(y)})"><rect width="${w}" height="${h}" rx="8" class="b-bulle"/>${lignes.map((l, i) => `<text x="9" y="${16 + i * 13}" class="b-bulle-t">${esc(l)}</text>`).join("")}</g>`;
+      }
+
+      // ---------- Optique du banc (mode prisme) ----------
+      // Qualité du faisceau selon ce qui est posé sur le banc : "net" (fente puis lentille), "flou" (fente seule ou mal placée), "large" (pas de fente)
+      function surBanc() { return S.objets.filter((o) => o.place === "r1" || o.place === "r2").sort((a, b) => SLOTS[a.place] - SLOTS[b.place]); }
+      function qualite() {
+        const b = surBanc().map((o) => o.type);
+        if (b[0] === "fente" && b[1] === "lentille") return "net";
+        return b.indexOf("fente") >= 0 ? "flou" : "large";
+      }
+      const prismeOk = () => { const p = parId("prisme"); return !!p && p.place === "pl"; };
+      const ecranOk = () => { const e = parId("ecran"); return !!e && e.place === "se"; };
+      const decalage = () => (S.rot - ROT_OK) * 1.0; // écart (en degrés) entre la lumière déviée et l'écran
+      function cible() {
+        if (!S.lampe || !prismeOk()) return "aucun";
+        const d = Math.abs(decalage());
+        return d <= 5 ? "plein" : d <= 14.5 ? "partiel" : "rate";
+      }
+      const thetaL = (l) => BETA + decalage() + 4.5 - 9 * (l - 400) / 300; // le violet est plus dévié que le rouge
+
+      // ---------- Dessin ----------
+      function dessiner() {
+        let s = "";
+        if (S.mode === "prisme") s = dessinPrisme(); else s = dessinSpectro();
+        s += `<g class="b-reset" data-act="reset" transform="translate(${X1 - 22} ${Y0 + 4})" role="button" aria-label="Remettre la paillasse comme au départ"><rect width="18" height="18" rx="5"/><path d="M5 9a4 4 0 104-4H6M6 3v2.5h2.5"/></g>`;
+        gD.innerHTML = s;
+        dessinerBulle();
+      }
+      const decalH = (o) => decalHoche(S.hoche, o.id);
+      function plateauMateriel(titre) {
+        return `<rect x="16" y="${PLATEAU_Y}" width="298" height="90" rx="9" class="o-plateau-m"/><text x="24" y="${PLATEAU_Y + 14}" class="o-nom">${titre}</text>`;
+      }
+      function dessinPrisme() {
+        let s = plateauMateriel("Matériel : glisse-le sur le banc");
+        // banc gradué
+        s += `<rect x="${RAIL.x - 6}" y="${AXE + 14}" width="${RAIL.x2 - RAIL.x + 12}" height="9" rx="2" class="o-rail"/>`;
+        for (let x = RAIL.x; x <= RAIL.x2; x += 10) s += `<line x1="${x}" x2="${x}" y1="${AXE + 14}" y2="${AXE + ((x - RAIL.x) % 50 === 0 ? 20 : 17)}" class="o-grad"/>`;
+        s += `<text x="${(RAIL.x + RAIL.x2) / 2}" y="${AXE + 34}" text-anchor="middle" class="o-nom">Banc d'optique</text>`;
+        Object.entries(SLOTS).forEach(([k, x]) => { if (!S.objets.some((o) => o.place === k)) s += `<rect x="${x - 10}" y="${AXE - 24}" width="20" height="48" rx="4" class="o-emplacement"/>`; });
+        // plateau tournant et support de l'écran
+        s += `<circle cx="${P.x}" cy="${P.y}" r="23" class="o-plateau"/>`;
+        for (let a = 0; a < 360; a += 30) s += `<line x1="${f1(P.x + 19 * Math.cos(rad(a)))}" y1="${f1(P.y + 19 * Math.sin(rad(a)))}" x2="${f1(P.x + 23 * Math.cos(rad(a)))}" y2="${f1(P.y + 23 * Math.sin(rad(a)))}" class="o-grad"/>`;
+        s += `<text x="${P.x}" y="${P.y - 28}" text-anchor="middle" class="o-nom">Plateau tournant</text>`;
+        [[BT_G, "↺", "rotg", "Tourner le prisme vers la gauche"], [BT_D, "↻", "rotd", "Tourner le prisme vers la droite"]].forEach(([b, t, a, l]) => {
+          s += `<g class="o-btn" data-act="${a}" role="button" aria-label="${l}"><rect x="${b.x}" y="${b.y}" width="${b.w}" height="${b.h}" rx="6"/><text x="${b.x + b.w / 2}" y="${b.y + 16}" text-anchor="middle">${t}</text></g>`;
+        });
+        s += `<g transform="rotate(${BETA} ${f1(E.x)} ${f1(E.y)})"><rect x="${f1(E.x - 6)}" y="${f1(E.y - 30)}" width="12" height="60" rx="3" class="o-support"/></g>`;
+        if (!ecranOk()) s += `<text x="${X1 - 4}" y="${f1(E.y + 44)}" text-anchor="end" class="o-nom">Support de l'écran</text>`;
+        // lampe
+        s += `<g class="o-obj" data-act="lampe" role="button" aria-label="Allumer ou éteindre la lampe"><rect x="14" y="${AXE - 22}" width="42" height="44" rx="7" class="o-boitier"/>
+          <circle cx="32" cy="${AXE}" r="9" class="o-ampoule${S.lampe ? " on" : ""}"/><rect x="51" y="${AXE - 6}" width="6" height="12" rx="1" class="o-fenetre"/>
+          <text x="14" y="${AXE + 36}" class="o-nom">Lampe ${S.lampe ? "allumée" : "éteinte"}</text></g>`;
+        // lumière
+        s += `<g clip-path="url(#O-clip)" pointer-events="none">${faisceau()}</g>`;
+        // objets
+        S.objets.forEach((o) => { s += dessinObjetP(o); });
+        return s;
+      }
+      // Le faisceau, de la lampe au prisme, puis la lumière dispersée
+      function faisceau() {
+        if (!S.lampe) return "";
+        const xs = [], pts = [];
+        let x = SORTIE, hw = 8, g = 0.1, avant = null;
+        const elems = surBanc().map((o) => ({ x: SLOTS[o.place], t: o.type }));
+        const xFin = prismeOk() ? P.x : X1 + 10;
+        const seg = (x2) => { pts.push([x, hw]); hw = Math.max(0.8, hw + g * (x2 - x)); x = x2; pts.push([x, hw]); };
+        elems.forEach((e) => {
+          if (e.x > xFin) return;
+          seg(e.x);
+          if (e.t === "fente") { hw = Math.min(hw, 1.6); g = 0.07; }
+          if (e.t === "lentille") { g = avant === "fente" ? -(hw - 1.2) / Math.max(20, P.x - e.x) : -0.03; }
+          avant = e.t;
+        });
+        seg(xFin);
+        const haut = pts.map(([px, w]) => `${f1(px)},${f1(AXE - w)}`), bas = pts.slice().reverse().map(([px, w]) => `${f1(px)},${f1(AXE + w)}`);
+        let s = `<polygon points="${haut.concat(bas).join(" ")}" class="o-faisceau"/>`;
+        if (!prismeOk()) return s;
+        // lumière dispersée par le prisme
+        const q = qualite(), demi = q === "net" ? 0.7 : q === "flou" ? 2.2 : 5.5, op = q === "net" ? 0.85 : q === "flou" ? 0.5 : 0.32;
+        const ecr = ecranOk();
+        [405, 430, 455, 480, 505, 530, 555, 580, 605, 630, 660, 690].forEach((l) => {
+          const t = thetaL(l), Lr = ecr && Math.abs(t - BETA) <= 10.5 ? DIST_E / Math.cos(rad(t - BETA)) : 260;
+          const a1 = rad(t - demi), a2 = rad(t + demi);
+          s += `<polygon points="${P.x},${P.y} ${f1(P.x + Lr * Math.cos(a1))},${f1(P.y + Lr * Math.sin(a1))} ${f1(P.x + Lr * Math.cos(a2))},${f1(P.y + Lr * Math.sin(a2))}" fill="${couleurLambda(l, "raie")}" opacity="${op}" class="o-ray"/>`;
+        });
+        return s;
+      }
+      function dessinObjetP(o) {
+        const D = dim(o), hx = decalH(o);
+        let x = o.x, y = o.y, tr = "";
+        if (o.place === "r1" || o.place === "r2") { x = SLOTS[o.place] - D.w / 2; y = AXE - D.h / 2; }
+        if (o.place === "pl") { x = P.x - 20; y = P.y - 23; tr = ` rotate(${S.rot} 20 23)`; }
+        if (o.place === "se") { x = E.x - D.w / 2; y = E.y - D.h / 2; tr = ` rotate(${BETA} ${D.w / 2} ${D.h / 2})`; }
+        o.vx = x; o.vy = y;
+        const tenu = geste && geste.o === o;
+        let corps = "";
+        if (o.type === "fente") corps = `<rect x="3" y="0" width="8" height="19" rx="1.5" class="o-plaque"/><rect x="3" y="25" width="8" height="19" rx="1.5" class="o-plaque"/><rect x="5.5" y="19" width="3" height="6" class="o-trou"/>`;
+        if (o.type === "lentille") corps = `<path d="M8 0C17 12 17 36 8 48C-1 36 -1 12 8 0Z" class="o-verre"/>`;
+        if (o.type === "prisme") corps = `<path d="M20 2L38 34H2Z" class="o-verre"/>`;
+        if (o.type === "ecran") corps = `<rect x="1" y="0" width="8" height="50" rx="2" class="o-ecran"/>`;
+        const nom = o.place ? "" : `<text x="${D.w / 2}" y="${D.h + 13}" text-anchor="middle" class="o-nom">${D.nom}</text>`;
+        return `<g class="o-obj${tenu ? " tenu" : ""}" data-obj="${o.id}" transform="translate(${f1(x + hx)} ${f1(y)})${tr}"><rect x="-8" y="-8" width="${D.w + 16}" height="${D.h + 16}" fill="transparent"/>${corps}${nom}</g>`;
+      }
+
+      // ---------- Mode spectromètre ----------
+      function sourceActive() {
+        if (M.source === "incand") return S.U >= 1.5 ? { kind: "incand", U: S.U } : null;
+        const o = surSupport();
+        if (!o || !S.alim) return null;
+        if (o.type === "laser") return { kind: "laser" };
+        return { kind: "raies", gaz: o.type === "mystere" ? (opts.mystere || ["Néon"]) : dim(o).gaz };
+      }
+      const intensiteSource = () => { const src = sourceActive(); if (!src) return 0; return src.kind === "raies" ? S.chauffe : 1; };
+      // Lumière reçue par la fibre : 1 tout près de la fenêtre de sortie, puis de moins en moins quand on s'éloigne
+      function captage() {
+        const src = sourceActive(); if (!src) return 0;
+        const F = S.fibre;
+        if (F.x < A.x - 4) return 0;
+        if (src.kind === "laser") return Math.abs(F.y - A.y) < 11 ? 1 : 0;
+        const d = Math.hypot(F.x - A.x, F.y - A.y);
+        return d <= 24 ? 1 : Math.max(0, 1 - (d - 24) / 110);
+      }
+      function dessinSpectro() {
+        const src = sourceActive(), I = intensiteSource(), coul = src ? couleurSource(src) : "#000";
+        let s = `<defs><radialGradient id="O-lueur"><stop offset="0" stop-color="${coul}" stop-opacity=".95"/><stop offset=".45" stop-color="${coul}" stop-opacity=".35"/><stop offset="1" stop-color="${coul}" stop-opacity="0"/></radialGradient></defs>`;
+        s += M.plateau ? plateauMateriel("Matériel : glisse une source sur le support") : "";
+        // spectromètre et fibre
+        const F = S.fibre;
+        s += `<rect x="${SPEC.x}" y="${SPEC.y}" width="${SPEC.w}" height="${SPEC.h}" rx="7" class="o-boitier"/><rect x="${SPEC.x + 8}" y="${SPEC.y + 8}" width="34" height="14" rx="2" class="o-fenetre"/>
+          <text x="${SPEC.x + 50}" y="${SPEC.y + 19}" class="o-nom-c">Spectro-</text><text x="${SPEC.x + 50}" y="${SPEC.y + 31}" class="o-nom-c">mètre</text><text x="${SPEC.x + SPEC.w - 6}" y="${SPEC.y + 41}" text-anchor="end" class="o-petit">USB → ordi</text>`;
+        // boîtier de la source / support
+        if (M.source === "incand") {
+          const U = S.U, on = U >= 1.5;
+          s += `<rect x="24" y="${SUP.y - 36}" width="80" height="72" rx="9" class="o-boitier"/><rect x="99" y="${SUP.y - 7}" width="7" height="14" rx="1" class="o-fenetre"/>
+            <circle cx="${SUP.x}" cy="${SUP.y - 4}" r="16" class="o-bulbe"/><path d="M${SUP.x - 7} ${SUP.y + 8}v-12l3-5 2 5 2-5 2 5 2-5 2 5v12" class="o-filament" style="${on ? `stroke:${coul}` : ""}"/>
+            ${on ? `<circle cx="${SUP.x}" cy="${SUP.y - 4}" r="${f1(10 + U)}" fill="url(#O-lueur)" style="color:${coul}" opacity="${f1(Math.min(1, 0.25 + U / 12))}"/>` : ""}
+            <rect x="${SUP.x - 8}" y="${SUP.y + 12}" width="16" height="10" rx="2" class="b-metal"/>
+            <text x="${SUP.x + 2}" y="${SUP.y + 50}" text-anchor="middle" class="o-nom">Lampe à filament</text>`;
+          s += `<path d="M48 ${SUP.y + 36}V${ALIM.y}M76 ${SUP.y + 36}V${ALIM.y}" class="o-cable"/>`;
+          s += `<rect x="${ALIM.x}" y="${ALIM.y + 8}" width="${ALIM.w}" height="${ALIM.h}" rx="8" class="o-alim"/><rect x="${ALIM.x + 10}" y="${ALIM.y + 15}" width="${ALIM.w - 20}" height="18" rx="3" class="b-lcd"/>
+            <text x="${ALIM.x + ALIM.w - 14}" y="${ALIM.y + 29}" text-anchor="end" class="o-lcd">${U} V</text>
+            <g class="o-btn" data-act="moins" role="button" aria-label="Diminuer la tension"><rect x="${ALIM.x + 8}" y="${ALIM.y + 38}" width="30" height="20" rx="6"/><text x="${ALIM.x + 23}" y="${ALIM.y + 53}" text-anchor="middle">−</text></g>
+            <g class="o-btn" data-act="plus" role="button" aria-label="Augmenter la tension"><rect x="${ALIM.x + ALIM.w - 38}" y="${ALIM.y + 38}" width="30" height="20" rx="6"/><text x="${ALIM.x + ALIM.w - 23}" y="${ALIM.y + 53}" text-anchor="middle">+</text></g>
+            <text x="${ALIM.x + ALIM.w / 2}" y="${ALIM.y + ALIM.h + 22}" text-anchor="middle" class="o-nom">Générateur 0 – 12 V</text>`;
+        } else {
+          const o = surSupport();
+          s += `<rect x="24" y="${SUP.y - 40}" width="80" height="80" rx="9" class="o-boitier support"/><rect x="99" y="${SUP.y - 7}" width="7" height="14" rx="1" class="o-fenetre"/>`;
+          if (!o) s += `<text x="${SUP.x}" y="${SUP.y + 4}" text-anchor="middle" class="o-nom-c">support</text>`;
+          s += `<path d="M62 ${SUP.y + 40}V${ALIM.y + 8}" class="o-cable"/>`;
+          const chaud = S.chaudJusqua > S.t;
+          s += `<g class="o-btn alim" data-act="alim" role="button" aria-label="Allumer ou éteindre l'alimentation"><rect x="${ALIM.x}" y="${ALIM.y + 8}" width="${ALIM.w}" height="${ALIM.h}" rx="8" class="o-alim"/>
+              <circle cx="${ALIM.x + 18}" cy="${ALIM.y + 36}" r="5" class="o-led${S.alim ? " on" : ""}"/><text x="${ALIM.x + 30}" y="${ALIM.y + 32}" class="o-nom-c">Alimentation</text>
+              <text x="${ALIM.x + 30}" y="${ALIM.y + 46}" class="o-nom-c fort">${S.alim ? "ON" : "OFF"}${chaud ? " · chaud !" : ""}</text></g>`;
+        }
+        // lueur, faisceau du laser
+        if (src && I > 0) {
+          if (src.kind === "laser") {
+            const xf = Math.abs(F.y - A.y) < 11 && F.x > A.x ? F.x - 8 : X1;
+            s += `<line x1="${A.x - 18}" y1="${A.y}" x2="${f1(xf)}" y2="${A.y}" class="o-laser"/>`;
+          } else s += `<ellipse cx="${A.x + 6}" cy="${A.y}" rx="${f1(30 + 40 * I)}" ry="${f1(22 + 26 * I)}" fill="url(#O-lueur)" style="color:${coul}" opacity="${f1(0.35 + 0.5 * I)}" pointer-events="none"/>`;
+        }
+        // objets du plateau (lampes, laser)
+        S.objets.forEach((o) => { s += dessinSource(o, src, I); });
+        // fibre optique
+        const mx = (ANCRE.x + F.x) / 2;
+        s += `<path d="M${ANCRE.x} ${ANCRE.y}C${ANCRE.x} ${ANCRE.y + 70} ${f1(mx + 50)} ${f1(F.y + 4)} ${f1(F.x + 14)} ${f1(F.y)}" class="o-fibre"/>
+          <g class="o-obj" data-fibre="1" transform="translate(${f1(F.x)} ${f1(F.y)})"><circle r="17" fill="transparent"/><rect x="-6" y="-5" width="22" height="10" rx="3" class="o-embout"/><circle cx="-6" cy="0" r="3" class="o-capteur"/>
+          <text x="5" y="20" text-anchor="middle" class="o-nom">fibre</text></g>`;
+        return s;
+      }
+      function dessinSource(o, src, I) {
+        const D = dim(o), hx = decalH(o);
+        let x = o.x, y = o.y;
+        if (o.place === "sup") { x = SUP.x - D.w / 2 + (o.type === "laser" ? 8 : 0); y = SUP.y - D.h / 2; }
+        o.vx = x; o.vy = y; o.w = D.w; o.h = D.h;
+        const allume = o.place === "sup" && src && I > 0, coul = allume ? couleurSource(src) : null;
+        let corps;
+        if (o.type === "laser") corps = `<rect x="0" y="3" width="${D.w}" height="20" rx="4" class="o-laser-b"/><circle cx="${D.w - 3}" cy="13" r="3" class="o-trou"/><text x="18" y="17" text-anchor="middle" class="o-petit c">laser</text>`;
+        else corps = `<rect x="9" y="2" width="12" height="46" rx="6" class="o-tube"${allume ? ` style="fill:${coul};opacity:${f1(0.35 + 0.65 * I)}"` : ""}/><rect x="5" y="48" width="20" height="14" rx="2" class="b-metal"/>
+            <text x="15" y="59" text-anchor="middle" class="o-petit">${esc(D.court)}</text>`;
+        const nom = o.place ? "" : `<text x="${D.w / 2}" y="${D.h + 12}" text-anchor="middle" class="o-nom">${D.etiq || D.nom}</text>`;
+        return `<g class="o-obj${geste && geste.o === o ? " tenu" : ""}" data-obj="${o.id}" transform="translate(${f1(x + hx)} ${f1(y)})"><rect x="-8" y="-6" width="${D.w + 16}" height="${D.h + 12}" fill="transparent"/>${corps}${nom}</g>`;
+      }
+
+      // ---------- L'écran vu de face (mode prisme) et l'ordinateur (mode spectro) ----------
+      function statut() {
+        if (S.mode === "prisme") return vueEcran();
+        majPlot(true);
+      }
+      function vueEcran() {
+        const fv = vue.querySelector(".o-fv"), st = vue.querySelector(".o-statut");
+        if (!fv) return;
+        const c = cible(), q = qualite(), ecr = ecranOk();
+        let msg = "", bande = "";
+        if (!S.lampe) msg = "La lampe est éteinte : touche-la pour l'allumer.";
+        else if (!ecr) msg = "L'écran n'est pas sur son support : il n'y a rien à observer.";
+        else if (!prismeOk()) msg = "Rien sur l'écran : sans prisme, la lumière part tout droit.";
+        else if (c === "rate") msg = "La lumière n'arrive pas sur l'écran : tourne le prisme avec ↺ et ↻.";
+        else {
+          const x0 = 160 + (thetaL(780) - BETA) * 15, x1 = 160 + (thetaL(380) - BETA) * 15;
+          const flou = q === "net" ? "" : ` filter="url(#O-flou${q === "large" ? "2" : ""})"`;
+          bande = `<g clip-path="url(#O-ecr)"><rect x="${f1(x0)}" y="${q === "large" ? 8 : 16}" width="${f1(x1 - x0)}" height="${q === "large" ? 46 : 30}" fill="url(#O-grad)"${flou}/>${q === "large" ? `<ellipse cx="${f1((x0 + x1) / 2)}" cy="31" rx="${f1((x1 - x0) * 0.36)}" ry="22" fill="#fff" opacity=".85" filter="url(#O-flou)"/>` : ""}</g>`;
+          if (c === "partiel") msg = "Le spectre n'est pas entier sur l'écran : continue de tourner le prisme.";
+          else if (q === "net") msg = "Un beau spectre net, du rouge (le moins dévié) au violet (le plus dévié).";
+          else if (q === "flou") msg = "Le spectre est flou : vérifie l'ordre des objets sur le banc (la fente juste devant la lampe, puis la lentille).";
+          else msg = "Les couleurs se superposent (blanc au centre) : il manque la fente pour avoir un faisceau fin.";
+          if (c === "plein" && q === "net") bande += `<text x="${f1(x0 + 4)}" y="60" class="o-fv-l">rouge</text><text x="${f1(x1 - 4)}" y="60" text-anchor="end" class="o-fv-l">violet</text>`;
+        }
+        fv.innerHTML = `<svg viewBox="0 0 320 66" class="o-fv-svg" role="img" aria-label="${esc(msg)}"><defs><linearGradient id="O-grad" x1="1" x2="0">${grad}</linearGradient>
+            <filter id="O-flou" x="-30%" y="-60%" width="160%" height="220%"><feGaussianBlur stdDeviation="4"/></filter><filter id="O-flou2" x="-30%" y="-60%" width="160%" height="220%"><feGaussianBlur stdDeviation="8"/></filter>
+            <clipPath id="O-ecr"><rect x="10" y="3" width="300" height="60" rx="4"/></clipPath></defs>
+            <rect x="10" y="3" width="300" height="60" rx="4" class="o-fv-fond"/>${bande}</svg>`;
+        st.textContent = msg;
+      }
+      function brancherOrdi() {
+        const pl = vue.querySelector(".o-plot");
+        let tire = false;
+        const pose = (e) => { const p = versPaillasse(pl, e.clientX, e.clientY); S.lambda = Math.max(LMIN, Math.min(LMAX, Math.round(xNm(p.x)))); majPlot(true); };
+        pl.addEventListener("pointerdown", (e) => { tire = true; try { pl.setPointerCapture(e.pointerId); } catch (er) {} pose(e); });
+        pl.addEventListener("pointermove", (e) => { if (tire) pose(e); });
+        pl.addEventListener("pointerup", () => { tire = false; });
+        pl.addEventListener("pointercancel", () => { tire = false; });
+        vue.querySelectorAll("[data-c]").forEach((b) => b.onclick = () => {
+          if (b.dataset.c === "noter") return noter();
+          S.lambda = Math.max(LMIN, Math.min(LMAX, S.lambda + +b.dataset.c)); majPlot(true);
+        });
+      }
+      function majPlot(force) {
+        const pl = vue.querySelector(".o-plot"); if (!pl) return;
+        if (!force && S.t - S.tPlot < 0.12) return;
+        S.tPlot = S.t;
+        const src = sourceActive(), f = captage(), amp = src ? f * intensiteSource() : 0, d = src ? donnees(src) : null;
+        const bruit = (l) => 0.012 * (Math.sin(l * 1.7 + S.t * 9) + Math.sin(l * 0.53 - S.t * 5)) + 0.014;
+        const Y = (v) => 132 - 120 * Math.max(0, Math.min(1.04, v));
+        let pts = [], bande = "";
+        for (let l = LMIN; l <= LMAX; l += 2) {
+          const v = (d ? val(d, l) * amp : 0) + bruit(l) * (src ? 1 : 0.6);
+          pts.push(`${f1(nmX(l))},${f1(Y(v))}`);
+          if (d && amp > 0.02) { const k = Math.min(1, val(d, l) * amp * 1.4); if (k > 0.03) bande += `<rect x="${f1(nmX(l) - 0.9)}" y="150" width="1.8" height="14" fill="${couleurLambda(l, Math.pow(k, 0.7))}"/>`; }
+        }
+        let axes = "";
+        for (let l = 400; l <= 750; l += 50) axes += `<line x1="${f1(nmX(l))}" x2="${f1(nmX(l))}" y1="132" y2="136" class="o-ax"/>` + (l % 100 === 0 ? `<text x="${f1(nmX(l))}" y="146" text-anchor="middle" class="o-axt">${l}</text>` : "");
+        [0, 50, 100].forEach((p) => { axes += `<line x1="36" x2="308" y1="${Y(p / 100)}" y2="${Y(p / 100)}" class="o-grille"/><text x="31" y="${Y(p / 100) + 3}" text-anchor="end" class="o-axt">${p}</text>`; });
+        const xc = nmX(S.lambda), vc = d ? val(d, S.lambda) * amp : 0;
+        pl.innerHTML = `<defs><linearGradient id="O-pgrad">${grad}</linearGradient><clipPath id="O-sous"><polygon points="36,132 ${pts.join(" ")} 308,132"/></clipPath></defs>
+          <rect x="0" y="0" width="320" height="176" rx="8" class="o-ordi-fond"/>${axes}
+          <text x="6" y="10" class="o-axt">I (%)</text><text x="312" y="146" text-anchor="end" class="o-axt">λ (nm)</text>
+          <rect x="36" y="10" width="272" height="122" fill="url(#O-pgrad)" opacity=".55" clip-path="url(#O-sous)"/>
+          <polyline points="${pts.join(" ")}" class="o-courbe"/>
+          <rect x="36" y="150" width="272" height="14" fill="#000"/>${bande}
+          <line x1="${f1(xc)}" x2="${f1(xc)}" y1="10" y2="164" class="o-curseur"/><path d="M${f1(xc)} 132l-5 -8h10z" class="o-curseur-p"/>
+          <rect x="${f1(Math.max(36, Math.min(262, xc - 23)))}" y="1" width="46" height="13" rx="3" class="o-curseur-e"/><text x="${f1(Math.max(59, Math.min(285, xc)))}" y="11" text-anchor="middle" class="o-curseur-t">${S.lambda} nm</text>`;
+        const lect = vue.querySelector(".o-lect"), sig = vue.querySelector(".o-signal");
+        lect.innerHTML = `Curseur : <strong>λ = ${S.lambda} nm</strong> · intensité ${Math.round(100 * Math.max(0, vc))} %`;
+        let st = "";
+        if (!src) st = M.source === "incand" ? "Lampe éteinte : augmente la tension du générateur." : surSupport() ? "Alimentation éteinte." : "Aucune source sur le support.";
+        else if (src.kind === "raies" && S.chauffe < 0.98) st = "La lampe chauffe…";
+        else if (f <= 0.02) st = "Aucune lumière dans la fibre : approche-la de la source.";
+        else if (f < 0.5) st = "Signal faible : rapproche la fibre de la source.";
+        else st = "Signal bon.";
+        sig.textContent = st; sig.className = "o-signal small" + (st === "Signal bon." ? " bon" : "");
+        if (force) { const z = vue.querySelector(".o-statut"); if (z && S.msg) { z.textContent = S.msg.txt; z.className = "small o-statut " + (S.msg.ok ? "ok" : "ko"); } else if (z) z.textContent = ""; }
+      }
+      function noter() {
+        const src = sourceActive(), f = captage(), amp = src ? f * intensiteSource() : 0;
+        const dire = (ok, txt) => { S.msg = { ok, txt }; signalPaillasse(bench, ok ? "ok" : "ko"); majPlot(true); };
+        if (!src || amp < 0.4) return dire(false, src && src.kind === "raies" && S.chauffe < 0.98 ? "Attends que la lampe ait fini de chauffer." : "Le signal est trop faible : allume la source et approche la fibre de la fenêtre de sortie.");
+        const info = { lambda: S.lambda };
+        if (src.kind === "incand") Object.assign(info, { kind: "incand", U: S.U, debut: debutSpectre(S.U) });
+        else {
+          const o = surSupport(), P0 = pics(src);
+          let best = null; P0.forEach((c) => { if (Math.abs(c - S.lambda) <= 4 && (best == null || Math.abs(c - S.lambda) < Math.abs(best - S.lambda))) best = c; });
+          if (best == null) return dire(false, "Le curseur n'est pas sur un pic : place-le au sommet d'une raie, puis touche NOTER.");
+          Object.assign(info, { kind: src.kind, source: o.type, raie: best });
+        }
+        const r = surEvt("noter", info) || { ok: true, txt: "Mesure notée : λ = " + S.lambda + " nm." };
+        dire(r.ok, r.txt);
+      }
+
+      // ---------- Gestes ----------
+      const pt = (e) => { const p = versPaillasse(svg, e.clientX, e.clientY); return [p.x, p.y]; };
+      function quoiSous(cible) {
+        const g = cible && cible.closest ? cible.closest("[data-act],[data-obj],[data-fibre]") : null;
+        if (!g || !svg.contains(g)) return null;
+        if (g.dataset.act) return { type: "act", act: g.dataset.act };
+        if (g.dataset.fibre) return { type: "fibre" };
+        return { type: "obj", o: parId(g.dataset.obj) };
+      }
+      svg.addEventListener("pointerdown", (e) => {
+        const q = quoiSous(e.target); if (!q) { geste = null; return; }
+        const [x, y] = pt(e);
+        if (q.type === "obj") {
+          const o = q.o;
+          if (o.place === "sup" && (S.alim || S.chaudJusqua > S.t)) { geste = { type: "bloque", o, x, y }; }
+          else geste = { type: "obj", o, dx: x - (o.vx != null ? o.vx : o.x), dy: y - (o.vy != null ? o.vy : o.y), x, y, bouge: false };
+        } else if (q.type === "fibre") geste = { type: "fibre", dx: x - S.fibre.x, dy: y - S.fibre.y, x, y, bouge: false };
+        else geste = { type: "act", act: q.act, x, y, bouge: false };
+        e.preventDefault();
+        try { svg.setPointerCapture(e.pointerId); } catch (er) {}
+      });
+      svg.addEventListener("pointermove", (e) => {
+        if (!geste) return;
+        const [x, y] = pt(e);
+        if (Math.abs(x - geste.x) + Math.abs(y - geste.y) > 6) geste.bouge = true;
+        if (!geste.bouge) return;
+        if (geste.type === "obj") {
+          const o = geste.o, D = dim(o);
+          if (o.place) { o.place = null; }
+          o.x = Math.max(X0, Math.min(X1 - D.w, x - geste.dx)); o.y = Math.max(Y0, Math.min(Y1 - D.h, y - geste.dy));
+          o.vx = o.x; o.vy = o.y; dessiner(); statut();
+        }
+        if (geste.type === "fibre") { S.fibre.x = Math.max(X0 + 8, Math.min(X1 - 16, x - geste.dx)); S.fibre.y = Math.max(Y0 + 6, Math.min(Y1 - 20, y - geste.dy)); dessiner(); }
+      });
+      svg.addEventListener("pointerup", (e) => {
+        const g = geste; geste = null; if (!g) return;
+        if (g.type === "bloque") {
+          if (S.alim) bulle("Éteins d'abord l'alimentation avant de retirer la source.", g.o, 2.6, "ko");
+          else bulle("La lampe est brûlante : attends quelques secondes qu'elle refroidisse avant de la retirer.", g.o, 2.8, "ko");
+          dessiner(); return;
+        }
+        if (g.type === "act") { if (!g.bouge) action(g.act); return; }
+        if (g.type === "fibre") { if (!g.bouge) bulle("L'extrémité de la fibre optique : place-la devant la fenêtre de sortie de la source pour capter sa lumière.", null, 3); dessiner(); return; }
+        const o = g.o;
+        if (!g.bouge) { bulle(dim(o).role, o, 3.6); dessiner(); return; }
+        if (S.mode === "prisme") poserP(o); else poserS(o);
+        dessiner(); statut();
+      });
+      svg.addEventListener("pointercancel", () => { geste = null; dessiner(); });
+      gererDefilement(svg, (x, y, cible) => !!quoiSous(cible), () => !!geste);
+
+      function refuser(o, txt) { bulle(txt, o, 2.8, "ko"); }
+      function poserP(o) {
+        const D = dim(o), cx = o.x + D.w / 2, cy = o.y + D.h / 2;
+        const surRail = Math.abs(cy - AXE) < 32 && cx > RAIL.x - 16 && cx < RAIL.x2 + 14;
+        const surPlateau = Math.hypot(cx - P.x, cy - P.y) < 38, surSupportE = Math.hypot(cx - E.x, cy - E.y) < 40;
+        if (o.type === "fente" || o.type === "lentille") {
+          if (surPlateau) return refuser(o, "Sur le plateau tournant, on pose seulement le prisme.");
+          if (surSupportE) return refuser(o, "Ce support est celui de l'écran.");
+          if (!surRail) return;
+          const k = Math.abs(cx - SLOTS.r1) < Math.abs(cx - SLOTS.r2) ? "r1" : "r2";
+          if (S.objets.some((x) => x !== o && x.place === k)) return refuser(o, "Il y a déjà un objet à cet endroit du banc.");
+          o.place = k; bulle(D.nom + " posée sur le banc.", null, 1.4, "ok"); return;
+        }
+        if (o.type === "prisme") {
+          if (surPlateau) { o.place = "pl"; bulle("Le prisme est sur le plateau. Tourne-le avec ↺ et ↻.", null, 2.4, "ok"); return; }
+          if (surRail) return refuser(o, "Le prisme se pose sur le plateau tournant, au bout du banc.");
+          if (surSupportE) return refuser(o, "Ce support est celui de l'écran.");
+          return;
+        }
+        if (o.type === "ecran") {
+          if (surSupportE) { o.place = "se"; bulle("L'écran est sur son support.", null, 1.6, "ok"); return; }
+          if (surRail || surPlateau) return refuser(o, "L'écran se place sur son support, là où arrive la lumière qui sort du prisme.");
+        }
+      }
+      function poserS(o) {
+        const D = dim(o), cx = o.x + D.w / 2, cy = o.y + D.h / 2;
+        if (Math.hypot(cx - SUP.x, cy - SUP.y) < 48) {
+          const occ = surSupport();
+          if (occ && occ !== o) return refuser(o, "Il y a déjà une source sur le support : retire-la d'abord.");
+          o.place = "sup";
+          bulle(D.nom + " posé" + (o.type === "laser" ? "" : "e") + " sur le support. Allume l'alimentation.", null, 2.2, "ok");
+        }
+      }
+      function action(a) {
+        if (a === "reset") { charger(M, opts); bulle("La paillasse est remise comme au départ.", null, 1.8); surEvt("reset", {}); return; }
+        if (a === "lampe") { S.lampe = !S.lampe; bulle(S.lampe ? "Lampe allumée : suis le trajet de la lumière." : "Lampe éteinte.", null, 1.6); }
+        if (a === "rotg" || a === "rotd") {
+          if (!prismeOk()) { bulle("Pose d'abord le prisme sur le plateau tournant.", null, 2.2, "ko"); return; }
+          S.rot = Math.max(-45, Math.min(45, S.rot + (a === "rotd" ? PAS_ROT : -PAS_ROT)));
+        }
+        if (a === "moins" || a === "plus") {
+          S.U = Math.max(0, Math.min(12, S.U + (a === "plus" ? 1 : -1)));
+          if (S.U === 12 && a === "plus") bulle("12 V : c'est la tension maximale de cette lampe.", null, 1.8);
+        }
+        if (a === "alim") {
+          const o = surSupport();
+          if (!S.alim && !o) { bulle("Pose d'abord une source sur le support.", null, 2.2, "ko"); return; }
+          S.alim = !S.alim;
+          if (S.alim) {
+            S.chauffe = o.type === "laser" ? 1 : 0;
+            if (o.type === "laser") bulle("Laser allumé : ne regarde jamais le faisceau et ne le dirige vers personne.", null, 3.4);
+            else if (dim(o).uv) bulle("La lampe au mercure émet des ultraviolets : ne la regarde pas directement.", null, 3.4);
+            else bulle("Alimentation allumée : la lampe chauffe quelques secondes.", null, 2.2);
+          } else { if (o && o.type !== "laser") S.chaudJusqua = S.t + 3; S.chauffe = 0; }
+        }
+        S.msg = null; dessiner(); statut();
+      }
+
+      // ---------- Boucle ----------
+      let dernier = performance.now(), acc = 0;
+      function boucle(now) {
+        if (!document.body.contains(svg)) return;
+        const dt = Math.min(0.05, (now - dernier) / 1000); dernier = now; S.t += dt;
+        let redessin = !!S.hoche || (S.bulle && S.t > S.bulle.fin);
+        if (S.bulle && S.t > S.bulle.fin) S.bulle = null;
+        if (S.hoche && performance.now() - S.hoche.t0 > DUREE_HOCHE) S.hoche = null;
+        if (S.alim && S.chauffe < 1) { S.chauffe = Math.min(1, S.chauffe + dt / 2.5); redessin = true; }
+        if (S.chaudJusqua > 0 && S.t > S.chaudJusqua) { S.chaudJusqua = -1; redessin = true; }
+        if (redessin) dessiner();
+        if (S.mode === "spectro") majPlot(false);
+        acc += dt;
+        if (acc >= 0.25) { acc = 0; surEvt("etat", etat()); }
+        requestAnimationFrame(boucle);
+      }
+      function etat() {
+        if (S.mode === "prisme") return { mode: "prisme", lampe: S.lampe, qualite: qualite(), banc: surBanc().map((o) => o.type), prisme: prismeOk(), ecran: ecranOk(), cible: cible(), dt: 0.25 };
+        const src = sourceActive(), o = surSupport();
+        return { mode: "spectro", src, U: S.U, f: captage(), chauffe: S.chauffe, source: o ? o.type : null, alim: S.alim, dt: 0.25 };
+      }
+      requestAnimationFrame(boucle);
+      return { charger, _etat: () => S, _noter: noter };
+    }
+
+    return { banc, debutSpectre, pics, donnees, raiesDe, LASER, OBJ };
+  })();
   // ======================= TP : page du laboratoire (objectifs + conclusion) =======================
   // Montage de départ de chaque objectif : objets (position en x, y sur la paillasse), fils déjà posés, turbine et alternateur accrochés…
   const MONTAGES = {
@@ -7425,6 +8156,16 @@ const QUESTIONS = [
     p4: { elec: true, objets: [{ type: "bougie", x: 40, y: 236 }, { type: "bocal", x: 120, y: 112 }, { type: "bocal", droit: true, temoin: true, lab: "Bocal témoin", x: 232, y: 96 }, { type: "chaux", x: 262, y: 238 }] }
   };
 
+  // ----- 2nde « Le spectre de la lumière » : paillasses d'optique (moteur dans 08_optique.js) -----
+  const MONTAGES_OPTIQUE = {
+    s1: { mode: "prisme" },
+    s2: { mode: "spectro", source: "incand" },
+    s3: { mode: "spectro", plateau: ["lampeNa", "lampeHg", "lampeH", "laser"] },
+    s4: { mode: "spectro", plateau: ["mystere"] }
+  };
+  // Gaz possibles du tube de l'enseigne mystère (objectif 4), tirés au hasard pour chaque élève
+  const MYSTERES = [["Néon"], ["Hélium"], ["Hélium", "Néon"], ["Hydrogène", "Hélium"], ["Hydrogène", "Néon"]];
+
   // Texte à trous : les mots entre [ ] sont à retrouver dans la banque de mots
   function widgetTrous(el, texte, pieges, onOk) {
     const morceaux = texte.split(/(\[[^\]]+\])/).filter((x) => x !== "");
@@ -7467,7 +8208,7 @@ const QUESTIONS = [
     O.forEach((o) => { rep.obj[o.id] = rep.obj[o.id] || { t: {}, q: [] }; });
     const objFait = (o) => o.taches.every((t) => rep.obj[o.id].t[t.id]) && o.questions.every((q, k) => rep.obj[o.id].q.indexOf(k) >= 0);
     const ongletOuvert = (i) => modeProf() || O.slice(0, i).every(objFait);
-    const conclFaite = () => tp.conclusion.textes.every((x, k) => rep.concl[k]) && !!rep.concl.chaine;
+    const conclFaite = () => tp.conclusion.textes.every((x, k) => rep.concl[k]) && (!tp.conclusion.chaine || !!rep.concl.chaine);
     let actif = O.findIndex((o, i) => !objFait(o) && ongletOuvert(i)); if (actif < 0) actif = NC;
     let L = null, temps = {}, vus = {};
 
@@ -7491,8 +8232,8 @@ const QUESTIONS = [
       temps = {}; vus = {};
       $("tp-zone").innerHTML = `<div class="panel mission" id="o-carte"></div><div id="o-banc"></div><div class="stack" id="o-extra"></div><div class="stack" id="o-quest"></div><div class="stack" id="o-retenir"></div>`;
       carteObjectif();
-      L = paillasse($("o-banc"), evenement);
-      L.charger(MONTAGES[o.id]);
+      if (o.id[0] === "s") { L = OPTIQUE.banc($("o-banc"), evenement); L.charger(MONTAGES_OPTIQUE[o.id], { mystere: gazMystere() }); }
+      else { L = paillasse($("o-banc"), evenement); L.charger(MONTAGES[o.id]); }
       extra(); questions(); retenir();
     }
     function carteObjectif() { const o = O[actif]; $("o-carte").innerHTML = htmlMission(o, actif, rep.obj[o.id], objFait(o)); }
@@ -7501,6 +8242,7 @@ const QUESTIONS = [
       if (o.id[0] === "w") return extraW(box, o);
       if (o.id[0] === "p") return extraP(box, o);
       if ("iur".indexOf(o.id[0]) >= 0) return extra4(box, o);
+      if (o.id[0] === "s") return extraS(box, o);
       if (o.id !== "o2") { box.innerHTML = ""; return; }
       const m = rep.mesures;
       if (!m.length) { box.innerHTML = `<h3>Mes mesures</h3><p class="small muted">Aucune mesure pour l'instant. Quand l'écran affiche une tension stable, touche NOTER sur le multimètre.</p>`; return; }
@@ -7528,7 +8270,7 @@ const QUESTIONS = [
           const x = $("oq" + k); if (x) { x.classList.add("reussi"); const b = x.querySelector(".badge"); b.textContent = "Réussi"; b.classList.add("ok"); }
           verifierObjectif();
         };
-        if (q.type === "releve") questionReleve($("oqw" + k), ok); else if (q.type === "produit") questionProduit($("oqw" + k), ok); else monterExemple($("oqw" + k), q, ok);
+        if (q.type === "releve") questionReleve($("oqw" + k), ok); else if (q.type === "mystere") questionMystere($("oqw" + k), ok); else if (q.type === "produit") questionProduit($("oqw" + k), ok); else monterExemple($("oqw" + k), q, ok);
       });
     }
     function questionReleve(el, onOk) {
@@ -7580,6 +8322,7 @@ const QUESTIONS = [
       if (id[0] === "w") return evenementW(type, d, id, st, duree);
       if (id[0] === "p") return evenementP(type, d, id, st, duree);
       if ("iur".indexOf(id[0]) >= 0) return evenement4(type, d, id, st, duree);
+      if (id[0] === "s") return evenementS(type, d, id, st, duree);
       if (type === "mesure" && id === "o2") {
         if (d.gen !== "alternateur" || d.mode !== "AC") return;
         rep.mesures.push({ debit: d.debit, u: d.u }); sauver(); extra();
@@ -7821,15 +8564,110 @@ const QUESTIONS = [
       else box.innerHTML = "";
     }
 
+    // ---------- 2nde : spectres (banc d'optique et spectromètre, 08_optique.js) ----------
+    // Le gaz du tube mystère est tiré au hasard une fois par élève (il est gardé avec le TP).
+    function gazMystere() { if (!rep.mystere) { rep.mystere = MYSTERES[hasard(0, MYSTERES.length - 1)]; sauver(); } return rep.mystere; }
+    const REF_S = { lampeNa: [589], lampeHg: [405, 436, 546, 577, 579], lampeH: [410, 434, 486, 656], laser: [OPTIQUE.LASER] };
+    const NOMS_S = { lampeNa: "Sodium", lampeHg: "Mercure", lampeH: "Hydrogène", laser: "Laser rouge", mystere: "Tube mystère" };
+    const COUL_FIL = { 3: "rouge sombre", 6: "orangé", 12: "jaune-blanc" };
+    const nm = (v) => v == null ? "…" : v + " nm";
+    function evenementS(type, d, id, st, duree) {
+      const M = rep.m5 = rep.m5 || {}, m = M[id] = M[id] || {};
+      const garder = () => { sauver(); extra(); };
+      if (type === "etat") {
+        if (id === "s1") {
+          const monte = d.lampe && d.qualite === "net" && d.prisme;
+          if (duree("monte", monte) >= 0.5) cocher("monte");
+          if (duree("spectre", monte && d.ecran && d.cible === "plein") >= 1) cocher("spectre");
+        }
+        if (id === "s2" && duree("fibre", d.src && d.U >= 3 && d.f >= 0.5) >= 1) cocher("fibre");
+        return;
+      }
+      if (type !== "noter") return;
+      if (id === "s2") {
+        if (!COUL_FIL[d.U]) return { ok: false, txt: "Règle le générateur exactement sur 3 V, 6 V ou 12 V avant de noter." };
+        if (Math.abs(d.lambda - d.debut) > 20) return { ok: false, txt: "Le curseur n'est pas au début du spectre : place-le là où la courbe commence à monter, du côté violet (à gauche)." };
+        m.debut = m.debut || {}; m.debut[d.U] = d.lambda; garder();
+        if (m.debut[3] != null) cocher("basse");
+        if (m.debut[6] != null && m.debut[12] != null) cocher("haute");
+        return { ok: true, txt: `Noté : à ${d.U} V, le spectre commence vers ${d.lambda} nm.` };
+      }
+      if (id === "s3" || id === "s4") {
+        m.raies = m.raies || {};
+        const L0 = m.raies[d.source] = (m.raies[d.source] || []).filter((r) => r.raie !== d.raie);
+        L0.push({ raie: d.raie, l: d.lambda }); L0.sort((a, b) => a.l - b.l); garder();
+        if (id === "s3") {
+          const n = (t) => (m.raies[t] || []).length;
+          if (n("lampeNa") >= 1 && m.raies.lampeNa.some((r) => r.raie >= 588 && r.raie <= 590)) cocher("sodium");
+          if (n("lampeHg") >= 2) cocher("mercure");
+          if (n("lampeH") >= 2) cocher("hydrogene");
+          if (n("laser") >= 1) cocher("laser");
+          if (d.source === "lampeNa" && !(d.raie >= 588 && d.raie <= 590)) return { ok: true, txt: `Raie notée (${d.lambda} nm). Cherche maintenant la raie la plus intense du sodium.` };
+        } else if ((m.raies.mystere || []).length >= 3) cocher("raies");
+        return { ok: true, txt: `Raie notée : λ = ${d.lambda} nm.` };
+      }
+    }
+    function extraS(box, o) {
+      const m = (rep.m5 || {})[o.id] || {};
+      const table = (titre, t, lignes, apres) => `<h3>${titre}</h3><div class="table-wrap"><table class="mes-table"><thead><tr>${t.map((x) => `<th>${x}</th>`).join("")}</tr></thead><tbody>${lignes.map((l) => `<tr>${l.map((c) => `<td>${c}</td>`).join("")}</tr>`).join("")}</tbody></table></div>${apres || ""}`;
+      const R = m.raies || {}, liste = (t) => (R[t] || []).map((r) => r.l).join(" ; ") || "…";
+      if (o.id === "s2") { const D = m.debut || {}; box.innerHTML = table("Mes mesures", ["Tension", "Couleur du filament", "Début du spectre (côté violet)"], [3, 6, 12].map((u) => [u + " V", D[u] != null ? COUL_FIL[u] : "…", nm(D[u])]), `<p class="small muted">Une nouvelle mesure remplace l'ancienne.</p>`); }
+      else if (o.id === "s3") box.innerHTML = table("Mes mesures", ["Source", "λ mesurées (nm)", "λ de référence (nm)"], ["lampeNa", "lampeHg", "lampeH", "laser"].map((t) => [NOMS_S[t], liste(t), R[t] && R[t].length ? REF_S[t].join(" ; ") : "…"]), `<p class="small muted">Les longueurs d'onde de référence s'affichent quand tu as noté une raie. Un écart de quelques nm est normal.</p>`);
+      else if (o.id === "s4") box.innerHTML = table("Mes mesures", ["Source", "λ mesurées (nm)"], [["Tube mystère", liste("mystere")]]);
+      else box.innerHTML = "";
+    }
+    // Question « mystère » : quels éléments contient le tube ? puis justification rédigée (capacités langagières)
+    function questionMystere(el, onOk) {
+      const gaz = gazMystere(), mes = ((((rep.m5 || {}).s4 || {}).raies || {}).mystere || []).map((r) => r.l);
+      const choix = ["Hydrogène", "Hélium", "Néon", "Sodium", "Mercure"];
+      el.innerHTML = `<p class="qtext">Quel(s) élément(s) contient le tube de l'enseigne ? Compare tes mesures aux spectres de référence.</p>
+        <p class="small"><strong>Mes raies :</strong> ${mes.length ? mes.join(" nm ; ") + " nm" : "(mode prof : pas de mesure)"}</p>
+        <div class="fig-cours">${choix.map((n) => `<span class="leg">${n}</span>${spectreDe(n, { h: 18, axe: n === "Mercure" })}`).join("")}</div>
+        <div class="o-mys">${choix.map((n) => `<label><input type="checkbox" value="${n}"> ${n}</label>`).join("")}</div>
+        <button class="btn btn-primary btn-sm" data-v>Vérifier</button><div class="fbz"></div><div class="stack o-just-z"></div>`;
+      el.querySelector("[data-v]").onclick = () => {
+        const coche = [...el.querySelectorAll(".o-mys input:checked")].map((i) => i.value), fb = el.querySelector(".fbz");
+        if (!coche.length) { fb.innerHTML = `<p class="error">Coche au moins un élément.</p>`; return; }
+        const bon = coche.length === gaz.length && gaz.every((g) => coche.indexOf(g) >= 0);
+        if (!bon) { fb.innerHTML = `<div class="feedback ko"><strong>Ce n'est pas ça.</strong><span>Un élément est présent si toutes ses raies (les plus intenses) se retrouvent dans le spectre du tube. Un tube peut contenir un mélange de gaz. Mesure d'autres raies si besoin.</span></div>`; return; }
+        el.querySelector("[data-v]").disabled = true; el.querySelectorAll(".o-mys input").forEach((i) => i.disabled = true);
+        fb.innerHTML = `<div class="feedback ok"><strong>Bravo, c'est ${gaz.length > 1 ? "un mélange " + etListe(gaz.map(deG)) : leG(gaz[0])} !</strong><span>Rédige maintenant ta justification.</span></div>`;
+        justifier(el.querySelector(".o-just-z"), gaz, mes, onOk);
+      };
+    }
+    // « de l'hélium », « du néon », « d'hélium », « le néon »… (h muet : hydrogène, hélium)
+    const voy = (n) => /^[aeiouyhéè]/i.test(n), min = (n) => n.toLowerCase();
+    const duG = (n) => (voy(n) ? "de l'" : "du ") + min(n), deG = (n) => (voy(n) ? "d'" : "de ") + min(n), leG = (n) => (voy(n) ? "l'" : "le ") + min(n);
+    const etListe = (t) => t.length > 1 ? t.slice(0, -1).join(", ") + " et " + t[t.length - 1] : t.join("");
+    function justifier(z, gaz, mes, onOk) {
+      const crit = ["J'ai cité des longueurs d'onde que j'ai mesurées.", "J'ai comparé avec les spectres de référence.", "J'ai conclu en nommant le ou les éléments présents."];
+      z.innerHTML = `<p class="qtext">Justifie ta réponse en quelques phrases, comme dans une copie.</p>
+        <div class="methode"><strong class="lbl">Pour t'aider</strong><ul><li>« J'ai mesuré des raies à … nm, … nm et … nm. »</li><li>« Ces raies correspondent à celles du spectre de référence de … »</li><li>« Chaque élément a ses propres raies, donc le tube contient … »</li></ul></div>
+        <textarea class="o-just" aria-label="Ma justification">${esc(rep.just || "")}</textarea>
+        <div class="o-mys">${crit.map((c, k) => `<label><input type="checkbox" data-k="${k}"> ${c}</label>`).join("")}</div>
+        <button class="btn btn-primary btn-sm" data-j>J'ai relu ma justification</button><div class="fbj"></div>`;
+      const ta = z.querySelector("textarea");
+      ta.oninput = () => { rep.just = ta.value; sauver(); };
+      z.querySelector("[data-j]").onclick = () => {
+        const fb = z.querySelector(".fbj");
+        if (ta.value.trim().length < 40) { fb.innerHTML = `<p class="error">Écris au moins deux phrases complètes.</p>`; return; }
+        if ([...z.querySelectorAll("[data-k]")].some((c) => !c.checked)) { fb.innerHTML = `<p class="error">Relis-toi avec les trois critères et coche-les quand ta justification les respecte.</p>`; return; }
+        z.querySelector("[data-j]").disabled = true;
+        const ex = mes.length ? etListe(mes.slice(0, 3).map((l) => l + " nm")) : "585 nm, 640 nm et 703 nm";
+        fb.innerHTML = `<div class="feedback ok"><strong>Justification terminée.</strong><span>Exemple de réponse : « J'ai mesuré des raies à ${ex}. On les retrouve dans ${gaz.length > 1 ? "les spectres de référence " + etListe(gaz.map(duG)) : "le spectre de référence " + duG(gaz[0])}. Comme chaque élément chimique émet des raies qui lui sont propres, le tube contient ${etListe(gaz.map(duG))}. »</span></div>`;
+        onOk();
+      };
+    }
+
     // ---------- Conclusion (onglet ultime) ----------
     function afficherConclusion() {
       L = null;
       const C = tp.conclusion;
       $("tp-zone").innerHTML = `<div class="panel mission"><span class="kicker">Conclusion</span><h3>Ce que j'ai compris dans le laboratoire</h3>
           <p>Complète la conclusion avec les mots de la banque. Chaque paragraphe reprend un objectif ; l'ensemble correspond à ce que dit le programme.</p>
-          <div class="methode"><strong class="lbl">Le programme (cycle 4)</strong><ul>${C.attendus.map((a) => `<li>${esc(a)}</li>`).join("")}</ul></div></div>
+          <div class="methode"><strong class="lbl">${esc(C.programme || "Le programme (cycle 4)")}</strong><ul>${C.attendus.map((a) => `<li>${esc(a)}</li>`).join("")}</ul></div></div>
         ${C.textes.map((x, k) => `<div class="ex${rep.concl[k] ? " reussi" : ""}" id="ct${k}"><div class="ex-head"><strong>${esc(x.attendu)}</strong><span class="badge${rep.concl[k] ? " ok" : ""}">${rep.concl[k] ? "Réussi" : "Objectif " + (O.findIndex((o) => o.id === x.obj) + 1)}</span></div><div class="stack" id="ctw${k}"></div></div>`).join("")}
-        <div class="ex${rep.concl.chaine ? " reussi" : ""}" id="ct-ch"><div class="ex-head"><strong>Chaîne énergétique</strong><span class="badge${rep.concl.chaine ? " ok" : ""}">${rep.concl.chaine ? "Réussi" : "À faire"}</span></div><div class="stack" id="ctw-ch"></div></div>
+        ${C.chaine ? `<div class="ex${rep.concl.chaine ? " reussi" : ""}" id="ct-ch"><div class="ex-head"><strong>Chaîne énergétique</strong><span class="badge${rep.concl.chaine ? " ok" : ""}">${rep.concl.chaine ? "Réussi" : "À faire"}</span></div><div class="stack" id="ctw-ch"></div></div>` : ""}
         <div class="stack" id="c-fin"></div>`;
       C.textes.forEach((x, k) => {
         const el = $("ctw" + k);
@@ -7837,16 +8675,18 @@ const QUESTIONS = [
         widgetTrous(el, x.texte, x.pieges, () => { rep.concl[k] = true; sauver(); enregistrer(cle + "-concl" + k, 5, false, true); marquerReussi($("ct" + k)); fin(); });
       });
       const elc = $("ctw-ch"), chn = C.chaine;
+      if (!chn) { fin(); return; }
       if (rep.concl.chaine) { elc.innerHTML = `<p class="qtext">${esc(chn.nom)}</p>${legendeChaine}${chaineHTML(chn.elements, { perte: chn.perte })}`; marquerDefilement(elc); }
       else widgetChaine(elc, chn, { mode: "essais", trous: chn.trous, distracteurs: chn.distracteurs, nbDistracteurs: 3, perte: chn.perte }, () => { rep.concl.chaine = true; sauver(); enregistrer(cle + "-concl-chaine", 10, false, true); marquerReussi($("ct-ch")); fin(); });
       fin();
     }
     function fin() {
       const z = $("c-fin"); if (!z) return;
-      if (!conclFaite()) { const n = tp.conclusion.textes.filter((x, k) => rep.concl[k]).length + (rep.concl.chaine ? 1 : 0); z.innerHTML = `<div class="level-line">Conclusion complétée <i><b style="width:${Math.round(100 * n / (NC + 1))}%"></b></i>${n}/${NC + 1}</div>`; return; }
+      const NT = tp.conclusion.textes.length + (tp.conclusion.chaine ? 1 : 0);
+      if (!conclFaite()) { const n = tp.conclusion.textes.filter((x, k) => rep.concl[k]).length + (tp.conclusion.chaine && rep.concl.chaine ? 1 : 0); z.innerHTML = `<div class="level-line">Conclusion complétée <i><b style="width:${Math.round(100 * n / NT)}%"></b></i>${n}/${NT}</div>`; return; }
       z.innerHTML = `<div class="retenir"><strong class="lbl">Ma fiche bilan</strong><ul>${tp.conclusion.textes.map((x) => `<li>${esc(x.texte.replace(/\[|\]/g, ""))}</li>`).join("")}</ul></div>
         <button class="btn btn-primary" id="btn-tp" ${fait(cle) ? "disabled" : ""}>${fait(cle) ? "TP terminé" : "J'ai terminé le TP"}</button>`;
-      $("btn-tp").onclick = () => { enregistrer(cle, 40, true, true); onglets(); fin(); majNav(); toast("TP terminé : direction Cayenne pour l'entraînement !"); };
+      $("btn-tp").onclick = () => { enregistrer(cle, 40, true, true); onglets(); fin(); majNav(); toast(tp.finTP || "TP terminé : direction Cayenne pour l'entraînement !"); };
     }
 
     function afficher() { onglets(); majNav(); if (actif >= NC) afficherConclusion(); else afficherObjectif(); }
