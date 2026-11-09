@@ -263,6 +263,36 @@ svg.spectre { display: block; width: 100%; max-width: 420px; height: auto; color
 .opt.spx-o svg.spectre { grid-column: 1 / -1; max-width: none; }
 .fig-cours { display: flex; flex-direction: column; gap: .35rem; margin: .4rem 0; }
 .fig-cours figcaption, .fig-cours .leg { font-size: .85rem; color: var(--muted); }
+/* Terminale, diffraction et interférences : figures (écran, règle, cuve) et animations interactives du cours */
+.fig-cours svg.ondes, .anim svg.ondes { display: block; width: 100%; max-width: 460px; height: auto; color: var(--muted); }
+.anim { border: 2px solid var(--accent-soft); background: var(--surface); border-radius: 12px; padding: .8rem; display: flex; flex-direction: column; gap: .55rem; margin: .3rem 0; }
+.anim .a-titre { font-family: var(--f-display); font-weight: 700; color: var(--accent); }
+.anim canvas { display: block; width: 100%; max-width: 460px; height: auto; border-radius: 8px; background: #000; touch-action: pan-y; }
+.anim label { display: grid; grid-template-columns: 1fr auto; gap: 0 .5rem; align-items: center; font-size: .92rem; }
+.anim label input[type="range"] { grid-column: 1 / -1; height: 1.8rem; }
+.anim label output { font-weight: 700; font-variant-numeric: tabular-nums; }
+.anim .a-res { font-size: .95rem; background: var(--accent-soft); border-radius: 8px; padding: .45rem .7rem; }
+.anim .a-res strong { color: var(--accent); }
+.anim .a-bts { display: flex; gap: .5rem; flex-wrap: wrap; }
+/* TP de terminale « Diffraction et interférences » : paillasses sombres (banc laser, cuves à ondes), mêmes couleurs en clair et en sombre */
+.od-banc { background: #111A24; color: #E3EFEB; border: 3px solid #2A3B4C; border-radius: 14px; padding: .7rem; display: flex; flex-direction: column; gap: .55rem; min-width: 0; }
+.od-banc.od-ok { border-color: #5BD27E; animation: o-ok .6s; } .od-banc.od-ko { border-color: #E5483B; animation: o-ko .45s; }
+.od-titre { font-weight: 700; font-size: .88rem; color: #B8C7D3; }
+.od-cv, .od-ecran, .od-svg { display: block; width: 100%; height: auto; border-radius: 8px; }
+.od-cv { touch-action: manipulation; } .od-ecran { touch-action: none; }
+.od-ctl { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: .4rem .6rem; font-size: .92rem; }
+.od-pm { display: inline-flex; gap: .35rem; flex-wrap: wrap; }
+.od-pm button, .od-fentes button, .od-seg button, .od-on, .od-noter { font: inherit; font-size: .92rem; border-radius: 8px; border: 1.5px solid #4A6074; background: #1C2B3A; color: #E3EFEB; min-height: 2.5rem; min-width: 2.7rem; padding: .3rem .65rem; cursor: pointer; }
+.od-pm button.sel, .od-fentes button.sel, .od-seg button.sel { background: #FFD24A; color: #1A1400; border-color: #FFD24A; font-weight: 700; }
+.od-on.on { background: #245E3D; border-color: #5BD27E; }
+.od-noter { background: #FFD24A; color: #1A1400; border-color: #FFD24A; font-weight: 800; }
+.od-fentes { display: flex; flex-wrap: wrap; gap: .35rem; }
+.od-seg { display: grid; grid-template-columns: 1fr 1fr; gap: .35rem; }
+.od-lect { font-size: .92rem; font-variant-numeric: tabular-nums; }
+.od-choix { display: flex; flex-direction: column; gap: .4rem; }
+.od-banc .btn-ghost { color: #FFD24A; border-color: #FFD24A; text-align: left; }
+.od-banc .small { color: #D8E3EA; }
+.od-banc .od-secu { color: #FFB4A8; font-weight: 700; margin: 0; }
 .retenir { background: var(--accent-soft); border-radius: 12px; padding: .9rem 1rem; display: flex; flex-direction: column; gap: .4rem; }
 .retenir strong.lbl { font-family: var(--f-display); font-size: 1.15rem; color: var(--accent); }
 .ex { border: 2px dashed var(--accent); border-radius: 14px; padding: .9rem; display: flex; flex-direction: column; gap: .75rem; background: var(--surface); min-width: 0; }
@@ -795,7 +825,8 @@ const REGLAGES = {
     "4e-tension": true,     // 4ème : la tension électrique (cours + TP)
     "4e-ohm": false,        // 4ème : la résistance et la loi d'Ohm (cours + TP)
     "2nde-spectre": true,   // 2nde : le spectre de la lumière (rappel, cours, TP « Le laboratoire des lumières », entraînement)
-    "tle-titrages": true    // Terminale : analyser un système par des méthodes chimiques (titrages)
+    "tle-titrages": true,   // Terminale : analyser un système par des méthodes chimiques (titrages)
+    "tle-diffraction": false // Terminale : diffraction et interférences (rappel, cours, 2 TP, entraînement)
   },
   // Score minimum (en %) pour débloquer l'exercice suivant
   seuilReussite: 50,
@@ -874,6 +905,362 @@ function spectreSVG(o) {
 }
 // Spectre d'un ou plusieurs éléments (noms de SPECTRES_ELEMENTS).
 const spectreDe = (noms, o) => spectreSVG(Object.assign({ raies: [].concat(...[].concat(noms).map((n) => SPECTRES_ELEMENTS[n])) }, o || {}));
+
+// ============================================================
+// ONDES (terminale, « Diffraction et interférences ») : figures, animations du cours et générateurs d'exercices.
+//  - figures : écran de diffraction / de franges avec règle graduée (mesures), cuve à ondes vue de dessus, graphiques sinusoïdaux ;
+//  - animations (blocs « anim » du cours) : onde qui franchit une ouverture, figure d'une fente, somme de deux signaux, fentes d'Young ;
+//  - générateurs (exemples et jeux « calcul » : gen) : valeurs tirées au hasard, réponse numérique avec tolérance relative.
+// Les écrans sont dessinés dans un canvas (intensité calculée), puis insérés comme image : la figure reste légère.
+// ============================================================
+const ONDES = (() => {
+  const nb = (x, d) => { const t = x.toFixed(d).replace(".", ","); return t.replace(/^(-?\d+)(\d{3})(,|$)/, "$1\u00a0$2$3"); };
+  // Écriture scientifique à la française : sci(0.0065, 2) → « 6,5 × 10⁻³ »
+  const EXP = { "-": "⁻", 0: "⁰", 1: "¹", 2: "²", 3: "³", 4: "⁴", 5: "⁵", 6: "⁶", 7: "⁷", 8: "⁸", 9: "⁹" };
+  const p10 = (n) => "10" + String(n).split("").map((c) => EXP[c]).join("");
+  const sci = (x, cs) => { if (x === 0) return "0"; let e = Math.floor(Math.log10(Math.abs(x))); let m = x / Math.pow(10, e);
+    if (Math.abs(+m.toFixed(cs - 1)) >= 10) { m /= 10; e++; } return e === 0 ? nb(m, cs - 1) : nb(m, cs - 1) + " × " + p10(e); };
+  const alea = (t) => t[Math.floor(Math.random() * t.length)];
+  const sinc2 = (u) => Math.abs(u) < 1e-9 ? 1 : Math.pow(Math.sin(u) / u, 2);
+  const rgb = (l) => couleurLambda(l).match(/\d+/g).map(Number);
+
+  // ---------- Écran : bande colorée dont l'intensité vaut I(x) (x en mm, de -H à +H) ----------
+  function bandeCanvas(cv, I, lambda, H) {
+    const w = cv.width, h = cv.height, ctx = cv.getContext("2d"), [r, g, b] = rgb(lambda);
+    const img = ctx.createImageData(w, h);
+    for (let px = 0; px < w; px++) {
+      const v = Math.pow(Math.max(0, I((px + 0.5) / w * 2 * H - H)), 0.42);
+      for (let py = 0; py < h; py++) {
+        const yy = (py + 0.5) / h * 2 - 1, f = v * Math.exp(-Math.pow(yy / 0.55, 4)), k = 4 * (py * w + px);
+        img.data[k] = r * f; img.data[k + 1] = g * f; img.data[k + 2] = b * f; img.data[k + 3] = 255;
+      }
+    }
+    ctx.putImageData(img, 0, 0);
+  }
+  const cache = {};
+  function bandeURL(cle, I, lambda, H) {
+    if (cache[cle]) return cache[cle];
+    const cv = document.createElement("canvas"); cv.width = 600; cv.height = 70; bandeCanvas(cv, I, lambda, H);
+    return (cache[cle] = cv.toDataURL("image/png"));
+  }
+  const Idiff = (lambda, a, D) => (x) => sinc2(Math.PI * a * 1e-6 * x * 1e-3 / (lambda * 1e-9 * D));
+  const Iyoung = (lambda, b, D, a) => (x) => { const u = x * 1e-3 / (lambda * 1e-9 * D); return Math.pow(Math.cos(Math.PI * b * 1e-3 * u), 2) * sinc2(Math.PI * (a || 0.06) * 1e-3 * u); };
+  // Figure SVG : l'écran (image) + une règle graduée en mm (de 0 à 2H), pour mesurer.
+  function ecranSVG(url, H, regle, alt) {
+    const X0 = 10, W = 300, s = W / (2 * H);
+    let r = "";
+    if (regle) {
+      const pas = s >= 2.5 ? 1 : 2;
+      r += `<rect x="${X0}" y="76" width="${W}" height="30" rx="3" fill="#F3E6B3" stroke="#B59A3C"/>`;
+      for (let m = 0; m <= 2 * H + 1e-9; m += pas) {
+        const x = (X0 + m * s).toFixed(2), long = m % 10 === 0 ? 11 : m % 5 === 0 ? 8 : 5;
+        r += `<line x1="${x}" y1="76" x2="${x}" y2="${76 + long}" stroke="#3A2E00" stroke-width="${m % 10 === 0 ? 1 : 0.6}"/>`;
+        if (m % 10 === 0) r += `<text x="${x}" y="101" font-size="8.5" text-anchor="middle" fill="#3A2E00">${m}</text>`;
+      }
+      r += `<text x="${X0 + W - 2}" y="91" font-size="8" text-anchor="end" fill="#3A2E00">mm</text>`;
+    }
+    return `<svg class="ondes" viewBox="0 0 320 ${regle ? 110 : 76}" role="img" aria-label="${alt}"><rect x="${X0 - 4}" y="2" width="${W + 8}" height="72" rx="6" fill="#000"/><image href="${url}" x="${X0}" y="4" width="${W}" height="68" preserveAspectRatio="none"/>${r}</svg>`;
+  }
+  const figDiffraction = (o) => ecranSVG(bandeURL(`d${o.lambda}-${o.a}-${o.D}-${o.H}`, Idiff(o.lambda, o.a, o.D), o.lambda, o.H), o.H, o.regle !== false,
+    o.alt || "Figure de diffraction par une fente : une tache centrale large et des taches secondaires de part et d'autre");
+  const figYoung = (o) => ecranSVG(bandeURL(`y${o.lambda}-${o.b}-${o.D}-${o.H}-${o.a || 0}`, Iyoung(o.lambda, o.b, o.D, o.a), o.lambda, o.H), o.H, o.regle !== false,
+    o.alt || "Figure d'interférences des fentes d'Young : des franges brillantes et sombres régulièrement espacées");
+
+  // ---------- Cuve à ondes vue de dessus : deux pointes S1 et S2 en phase, quatre points repérés ----------
+  // Unités : pixels de la figure (300 × 190), λ = 22 px, S1S2 = 4λ.
+  const CUVE = { w: 300, h: 190, lam: 22, y0: 6 };
+  CUVE.s1 = 150 - 2 * CUVE.lam; CUVE.s2 = 150 + 2 * CUVE.lam;
+  const deltaCuve = (x, y) => Math.hypot(x - CUVE.s2, y - CUVE.y0) - Math.hypot(x - CUVE.s1, y - CUVE.y0);
+  function cuveURL() {
+    if (cache.cuve) return cache.cuve;
+    const { w, h, lam } = CUVE, cv = document.createElement("canvas"); cv.width = w; cv.height = h;
+    const ctx = cv.getContext("2d"), img = ctx.createImageData(w, h);
+    for (let y = 0; y < h; y++) for (let x = 0; x < w; x++) {
+      const d1 = Math.hypot(x - CUVE.s1, y - CUVE.y0), d2 = Math.hypot(x - CUVE.s2, y - CUVE.y0);
+      const s = (Math.cos(2 * Math.PI * d1 / lam) + Math.cos(2 * Math.PI * d2 / lam)) / 2 * Math.min(1, 40 / (20 + (d1 + d2) / 4));
+      const k = 4 * (y * w + x), v = 0.5 + 0.5 * s;
+      img.data[k] = 20 + 150 * v; img.data[k + 1] = 70 + 160 * v; img.data[k + 2] = 110 + 140 * v; img.data[k + 3] = 255;
+    }
+    ctx.putImageData(img, 0, 0);
+    return (cache.cuve = cv.toDataURL("image/png"));
+  }
+  // Point sur la ligne horizontale y où δ = d₂ − d₁ = cible (en λ) ; δ décroît quand x augmente.
+  function pointCuve(cible, y) {
+    let a = 2, b = CUVE.w - 2; const f = (x) => deltaCuve(x, y) / CUVE.lam - cible;
+    if (f(a) < 0 || f(b) > 0) return null;
+    for (let i = 0; i < 40; i++) { const m = (a + b) / 2; if (f(m) > 0) a = m; else b = m; }
+    return { x: (a + b) / 2, y, k: cible };
+  }
+  function cuveSVG(pts) {
+    const lab = pts.map((p) => `<circle cx="${p.x.toFixed(1)}" cy="${p.y}" r="5" fill="none" stroke="#FFF" stroke-width="2"/><circle cx="${p.x.toFixed(1)}" cy="${p.y}" r="1.6" fill="#FFF"/><text x="${(p.x + 7).toFixed(1)}" y="${p.y - 6}" font-size="12" font-weight="700" fill="#FFF" stroke="#000" stroke-width="2.5" paint-order="stroke">${p.nom}</text>`).join("");
+    return `<svg class="ondes" viewBox="0 0 ${CUVE.w} ${CUVE.h}" role="img" aria-label="Cuve à ondes vue de dessus : deux pointes S1 et S2 vibrent en phase ; quatre points A, B, C et D sont repérés."><image href="${cuveURL()}" x="0" y="0" width="${CUVE.w}" height="${CUVE.h}"/>
+      <circle cx="${CUVE.s1}" cy="${CUVE.y0}" r="4" fill="#FFD24A" stroke="#000"/><circle cx="${CUVE.s2}" cy="${CUVE.y0}" r="4" fill="#FFD24A" stroke="#000"/>
+      <text x="${CUVE.s1}" y="24" font-size="11" font-weight="700" text-anchor="middle" fill="#FFD24A" stroke="#000" stroke-width="2.5" paint-order="stroke">S1</text><text x="${CUVE.s2}" y="24" font-size="11" font-weight="700" text-anchor="middle" fill="#FFD24A" stroke="#000" stroke-width="2.5" paint-order="stroke">S2</text>${lab}</svg>`;
+  }
+  // Variante de question : « immobile » (un point sur une ligne destructive, trois sur des lignes constructives) ou l'inverse.
+  function varianteCuve(immobile) {
+    for (let essai = 0; essai < 200; essai++) {
+      const intrus = immobile ? alea([-1.5, -0.5, 0.5, 1.5]) : alea([-2, -1, 0, 1, 2]);
+      const autres = (immobile ? [-3, -2, -1, 0, 1, 2, 3] : [-2.5, -1.5, -0.5, 0.5, 1.5, 2.5]).sort(() => Math.random() - 0.5).slice(0, 3);
+      const pts = [intrus].concat(autres).map((k) => pointCuve(k, 50 + Math.floor(Math.random() * 125)));
+      if (pts.some((p) => !p || p.x < 18 || p.x > CUVE.w - 22)) continue;
+      if (pts.some((p, i) => pts.some((q, j) => j > i && Math.hypot(p.x - q.x, p.y - q.y) < 34))) continue;
+      const noms = ["A", "B", "C", "D"].sort(() => Math.random() - 0.5);
+      pts.forEach((p, i) => { p.nom = noms[i]; });
+      const cible = pts[0], kTxt = (k) => nb(Math.abs(k), Number.isInteger(k) ? 0 : 1);
+      const svg = cuveSVG(pts);
+      return {
+        figure: svg,
+        question: immobile ? "Les pointes S1 et S2 vibrent en phase. En quel point la surface de l'eau reste-t-elle (presque) immobile ?" : "Les pointes S1 et S2 vibrent en phase. En quel point l'agitation de l'eau est-elle maximale ?",
+        reponses: ["Point " + cible.nom].concat(pts.slice(1).map((p) => "Point " + p.nom)), bonne: 0,
+        explication: immobile
+          ? `Au point ${cible.nom}, |δ| = |d₂ − d₁| = ${kTxt(cible.k)} λ : un nombre demi-entier de longueurs d'onde. Les ondes arrivent en opposition de phase : interférences destructives (zone calme, grise et lisse sur la figure).`
+          : `Au point ${cible.nom}, |δ| = |d₂ − d₁| = ${kTxt(cible.k)} λ : un nombre entier de longueurs d'onde. Les ondes arrivent en phase : interférences constructives (rides les plus marquées).`
+      };
+    }
+  }
+
+  // ---------- Graphique d'une sinusoïde (rappel : lire T ou λ) ----------
+  function sinusSVG(o) { // o : { div (valeur d'une division), unite, nDiv (période en divisions), axe: "t" | "x", phase }
+    const W = 300, X0 = 14, Y0 = 70, A = 46, n = 12, s = W / n;
+    let grille = "";
+    for (let i = 0; i <= n; i++) grille += `<line x1="${X0 + i * s}" y1="${Y0 - 56}" x2="${X0 + i * s}" y2="${Y0 + 56}" stroke="currentColor" stroke-opacity=".25" stroke-width="${i % 2 ? .6 : 1}"/>`;
+    for (let j = -2; j <= 2; j++) grille += `<line x1="${X0}" y1="${Y0 + j * 25}" x2="${X0 + W}" y2="${Y0 + j * 25}" stroke="currentColor" stroke-opacity=".25" stroke-width=".6"/>`;
+    const pts = []; for (let i = 0; i <= 300; i++) { const u = i / 300 * n; pts.push(`${(X0 + u * s).toFixed(1)},${(Y0 - A * Math.cos(2 * Math.PI * u / o.nDiv + o.phase)).toFixed(1)}`); }
+    let labels = ""; for (let i = 0; i <= n; i += 2) labels += `<text x="${X0 + i * s}" y="${Y0 + 70}" font-size="9" text-anchor="middle" fill="currentColor">${nb(i * o.div, o.div < 1 ? 1 : 0)}</text>`;
+    const nomAxe = o.axe === "t" ? `t (${o.unite})` : `x (${o.unite})`;
+    return `<svg class="ondes" viewBox="0 0 320 152" role="img" aria-label="Graphique d'une grandeur sinusoïdale en fonction de ${o.axe === "t" ? "du temps" : "la position"}">${grille}<line x1="${X0}" y1="${Y0}" x2="${X0 + W}" y2="${Y0}" stroke="currentColor" stroke-width="1.2"/><polyline points="${pts.join(" ")}" fill="none" style="stroke:var(--accent)" stroke-width="2.4"/>${labels}<text x="${X0 + W}" y="${Y0 - 58}" font-size="9" text-anchor="end" fill="currentColor">${nomAxe}</text></svg>`;
+  }
+  function genGraphique(mode) {
+    mode = mode || alea(["T", "lambda", "f", "lambdaVT"]);
+    const nDiv = alea([3, 4, 5, 6]), phase = alea([0, Math.PI / 2, Math.PI, -Math.PI / 2]);
+    if (mode === "lambda") {
+      const div = alea([2, 5, 10]), lam = nDiv * div;
+      return { figure: sinusSVG({ div, unite: "cm", nDiv, axe: "x", phase }), texte: `Ce graphique représente, à un instant donné, l'élongation d'une corde en fonction de la position x. Quelle est la longueur d'onde λ ?`, rep: lam, u: "cm", tol: 0.04,
+        corr: `Le graphique est en fonction de la position : on y lit λ, la plus petite distance au bout de laquelle la courbe se répète. Une période spatiale occupe ${nDiv} divisions de ${div} cm : λ = ${lam} cm.` };
+    }
+    const div = alea([0.5, 1, 2]), T = nDiv * div, Ttxt = nb(T, T % 1 ? 1 : 0);
+    const fig = sinusSVG({ div, unite: "ms", nDiv, axe: "t", phase });
+    if (mode === "T") return { figure: fig, texte: `Ce graphique représente la tension d'un micro qui capte un son, en fonction du temps. Quelle est la période T du son ?`, rep: T, u: "ms", tol: 0.04,
+      corr: `Le graphique est en fonction du temps : on y lit la période T. Un motif occupe ${nDiv} divisions de ${nb(div, div % 1 ? 1 : 0)} ms : T = ${Ttxt} ms. (Astuce : mesurer plusieurs périodes pour être plus précis.)` };
+    if (mode === "f") { const f = 1000 / T; return { figure: fig, texte: `Ce graphique représente la tension d'un micro qui capte un son, en fonction du temps. Calculer la fréquence f du son.`, rep: f, u: "Hz", tol: 0.04, repTxt: nb(f, 0),
+      corr: `On lit T = ${Ttxt} ms = ${nb(T / 1000, 4)} s, puis f = 1 / T = 1 / ${nb(T / 1000, 4)} = ${nb(f, 0)} Hz.` }; }
+    const lam = 340 * T / 1000;
+    return { figure: fig, texte: `Ce graphique représente le son capté par un micro, en fonction du temps. Le son se propage dans l'air à v = 340 m/s. Calculer sa longueur d'onde λ.`, rep: lam, u: "m", tol: 0.04, repTxt: nb(lam, 2),
+      corr: `On lit T = ${Ttxt} ms = ${nb(T / 1000, 4)} s. λ = v × T = 340 × ${nb(T / 1000, 4)} = ${nb(lam, 2)} m.` };
+  }
+
+  // ---------- Générateurs de calculs (cours et entraînement) ----------
+  const LASERS = [[650, "rouge"], [633, "rouge (hélium-néon)"], [532, "vert"], [405, "violet"]];
+  function genCalcul(mode) {
+    mode = mode || alea(["theta", "L", "a", "lambdaL", "i", "lambdaI", "son"]);
+    const [l, c] = alea(LASERS);
+    if (mode === "theta") {
+      const a = alea([50, 80, 100, 120, 150, 200]), th = l * 1e-9 / (a * 1e-6);
+      return { texte: `Un laser ${c} (λ = ${l} nm) éclaire une fente de largeur a = ${a} µm. Calculer l'angle caractéristique de diffraction θ.`, rep: th * 1e3, u: "× 10⁻³ rad", tol: 0.03, repTxt: nb(th * 1e3, 2),
+        corr: `θ = λ / a avec λ et a dans la même unité : θ = ${sci(l * 1e-9, 3)} m ÷ ${sci(a * 1e-6, 2)} m = ${sci(th, 3)} rad.` };
+    }
+    if (mode === "L") {
+      const a = alea([50, 80, 100, 120]), D = alea([1.5, 2.0]), L = 2 * l * 1e-9 * D / (a * 1e-6) * 1e3;
+      return { texte: `Un laser (λ = ${l} nm) éclaire une fente de largeur a = ${a} µm. L'écran est à D = ${nb(D, 2)} m. Calculer la largeur L de la tache centrale.`, rep: L, u: "mm", tol: 0.03, repTxt: nb(L, 1),
+        corr: `L = 2 λ D / a = 2 × ${sci(l * 1e-9, 3)} × ${nb(D, 2)} ÷ ${sci(a * 1e-6, 2)} = ${sci(L * 1e-3, 3)} m = ${nb(L, 1)} mm.` };
+    }
+    if (mode === "a") {
+      const a0 = alea([60, 80, 100, 120]), D = alea([1.5, 2.0]), L = Math.round(2 * l * 1e-9 * D / (a0 * 1e-6) * 1e3), a = 2 * l * 1e-9 * D / (L * 1e-3) * 1e6;
+      return { texte: `Un cheveu éclairé par un laser (λ = ${l} nm) donne la même figure qu'une fente de même largeur. Sur l'écran, à D = ${nb(D, 2)} m, la tache centrale mesure L = ${L} mm. Calculer l'épaisseur a du cheveu.`, rep: a, u: "µm", tol: 0.03, repTxt: nb(a, 0),
+        corr: `a = 2 λ D / L = 2 × ${sci(l * 1e-9, 3)} × ${nb(D, 2)} ÷ ${sci(L * 1e-3, 2)} = ${sci(a * 1e-6, 2)} m ≈ ${nb(a, 0)} µm.` };
+    }
+    if (mode === "lambdaL") {
+      const a = alea([80, 100, 120]), D = 2.0, L = Math.round(2 * l * 1e-9 * D / (a * 1e-6) * 1e3), lam = L * 1e-3 * a * 1e-6 / (2 * D) * 1e9;
+      return { texte: `Un laser de couleur inconnue éclaire une fente de largeur a = ${a} µm. L'écran est à D = 2,00 m et la tache centrale mesure L = ${L} mm. Calculer la longueur d'onde λ du laser.`, rep: lam, u: "nm", tol: 0.03, repTxt: nb(lam, 0),
+        corr: `λ = L × a / (2 D) = ${sci(L * 1e-3, 2)} × ${sci(a * 1e-6, 2)} ÷ (2 × 2,00) = ${sci(lam * 1e-9, 3)} m ≈ ${nb(lam, 0)} nm.` };
+    }
+    if (mode === "i") {
+      const b = alea([0.2, 0.3, 0.4, 0.5]), D = alea([1.5, 2.0]), i = l * 1e-9 * D / (b * 1e-3) * 1e3;
+      return { texte: `Des fentes d'Young distantes de b = ${nb(b, 2)} mm sont éclairées par un laser (λ = ${l} nm). L'écran est à D = ${nb(D, 2)} m. Calculer l'interfrange i.`, rep: i, u: "mm", tol: 0.03, repTxt: nb(i, 2),
+        corr: `i = λ D / b = ${sci(l * 1e-9, 3)} × ${nb(D, 2)} ÷ ${sci(b * 1e-3, 2)} = ${sci(i * 1e-3, 3)} m = ${nb(i, 2)} mm.` };
+    }
+    if (mode === "lambdaI") {
+      const b = alea([0.3, 0.4, 0.5]), D = 2.0, i0 = l * 1e-9 * D / (b * 1e-3) * 1e3, L5 = Math.round(5 * i0 * 10) / 10, lam = L5 / 5 * 1e-3 * b * 1e-3 / D * 1e9;
+      return { texte: `Avec des fentes d'Young distantes de b = ${nb(b, 2)} mm et un écran à D = 2,00 m, on mesure 5 interfranges sur ${nb(L5, 1)} mm. Calculer la longueur d'onde λ du laser.`, rep: lam, u: "nm", tol: 0.03, repTxt: nb(lam, 0),
+        corr: `i = ${nb(L5, 1)} ÷ 5 = ${nb(L5 / 5, 2)} mm. λ = i × b / D = ${sci(L5 / 5 * 1e-3, 3)} × ${sci(b * 1e-3, 2)} ÷ 2,00 = ${sci(lam * 1e-9, 3)} m ≈ ${nb(lam, 0)} nm.` };
+    }
+    const f = alea([85, 170, 340, 680, 1700, 3400]), lam = 340 / f;
+    return { texte: `Un haut-parleur émet un son de fréquence f = ${nb(f, 0)} Hz. Dans l'air, v = 340 m/s. Calculer la longueur d'onde λ du son.`, rep: lam, u: "m", tol: 0.03, repTxt: nb(lam, 2),
+      corr: `λ = v / f = 340 ÷ ${nb(f, 0)} = ${nb(lam, 2)} m.` };
+  }
+  // Mesure sur une figure : largeur de la tache centrale → a ; 5 interfranges → λ.
+  function genMesureDiff() {
+    const [l] = alea(LASERS.slice(0, 3)), D = alea([1.5, 2.0]), a = alea([60, 80, 100, 120]), L = 2 * l * 1e-9 * D / (a * 1e-6) * 1e3;
+    return { figure: figDiffraction({ lambda: l, a, D, H: 40 }),
+      texte: `Un laser (λ = ${l} nm) éclaire une fente de largeur a inconnue ; l'écran est à D = ${nb(D, 2)} m. Mesurer la largeur L de la tache centrale avec la règle (entre les deux zones noires qui l'encadrent), puis calculer a.`,
+      rep: a, u: "µm", tol: 0.08, repTxt: nb(a, 0),
+      corr: `On mesure L ≈ ${nb(L, 0)} mm. a = 2 λ D / L = 2 × ${sci(l * 1e-9, 3)} × ${nb(D, 2)} ÷ ${sci(L * 1e-3, 2)} ≈ ${sci(a * 1e-6, 2)} m = ${a} µm.` };
+  }
+  function genMesureYoung() {
+    const [l] = alea(LASERS.slice(0, 3)), D = alea([1.5, 2.0]), b = alea([0.3, 0.4, 0.5]), i = l * 1e-9 * D / (b * 1e-3) * 1e3;
+    return { figure: figYoung({ lambda: l, b, D, H: 15, a: 0.05 }),
+      texte: `Des fentes d'Young distantes de b = ${nb(b, 2)} mm sont éclairées par un laser ; l'écran est à D = ${nb(D, 2)} m. Mesurer la distance correspondant à 5 interfranges (du milieu d'une frange brillante au milieu de la 5e suivante), puis calculer λ.`,
+      rep: l, u: "nm", tol: 0.07, repTxt: nb(l, 0),
+      corr: `On mesure 5 i ≈ ${nb(5 * i, 1)} mm, donc i ≈ ${nb(i, 2)} mm. λ = i × b / D = ${sci(i * 1e-3, 3)} × ${sci(b * 1e-3, 2)} ÷ ${nb(D, 2)} ≈ ${sci(l * 1e-9, 3)} m = ${l} nm.` };
+  }
+  // Graphique L = f(1/a) : on lit le coefficient directeur k = 2 λ D, puis λ = k / (2 D).
+  function genGraphiqueL() {
+    const [l] = alea(LASERS.slice(0, 3)), D = 1.5, k = 2 * l * 1e-6 * D * 1e3; // L (mm) = k × (1/a en mm⁻¹), k en mm²
+    const inv = [5, 8, 10, 12.5, 16.7, 20], W = 260, X0 = 44, Y0 = 130, sx = W / 22, Lmax = Math.ceil(k * 22 / 10) * 10, sy = 110 / Lmax;
+    let g = "";
+    for (let x = 0; x <= 22; x += 2) g += `<line x1="${X0 + x * sx}" y1="${Y0}" x2="${X0 + x * sx}" y2="${Y0 - 110}" stroke="currentColor" stroke-opacity=".22"/>` + (x % 4 === 0 ? `<text x="${X0 + x * sx}" y="${Y0 + 12}" font-size="9" text-anchor="middle" fill="currentColor">${x}</text>` : "");
+    for (let y = 0; y <= Lmax; y += 5) g += `<line x1="${X0}" y1="${Y0 - y * sy}" x2="${X0 + W - 4}" y2="${Y0 - y * sy}" stroke="currentColor" stroke-opacity="${y % 10 ? .12 : .25}"/>` + (y % 10 === 0 ? `<text x="${X0 - 5}" y="${Y0 - y * sy + 3}" font-size="9" text-anchor="end" fill="currentColor">${y}</text>` : "");
+    const pts = inv.map((u) => `<circle cx="${(X0 + u * sx).toFixed(1)}" cy="${(Y0 - k * u * sy * (1 + (Math.random() - .5) * .03)).toFixed(1)}" r="3" style="fill:var(--accent)"/>`).join("");
+    const svg = `<svg class="ondes" viewBox="0 0 320 160" role="img" aria-label="Graphique de L en fonction de 1/a : des points alignés sur une droite passant par l'origine">${g}<line x1="${X0}" y1="${Y0}" x2="${X0 + 22 * sx}" y2="${Y0 - k * 22 * sy}" stroke="currentColor" stroke-width="1.4"/>${pts}<text x="${X0 + W - 2}" y="${Y0 - 4}" font-size="9" text-anchor="end" fill="currentColor">1/a (mm⁻¹)</text><text x="${X0 + 4}" y="${Y0 - 112}" font-size="9" fill="currentColor">L (mm)</text></svg>`;
+    return { figure: svg, texte: `Un élève mesure la largeur L de la tache centrale pour plusieurs fentes, avec le même laser et D = 1,50 m. Il trace L en fonction de 1/a (graphique). Le coefficient directeur de la droite vaut k = 2 λ D. Déterminer λ.`,
+      rep: l, u: "nm", tol: 0.07, repTxt: nb(l, 0),
+      corr: `On lit par exemple L ≈ ${nb(k * 20, 1)} mm pour 1/a = 20 mm⁻¹ : k ≈ ${nb(k, 3)} mm² = ${sci(k * 1e-6, 3)} m². λ = k / (2 D) = ${sci(k * 1e-6, 3)} ÷ 3,00 ≈ ${sci(l * 1e-9, 3)} m = ${l} nm.` };
+  }
+  // Conditions d'interférences : δ = d₂ − d₁ comparé à λ (cuve à ondes ou haut-parleurs)
+  function variantesDelta(n) {
+    const out = [];
+    const cas = [
+      () => { const lam = 2.0, k = alea([1, 2, 3]), d1 = alea([10.0, 12.0, 15.0]), d2 = d1 + k * lam; return { ctx: `Dans une cuve à ondes, λ = ${nb(lam, 1)} cm. Un point M est à d₁ = ${nb(d1, 1)} cm de S1 et d₂ = ${nb(d2, 1)} cm de S2 (sources en phase).`, delta: d2 - d1, lam, u: "cm", k }; },
+      () => { const lam = 2.0, k = alea([0.5, 1.5, 2.5]), d1 = alea([10.0, 12.0, 15.0]), d2 = d1 + k * lam; return { ctx: `Dans une cuve à ondes, λ = ${nb(lam, 1)} cm. Un point M est à d₁ = ${nb(d1, 1)} cm de S1 et d₂ = ${nb(d2, 1)} cm de S2 (sources en phase).`, delta: d2 - d1, lam, u: "cm", k }; },
+      () => { const lam = 0.50, k = alea([1, 2, 3, 0.5, 1.5]), d1 = alea([6.00, 8.00]), d2 = d1 + k * lam; return { ctx: `Deux haut-parleurs alimentés par le même signal (en phase) émettent un son de longueur d'onde λ = ${nb(lam, 2)} m. Un auditeur, au point M, est à d₁ = ${nb(d1, 2)} m de l'un et d₂ = ${nb(d2, 2)} m de l'autre.`, delta: d2 - d1, lam, u: "m", k }; },
+      () => { const lam = 1.0, k = alea([0.3, 0.7, 1.25]), d1 = 10.0, d2 = d1 + k * lam; return { ctx: `Deux haut-parleurs en phase émettent un son de longueur d'onde λ = ${nb(lam, 1)} m. Un auditeur, au point M, est à d₁ = ${nb(d1, 2)} m de l'un et d₂ = ${nb(d2, 2)} m de l'autre.`, delta: d2 - d1, lam, u: "m", k }; }
+    ];
+    for (let j = 0; j < n; j++) {
+      const v = cas[j % cas.length](), entier = Number.isInteger(v.k), demi = Number.isInteger(v.k - 0.5);
+      const bonne = entier ? 0 : demi ? 1 : 2, kt = String(v.k).replace(".", ",");
+      out.push({ question: v.ctx + " Que se passe-t-il en M ?",
+        reponses: ["Interférences constructives", "Interférences destructives", "Ni constructives ni destructives (cas intermédiaire)", "Rien : deux ondes ne peuvent pas se superposer"], bonne,
+        explication: `δ = d₂ − d₁ = ${nb(v.delta, v.u === "m" ? 2 : 1)} ${v.u}, donc δ / λ = ${kt}. ` + (entier ? "C'est un nombre entier : les ondes arrivent en phase, interférences constructives." : demi ? "C'est un demi-entier : les ondes arrivent en opposition de phase, interférences destructives." : "Ce n'est ni un entier ni un demi-entier : l'amplitude est intermédiaire.") });
+    }
+    return out;
+  }
+
+  // ---------- Animations du cours (blocs { t: "anim", monter }) ----------
+  const prepCanvas = (cv, w, h) => { cv.width = w; cv.height = h; return cv.getContext("2d"); };
+  const reduit = () => window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const curseur = (id, txt, min, max, pas, val) => `<label>${txt}<output id="${id}-o"></output><input type="range" id="${id}" min="${min}" max="${max}" step="${pas}" value="${val}"></label>`;
+
+  // 1. Une onde plane franchit une ouverture de largeur a (calcul de Huygens-Fresnel, vue de dessus animée).
+  function animOuverture(el) {
+    const id = "ao" + Math.random().toString(36).slice(2, 7);
+    el.innerHTML = `<span class="a-titre">Simulation : la houle franchit l'entrée d'un port</span><canvas width="320" height="200" aria-label="Vue de dessus : une onde plane arrive de la gauche sur une digue percée d'une ouverture ; à droite, l'onde s'étale plus ou moins selon la largeur de l'ouverture."></canvas>
+      ${curseur(id, "Largeur de l'ouverture a = ", 0.5, 6, 0.5, 1)}<div class="a-res" id="${id}-r"></div><div class="a-bts"><button class="btn btn-ghost btn-sm" type="button" id="${id}-p">Pause</button></div>`;
+    const cv = el.querySelector("canvas"), ctx = cv.getContext("2d"), NX = 160, NY = 100, XM = 50, LAM = 10, k = 2 * Math.PI / LAM;
+    const buf = document.createElement("canvas"), bctx = prepCanvas(buf, NX, NY), img = bctx.createImageData(NX, NY);
+    let Ar, Ai, aCases = 10, t = 0, pause = reduit();
+    const calc = () => {
+      const r = +el.querySelector("#" + id).value; aCases = Math.min(90, r * LAM);
+      el.querySelector(`#${id}-o`).textContent = nb(r, 1) + " λ";
+      el.querySelector(`#${id}-r`).innerHTML = r <= 1.5 ? `<strong>a ≈ λ ou moins :</strong> l'onde s'étale dans toutes les directions, la diffraction est très marquée.` : r <= 3.5 ? `<strong>a un peu plus grand que λ :</strong> l'onde s'étale encore nettement sur les côtés.` : `<strong>a grand devant λ :</strong> l'onde passe presque tout droit, la diffraction n'est visible qu'aux bords.`;
+      const N = Math.max(8, Math.round(aCases * 1.5)), y0 = NY / 2;
+      Ar = new Float32Array(NX * NY); Ai = new Float32Array(NX * NY);
+      let norme = 0;
+      for (let x = XM + 1; x < NX; x++) for (let y = 0; y < NY; y++) {
+        let sr = 0, si = 0;
+        for (let j = 0; j < N; j++) { const ys = y0 - aCases / 2 + (j + .5) * aCases / N, d = Math.hypot(x - XM, y - ys) + 0.5, amp = 1 / Math.sqrt(d); sr += amp * Math.cos(k * d); si += amp * Math.sin(k * d); }
+        Ar[y * NX + x] = sr; Ai[y * NX + x] = si;
+        if (x === XM + 3 && y === Math.round(y0)) norme = Math.hypot(sr, si);
+      }
+      for (let i = 0; i < NX * NY; i++) { Ar[i] /= norme || 1; Ai[i] /= norme || 1; }
+    };
+    const dessiner = () => {
+      const c = Math.cos(t), s = Math.sin(t);
+      for (let y = 0; y < NY; y++) for (let x = 0; x < NX; x++) {
+        let v; const i = y * NX + x, p = 4 * i;
+        const mur = x >= XM - 1 && x <= XM && Math.abs(y - NY / 2) > aCases / 2;
+        if (mur) { img.data[p] = 120; img.data[p + 1] = 100; img.data[p + 2] = 80; img.data[p + 3] = 255; continue; }
+        v = x < XM ? Math.cos(k * (x - XM) - t) : Ar[i] * c + Ai[i] * s;
+        v = Math.sign(v) * Math.pow(Math.min(1, Math.abs(v)), 0.55); // contraste renforcé loin de l'ouverture
+        const f = 0.5 + 0.5 * v;
+        img.data[p] = 15 + 170 * f; img.data[p + 1] = 70 + 170 * f; img.data[p + 2] = 120 + 135 * f; img.data[p + 3] = 255;
+      }
+      bctx.putImageData(img, 0, 0);
+      ctx.imageSmoothingEnabled = true; ctx.drawImage(buf, 0, 0, cv.width, cv.height);
+      ctx.fillStyle = "#FFF"; ctx.font = "bold 11px system-ui"; ctx.fillText("onde incidente", 6, 14); ctx.fillText("digue", XM * 2 - 34, cv.height - 6);
+    };
+    const boucle = () => { if (!cv.isConnected) return; if (!pause) { t += 0.12; dessiner(); } requestAnimationFrame(boucle); };
+    el.querySelector("#" + id).addEventListener("input", () => { calc(); dessiner(); });
+    const bp = el.querySelector(`#${id}-p`); bp.textContent = pause ? "Lecture" : "Pause";
+    bp.onclick = () => { pause = !pause; bp.textContent = pause ? "Lecture" : "Pause"; };
+    calc(); dessiner(); requestAnimationFrame(boucle);
+  }
+
+  // 2. Figure de diffraction d'une fente : curseurs a et λ ; θ et L calculés (D = 2,00 m).
+  function animFente(el) {
+    const id = "af" + Math.random().toString(36).slice(2, 7), D = 2.0, H = 80;
+    el.innerHTML = `<span class="a-titre">Simulation : figure de diffraction d'une fente (écran à D = 2,00 m)</span><canvas width="600" height="120" aria-label="Écran : figure de diffraction d'une fente, la tache centrale est repérée par une accolade."></canvas>
+      ${curseur(id + "a", "Largeur de la fente a = ", 20, 200, 10, 80)}${curseur(id + "l", "Longueur d'onde du laser λ = ", 400, 700, 10, 650)}<div class="a-res" id="${id}-r"></div>`;
+    const cv = el.querySelector("canvas"), ctx = cv.getContext("2d");
+    const maj = () => {
+      const a = +el.querySelector(`#${id}a`).value, l = +el.querySelector(`#${id}l`).value, th = l * 1e-9 / (a * 1e-6), L = 2 * th * D * 1e3;
+      el.querySelector(`#${id}a-o`).textContent = a + " µm"; el.querySelector(`#${id}l-o`).textContent = l + " nm";
+      const b = document.createElement("canvas"); b.width = 600; b.height = 100; bandeCanvas(b, Idiff(l, a, D), l, H);
+      ctx.fillStyle = "#000"; ctx.fillRect(0, 0, 600, 120); ctx.drawImage(b, 0, 0);
+      const s = 600 / (2 * H), x1 = 300 - L / 2 * s, x2 = 300 + L / 2 * s;
+      ctx.strokeStyle = "#FFF"; ctx.fillStyle = "#FFF"; ctx.lineWidth = 2;
+      if (L < 2 * H) { ctx.beginPath(); ctx.moveTo(x1, 104); ctx.lineTo(x1, 112); ctx.lineTo(x2, 112); ctx.lineTo(x2, 104); ctx.stroke(); ctx.font = "bold 13px system-ui"; ctx.textAlign = "center"; ctx.fillText("L", 300, 100 - 2); }
+      el.querySelector(`#${id}-r`).innerHTML = `θ = λ / a = <strong>${sci(th, 2)} rad</strong> · L = 2 λ D / a = <strong>${nb(L, 0)} mm</strong>${L >= 2 * H ? " (plus large que l'écran affiché)" : ""}<br>Plus la fente est fine, plus la tache centrale est large.`;
+    };
+    el.querySelectorAll("input").forEach((x) => x.addEventListener("input", maj)); maj();
+  }
+
+  // 3. Somme de deux signaux sinusoïdaux synchrones : curseur de décalage (retard de s2 en fraction de T, ou δ en fraction de λ).
+  function animSomme(el) {
+    const id = "as" + Math.random().toString(36).slice(2, 7);
+    el.innerHTML = `<span class="a-titre">Simulation : la somme de deux ondes de même fréquence</span><div id="${id}-g"></div>
+      ${curseur(id, "Décalage de l'onde 2 : δ = ", 0, 2, 0.05, 0)}<div class="a-res" id="${id}-r"></div>`;
+    const maj = () => {
+      const d = +el.querySelector("#" + id).value, phi = 2 * Math.PI * d, W = 300, X0 = 12, Y0 = 80, A = 26;
+      el.querySelector(`#${id}-o`).textContent = nb(d, 2) + " λ";
+      const courbe = (f, st, w) => { const p = []; for (let i = 0; i <= 240; i++) { const u = i / 240 * 2; p.push(`${(X0 + u / 2 * W).toFixed(1)},${(Y0 - A * f(u)).toFixed(1)}`); } return `<polyline points="${p.join(" ")}" fill="none" style="stroke:${st}" stroke-width="${w}"/>`; };
+      const s1 = (u) => Math.cos(2 * Math.PI * u), s2 = (u) => Math.cos(2 * Math.PI * u - phi);
+      el.querySelector(`#${id}-g`).innerHTML = `<svg class="ondes" viewBox="0 0 320 160" role="img" aria-label="Deux signaux sinusoïdaux et leur somme"><line x1="${X0}" y1="${Y0}" x2="${X0 + W}" y2="${Y0}" stroke="currentColor" stroke-opacity=".4"/>${courbe(s1, "var(--water)", 1.6)}${courbe(s2, "#E07A2F", 1.6)}${courbe((u) => s1(u) + s2(u), "var(--accent)", 3)}<text x="${X0}" y="12" font-size="9.5" fill="currentColor"><tspan style="fill:var(--water)">onde 1</tspan> · <tspan style="fill:#E07A2F">onde 2</tspan> · <tspan style="fill:var(--accent);font-weight:700">somme</tspan></text><text x="${X0 + W}" y="${Y0 + 76}" font-size="9" text-anchor="end" fill="currentColor">t (deux périodes)</text></svg>`;
+      const amp = 2 * Math.abs(Math.cos(phi / 2)), entier = Math.abs(d - Math.round(d)) < 1e-6, demi = Math.abs(d - Math.round(d - .5) - .5) < 1e-6;
+      el.querySelector(`#${id}-r`).innerHTML = `Amplitude de la somme : <strong>${nb(amp, 2)} × A</strong>. ` + (entier ? "δ est un nombre <strong>entier</strong> de λ : les ondes sont en phase, <strong>interférences constructives</strong>." : demi ? "δ est un nombre <strong>demi-entier</strong> de λ : opposition de phase, <strong>interférences destructives</strong>." : "Cas intermédiaire : ni constructives, ni destructives.");
+    };
+    el.querySelector("#" + id).addEventListener("input", maj); maj();
+  }
+
+  // 4. Fentes d'Young : curseurs b et λ ; interfrange calculée (D = 1,50 m).
+  function animYoung(el) {
+    const id = "ay" + Math.random().toString(36).slice(2, 7), D = 1.5, H = 15;
+    el.innerHTML = `<span class="a-titre">Simulation : les fentes d'Young (écran à D = 1,50 m)</span><canvas width="600" height="120" aria-label="Écran : franges d'interférences ; l'interfrange est repérée."></canvas>
+      ${curseur(id + "b", "Distance entre les fentes b = ", 0.2, 1, 0.05, 0.4)}${curseur(id + "l", "Longueur d'onde λ = ", 400, 700, 10, 650)}<div class="a-res" id="${id}-r"></div>`;
+    const cv = el.querySelector("canvas"), ctx = cv.getContext("2d");
+    const maj = () => {
+      const b = +el.querySelector(`#${id}b`).value, l = +el.querySelector(`#${id}l`).value, i = l * 1e-9 * D / (b * 1e-3) * 1e3;
+      el.querySelector(`#${id}b-o`).textContent = nb(b, 2) + " mm"; el.querySelector(`#${id}l-o`).textContent = l + " nm";
+      const c = document.createElement("canvas"); c.width = 600; c.height = 100; bandeCanvas(c, Iyoung(l, b, D, 0.05), l, H);
+      ctx.fillStyle = "#000"; ctx.fillRect(0, 0, 600, 120); ctx.drawImage(c, 0, 0);
+      const s = 600 / (2 * H); ctx.strokeStyle = "#FFF"; ctx.fillStyle = "#FFF"; ctx.lineWidth = 2;
+      ctx.beginPath(); ctx.moveTo(300, 104); ctx.lineTo(300, 112); ctx.lineTo(300 + i * s, 112); ctx.lineTo(300 + i * s, 104); ctx.stroke();
+      ctx.font = "bold 13px system-ui"; ctx.textAlign = "left"; ctx.fillText("i", 300 + i * s + 6, 114);
+      el.querySelector(`#${id}-r`).innerHTML = `Interfrange : i = λ D / b = <strong>${nb(i, 2)} mm</strong><br>Quand b augmente, les franges se resserrent ; quand λ augmente, elles s'écartent.`;
+    };
+    el.querySelectorAll("input").forEach((x) => x.addEventListener("input", maj)); maj();
+  }
+
+  // Schéma du montage de diffraction (laser, fente, écran, θ, D, L) et des deux sources (S1, S2, M, d1, d2).
+  const SCHEMA_FENTE = `<svg class="ondes" viewBox="0 0 320 130" role="img" aria-label="Schéma : un laser éclaire une fente de largeur a ; sur l'écran à la distance D, la tache centrale a une largeur L ; θ est le demi-angle sous lequel on voit la tache depuis la fente.">
+    <rect x="6" y="56" width="40" height="18" rx="3" fill="#C8463C"/><text x="26" y="88" font-size="9" text-anchor="middle" fill="currentColor">laser</text>
+    <line x1="46" y1="65" x2="92" y2="65" stroke="#E84A3C" stroke-width="2.5"/>
+    <line x1="96" y1="20" x2="96" y2="61" stroke="currentColor" stroke-width="3"/><line x1="96" y1="69" x2="96" y2="110" stroke="currentColor" stroke-width="3"/><text x="96" y="124" font-size="9" text-anchor="middle" fill="currentColor">fente (a)</text>
+    <path d="M96 65 L296 38 L296 92 Z" fill="#E84A3C" fill-opacity=".22"/><line x1="96" y1="65" x2="296" y2="65" stroke="currentColor" stroke-dasharray="3 3" stroke-opacity=".6"/><line x1="96" y1="65" x2="296" y2="38" stroke="#E84A3C" stroke-width="1.4"/>
+    <line x1="298" y1="14" x2="298" y2="116" stroke="currentColor" stroke-width="3"/><text x="304" y="124" font-size="9" text-anchor="end" fill="currentColor">écran</text>
+    <path d="M150 65 A 54 54 0 0 0 149 58" fill="none" stroke="currentColor" stroke-width="1.4"/><text x="158" y="60" font-size="11" font-style="italic" fill="currentColor">θ</text>
+    <line x1="96" y1="102" x2="294" y2="102" stroke="currentColor" stroke-width="1"/><text x="196" y="98" font-size="10" text-anchor="middle" fill="currentColor">D</text>
+    <line x1="308" y1="38" x2="308" y2="92" stroke="#E84A3C" stroke-width="1.4"/><line x1="304" y1="38" x2="312" y2="38" stroke="#E84A3C"/><line x1="304" y1="92" x2="312" y2="92" stroke="#E84A3C"/><text x="316" y="69" font-size="10" fill="#E84A3C" text-anchor="end" font-weight="700">L</text></svg>`;
+  const SCHEMA_SOURCES = `<svg class="ondes" viewBox="0 0 320 120" role="img" aria-label="Schéma : deux sources S1 et S2 et un point M ; d1 = S1M et d2 = S2M ; la différence de marche est δ = d2 − d1.">
+    <circle cx="40" cy="30" r="5" fill="#FFB020"/><circle cx="40" cy="90" r="5" fill="#FFB020"/><text x="30" y="34" font-size="11" text-anchor="end" fill="currentColor">S1</text><text x="30" y="94" font-size="11" text-anchor="end" fill="currentColor">S2</text>
+    <circle cx="270" cy="44" r="4" style="fill:var(--accent)"/><text x="280" y="48" font-size="12" font-weight="700" fill="currentColor">M</text>
+    <line x1="40" y1="30" x2="270" y2="44" style="stroke:var(--water)" stroke-width="2"/><line x1="40" y1="90" x2="270" y2="44" stroke="#E07A2F" stroke-width="2"/>
+    <text x="150" y="28" font-size="11" style="fill:var(--water)">d₁</text><text x="150" y="86" font-size="11" fill="#E07A2F">d₂</text>
+    <text x="160" y="112" font-size="11" text-anchor="middle" fill="currentColor">différence de marche : δ = d₂ − d₁</text></svg>`;
+
+  return { nb, sci, figDiffraction, figYoung, varianteCuve, genGraphique, genCalcul, genMesureDiff, genMesureYoung, genGraphiqueL, variantesDelta,
+    animOuverture, animFente, animSomme, animYoung, SCHEMA_FENTE, SCHEMA_SOURCES };
+})();
 
 const CONTENU = {
   niveaux: [
@@ -4040,6 +4427,470 @@ const CONTENU = {
             ]
           }
         ]
+      },
+      // ==================================================================
+      // Terminale, spécialité physique-chimie – thème « Ondes et signaux », section 1 « Caractériser les phénomènes ondulatoires »
+      // (BO spécial n° 8 du 25/07/2019) : diffraction et interférences, ondes progressives sinusoïdales seulement.
+      // Intensité sonore et effet Doppler : autre séquence. Rappels : programme de 1ère spécialité (ondes mécaniques, lumière).
+      // Figures, animations et générateurs : module ONDES (en haut de ce fichier). Deux TP (moteur 08_ondes_tp.js), codés le 09/11/2026.
+      // Notation : b = distance entre les deux fentes d'Young (a = largeur d'une fente).
+      // ==================================================================
+      {
+        id: "diffraction", theme: "ondes",
+        titre: "Diffraction et interférences",
+        resume: "Angle de diffraction, interférences constructives et destructives, fentes d'Young",
+
+        // ======================== 1. RAPPEL (1ère spécialité) ========================
+        rappel: {
+          intro: "Réactiver ce que tu as vu en 1ère sur les ondes : période, longueur d'onde, célérité. Sans ces bases, la diffraction et les interférences restent incompréhensibles. Chaque jeu change à chaque partie.",
+          activites: [
+            { id: "unites", type: "relier", titre: "Grandeurs et unités", desc: "Relier chaque grandeur à son unité", n: 5, paires: [
+              ["Période T", "seconde (s)"],
+              ["Fréquence f", "hertz (Hz)"],
+              ["Longueur d'onde λ", "mètre (m)"],
+              ["Célérité v", "mètre par seconde (m·s⁻¹)"],
+              ["Angle θ dans θ = λ / a", "radian (rad)"]
+            ] },
+            { id: "qcm", type: "qcm", titre: "QCM des ondes", desc: "8 questions sur les ondes de 1ère", n: 8, questions: [
+              { question: "Une onde mécanique progressive transporte…", reponses: ["de l'énergie, sans transport de matière", "de la matière, sans énergie", "de la matière et de l'énergie", "rien du tout"], bonne: 0, explication: "La perturbation se propage de proche en proche ; chaque point du milieu reste sur place en moyenne." },
+              { question: "Un bouchon flotte sur l'eau quand la houle passe. Il…", reponses: ["monte et descend presque sur place", "avance avec la vague jusqu'à la plage", "reste parfaitement immobile", "coule"], bonne: 0, explication: "L'onde se propage, mais le milieu (l'eau, le bouchon) ne fait qu'osciller autour de sa position." },
+              { question: "Une onde de célérité v parcourt une distance d. Son retard τ vaut…", reponses: ["τ = d / v", "τ = v / d", "τ = d × v", "τ = v − d"], bonne: 0, explication: "τ = d / v : par exemple 340 m à 340 m/s donnent un retard de 1 s." },
+              { question: "Quelle relation relie λ, v et T ?", reponses: ["λ = v × T", "λ = v / T", "λ = T / v", "λ = v + T"], bonne: 0, explication: "Pendant une période T, l'onde avance d'une longueur d'onde : λ = v × T = v / f." },
+              { question: "Un signal a une fréquence f = 50 Hz. Sa période vaut…", reponses: ["0,020 s", "50 s", "0,50 s", "2,0 s"], bonne: 0, explication: "T = 1 / f = 1 / 50 = 0,020 s = 20 ms." },
+              { question: "Sur un graphique en fonction du TEMPS, on lit…", reponses: ["la période T", "la longueur d'onde λ", "la célérité v", "la distance parcourue"], bonne: 0, explication: "Graphique temporel → période T ; graphique en fonction de la position → longueur d'onde λ." },
+              { question: "La longueur d'onde λ est…", reponses: ["la plus petite distance entre deux points du milieu qui vibrent de la même façon", "la hauteur de la vague", "la durée d'une oscillation", "la vitesse de l'onde"], bonne: 0, explication: "C'est la période spatiale de l'onde ; la hauteur, c'est l'amplitude." },
+              { question: "Un son de 680 Hz se propage dans l'air à 340 m/s. Sa longueur d'onde vaut…", reponses: ["0,50 m", "2,0 m", "2,3 × 10⁵ m", "1 020 m"], bonne: 0, explication: "λ = v / f = 340 / 680 = 0,50 m." },
+              { question: "Une radiation lumineuse a une fréquence ν = 5,0 × 10¹⁴ Hz. Dans le vide, λ = c / ν vaut…", reponses: ["6,0 × 10⁻⁷ m (600 nm)", "1,7 × 10⁶ m", "6,0 × 10⁷ m", "1,5 × 10²³ m"], bonne: 0, explication: "λ = 3,00 × 10⁸ / 5,0 × 10¹⁴ = 6,0 × 10⁻⁷ m = 600 nm (orange)." },
+              { question: "Le domaine visible s'étend environ de…", reponses: ["400 nm à 800 nm", "4 mm à 8 mm", "400 µm à 800 µm", "40 nm à 80 nm"], bonne: 0, explication: "Du violet (≈ 400 nm) au rouge (≈ 800 nm)." },
+              { question: "La lumière est une onde…", reponses: ["électromagnétique, qui peut se propager dans le vide", "mécanique, qui a besoin d'air", "sonore", "qui ne se propage que dans l'eau"], bonne: 0, explication: "Contrairement au son, la lumière n'a pas besoin de milieu matériel." },
+              { question: "Pour un petit angle exprimé en radian…", reponses: ["tan θ ≈ θ", "tan θ ≈ 1", "tan θ ≈ 0", "tan θ ≈ θ en degrés"], bonne: 0, explication: "C'est l'approximation des petits angles : tan(0,010 rad) ≈ 0,010. La calculatrice doit être en mode radian !" }
+            ] },
+            { id: "graphique", type: "calcul", titre: "Lire le graphique", desc: "Lire une période ou une longueur d'onde", n: 4,
+              rappel: "Graphique en fonction du <strong>temps</strong> → période T. Graphique en fonction de la <strong>position</strong> → longueur d'onde λ. λ = v × T et f = 1 / T.",
+              contextes: [{ gen: () => ONDES.genGraphique() }] },
+            { id: "grandeurs", type: "relier", titre: "Ordres de grandeur", desc: "Relier chaque onde à sa longueur d'onde", n: 5, paires: [
+              ["Houle au large de la Guyane", "≈ 100 m"],
+              ["Son grave de 170 Hz dans l'air", "≈ 2 m"],
+              ["Wi-Fi ou micro-ondes (2,45 GHz)", "≈ 12 cm"],
+              ["Ultrasons d'une échographie (2 MHz)", "≈ 0,8 mm"],
+              ["Lumière visible", "400 à 800 nm"],
+              ["Rayons X", "≈ 0,1 nm"]
+            ] },
+            { id: "croises", type: "croises", titre: "Mots croisés des ondes", desc: "Une nouvelle grille à chaque partie", n: 8, mots: [
+              { mot: "PERIODE",     indice: "Durée au bout de laquelle le phénomène se répète (T)." },
+              { mot: "FREQUENCE",   indice: "Nombre de périodes par seconde, en hertz." },
+              { mot: "CELERITE",    indice: "Vitesse de propagation d'une onde." },
+              { mot: "RETARD",      indice: "Durée τ = d / v mise par l'onde pour aller d'un point à un autre." },
+              { mot: "HERTZ",       indice: "Unité de fréquence." },
+              { mot: "SINUSOIDALE", indice: "Se dit d'une onde dont la forme est celle d'un cosinus." },
+              { mot: "MATIERE",     indice: "Une onde mécanique transporte de l'énergie, mais pas de…" },
+              { mot: "RADIAN",      indice: "Unité d'angle à utiliser dans θ = λ / a." },
+              { mot: "VIDE",        indice: "La lumière peut s'y propager, le son non." },
+              { mot: "HOULE",       indice: "Onde à la surface de l'océan, de longueur d'onde de l'ordre de 100 m." },
+              { mot: "AMPLITUDE",   indice: "Écart maximal par rapport à la position de repos." }
+            ] }
+          ]
+        },
+
+        // ======================== 2. COURS ========================
+        cours: {
+          competences: [
+            "Je reconnais le phénomène de diffraction dans des situations variées.",
+            "Je prévois si la diffraction est marquée en comparant la taille de l'ouverture a et la longueur d'onde λ.",
+            "Je calcule l'angle caractéristique de diffraction θ = λ / a.",
+            "J'exploite la figure de diffraction d'une fente (L, D, a et λ).",
+            "Je reconnais des interférences à la surface de l'eau.",
+            "J'applique les conditions d'interférences constructives ou destructives.",
+            "J'exploite l'interfrange i = λ D / b des fentes d'Young.",
+            "Je distingue une figure de diffraction d'une figure d'interférences."
+          ],
+          blocs: [
+            { t: "h", texte: "1. Qu'est-ce que la diffraction ?" },
+            { t: "p", texte: "Quand une onde rencontre une <strong>ouverture</strong> ou un <strong>obstacle</strong> de petite taille, elle ne continue pas tout droit : elle <strong>s'étale</strong> dans des directions qu'elle n'aurait pas atteintes en ligne droite. C'est la <strong>diffraction</strong>. Elle concerne toutes les ondes : houle, son, lumière, ondes radio." },
+            { t: "p", texte: "La diffraction <strong>ne change ni la fréquence, ni la longueur d'onde, ni la célérité</strong> de l'onde : seule sa direction de propagation s'élargit. Un laser rouge diffracté reste rouge." },
+            { t: "anim", monter: (el) => ONDES.animOuverture(el) },
+            { t: "exemple", type: "tri", competence: 1, n: 4, question: "Est-ce de la diffraction ?", oui: "Diffraction", non: "Autre phénomène", court: ["Diffraction", "Autre"], consigne: "Pour chaque situation, choisir « Diffraction » ou « Autre » (réflexion, réfraction, dispersion…).", items: [
+              { source: "La houle franchit l'entrée d'un port et s'étale dans tout le bassin.", oui: true, pourquoi: "L'onde s'étale après une ouverture de taille proche de sa longueur d'onde." },
+              { source: "On entend un ami qui parle derrière l'angle d'un mur.", oui: true, pourquoi: "Le son (λ de l'ordre du mètre) contourne l'angle du mur." },
+              { source: "Un laser qui traverse une fente très fine donne une tache allongée et des taches secondaires.", oui: true, pourquoi: "C'est la figure de diffraction d'une fente." },
+              { source: "Les ondes radio sont captées dans une vallée, derrière une colline.", oui: true, pourquoi: "Les grandes ondes radio contournent les reliefs." },
+              { source: "Un miroir renvoie la lumière du Soleil.", oui: false, pourquoi: "C'est une réflexion." },
+              { source: "Un bâton plongé dans l'eau paraît brisé.", oui: false, pourquoi: "C'est la réfraction : la lumière change de direction en changeant de milieu." },
+              { source: "Un prisme décompose la lumière blanche en couleurs.", oui: false, pourquoi: "C'est la dispersion." },
+              { source: "L'écho de la voix revient d'une falaise.", oui: false, pourquoi: "C'est une réflexion du son." }
+            ] },
+
+            { t: "h", texte: "2. Quand la diffraction est-elle marquée ?" },
+            { t: "p", texte: "La diffraction est d'autant plus marquée que l'ouverture (ou l'obstacle) est <strong>petite</strong>. Elle est très visible quand la taille <strong>a</strong> de l'ouverture est <strong>du même ordre de grandeur que la longueur d'onde λ, ou plus petite</strong>. Si a est très grande devant λ, l'onde passe presque tout droit." },
+            { t: "tableau", entetes: ["Onde et ouverture", "Diffraction"], lignes: [
+              ["Houle (λ ≈ 100 m), entrée de port (a ≈ 100 m)", "très marquée"],
+              ["Son de 440 Hz (λ ≈ 0,8 m), porte (a ≈ 0,9 m)", "très marquée"],
+              ["Lumière (λ ≈ 600 nm), porte (a ≈ 0,9 m)", "invisible"],
+              ["Laser (λ ≈ 600 nm), fente (a = 0,1 mm)", "bien visible"]
+            ] },
+            { t: "p", texte: "C'est pourquoi on entend derrière une porte, mais on n'y voit pas : la porte est comparable à la longueur d'onde du son, mais immense devant celle de la lumière." },
+            { t: "exemple", type: "qcm", competence: 2, variantes: [
+              { question: "Un son de 340 Hz (λ = 1,0 m dans l'air) passe par une fenêtre de 1,2 m de large. La diffraction est…", reponses: ["marquée, car a est du même ordre que λ", "nulle, car a > λ", "nulle, car le son ne se diffracte pas", "marquée, car le son est rapide"], bonne: 0, explication: "a ≈ λ : le son s'étale largement après la fenêtre." },
+              { question: "Pour observer la diffraction d'un laser (λ = 650 nm), quelle ouverture choisir ?", reponses: ["Une fente de 0,1 mm", "Une fenêtre de 1 m", "Une porte de 2 m", "Un trou de 5 cm"], bonne: 0, explication: "Il faut une ouverture qui ne soit pas trop grande devant λ : 0,1 mm = 100 µm convient, les autres sont bien trop larges." },
+              { question: "On réduit la largeur de la fente traversée par un laser. La tache centrale sur l'écran…", reponses: ["s'élargit", "rétrécit", "change de couleur", "ne change pas"], bonne: 0, explication: "Plus la fente est fine, plus la diffraction est marquée : la tache s'élargit (θ = λ / a augmente)." }
+            ] },
+
+            { t: "h", texte: "3. L'angle caractéristique de diffraction" },
+            { t: "p", texte: "Une fente de largeur a, éclairée par un laser, donne sur un écran une <strong>tache centrale</strong> très lumineuse, entourée de <strong>taches secondaires</strong> moins lumineuses. La figure s'étale <strong>perpendiculairement à la fente</strong>." },
+            { t: "p", texte: `<figure class="fig-cours">${ONDES.SCHEMA_FENTE}<figcaption>θ est le demi-angle sous lequel on voit la tache centrale depuis la fente.</figcaption></figure>` },
+            { t: "methode", titre: "L'angle caractéristique de diffraction", items: [
+              "<strong>θ = λ / a</strong>, avec θ en <strong>radian</strong>, λ et a dans la <strong>même unité</strong> (en mètres, par exemple).",
+              "Sur l'écran à la distance D : tan θ = (L / 2) / D. Pour un petit angle, tan θ ≈ θ (en radian).",
+              "On en déduit la largeur de la tache centrale : <strong>L = 2 λ D / a</strong>.",
+              "Conséquences : θ augmente quand a diminue, et quand λ augmente (le rouge est plus diffracté que le bleu)."
+            ] },
+            { t: "anim", monter: (el) => ONDES.animFente(el) },
+            { t: "exemple", type: "calcul", competence: 3, contextes: [{ gen: () => ONDES.genCalcul("theta") }] },
+            { t: "p", texte: "<strong>Mesurer avec la diffraction.</strong> Un fil ou un cheveu donne la même figure qu'une fente de même largeur. En mesurant L, on peut donc calculer l'épaisseur a d'un cheveu (a = 2 λ D / L), ou la longueur d'onde d'un laser inconnu." },
+            { t: "exemple", type: "calcul", competence: 4, contextes: [{ gen: () => ONDES.genMesureDiff() }] },
+
+            { t: "h", texte: "4. Des conséquences de la diffraction" },
+            { t: "liste", items: [
+              "On entend la musique d'un char du carnaval avant de le voir arriver au coin de la rue : le son contourne les bâtiments.",
+              "Les ondes radio grandes ondes atteignent les vallées derrière les collines.",
+              "La diffraction limite la netteté des télescopes et des objectifs : deux étoiles très proches peuvent former une seule tache. Plus le miroir est grand, plus l'image est fine.",
+              "Elle permet de mesurer de petites dimensions : épaisseur d'un cheveu, d'un fil d'araignée, pas d'un réseau."
+            ] },
+
+            { t: "h", texte: "5. Superposer deux ondes : les interférences" },
+            { t: "p", texte: "Deux ondes de <strong>même fréquence</strong>, émises par deux sources <strong>synchrones</strong>, se superposent : en chaque point, les deux perturbations <strong>s'ajoutent</strong>. Selon leur décalage, elles se renforcent ou se détruisent : ce sont des <strong>interférences</strong>." },
+            { t: "anim", monter: (el) => ONDES.animSomme(el) },
+            { t: "liste", items: [
+              "Ondes <strong>en phase</strong> : l'amplitude est maximale, ce sont des <strong>interférences constructives</strong>.",
+              "Ondes en <strong>opposition de phase</strong> : l'amplitude est nulle (si les amplitudes sont égales), ce sont des <strong>interférences destructives</strong>."
+            ] },
+            { t: "p", texte: "Dans une cuve à ondes, deux pointes qui frappent l'eau en même temps créent des zones très agitées et des zones calmes, sur des lignes en forme d'hyperboles." },
+            { t: "exemple", type: "qcm", competence: 5, get variantes() { return [ONDES.varianteCuve(true), ONDES.varianteCuve(false), ONDES.varianteCuve(true)]; } },
+
+            { t: "h", texte: "6. Conditions d'interférences constructives ou destructives" },
+            { t: "p", texte: `<figure class="fig-cours">${ONDES.SCHEMA_SOURCES}</figure>` },
+            { t: "p", texte: "Deux sources S1 et S2 <strong>en phase</strong> émettent dans un milieu homogène. Au point M, l'onde de S2 a parcouru d₂ = S2M et celle de S1, d₁ = S1M. La <strong>différence de marche</strong> est δ = d₂ − d₁ (pour la lumière, on parle de différence de chemin optique)." },
+            { t: "methode", titre: "Conditions d'interférences (k entier : 0, ±1, ±2…)", items: [
+              "<strong>Constructives</strong> si δ = k λ : un nombre <strong>entier</strong> de longueurs d'onde, les ondes arrivent en phase.",
+              "<strong>Destructives</strong> si δ = (k + ½) λ : un nombre <strong>demi-entier</strong> de longueurs d'onde, les ondes arrivent en opposition de phase.",
+              "Méthode : calculer δ, puis le quotient δ / λ. Entier → constructives ; demi-entier (0,5 ; 1,5…) → destructives."
+            ] },
+            { t: "exemple", type: "qcm", competence: 6, get variantes() { return ONDES.variantesDelta(4); } },
+
+            { t: "h", texte: "7. Les fentes d'Young" },
+            { t: "p", texte: "En 1801, Thomas Young éclaire deux fentes très fines et très proches, séparées d'une distance <strong>b</strong>. Chaque fente diffracte la lumière ; là où les deux faisceaux se recouvrent, ils interfèrent. Sur l'écran à la distance D, on observe des <strong>franges</strong> brillantes et sombres, alternées et régulièrement espacées." },
+            { t: "p", texte: "Pour un point de l'écran à la distance x de la frange centrale, la différence de chemin optique vaut (expression donnée) : <strong>δ = b x / D</strong>." },
+            { t: "methode", titre: "Établir l'interfrange", items: [
+              "Franges brillantes : δ = k λ, donc b x / D = k λ, soit x<sub>k</sub> = k λ D / b.",
+              "Deux franges brillantes voisines : x<sub>k+1</sub> − x<sub>k</sub> = λ D / b.",
+              "L'<strong>interfrange</strong> (distance entre deux franges brillantes, ou sombres, consécutives) vaut <strong>i = λ D / b</strong>.",
+              "Pour être précis, on mesure plusieurs interfranges : 5 i = distance entre une frange brillante et la 5e suivante."
+            ] },
+            { t: "anim", monter: (el) => ONDES.animYoung(el) },
+            { t: "exemple", type: "calcul", competence: 7, contextes: [{ gen: () => ONDES.genMesureYoung() }] },
+
+            { t: "h", texte: "8. Diffraction ou interférences ?" },
+            { t: "p", texte: `<figure class="fig-cours"><span class="leg">Une seule fente : tache centrale deux fois plus large que les taches secondaires</span>${ONDES.figDiffraction({ lambda: 650, a: 80, D: 2, H: 60, regle: false })}<span class="leg">Deux fentes (Young) : franges fines et régulières</span>${ONDES.figYoung({ lambda: 650, b: 0.4, D: 1.5, H: 15, a: 0.05, regle: false })}</figure>` },
+            { t: "exemple", type: "qcm", competence: 8, get variantes() { return [
+              { figure: ONDES.figDiffraction({ lambda: 532, a: 100, D: 2, H: 50, regle: false }), question: "Quel dispositif a donné cette figure sur l'écran ?", reponses: ["Une seule fente fine", "Deux fentes fines très proches", "Un prisme", "Un miroir plan"], bonne: 0, explication: "Une tache centrale large, deux fois plus large que les taches secondaires : c'est la diffraction par une fente." },
+              { figure: ONDES.figYoung({ lambda: 633, b: 0.3, D: 1.5, H: 15, a: 0.05, regle: false }), question: "Quel dispositif a donné cette figure sur l'écran ?", reponses: ["Deux fentes fines très proches", "Une seule fente fine", "Un prisme", "Une lentille"], bonne: 0, explication: "Des franges fines, régulièrement espacées : ce sont les interférences des deux faisceaux issus des fentes d'Young." },
+              { figure: ONDES.figYoung({ lambda: 532, b: 0.4, D: 2, H: 15, a: 0.05, regle: false }), question: "Sur cette figure des fentes d'Young, que mesure-t-on pour trouver l'interfrange i ?", reponses: ["La distance entre deux franges brillantes voisines", "La largeur totale de la figure", "La largeur d'une frange sombre seulement", "La distance entre les deux fentes"], bonne: 0, explication: "L'interfrange est la distance entre deux franges brillantes (ou sombres) consécutives ; on en mesure plusieurs pour être précis." }
+            ]; } },
+
+            { t: "h", texte: "9. Des interférences autour de nous" },
+            { t: "liste", items: [
+              "Les <strong>couleurs des bulles de savon</strong> et des <strong>taches d'huile</strong> sur une route mouillée : la lumière réfléchie par les deux faces d'une couche très mince interfère ; certaines couleurs sont renforcées.",
+              "Le <strong>bleu chatoyant du papillon Morpho</strong> de Guyane : ses écailles portent des lamelles très fines ; le bleu est renforcé par interférences constructives. Il n'y a pas de pigment bleu !",
+              "Le <strong>casque anti-bruit actif</strong> : il émet un son en opposition de phase avec le bruit, pour des interférences destructives.",
+              "Les reflets irisés d'un CD ou d'un DVD."
+            ] },
+            { t: "retenir", items: [
+              "La <strong>diffraction</strong> : une onde s'étale après une ouverture ou un obstacle de taille a ; elle est marquée si a est du même ordre que λ ou plus petite.",
+              "Angle caractéristique : <strong>θ = λ / a</strong> (θ en rad) ; tache centrale sur un écran à la distance D : <strong>L = 2 λ D / a</strong>.",
+              "Deux ondes de même fréquence issues de sources synchrones <strong>interfèrent</strong> : δ = d₂ − d₁.",
+              "Sources en phase : <strong>constructives si δ = k λ</strong>, <strong>destructives si δ = (k + ½) λ</strong>.",
+              "Fentes d'Young : <strong>i = λ D / b</strong> (b : distance entre les fentes)."
+            ] }
+          ]
+        },
+
+        // ======================== 3. TP : deux TP (moteur « ondes », fichier 08_ondes_tp.js) ========================
+        // Capacités expérimentales du programme : illustrer et caractériser la diffraction ; exploiter θ = λ / a pour une fente,
+        // éventuellement avec un logiciel de traitement d'image (TP 1) ; tester les conditions d'interférences à la surface de l'eau (TP 2).
+        tp: {
+          moteur: "ondes",
+          titre: "Deux TP : diffraction, puis interférences",
+          intro: "Dans le TP 1, tu observes la diffraction puis tu mesures la tache centrale d'un laser pour contrôler un fil de pêche. Dans le TP 2, tu fais interférer deux ondes à la surface de l'eau.",
+          labos: [
+            {
+              id: "diff", titre: "TP 1", sousTitre: "Le laboratoire de la diffraction",
+              intro: "Un fabricant de fil de pêche de Cayenne veut contrôler le diamètre de ses fils sans les toucher. Avant de mener l'enquête, il faut comprendre la diffraction et savoir mesurer la tache centrale.",
+              enClasse: {
+                objectif: "Illustrer la diffraction dans des situations variées, puis exploiter la relation θ = λ / a pour une onde lumineuse diffractée par une fente, éventuellement avec un logiciel de traitement d'image. Durée : environ 2 h ; possible en deux séances (objectifs 1-2, puis 3-4).",
+                materiel: ["Cuve à ondes avec vibreur, générateur de fréquence et deux cales pour régler l'ouverture", "Laser rouge (λ = 650 nm, classe 2) sur un banc gradué", "Diapositive de fentes calibrées (40 à 120 µm) et support", "Écran blanc, règle ou papier millimétré", "Fil de pêche de la bobine à contrôler, tendu sur un cadre", "Smartphone et logiciel de traitement d'image (profil d'intensité), ou tableur"],
+                securite: ["Ne jamais regarder le faisceau laser, ni directement ni par réflexion (montre, bague, surface brillante).", "Garder le faisceau horizontal, sous le niveau des yeux ; prévenir avant d'allumer.", "Cuve à ondes : éloigner les appareils électriques de l'eau et essuyer les éclaboussures."]
+              },
+              objectifs: [
+                {
+                  id: "d1", competence: "Observer", onglet: "Observer", titre: "Observer la diffraction",
+                  notion: "Cours, parties 1 et 2 : la diffraction, quand est-elle marquée ?",
+                  banc: { modes: ["cuve", "laser"], fentes: ["aucune", "large", "f50"], D: 1.5 },
+                  but: "Dans la cuve à ondes, faire varier l'ouverture a et la longueur d'onde λ, et noter à chaque fois ce que fait l'onde après la digue. Puis, sur le banc laser, comparer le faisceau sans fente et après une fente fine.",
+                  taches: [
+                    { id: "petite", texte: "Cuve : noter une observation où l'onde s'étale beaucoup après la digue (ouverture a ≈ λ ou plus petite)." },
+                    { id: "grande", texte: "Cuve : noter une observation où l'onde passe presque tout droit (ouverture a ≥ 4 λ)." },
+                    { id: "lambda", texte: "Cuve : garder la même ouverture, changer la fréquence du vibreur (donc λ) et noter une nouvelle observation." },
+                    { id: "sans", texte: "Banc laser : allumer le laser sans fente et regarder l'écran." },
+                    { id: "fine", texte: "Banc laser : placer la fente de 50 µm dans le faisceau et regarder l'écran." }
+                  ],
+                  questions: [
+                    { type: "qcm", variantes: [{ question: "D'après tes observations dans la cuve, la diffraction est très marquée quand…", reponses: ["l'ouverture a est du même ordre de grandeur que λ, ou plus petite", "l'ouverture a est très grande devant λ", "la fréquence du vibreur est très grande", "l'eau est profonde"], bonne: 0, explication: "Avec a ≈ λ, l'onde s'étale dans toutes les directions après la digue ; avec a ≥ 4 λ, elle passe presque tout droit." }] },
+                    { type: "qcm", variantes: [{ question: "Sur l'écran, après la fente de 50 µm, la tache du laser est…", reponses: ["étalée perpendiculairement à la fente, avec des taches secondaires", "exactement la même que sans fente", "plus petite que sans fente", "de couleur verte"], bonne: 0, explication: "La fente (50 µm) n'est que 77 fois plus large que λ = 0,65 µm : la lumière est nettement diffractée. Sa couleur ne change pas." }] },
+                    { type: "vraifaux", variantes: [{ affirmation: "Dans la cuve, quand on diminue la fréquence du vibreur, λ augmente, et la diffraction par une même ouverture devient plus marquée.", vrai: true, explication: "λ = v / f : f plus petite, λ plus grande, donc a / λ plus petit : l'onde s'étale davantage." }] }
+                  ],
+                  retenir: "La diffraction est d'autant plus marquée que l'ouverture est petite devant la longueur d'onde. Elle est très visible quand a est du même ordre de grandeur que λ ou plus petite. Elle concerne toutes les ondes : vagues, son, lumière."
+                },
+                {
+                  id: "d2", competence: "Mesurer", onglet: "Mesurer", titre: "Mesurer la tache centrale",
+                  notion: "Cours, partie 3 : l'angle caractéristique de diffraction",
+                  banc: { modes: ["laser"], fentes: ["f40", "f50", "f70", "f100", "f120"], D: 1.5, Dreglable: true },
+                  but: "Placer l'écran à D = 2,00 m. Pour chaque fente calibrée, placer les deux curseurs sur les premières extinctions (les zones noires qui encadrent la tache centrale), lire L et NOTER. Le tableau calcule θ = L / (2D).",
+                  taches: [
+                    { id: "D2", texte: "Placer l'écran à D = 2,00 m (boutons − et +) et allumer le laser." },
+                    { id: "quatre", texte: "Mesurer la largeur L de la tache centrale pour au moins 4 fentes différentes (curseurs, puis NOTER)." }
+                  ],
+                  questions: [
+                    { type: "dyn", quoi: "theta" },
+                    { type: "qcm", variantes: [{ question: "D'après ton tableau, quand la largeur a de la fente diminue, l'angle θ…", reponses: ["augmente", "diminue", "ne change pas", "s'annule"], bonne: 0, explication: "θ = λ / a : θ est inversement proportionnel à a. Plus la fente est fine, plus la tache est large." }] },
+                    { type: "qcm", variantes: [{ question: "Pourquoi place-t-on l'écran loin de la fente (2 m) ?", reponses: ["La tache est plus large, donc L est mesurée avec une meilleure précision relative", "Pour que le laser soit moins dangereux", "Pour que θ soit plus grand", "Pour changer la couleur du laser"], bonne: 0, explication: "L = 2 λ D / a est proportionnelle à D. θ, lui, ne dépend pas de D." }] }
+                  ],
+                  retenir: "Pour une fente de largeur a, la tache centrale a une largeur L = 2 λ D / a sur un écran à la distance D. On en déduit θ = L / (2D) (petits angles, en radian). θ augmente quand a diminue."
+                },
+                {
+                  id: "d3", competence: "Exploiter", onglet: "Exploiter", titre: "Exploiter avec un logiciel de traitement d'image",
+                  notion: "Cours, partie 3 : θ = λ / a",
+                  banc: { modes: ["laser"], fentes: ["f40", "f50", "f70", "f100", "f120"], D: 2.0, profil: true },
+                  but: "Le logiciel trace le profil d'intensité le long de la ligne jaune de la photo : les minima sont bien plus faciles à repérer. Refaire au moins 2 mesures avec le profil, puis tracer θ en fonction de 1/a et modéliser par une droite passant par l'origine.",
+                  taches: [
+                    { id: "profil", texte: "Refaire la mesure de L pour au moins 2 fentes en plaçant les curseurs sur les minima du profil d'intensité." },
+                    { id: "graphe", texte: "Tracer θ = f(1/a) dans le logiciel (au moins 4 fentes mesurées)." },
+                    { id: "modele", texte: "Modéliser les points par une droite passant par l'origine." }
+                  ],
+                  questions: [
+                    { type: "qcm", variantes: [{ question: "Les points de θ = f(1/a) sont alignés sur une droite passant par l'origine. Cela montre que…", reponses: ["θ est proportionnel à 1/a, ce qui vérifie θ = λ / a", "θ est proportionnel à a", "θ ne dépend pas de a", "la longueur d'onde dépend de la fente"], bonne: 0, explication: "Une droite passant par l'origine traduit une proportionnalité ; le coefficient directeur est λ." }] },
+                    { type: "dyn", quoi: "lambdaPente" },
+                    { type: "dyn", quoi: "ecart" }
+                  ],
+                  retenir: "θ = λ / a : le graphique de θ en fonction de 1/a est une droite passant par l'origine, de coefficient directeur λ. Un logiciel de traitement d'image (profil d'intensité) permet de repérer précisément les minima."
+                },
+                {
+                  id: "d4", competence: "Enquêter", onglet: "Enquêter", titre: "Enquête : le fil de pêche",
+                  notion: "Cours, partie 3 : mesurer avec la diffraction",
+                  banc: { modes: ["laser"], fentes: ["f100", "fil"], D: 2.0, Dreglable: true },
+                  but: "Le fabricant annonce un fil de 0,15 mm de diamètre. Un fil diffracte comme une fente de même largeur : remplacer la fente par le fil, mesurer la tache centrale, calculer le diamètre et répondre au fabricant. Chaque élève reçoit une bobine différente !",
+                  taches: [
+                    { id: "fil", texte: "Placer le fil de pêche dans le faisceau, laser allumé." },
+                    { id: "mesure", texte: "Mesurer la largeur L de la tache centrale du fil (curseurs, puis NOTER)." }
+                  ],
+                  questions: [
+                    { type: "dyn", quoi: "filA" },
+                    { type: "dyn", quoi: "filConforme" },
+                    { type: "dyn", quoi: "filRedac" }
+                  ],
+                  retenir: "Un fil fin donne la même figure de diffraction qu'une fente de même largeur : en mesurant L, on calcule son diamètre a = 2 λ D / L, sans le toucher."
+                }
+              ],
+              conclusion: {
+                programme: "Le programme (terminale spécialité)",
+                attendus: ["Illustrer et caractériser qualitativement le phénomène de diffraction dans des situations variées.", "Exploiter la relation donnant l'angle caractéristique de diffraction dans le cas d'une onde lumineuse diffractée par une fente rectangulaire en utilisant éventuellement un logiciel de traitement d'image."],
+                textes: [
+                  { obj: "d1", attendu: "Observer la diffraction", texte: "Une onde est fortement diffractée quand la taille de l'ouverture est du même ordre de grandeur que sa [longueur d'onde], ou plus [petite].", pieges: ["fréquence", "grande"] },
+                  { obj: "d2", attendu: "Mesurer la tache centrale", texte: "Sur l'écran, la tache centrale a une largeur L = 2 λ D / a : elle est d'autant plus [large] que la fente est [fine].", pieges: ["étroite", "épaisse"] },
+                  { obj: "d3", attendu: "Exploiter", texte: "Le graphique de θ en fonction de [1/a] est une droite passant par l'origine : son coefficient directeur est la [longueur d'onde] λ.", pieges: ["a", "fréquence"] },
+                  { obj: "d4", attendu: "Enquêter", texte: "Un fil diffracte comme une [fente] de même largeur : on calcule son diamètre avec a = 2 λ D / [L].", pieges: ["lentille", "θ"] }
+                ]
+              }
+            },
+            {
+              id: "cuve", titre: "TP 2", sousTitre: "Interférences à la surface de l'eau",
+              intro: "Deux pointes frappent l'eau en même temps : deux ondes synchrones se superposent. Où l'eau reste-t-elle calme, où s'agite-t-elle ? On teste les conditions d'interférences.",
+              enClasse: {
+                objectif: "Tester les conditions d'interférences constructives ou destructives à la surface de l'eau, dans le cas de deux ondes issues de deux sources ponctuelles en phase. Durée : environ 1 h 30.",
+                materiel: ["Cuve à ondes, vibreur à deux pointes (et une pointe seule)", "Générateur de fréquence (10 à 30 Hz)", "Stroboscope réglé sur la fréquence du vibreur", "Règle transparente, ou photo de la cuve et logiciel de traitement d'image"],
+                securite: ["Éloigner les appareils électriques de l'eau ; essuyer les éclaboussures.", "Stroboscope : prévenir les élèves sensibles aux lumières clignotantes ; ne pas fixer la lampe."]
+              },
+              objectifs: [
+                {
+                  id: "c1", competence: "Observer", onglet: "Observer", titre: "Observer les interférences",
+                  notion: "Cours, partie 5 : superposer deux ondes",
+                  banc: { pointes: "deux", f: 15, e: 4, M: true, classer: true },
+                  but: "Mettre le vibreur en marche avec les deux pointes, activer le stroboscope, puis repérer des lignes où l'eau reste calme et des lignes où elle est très agitée : toucher la cuve pour placer M, puis dire sur quelle ligne il se trouve.",
+                  taches: [
+                    { id: "allume", texte: "Mettre le vibreur en marche (deux pointes)." },
+                    { id: "strobe", texte: "Activer le stroboscope pour figer les rides." },
+                    { id: "calmes", texte: "Repérer 2 points sur des lignes calmes." },
+                    { id: "agitees", texte: "Repérer 2 points sur des lignes agitées." }
+                  ],
+                  questions: [
+                    { type: "qcm", variantes: [{ question: "Quelle forme ont les lignes calmes et les lignes agitées ?", reponses: ["Des courbes (hyperboles) qui partent d'entre les deux pointes", "Des cercles centrés sur S1", "Des droites parallèles à S1S2", "Elles changent de place sans arrêt"], bonne: 0, explication: "Ce sont des hyperboles fixes : en chacun de leurs points, la différence de marche d₂ − d₁ est constante." }] },
+                    { type: "qcm", variantes: [{ question: "Pourquoi l'eau reste-t-elle calme en certains points ?", reponses: ["Les deux ondes y arrivent en opposition de phase et s'annulent", "Aucune onde n'y arrive", "L'eau y est plus profonde", "Le stroboscope l'immobilise"], bonne: 0, explication: "Les deux ondes y arrivent bien, mais l'une soulève l'eau quand l'autre l'abaisse : interférences destructives." }] }
+                  ],
+                  retenir: "Deux ondes synchrones qui se superposent donnent des interférences : des zones d'amplitude maximale (constructives) et des zones calmes (destructives), sur des lignes fixes."
+                },
+                {
+                  id: "c2", competence: "Mesurer", onglet: "Mesurer λ", titre: "Mesurer la longueur d'onde",
+                  notion: "Rappel de 1ère : λ = v × T = v / f",
+                  banc: { pointes: "choix", e: 4, regle: true },
+                  but: "Avec une seule pointe, les rides sont des cercles espacés de λ. Figer l'image avec le stroboscope, poser la règle et mesurer plusieurs longueurs d'onde d'un coup. La fréquence est imposée par le professeur.",
+                  taches: [
+                    { id: "une", texte: "Mettre le vibreur en marche avec une seule pointe." },
+                    { id: "fige", texte: "Figer les rides avec le stroboscope." },
+                    { id: "regle", texte: "Poser la règle sur la cuve." }
+                  ],
+                  questions: [
+                    { type: "dyn", quoi: "lambdaCuve" },
+                    { type: "dyn", quoi: "vCuve" }
+                  ],
+                  retenir: "La longueur d'onde est la distance entre deux rides voisines ; pour la mesurer précisément, on mesure plusieurs longueurs d'onde. v = λ × f."
+                },
+                {
+                  id: "c3", competence: "Tester", onglet: "Tester", titre: "Tester les conditions d'interférences",
+                  notion: "Cours, partie 6 : conditions d'interférences",
+                  banc: { pointes: "deux", f: 15, e: 4, M: true, classer: true },
+                  but: "À f = 15 Hz, λ = 2,0 cm. Placer M sur des lignes calmes et agitées : l'appli mesure d₁ = S1M et d₂ = S2M ; le tableau calcule δ = d₂ − d₁ et δ / λ. Que remarques-tu ?",
+                  taches: [
+                    { id: "c3", texte: "Noter 3 points sur des lignes calmes (de préférence des lignes différentes)." },
+                    { id: "a3", texte: "Noter 3 points sur des lignes agitées (de préférence des lignes différentes)." }
+                  ],
+                  questions: [
+                    { type: "qcm", variantes: [{ question: "D'après ton tableau, sur une ligne agitée, δ / λ est…", reponses: ["un nombre entier (0 ; ±1 ; ±2…)", "un nombre demi-entier (±0,5 ; ±1,5…)", "toujours égal à 0", "n'importe quel nombre"], bonne: 0, explication: "Agitée : δ = k λ, les ondes arrivent en phase (interférences constructives)." }] },
+                    { type: "qcm", variantes: [{ question: "Et sur une ligne calme, δ / λ est…", reponses: ["un nombre demi-entier (±0,5 ; ±1,5…)", "un nombre entier", "toujours supérieur à 3", "nul"], bonne: 0, explication: "Calme : δ = (k + ½) λ, les ondes arrivent en opposition de phase (interférences destructives)." }] },
+                    { type: "qcm", variantes: [{ question: "Un point N est à d₁ = 9,0 cm et d₂ = 12,0 cm des pointes (λ = 2,0 cm). L'eau y est…", reponses: ["calme : δ / λ = 1,5", "agitée : δ / λ = 1,5", "agitée : δ / λ = 3", "calme : δ / λ = 3"], bonne: 0, explication: "δ = 3,0 cm ; δ / λ = 1,5 : demi-entier, interférences destructives." }] }
+                  ],
+                  retenir: "Sources en phase : interférences constructives si δ = k λ (lignes agitées), destructives si δ = (k + ½) λ (lignes calmes), avec k entier."
+                },
+                {
+                  id: "c4", competence: "Prévoir", onglet: "Prévoir", titre: "Prévoir l'effet de la fréquence",
+                  notion: "Cours, partie 6 : δ = (k + ½) λ",
+                  banc: { pointes: "deux", f: 15, fReglable: true, e: 4, M: false },
+                  but: "Compter les lignes calmes qui partent entre les deux pointes à f = 15 Hz, puis prévoir ce qui se passe à une fréquence plus grande, régler f au-dessus de 24 Hz et recompter.",
+                  taches: [
+                    { id: "n15", texte: "À f = 15 Hz, compter les lignes calmes entre S1 et S2 et noter le nombre." },
+                    { id: "n25", texte: "Régler f à 24 Hz ou plus, recompter et noter." }
+                  ],
+                  questions: [
+                    { type: "qcm", variantes: [{ question: "Quand la fréquence augmente, les lignes calmes…", reponses: ["se resserrent et sont plus nombreuses, car λ diminue", "s'écartent, car λ augmente", "ne changent pas", "disparaissent"], bonne: 0, explication: "λ = v / f diminue : il y a plus de valeurs δ = (k + ½) λ possibles entre −S1S2 et +S1S2." }] },
+                    { type: "qcm", variantes: [{ question: "Entre les pointes, δ varie de −S1S2 à +S1S2. Avec S1S2 = 4,0 cm et λ = 1,0 cm (30 Hz), combien de lignes calmes prévoir ?", reponses: ["8", "4", "6", "2"], bonne: 0, explication: "Il faut |δ| = (k + ½) λ < 4,0 cm : δ = ±0,5 ; ±1,5 ; ±2,5 ; ±3,5 cm, soit 8 lignes." }] }
+                  ],
+                  retenir: "Le nombre de lignes d'interférences dépend du rapport S1S2 / λ : plus λ est petite (fréquence grande), plus les lignes sont nombreuses et serrées."
+                }
+              ],
+              conclusion: {
+                programme: "Le programme (terminale spécialité)",
+                attendus: ["Caractériser le phénomène d'interférences de deux ondes.", "Établir les conditions d'interférences constructives et destructives de deux ondes issues de deux sources ponctuelles en phase dans un milieu homogène.", "Tester les conditions d'interférences constructives ou destructives à la surface de l'eau."],
+                textes: [
+                  { obj: "c1", attendu: "Observer les interférences", texte: "Deux ondes [synchrones] qui se superposent donnent des lignes calmes et des lignes [agitées], fixes.", pieges: ["lumineuses", "colorées"] },
+                  { obj: "c2", attendu: "Mesurer λ", texte: "On mesure plusieurs longueurs d'onde à la règle pour plus de [précision] ; puis v = λ × [f].", pieges: ["rapidité", "T"] },
+                  { obj: "c3", attendu: "Tester les conditions", texte: "Sur une ligne agitée, δ = d₂ − d₁ est un nombre [entier] de λ ; sur une ligne calme, un nombre [demi-entier] de λ.", pieges: ["pair", "négatif"] },
+                  { obj: "c4", attendu: "Prévoir", texte: "Quand la fréquence augmente, λ [diminue] : les lignes d'interférences se [resserrent].", pieges: ["augmente", "écartent"] }
+                ]
+              }
+            }
+          ]
+        },
+
+        // ======================== 4. ENTRAÎNEMENT ========================
+        entrainement: [
+          { id: "tri", type: "tri", titre: "Diffraction ou interférences ?", desc: "Classer 8 situations", n: 8,
+            question: "Quel phénomène explique cette situation ?", oui: "Interférences", non: "Diffraction", court: ["Interférences", "Diffraction"],
+            items: [
+              { source: "Derrière une fente, un laser donne une tache centrale large et des taches secondaires.", oui: false, pourquoi: "Une seule ouverture : c'est la diffraction." },
+              { source: "Derrière deux fentes très proches, on observe des franges régulières.", oui: true, pourquoi: "Les deux faisceaux se superposent : interférences (fentes d'Young)." },
+              { source: "Deux pointes frappent l'eau ensemble : des zones calmes et des zones agitées apparaissent.", oui: true, pourquoi: "Deux sources synchrones : interférences constructives et destructives." },
+              { source: "La houle s'étale dans le port après l'entrée de la digue.", oui: false, pourquoi: "Une seule ouverture : diffraction." },
+              { source: "Une bulle de savon montre des reflets colorés.", oui: true, pourquoi: "Lumière réfléchie par les deux faces de la couche mince : interférences." },
+              { source: "On entend la musique derrière l'immeuble.", oui: false, pourquoi: "Le son contourne l'obstacle : diffraction." },
+              { source: "Un casque supprime le bruit du moteur d'une pirogue.", oui: true, pourquoi: "Il émet un son en opposition de phase : interférences destructives." },
+              { source: "Un télescope ne sépare pas deux étoiles très proches.", oui: false, pourquoi: "L'ouverture du télescope diffracte la lumière : chaque étoile donne une petite tache." },
+              { source: "Les ailes du papillon Morpho sont d'un bleu éclatant.", oui: true, pourquoi: "Les lamelles des écailles renforcent le bleu par interférences constructives." },
+              { source: "Un laser qui éclaire un cheveu donne une tache allongée sur le mur.", oui: false, pourquoi: "Un obstacle fin diffracte comme une fente de même largeur." },
+              { source: "Une tache d'huile sur la route mouillée est irisée.", oui: true, pourquoi: "Couche très mince : interférences." },
+              { source: "Les ondes radio captées dans une vallée derrière une colline.", oui: false, pourquoi: "Les grandes ondes contournent le relief : diffraction." }
+            ] },
+          { id: "vf", type: "vraifaux", titre: "Vrai ou faux ?", desc: "8 affirmations à juger", n: 8, items: [
+            { affirmation: "La diffraction modifie la longueur d'onde de l'onde.", vrai: false, explication: "λ, f et v ne changent pas : seule la direction de propagation s'élargit." },
+            { affirmation: "Plus la fente est fine, plus la tache centrale est large.", vrai: true, explication: "θ = λ / a : quand a diminue, θ augmente." },
+            { affirmation: "Avec la même fente, un laser rouge est plus diffracté qu'un laser bleu.", vrai: true, explication: "λ(rouge) > λ(bleu), donc θ = λ / a est plus grand pour le rouge." },
+            { affirmation: "Dans θ = λ / a, l'angle θ s'exprime en degrés.", vrai: false, explication: "θ est en radian ; la calculatrice doit être en mode radian." },
+            { affirmation: "La lumière se diffracte en passant par une porte ouverte de façon bien visible.", vrai: false, explication: "La porte (≈ 1 m) est immense devant λ (≈ 600 nm) : diffraction invisible." },
+            { affirmation: "Deux ondes en opposition de phase et de même amplitude s'annulent.", vrai: true, explication: "Interférences destructives : l'amplitude résultante est nulle." },
+            { affirmation: "Si δ = 2 λ, les interférences sont destructives.", vrai: false, explication: "δ / λ = 2 est entier : interférences constructives." },
+            { affirmation: "Si δ = 1,5 λ, les interférences sont destructives (sources en phase).", vrai: true, explication: "δ / λ = 1,5 est demi-entier." },
+            { affirmation: "Si on écarte les fentes d'Young (b plus grand), les franges se resserrent.", vrai: true, explication: "i = λ D / b diminue quand b augmente." },
+            { affirmation: "Si on éloigne l'écran, l'interfrange diminue.", vrai: false, explication: "i = λ D / b augmente avec D." },
+            { affirmation: "Deux lampes de poche ordinaires donnent facilement des franges d'interférences.", vrai: false, explication: "Il faut deux sources synchrones (de même fréquence et à déphasage constant) : on les obtient à partir d'une même source, comme dans les fentes d'Young." },
+            { affirmation: "Un cheveu diffracte la lumière comme une fente de même largeur.", vrai: true, explication: "C'est ce qui permet de mesurer son épaisseur." }
+          ] },
+          { id: "calculs", type: "calcul", titre: "Calculer sans se tromper d'unité", desc: "6 calculs : θ, L, a, λ, interfrange", n: 6,
+            rappel: "θ = λ / a (rad) · L = 2 λ D / a · i = λ D / b · λ = v / f. Toutes les longueurs en mètres !",
+            contextes: [{ gen: () => ONDES.genCalcul() }] },
+          { id: "mesures", type: "calcul", titre: "Exploiter une mesure", desc: "Mesurer avec la règle ou lire un graphique", n: 4,
+            rappel: "Mesurer sur la figure, convertir en mètres, puis utiliser L = 2 λ D / a ou i = λ D / b. Pour un graphique : lire le coefficient directeur.",
+            contextes: [{ gen: () => ONDES.genMesureDiff() }, { gen: () => ONDES.genMesureYoung() }, { gen: () => ONDES.genGraphiqueL() }] },
+          { id: "erreurs", type: "qcm", titre: "Trouver l'erreur", desc: "Corriger les copies d'élèves fictifs", n: 6, questions: [
+            { question: "Léo écrit : « λ = 633 nm et a = 0,10 mm, donc θ = 633 / 0,10 = 6 330 rad. » Quelle est son erreur ?", reponses: ["λ et a ne sont pas dans la même unité", "Il fallait multiplier λ par a", "Il fallait utiliser des degrés", "Aucune erreur"], bonne: 0, explication: "En mètres : θ = 6,33 × 10⁻⁷ / 1,0 × 10⁻⁴ = 6,33 × 10⁻³ rad." },
+            { question: "Maëlys écrit : « La tache centrale mesure L = λ D / a. » Quelle est son erreur ?", reponses: ["Il manque un facteur 2 : L = 2 λ D / a", "Il faut écrire L = λ a / D", "Il faut écrire L = D / (λ a)", "Aucune erreur"], bonne: 0, explication: "tan θ = (L / 2) / D ≈ θ = λ / a, donc L = 2 λ D / a : L est la largeur totale de la tache." },
+            { question: "Kenji écrit : « δ = 3,0 cm et λ = 2,0 cm, donc δ = 1,5 λ : interférences constructives. » Quelle est son erreur ?", reponses: ["1,5 est demi-entier : les interférences sont destructives", "Il fallait calculer λ / δ", "δ doit être en mètres", "Aucune erreur"], bonne: 0, explication: "δ / λ = 1,5 = 1 + ½ : opposition de phase, interférences destructives." },
+            { question: "Inès écrit : « Avec une fente plus large, la tache centrale s'élargit. » Quelle est son erreur ?", reponses: ["C'est l'inverse : la tache rétrécit quand a augmente", "La tache ne dépend pas de a", "La tache change de couleur", "Aucune erreur"], bonne: 0, explication: "L = 2 λ D / a : L diminue quand a augmente." },
+            { question: "Jade trouve tan(θ) = 0,0065 et en déduit θ = 0,37. Sa calculatrice était en mode degrés. Quelle est la bonne valeur ?", reponses: ["θ ≈ 0,0065 rad", "θ ≈ 0,37 rad", "θ ≈ 37 rad", "θ ≈ 6,5 rad"], bonne: 0, explication: "Pour un petit angle en radian, θ ≈ tan θ = 0,0065 rad. 0,37 était en degrés." },
+            { question: "Noé écrit : « Après la fente, le laser rouge devient orangé, car la diffraction change sa longueur d'onde. » Quelle est son erreur ?", reponses: ["La diffraction ne change pas la longueur d'onde : la lumière reste rouge", "La lumière devient bleue", "La lumière devient blanche", "Aucune erreur"], bonne: 0, explication: "La diffraction ne modifie ni λ ni la fréquence." },
+            { question: "Sacha écrit l'interfrange : « i = λ b / D ». Quelle est son erreur ?", reponses: ["b et D sont inversés : i = λ D / b", "Il manque un facteur 2", "Il faut écrire i = b D / λ", "Aucune erreur"], bonne: 0, explication: "i = λ D / b : l'interfrange augmente avec D et diminue quand on écarte les fentes." },
+            { question: "Lou mesure 12,0 mm entre la 1re et la 6e frange brillante et écrit : « 6 i = 12,0 mm, donc i = 2,0 mm. » Quelle est son erreur ?", reponses: ["Entre la 1re et la 6e frange, il y a 5 interfranges : i = 2,4 mm", "Il fallait diviser par 7", "Il fallait multiplier par 6", "Aucune erreur"], bonne: 0, explication: "6 franges délimitent 5 intervalles : i = 12,0 / 5 = 2,4 mm." }
+          ] },
+          { id: "conditions", type: "qcm", titre: "Constructives ou destructives ?", desc: "Calculer δ / λ pour conclure", n: 6, get questions() { return ONDES.variantesDelta(8).concat([ONDES.varianteCuve(true), ONDES.varianteCuve(false)]); } },
+          {
+            id: "morpho", type: "brevet", titre: "Exercice type bac", desc: "Pourquoi le Morpho est-il si bleu ?",
+            documents: [
+              { titre: "Document 1 : un papillon de nos forêts", texte: "Le Morpho, grand papillon des forêts de Guyane, est célèbre pour le bleu éclatant de ses ailes, visible de très loin. Pourtant, ses écailles ne contiennent aucun pigment bleu. Quand on change d'angle de vue, la couleur change un peu : on dit qu'elle est chatoyante." },
+              { titre: "Document 2 : un modèle simplifié des écailles", texte: "Chaque écaille porte des lamelles transparentes, très fines et régulièrement espacées. La lumière blanche est réfléchie par deux lamelles voisines : les deux ondes réfléchies, issues de la même lumière, sont synchrones. Dans ce modèle simplifié, en éclairage perpendiculaire, leur différence de chemin optique vaut δ = 460 nm." },
+              { titre: "Document 3 : couleurs et longueurs d'onde", texte: "Violet : 400 à 450 nm · bleu : 450 à 500 nm · vert : 500 à 570 nm · jaune-orange : 570 à 620 nm · rouge : 620 à 800 nm. Lumière visible : de 400 à 800 nm environ." }
+            ],
+            questions: [
+              { type: "qcm", points: 1, question: "D'après le document 1, d'où vient la couleur bleue des ailes ?", reponses: ["D'interférences entre ondes lumineuses réfléchies par les lamelles", "D'un pigment bleu", "De la diffraction par une seule fente", "De la dispersion, comme dans un prisme"], bonne: 0, explication: "Pas de pigment et une couleur qui change avec l'angle : c'est une couleur « structurelle », due aux interférences." },
+              { type: "qcm", points: 2, question: "Les deux ondes réfléchies sont synchrones. Leurs interférences sont constructives quand…", reponses: ["δ = k λ, avec k entier", "δ = (k + ½) λ, avec k entier", "δ = λ / 2 seulement", "δ = 0 seulement"], bonne: 0, explication: "Constructives : la différence de chemin optique est un nombre entier de longueurs d'onde." },
+              { type: "qcm", points: 2, question: "Pour quelle(s) radiation(s) du domaine visible les interférences sont-elles constructives (δ = 460 nm) ?", reponses: ["Seulement λ = 460 nm (bleu)", "λ = 460 nm et λ = 230 nm, toutes deux visibles", "Seulement λ = 920 nm", "Toutes les radiations visibles"], bonne: 0, explication: "λ = δ / k : 460 nm (k = 1), 230 nm (k = 2, ultraviolet), 153 nm… Seule 460 nm est visible : le bleu est renforcé." },
+              { type: "qcm", points: 2, question: "Pour le rouge, λ = 650 nm. Que vaut δ / λ, et que peut-on conclure ?", reponses: ["≈ 0,71 : ni constructives ni destructives, le rouge n'est pas renforcé", "1 : le rouge est renforcé", "0,5 : le rouge est totalement éteint", "1,41 : le rouge est renforcé"], bonne: 0, explication: "460 / 650 ≈ 0,71 : ni entier, ni demi-entier. Le rouge n'est pas renforcé, il est donc bien moins réfléchi que le bleu." },
+              { type: "multi", points: 2, consigne: "Cocher toutes les affirmations exactes.", options: [["Si l'on remplissait l'espace entre les lamelles avec un liquide, la couleur changerait.", true], ["La couleur change un peu avec l'angle de vue, car δ dépend de l'angle.", true], ["Le rayonnement de 230 nm est aussi renforcé, mais il est invisible (ultraviolet).", true], ["Un pigment bleu donnerait exactement le même chatoiement.", false]], explication: "La couleur dépend de δ, donc de l'épaisseur, du milieu et de l'angle ; un pigment absorbe les autres couleurs et ne chatoie pas. 230 nm est dans l'ultraviolet." },
+              { type: "redaction", points: 3, consigne: "Expliquer en quelques phrases pourquoi les ailes du Morpho paraissent bleues.", criteres: ["J'ai dit que la lumière est réfléchie par deux lamelles voisines et que les deux ondes interfèrent.", "J'ai utilisé la condition δ = k λ et trouvé λ = 460 nm pour k = 1.", "J'ai conclu que seul le bleu est renforcé dans le domaine visible, sans pigment."],
+                elements: "La lumière blanche est réfléchie par deux lamelles voisines ; les deux ondes réfléchies sont synchrones et interfèrent. Les interférences sont constructives si δ = k λ : avec δ = 460 nm, λ = 460 nm pour k = 1 (bleu), les autres valeurs (230 nm…) étant hors du visible. Le bleu est donc renforcé : c'est une couleur due aux interférences, et non à un pigment." }
+            ]
+          },
+          {
+            id: "carnaval", type: "brevet", titre: "Exercice type bac (2)", desc: "La musique du carnaval",
+            documents: [
+              { titre: "Document 1 : le char du carnaval", texte: "Un char du carnaval de Cayenne diffuse de la musique dont les fréquences vont de 85 Hz (basses) à 3 400 Hz (aigus). Dans l'air, le son se propage à v = 340 m/s. Avant de voir le char, les spectateurs placés au coin d'une rue entendent surtout les basses." },
+              { titre: "Document 2 : deux enceintes sur la place", texte: "Sur la place des Palmistes, deux enceintes identiques, reliées au même amplificateur, émettent en phase un son de fréquence 340 Hz. Une spectatrice se tient au point M, à d₁ = 12,0 m de la première enceinte et d₂ = 13,5 m de la seconde." },
+              { titre: "Document 3 : un programme Python", texte: "Un élève veut représenter la somme des deux signaux reçus en M. Il écrit le programme ci-dessous ; la ligne 7 est à compléter.", figure: `<pre style="overflow-x:auto;font-size:.85rem;background:var(--bg);padding:.6rem;border-radius:8px;margin:0"><code>1  import numpy as np
+2  import matplotlib.pyplot as plt
+3  t = np.linspace(0, 0.01, 1000)
+4  f = 340
+5  s1 = np.cos(2*np.pi*f*t)
+6  s2 = np.cos(2*np.pi*f*t - np.pi)
+7  s = ...
+8  plt.plot(t, s1, t, s2, t, s)
+9  plt.show()</code></pre>` }
+            ],
+            questions: [
+              { type: "calcul", points: 2, contexte: { gen: () => ({ texte: "Calculer la longueur d'onde λ d'un son de basse de fréquence 170 Hz.", rep: 2, u: "m", tol: 0.03, repTxt: "2,0", corr: "λ = v / f = 340 / 170 = 2,0 m." }) } },
+              { type: "qcm", points: 2, question: "Pourquoi entend-on surtout les basses au coin de la rue (ouverture de quelques mètres) ?", reponses: ["Leur longueur d'onde (≈ 2 à 4 m) est du même ordre que l'ouverture : elles sont fortement diffractées", "Elles vont plus vite que les aigus", "Les aigus sont absorbés par les bâtiments", "Les basses ont une longueur d'onde plus petite"], bonne: 0, explication: "Aigus : λ = 340 / 3 400 = 0,10 m, petite devant la rue, peu diffractés. Basses : λ de 2 à 4 m, fortement diffractées : elles contournent le coin." },
+              { type: "qcm", points: 2, question: "Au point M (document 2), quelle est la nature des interférences ?", reponses: ["Destructives : δ = 1,5 m = 1,5 λ", "Constructives : δ = 1,5 m = 1,5 λ", "Constructives : δ = 1,0 λ", "Aucune : deux sons ne peuvent pas interférer"], bonne: 0, explication: "λ = 340 / 340 = 1,0 m ; δ = 13,5 − 12,0 = 1,5 m ; δ / λ = 1,5 (demi-entier) : interférences destructives, la spectatrice entend un son faible." },
+              { type: "qcm", points: 2, question: "Quelle instruction faut-il écrire à la ligne 7 du programme (document 3) ?", reponses: ["s = s1 + s2", "s = s1 * s2", "s = s1 - s2", "s = np.cos(s1 + s2)"], bonne: 0, explication: "Les deux perturbations s'ajoutent en M : s = s1 + s2." },
+              { type: "qcm", points: 2, question: "Avec le décalage « - np.pi » de la ligne 6, à quoi ressemble la courbe de s ?", reponses: ["Une droite confondue avec l'axe : s est nul", "Une sinusoïde d'amplitude 2", "Une sinusoïde de fréquence double", "Une courbe qui augmente sans cesse"], bonne: 0, explication: "Un décalage de π, c'est l'opposition de phase : s1 + s2 = 0 à chaque instant, interférences destructives." },
+              { type: "redaction", points: 2, consigne: "La spectatrice fait deux pas sur le côté et la musique redevient forte. Expliquer.", criteres: ["J'ai dit qu'en se déplaçant, elle change d₁ et d₂, donc la différence de marche δ.", "J'ai expliqué qu'à un endroit où δ = k λ, les interférences sont constructives (son fort)."],
+                elements: "En se déplaçant, la spectatrice modifie d₁ et d₂, donc δ = d₂ − d₁. Quand δ devient un nombre entier de longueurs d'onde (δ = k λ), les deux sons arrivent en phase : interférences constructives, la musique est forte. Sur la place, zones de son fort et zones de son faible alternent." }
+            ]
+          }
+        ]
       }
     ]
   }
@@ -5416,6 +6267,7 @@ const QUESTIONS = [
     lock: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 018 0v4"/></svg>',
     etoile: '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2l2.9 6.3 6.9.7-5.2 4.6 1.5 6.8L12 17l-6.1 3.4 1.5-6.8L2.2 9l6.9-.7z"/></svg>',
     spectre: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 4l6 14H4z"/><path d="M1 13l6-1.5"/><path d="M14 10.5l8-3M14.6 12.5H22M15.2 14.5l6.8 3"/></svg>',
+    diffraction: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 4v6M3 14v6"/><path d="M8 12a4 4 0 0 0 0-.01M8 8a6 6 0 0 1 0 8M11 5a9 9 0 0 1 0 14M14 2.5a12 12 0 0 1 0 19"/></svg>',
     titrages: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 3h6M10 3v6l-5 10a2 2 0 002 3h10a2 2 0 002-3l-5-10V3M7 15h10"/></svg>',
     check: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12l5 5 9-10"/></svg>',
     outils: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 17L17 3l4 4L7 21H3z"/><path d="M7 13l2 2M10 10l2 2M13 7l2 2"/></svg>'
@@ -5624,7 +6476,7 @@ const QUESTIONS = [
   // la garde aussi un moment en cache. On compare donc la version de cette page avec le petit fichier version.json
   // publié en même temps : à l'ouverture et à chaque retour sur l'onglet (au plus une fois par minute).
   // Si une version plus récente est en ligne, un bandeau propose de mettre à jour. La progression (pseudo, points…) est conservée.
-  const VERSION_APPLI = "2026-11-09 14:38:10"; // remplacée par la date d'assemblage (assembler.py)
+  const VERSION_APPLI = "2026-11-09 15:30:33"; // remplacée par la date d'assemblage (assembler.py)
   let derniereVerif = 0;
   function verifierMaj() {
     if (!/^https?:$/.test(location.protocol) || VERSION_APPLI.indexOf("__") === 0) return; // fichier ouvert sur l'ordinateur : rien à vérifier
@@ -5671,7 +6523,7 @@ const QUESTIONS = [
     if (ri < 0 || !rubriqueDispo(ch, rub)) return vueMenu(niv, ch);
     if (!rubriqueOuverte(niv, ch, ri)) return verrou("Termine d'abord l'étape précédente.", `c-${niv}-${ch.id}`);
     if (rub === "cours") return vueCours(niv, ch);
-    if (rub === "tp") return ch.tp.labos ? LABO.vueLabos(niv, ch, actId) : vueTP(niv, ch);
+    if (rub === "tp") return ch.tp.moteur === "ondes" ? TPONDES.vue(niv, ch, actId) : ch.tp.labos ? LABO.vueLabos(niv, ch, actId) : vueTP(niv, ch);
     if (!actId) return vueListe(niv, ch, rub);
     const acts = activites(ch, rub), ai = acts.findIndex((a) => a.id === actId);
     if (ai < 0) return vueListe(niv, ch, rub);
@@ -5852,9 +6704,11 @@ const QUESTIONS = [
 
   // ======================= Widgets réutilisables =======================
   // --- QCM (une question) ---
+  // q.figure (facultatif) : dessin affiché au-dessus de la question (texte HTML, ou fonction qui le fabrique).
+  const figureDe = (q) => { const f = typeof q.figure === "function" ? q.figure() : q.figure; return f ? `<div class="fig-cours">${f}</div>` : ""; };
   function widgetQCM(el, q, onRep) {
     const ordre = melanger([0, 1, 2, 3]), bonne = ordre.indexOf(q.bonne);
-    el.innerHTML = `<p class="qtext">${esc(q.question)}</p><div class="options">${ordre.map((k, pos) => `<button class="opt" data-pos="${pos}"><span class="l">${"ABCD"[pos]}</span><span>${esc(q.reponses[k])}</span></button>`).join("")}</div><div class="fbz"></div>`;
+    el.innerHTML = `${figureDe(q)}<p class="qtext">${esc(q.question)}</p><div class="options">${ordre.map((k, pos) => `<button class="opt" data-pos="${pos}"><span class="l">${"ABCD"[pos]}</span><span>${esc(q.reponses[k])}</span></button>`).join("")}</div><div class="fbz"></div>`;
     el.querySelectorAll(".opt").forEach((b) => b.onclick = () => {
       const choix = +b.dataset.pos, ok = choix === bonne;
       el.querySelectorAll(".opt").forEach((x, pos) => { x.disabled = true; if (pos === bonne) x.classList.add("good"); else if (pos === choix) x.classList.add("bad"); });
@@ -5864,7 +6718,7 @@ const QUESTIONS = [
   }
   // --- Vrai / faux (une affirmation) ---
   function widgetVF(el, it, onRep) {
-    el.innerHTML = `<p class="qtext">${esc(it.affirmation)}</p><div class="vf"><button class="btn btn-ghost" data-v="1">Vrai</button><button class="btn btn-ghost" data-v="0">Faux</button></div><div class="fbz"></div>`;
+    el.innerHTML = `${figureDe(it)}<p class="qtext">${esc(it.affirmation)}</p><div class="vf"><button class="btn btn-ghost" data-v="1">Vrai</button><button class="btn btn-ghost" data-v="0">Faux</button></div><div class="fbz"></div>`;
     el.querySelectorAll("[data-v]").forEach((b) => b.onclick = () => {
       const ok = (b.dataset.v === "1") === it.vrai;
       el.querySelectorAll("[data-v]").forEach((x) => { x.disabled = true; });
@@ -6047,6 +6901,7 @@ const QUESTIONS = [
   }
   // --- Calcul avec valeurs aléatoires (conservation de l'énergie) ---
   function genererCalcul(c, mode) {
+    if (c.gen) return c.gen(mode); // générateur fourni par le chapitre : { texte, rep, u, corr, tol (relative), figure }
     const pas = c.pas, n = Math.floor((c.max - c.min) / pas);
     const recue = c.min + pas * hasard(0, n);
     let utile = Math.round(recue * hasard(c.part[0], c.part[1]) / 100 / pas) * pas;
@@ -6064,13 +6919,13 @@ const QUESTIONS = [
   let idCalc = 0;
   function widgetCalcul(el, c, mode, onRep) {
     const q = genererCalcul(c, mode), id = "calc" + (++idCalc);
-    el.innerHTML = `<p class="qtext">${esc(q.texte)}</p><label for="${id}" class="small">Ta réponse</label><div class="calc-in"><input type="text" id="${id}" inputmode="decimal" autocomplete="off"><span class="u">${esc(q.u)}</span></div>
+    el.innerHTML = `${figureDe(q)}<p class="qtext">${esc(q.texte)}</p><label for="${id}" class="small">Ta réponse</label><div class="calc-in"><input type="text" id="${id}" inputmode="decimal" autocomplete="off"><span class="u">${esc(q.u)}</span></div>
       <button class="btn btn-primary btn-sm" data-ok>Vérifier</button><div class="fbz"></div>`;
     const inp = el.querySelector("input"), b = el.querySelector("[data-ok]");
     const valider = () => {
       const v = parseFloat(inp.value.replace(/\s| /g, "").replace(",", "."));
-      if (isNaN(v)) { el.querySelector(".fbz").innerHTML = `<p class="error">Écris un nombre, par exemple 65.</p>`; return; }
-      const ok = Math.abs(v - q.rep) < 0.5;
+      if (isNaN(v)) { el.querySelector(".fbz").innerHTML = `<p class="error">Écris un nombre, par exemple ${q.tol != null ? "6,5" : "65"}.</p>`; return; }
+      const ok = q.tol != null ? Math.abs(v - q.rep) <= q.tol * Math.abs(q.rep) : Math.abs(v - q.rep) < 0.5;
       inp.disabled = true; b.disabled = true;
       el.querySelector(".fbz").innerHTML = `<div class="feedback ${ok ? "ok" : "ko"}"><strong>${ok ? "Bravo, c'est juste !" : "Ce n'est pas ça."}</strong><span>${esc(q.corr)}</span></div>`;
       onRep(ok, q);
@@ -6159,9 +7014,9 @@ const QUESTIONS = [
     const liste = Array.from({ length: act.n || 4 }, () => act.contextes[hasard(0, act.contextes.length - 1)]);
     let i = 0, justes = 0; const rates = [];
     function etape() {
-      view.innerHTML = enTete(act.titre, i, liste.length) + `<div class="methode"><strong class="lbl">Rappel</strong><span>Énergie reçue = énergie utile + énergie dissipée</span></div>
+      view.innerHTML = enTete(act.titre, i, liste.length) + `${act.rappel === null ? "" : `<div class="methode"><strong class="lbl">Rappel</strong><span>${act.rappel || "Énergie reçue = énergie utile + énergie dissipée"}</span></div>`}
         <div class="panel" id="w"></div><button class="btn btn-primary" id="btn-next" hidden>${i === liste.length - 1 ? "Voir mon résultat" : "Calcul suivant"}</button>`;
-      widgetCalcul($("w"), liste[i], null, (ok, q) => { if (ok) justes++; else rates.push({ q: q.texte, a: nombre(q.rep) + " " + q.u, e: q.corr }); const n = $("btn-next"); n.hidden = false; n.focus(); });
+      widgetCalcul($("w"), liste[i], null, (ok, q) => { if (ok) justes++; else rates.push({ q: q.texte, a: (q.repTxt || nombre(q.rep)) + " " + q.u, e: q.corr }); const n = $("btn-next"); n.hidden = false; n.focus(); });
       $("btn-next").onclick = () => { if (i < liste.length - 1) { i++; etape(); window.scrollTo(0, 0); } else resultat({ titre: act.titre, score: justes, total: liste.length, points: justes * 15, revoir: rates, ctx }); };
     }
     etape();
@@ -6376,6 +7231,7 @@ const QUESTIONS = [
       if (b.t === "methode") return `<div class="methode"><strong class="lbl">${esc(b.titre || "Méthode")}</strong><ul>${b.items.map((i) => `<li>${i}</li>`).join("")}</ul></div>`;
       if (b.t === "chaine") return `<div class="stack">${b.legende ? `<p class="small muted">${esc(b.legende)}</p>` : ""}${legendeChaine}${chaineHTML(b.elements, { perte: b.perte })}</div>`;
       if (b.t === "retenir") return `<div class="retenir"><strong class="lbl">À retenir</strong><ul>${b.items.map((i) => `<li>${i}</li>`).join("")}</ul></div>`;
+      if (b.t === "anim") return `<div class="anim" id="anim${k}"></div>`;
       if (b.t === "exemple") return `<div class="ex${reussis.has(k) ? " reussi" : ""}" id="ex${k}"><div class="ex-head"><strong>À toi !</strong><span class="badge${reussis.has(k) ? " ok" : ""}">${reussis.has(k) ? "Réussi" : "Exemple " + (exemples.indexOf(k) + 1) + "/" + exemples.length}</span></div><div class="stack" id="exw${k}"></div></div>`;
       return "";
     }).join("");
@@ -6406,6 +7262,7 @@ const QUESTIONS = [
       const ex = $("ex" + k); ex.classList.add("reussi"); const bd = ex.querySelector(".badge"); bd.textContent = "Réussi"; bd.classList.add("ok"); maj();
     };
     exemples.forEach((k) => monterExemple($("exw" + k), ch.cours.blocs[k], () => reussir(k)));
+    ch.cours.blocs.forEach((b, k) => { if (b.t === "anim") { try { b.monter($("anim" + k)); } catch (e) { console.error(e); } } });
     $("btn-fin-cours").onclick = () => { enregistrer(cle, 20, true, true); maj(); toast(ch.tp ? "Cours terminé : le TP est débloqué" : "Cours terminé : l'entraînement est débloqué"); };
     maj(); marquerDefilement();
   }
@@ -7581,6 +8438,591 @@ const QUESTIONS = [
       compteurs: () => { const jm = objet("joulemetre"); return { Ein: S.Ein, Ej: jm ? jm.E : 0 }; }
     };
   }
+  // ======================= TP de terminale « Diffraction et interférences » : deux TP (moteur « ondes ») =======================
+  // TP 1 « Le laboratoire de la diffraction » : cuve à ondes à ouverture réglable, banc laser (fentes calibrées, fil de pêche),
+  //   écran vu de face avec deux curseurs (mesure de L), logiciel de traitement d'image (profil d'intensité, θ = f(1/a)).
+  // TP 2 « Interférences à la surface de l'eau » : cuve à deux pointes en phase, stroboscope, point M (d₁, d₂), règle.
+  // Rangement : comme les deux TP de titrage, p.tp2["tle-diffraction-tp-<id du TP>"] = { obj, concl, … } ;
+  // l'étape TP du chapitre est validée quand les deux TP sont terminés (la barre d'avancement est calculée de la même façon).
+  // Les objectifs, consignes et questions sont dans 03_contenu.html (tp.moteur = "ondes") ; ici : les paillasses et la vérification.
+  const TPONDES = (() => {
+    const fr = (x, d) => (+x).toFixed(d).replace(".", ",").replace("-", "−");
+    const LAMBDA = 650;           // laser rouge du lycée (nm)
+    const V_EAU = 30;             // célérité des ondes dans la cuve (cm/s) : λ (cm) = 30 / f (Hz)
+    const lamCuve = (f) => V_EAU / f;
+    const sinc2 = (u) => Math.abs(u) < 1e-9 ? 1 : Math.pow(Math.sin(u) / u, 2);
+    const rgbLaser = () => couleurLambda(LAMBDA).match(/\d+/g).map(Number);
+    const FENTES = {
+      aucune: { nom: "Sans fente" },
+      large: { nom: "Fente de 1 mm", a: 1000 },
+      f40: { nom: "a = 40 µm", a: 40 }, f50: { nom: "a = 50 µm", a: 50 }, f70: { nom: "a = 70 µm", a: 70 },
+      f100: { nom: "a = 100 µm", a: 100 }, f120: { nom: "a = 120 µm", a: 120 },
+      fil: { nom: "Fil de pêche", fil: true }
+    };
+    // Diamètres possibles du fil de pêche (µm), tirés au hasard pour chaque élève ; l'étiquette de la bobine annonce 150 µm (± 10 %).
+    const FILS = [150, 152, 120, 190, 125, 185];
+    const ANNONCE = 150;
+    function flash(el, ok) { if (!el) return; el.classList.remove("od-ok", "od-ko"); void el.offsetWidth; el.classList.add(ok ? "od-ok" : "od-ko"); setTimeout(() => el.classList.remove("od-ok", "od-ko"), ok ? 700 : 2000); }
+    function refuser(el, msg) { flash(el, false); toast(msg); }
+
+    // =====================================================================
+    // Paillasse 1 : cuve à ouverture réglable + banc laser et écran vu de face
+    // cfg : { modes: ["cuve", "laser"], fentes: [...], D: 2.0, Dreglable, profil, fil (µm) }
+    // =====================================================================
+    function bancDiff(el, cfg, evt) {
+      const S = { mode: cfg.modes[0], laser: false, fente: "aucune", D: cfg.D || 1.5, curs: [50, 70], sel: 0,
+        a: 1.0, f: 15, attente: null, t: 0, vu: {} };
+      const H = 60; // demi-largeur de l'écran affiché (mm)
+      el.innerHTML = `<div class="od-banc" id="od-b">
+        ${cfg.modes.length > 1 ? `<div class="od-seg" role="tablist">${cfg.modes.map((m) => `<button type="button" data-mode="${m}">${m === "cuve" ? "Cuve à ondes" : "Banc laser"}</button>`).join("")}</div>` : ""}
+        <div id="od-cuve" class="stack"></div><div id="od-laser" class="stack"></div></div>
+        <p class="small muted" id="od-aide"></p>`;
+      const panneau = el.querySelector("#od-b");
+      el.querySelectorAll("[data-mode]").forEach((b) => b.onclick = () => { S.mode = b.dataset.mode; rendre(); etat(); });
+
+      // ---------- Cuve à ondes : onde plane qui franchit une ouverture de largeur a (Huygens-Fresnel) ----------
+      const NX = 160, NY = 100, CM = 0.15, XM = 40; // une case = 0,15 cm ; la digue est à 6 cm du bord
+      let Ar = null, Ai = null, cuveCv = null, cuveCtx = null, buf = null, bctx = null, img = null;
+      function calcCuve() {
+        const lam = lamCuve(S.f) / CM, k = 2 * Math.PI / lam, aC = S.a / CM, N = Math.max(8, Math.round(aC * 1.2)), y0 = NY / 2;
+        Ar = new Float32Array(NX * NY); Ai = new Float32Array(NX * NY); let norme = 0;
+        for (let x = XM + 1; x < NX; x++) for (let y = 0; y < NY; y++) {
+          let sr = 0, si = 0;
+          for (let j = 0; j < N; j++) { const ys = y0 - aC / 2 + (j + .5) * aC / N, d = Math.hypot(x - XM, y - ys) + .5, amp = 1 / Math.sqrt(d); sr += amp * Math.cos(k * d); si += amp * Math.sin(k * d); }
+          Ar[y * NX + x] = sr; Ai[y * NX + x] = si; if (x === XM + 3 && y === Math.round(y0)) norme = Math.hypot(sr, si);
+        }
+        for (let i = 0; i < NX * NY; i++) { Ar[i] /= norme || 1; Ai[i] /= norme || 1; }
+      }
+      function dessinerCuve() {
+        if (!cuveCv) return;
+        const lam = lamCuve(S.f) / CM, k = 2 * Math.PI / lam, c = Math.cos(S.t), s = Math.sin(S.t), aC = S.a / CM;
+        for (let y = 0; y < NY; y++) for (let x = 0; x < NX; x++) {
+          const i = y * NX + x, p = 4 * i;
+          if (x >= XM - 1 && x <= XM && Math.abs(y - NY / 2) > aC / 2) { img.data[p] = 120; img.data[p + 1] = 104; img.data[p + 2] = 84; img.data[p + 3] = 255; continue; }
+          let v = x < XM ? Math.cos(k * (x - XM) - S.t) : Ar[i] * c + Ai[i] * s;
+          v = Math.sign(v) * Math.pow(Math.min(1, Math.abs(v)), 0.55);
+          const f = .5 + .5 * v; img.data[p] = 15 + 170 * f; img.data[p + 1] = 70 + 170 * f; img.data[p + 2] = 120 + 135 * f; img.data[p + 3] = 255;
+        }
+        bctx.putImageData(img, 0, 0); cuveCtx.imageSmoothingEnabled = true; cuveCtx.drawImage(buf, 0, 0, cuveCv.width, cuveCv.height);
+        cuveCtx.fillStyle = "#FFF"; cuveCtx.font = "bold 13px system-ui"; cuveCtx.fillText("vibreur →", 6, 17);
+      }
+      function zoneCuve() {
+        const z = el.querySelector("#od-cuve");
+        z.innerHTML = `<span class="od-titre">Cuve à ondes (vue de dessus)</span><canvas class="od-cv" width="320" height="200" aria-label="Vue de dessus de la cuve : une onde plane arrive de la gauche sur une digue percée d'une ouverture."></canvas>
+          <div class="od-ctl"><span>Ouverture <b>a = ${fr(S.a, 1)} cm</b></span><span class="od-pm"><button type="button" data-a="-1" aria-label="Réduire l'ouverture">−</button><button type="button" data-a="1" aria-label="Agrandir l'ouverture">+</button></span></div>
+          <div class="od-ctl"><span>Fréquence du vibreur <b>f = ${S.f} Hz</b> → λ = ${fr(lamCuve(S.f), 1)} cm</span><span class="od-pm"><button type="button" data-f="-1" aria-label="Diminuer la fréquence">−</button><button type="button" data-f="1" aria-label="Augmenter la fréquence">+</button></span></div>
+          <button type="button" class="od-noter" data-obs>NOTER l'observation</button><div id="od-juge"></div>`;
+        cuveCv = z.querySelector("canvas"); cuveCtx = cuveCv.getContext("2d");
+        buf = document.createElement("canvas"); buf.width = NX; buf.height = NY; bctx = buf.getContext("2d"); img = bctx.createImageData(NX, NY);
+        z.querySelectorAll("[data-a]").forEach((b) => b.onclick = () => { S.a = Math.max(0.5, Math.min(8, S.a + 0.5 * +b.dataset.a)); S.attente = null; calcCuve(); zoneCuve(); etat(); });
+        z.querySelectorAll("[data-f]").forEach((b) => b.onclick = () => { S.f = Math.max(10, Math.min(30, S.f + 5 * +b.dataset.f)); S.attente = null; calcCuve(); zoneCuve(); etat(); });
+        z.querySelector("[data-obs]").onclick = () => {
+          S.attente = { a: S.a, lam: lamCuve(S.f) };
+          z.querySelector("#od-juge").innerHTML = `<p class="small"><strong>Observation : a = ${fr(S.a, 1)} cm et λ = ${fr(S.attente.lam, 1)} cm.</strong> Après l'ouverture, l'onde…</p>
+            <div class="od-choix"><button type="button" class="btn btn-ghost btn-sm" data-j="marquee">s'étale beaucoup (diffraction marquée)</button><button type="button" class="btn btn-ghost btn-sm" data-j="faible">passe presque tout droit (diffraction faible)</button></div>`;
+          z.querySelectorAll("[data-j]").forEach((b) => b.onclick = () => juger(b.dataset.j));
+        };
+        dessinerCuve();
+      }
+      function juger(j) {
+        const o = S.attente; if (!o) return;
+        const r = o.a / o.lam, attendu = r <= 1.5 ? "marquee" : r >= 4 ? "faible" : null;
+        if (!attendu) { refuser(panneau, "Cas intermédiaire : choisis une ouverture nettement plus petite (a ≈ λ) ou nettement plus grande (a ≥ 4 λ) que la longueur d'onde."); return; }
+        if (j !== attendu) { refuser(panneau, "Regarde à nouveau la cuve, juste après la digue : " + (attendu === "marquee" ? "l'onde s'étale-t-elle sur les côtés ?" : "l'onde ne continue-t-elle pas presque tout droit ?")); return; }
+        flash(panneau, true); S.attente = null; el.querySelector("#od-juge").innerHTML = "";
+        evt("obs", { a: o.a, lam: o.lam, ratio: r, jugement: j });
+      }
+
+      // ---------- Banc laser (vue de dessus) et écran vu de face ----------
+      let ecran = null, ectx = null, glisse = -1;
+      const hauteurs = () => ({ band: 120, prof: cfg.profil ? 130 : 0, regle: 56 });
+      const aActuel = () => { const F = FENTES[S.fente]; return F.fil ? cfg.fil : F.a; };
+      const Lvrai = () => { const a = aActuel(); return a ? 2 * LAMBDA * 1e-9 * S.D / (a * 1e-6) * 1e3 : null; };
+      function intensite(x) { // x en mm sur l'écran
+        if (!S.laser) return 0;
+        const a = aActuel();
+        if (!a) return Math.exp(-Math.pow(x / 1.6, 2));
+        return sinc2(Math.PI * a * 1e-6 * x * 1e-3 / (LAMBDA * 1e-9 * S.D));
+      }
+      function svgBanc() {
+        const x0 = 70, k = 92, xs = x0 + S.D * k, a = aActuel(), on = S.laser;
+        let grad = ""; for (let m = 0; m <= 2.5 + 1e-9; m += 0.5) grad += `<line x1="${x0 + m * k}" y1="86" x2="${x0 + m * k}" y2="92" stroke="#B8C7D3"/><text x="${x0 + m * k}" y="102" font-size="8.5" text-anchor="middle" fill="#B8C7D3">${fr(m, 1)} m</text>`;
+        const demi = a ? Math.min(30, 0.6 + 900 / a) : 0.8;
+        const faisceau = on ? `<line x1="50" y1="50" x2="${x0}" y2="50" stroke="#FF3B2F" stroke-width="2"/>` + (S.fente === "aucune" || !a ? `<line x1="${x0}" y1="50" x2="${xs}" y2="50" stroke="#FF3B2F" stroke-width="2"/>` : `<path d="M${x0} 50 L${xs} ${50 - demi} L${xs} ${50 + demi} Z" fill="#FF3B2F" fill-opacity=".35"/><line x1="${x0}" y1="50" x2="${xs}" y2="50" stroke="#FF3B2F" stroke-width="1.2"/>`) : "";
+        return `<svg class="od-svg" viewBox="0 0 320 108" role="img" aria-label="Banc laser vu de dessus : le laser, la diapositive des fentes, puis l'écran à la distance D.">
+          <rect width="320" height="108" class="o-noir"/><line x1="${x0}" y1="89" x2="${x0 + 2.5 * k}" y2="89" stroke="#56687A" stroke-width="5"/>${grad}
+          <rect x="8" y="40" width="42" height="20" rx="3" fill="#B03A30"/><text x="29" y="54" font-size="9" text-anchor="middle" fill="#FFF" font-weight="700">laser</text>
+          <circle cx="46" cy="44" r="2.5" fill="${on ? "#FF5A4D" : "#4A1A16"}"/>
+          ${faisceau}
+          <rect x="${x0 - 3}" y="26" width="6" height="48" rx="1.5" fill="#C9D6E0"/><text x="${x0}" y="20" font-size="8.5" text-anchor="middle" fill="#B8C7D3">diapositive</text>
+          <rect x="${xs - 2}" y="14" width="5" height="72" fill="#EDEDED"/><text x="${Math.min(300, xs + 6)}" y="20" font-size="8.5" text-anchor="${xs > 270 ? "end" : "start"}" fill="#B8C7D3">écran</text>
+          <line x1="${x0}" y1="80" x2="${xs}" y2="80" stroke="#FFD24A" stroke-width="1"/><text x="${(x0 + xs) / 2}" y="77" font-size="9" text-anchor="middle" fill="#FFD24A">D = ${fr(S.D, 2)} m</text></svg>`;
+      }
+      function zoneLaser() {
+        const z = el.querySelector("#od-laser"), hh = hauteurs();
+        z.innerHTML = `<span class="od-titre">Banc laser (vue de dessus)</span><div id="od-svgb">${svgBanc()}</div>
+          <div class="od-ctl"><button type="button" class="od-on${S.laser ? " on" : ""}" data-laser>${S.laser ? "Laser : ON" : "Laser : OFF"}</button>
+            ${cfg.Dreglable ? `<span>Écran : <b>D = ${fr(S.D, 2)} m</b></span><span class="od-pm"><button type="button" data-d="-1" aria-label="Rapprocher l'écran">−</button><button type="button" data-d="1" aria-label="Éloigner l'écran">+</button></span>` : `<span>Écran à <b>D = ${fr(S.D, 2)} m</b></span>`}</div>
+          ${S.laser ? `<p class="small od-secu">Sécurité : ne jamais regarder le faisceau, ni son reflet.</p>` : ""}
+          <div class="od-fentes" role="group" aria-label="Diapositive : choisir ce que traverse le faisceau">${cfg.fentes.map((f) => `<button type="button" data-fente="${f}" class="${S.fente === f ? "sel" : ""}">${esc(FENTES[f].nom)}</button>`).join("")}</div>
+          <span class="od-titre">L'écran vu de face${cfg.profil ? " : photo et profil d'intensité (logiciel de traitement d'image)" : ""}</span>
+          <canvas class="od-ecran" width="600" height="${hh.band + hh.prof + hh.regle}" aria-label="Écran vu de face, avec une règle graduée en millimètres et deux curseurs à placer sur les premières extinctions."></canvas>
+          <div class="od-ctl"><span class="od-pm"><button type="button" data-c="0" class="${S.sel === 0 ? "sel" : ""}">Curseur 1</button><button type="button" data-c="1" class="${S.sel === 1 ? "sel" : ""}">Curseur 2</button></span>
+            <span class="od-pm"><button type="button" data-n="-1" aria-label="Déplacer le curseur vers la gauche">◀</button><button type="button" data-n="1" aria-label="Déplacer le curseur vers la droite">▶</button></span></div>
+          <div class="od-lect" id="od-lect"></div>
+          <button type="button" class="od-noter" data-noter>NOTER la mesure de L</button>`;
+        ecran = z.querySelector("canvas"); ectx = ecran.getContext("2d");
+        z.querySelector("[data-laser]").onclick = () => { S.laser = !S.laser; zoneLaser(); etat(); };
+        z.querySelectorAll("[data-d]").forEach((b) => b.onclick = () => { S.D = Math.round(Math.max(1, Math.min(2.5, S.D + 0.05 * +b.dataset.d)) * 100) / 100; majLaser(); etat(); z.querySelector(".od-ctl b").textContent = `D = ${fr(S.D, 2)} m`; });
+        z.querySelectorAll("[data-fente]").forEach((b) => b.onclick = () => { S.fente = b.dataset.fente; z.querySelectorAll("[data-fente]").forEach((x) => x.classList.toggle("sel", x === b)); majLaser(); etat(); });
+        z.querySelectorAll("[data-c]").forEach((b) => b.onclick = () => { S.sel = +b.dataset.c; z.querySelectorAll("[data-c]").forEach((x) => x.classList.toggle("sel", x === b)); dessinerEcran(); });
+        z.querySelectorAll("[data-n]").forEach((b) => b.onclick = () => { S.curs[S.sel] = Math.max(0, Math.min(2 * H, S.curs[S.sel] + 0.2 * +b.dataset.n)); dessinerEcran(); });
+        z.querySelector("[data-noter]").onclick = noter;
+        // Curseurs au doigt : toucher près d'un curseur le prend ; toucher ailleurs y amène le curseur sélectionné.
+        const mm = (ev) => { const r = ecran.getBoundingClientRect(); return Math.max(0, Math.min(2 * H, (ev.clientX - r.left) / r.width * 2 * H)); };
+        ecran.addEventListener("pointerdown", (ev) => {
+          const x = mm(ev), d = S.curs.map((c) => Math.abs(c - x)), i = d[0] <= d[1] ? 0 : 1;
+          glisse = d[i] < 6 ? i : S.sel; S.sel = glisse; S.curs[glisse] = x; ecran.setPointerCapture(ev.pointerId);
+          z.querySelectorAll("[data-c]").forEach((b) => b.classList.toggle("sel", +b.dataset.c === S.sel)); dessinerEcran(); ev.preventDefault();
+        });
+        ecran.addEventListener("pointermove", (ev) => { if (glisse < 0) return; S.curs[glisse] = mm(ev); dessinerEcran(); ev.preventDefault(); });
+        const lacher = () => { glisse = -1; }; ecran.addEventListener("pointerup", lacher); ecran.addEventListener("pointercancel", lacher);
+        dessinerEcran();
+      }
+      function majLaser() { const b = el.querySelector("#od-svgb"); if (b) b.innerHTML = svgBanc(); dessinerEcran(); }
+      function dessinerEcran() {
+        if (!ecran) return;
+        const W = 600, hh = hauteurs(), s = W / (2 * H), [r, g, b] = rgbLaser(), c = ectx;
+        c.fillStyle = "#000"; c.fillRect(0, 0, W, hh.band + hh.prof);
+        const im = c.createImageData(W, hh.band), I = [];
+        for (let px = 0; px < W; px++) {
+          const v0 = intensite((px + .5) / s - H); I.push(v0);
+          const v = Math.pow(v0, 0.42);
+          for (let py = 0; py < hh.band; py++) { const yy = (py + .5) / hh.band * 2 - 1, f = v * Math.exp(-Math.pow(yy / 0.5, 4)), k = 4 * (py * W + px); im.data[k] = r * f; im.data[k + 1] = g * f; im.data[k + 2] = b * f; im.data[k + 3] = 255; }
+        }
+        c.putImageData(im, 0, 0);
+        if (cfg.profil) { // profil d'intensité le long de la ligne jaune (comme dans un logiciel de traitement d'image)
+          c.strokeStyle = "#FFD24A"; c.setLineDash([4, 4]); c.beginPath(); c.moveTo(0, hh.band / 2); c.lineTo(W, hh.band / 2); c.stroke(); c.setLineDash([]);
+          const y0 = hh.band + hh.prof - 10, A = hh.prof - 34;
+          c.fillStyle = "#0B1520"; c.fillRect(0, hh.band, W, hh.prof);
+          c.strokeStyle = "#2E4256"; c.beginPath(); c.moveTo(0, y0); c.lineTo(W, y0); c.stroke();
+          c.strokeStyle = "#7FD1FF"; c.lineWidth = 2.5; c.beginPath();
+          I.forEach((v, px) => { const y = y0 - A * Math.sqrt(v); if (px) c.lineTo(px, y); else c.moveTo(px, y); }); c.stroke(); c.lineWidth = 1;
+          c.fillStyle = "#9FB3C4"; c.font = "18px system-ui"; c.fillText("profil d'intensité", 8, hh.band + 22);
+        }
+        const yR = hh.band + hh.prof; c.fillStyle = "#F3E6B3"; c.fillRect(0, yR, W, hh.regle); c.strokeStyle = "#3A2E00"; c.fillStyle = "#3A2E00"; c.font = "bold 19px system-ui"; c.textAlign = "center";
+        for (let m = 0; m <= 2 * H; m++) { const x = m * s, L = m % 10 === 0 ? 22 : m % 5 === 0 ? 15 : 8; c.beginPath(); c.moveTo(x, yR); c.lineTo(x, yR + L); c.lineWidth = m % 10 ? 1 : 1.5; c.stroke(); if (m % 10 === 0 && m > 0 && m < 2 * H) c.fillText(String(m), x, yR + 45); }
+        c.textAlign = "right"; c.fillText("mm", W - 4, yR + 45); c.textAlign = "left"; c.lineWidth = 1;
+        S.curs.forEach((cx, i) => { const x = cx * s; c.strokeStyle = i === S.sel ? "#FFD24A" : "#E8E8E8"; c.lineWidth = i === S.sel ? 3 : 2; c.beginPath(); c.moveTo(x, 0); c.lineTo(x, yR + hh.regle); c.stroke();
+          c.fillStyle = c.strokeStyle; c.beginPath(); c.moveTo(x - 10, 0); c.lineTo(x + 10, 0); c.lineTo(x, 14); c.fill(); c.font = "bold 20px system-ui"; c.textAlign = "left"; c.fillText(String(i + 1), x + 6, 32); });
+        c.lineWidth = 1;
+        const L = Math.round(Math.abs(S.curs[1] - S.curs[0]) * 2) / 2, le = el.querySelector("#od-lect");
+        if (le) le.innerHTML = `Curseur 1 : ${fr(S.curs[0], 1)} mm · curseur 2 : ${fr(S.curs[1], 1)} mm → <strong>écart L = ${fr(L, 1)} mm</strong>`;
+      }
+      function noter() {
+        const L = Math.round(Math.abs(S.curs[1] - S.curs[0]) * 2) / 2, Lv = Lvrai();
+        if (!S.laser) return refuser(panneau, "Allume d'abord le laser.");
+        if (!Lv || S.fente === "aucune") return refuser(panneau, "Place une fente (ou le fil) dans le faisceau pour obtenir une figure de diffraction.");
+        if (S.fente === "large") return refuser(panneau, "Avec la fente de 1 mm, la tache est trop petite pour être mesurée : choisis une fente fine.");
+        const tol = cfg.profil ? 0.035 : 0.07;
+        if (Math.abs(L - Lv) > tol * Lv) return refuser(panneau, cfg.profil ? "Place les deux curseurs exactement sur les deux minima du profil qui encadrent le pic central." : "Les deux curseurs doivent être sur les premières extinctions (zones noires) de part et d'autre de la tache centrale.");
+        flash(panneau, true); toast("Mesure notée : L = " + fr(L, 1) + " mm");
+        evt("noteL", { fente: S.fente, a: aActuel(), L, D: S.D, profil: !!cfg.profil });
+      }
+      function etat() { evt("etat", { mode: S.mode, laser: S.laser, fente: S.fente, D: S.D, a: S.a, f: S.f }); }
+      function rendre() {
+        el.querySelectorAll("[data-mode]").forEach((b) => b.classList.toggle("sel", b.dataset.mode === S.mode));
+        const zc = el.querySelector("#od-cuve"), zl = el.querySelector("#od-laser");
+        zc.hidden = S.mode !== "cuve"; zl.hidden = S.mode !== "laser";
+        if (S.mode === "cuve") { if (!Ar) calcCuve(); zoneCuve(); ecran = null; } else { cuveCv = null; zoneLaser(); }
+        el.querySelector("#od-aide").textContent = S.mode === "cuve" ? "Régler l'ouverture et la fréquence avec − et + ; NOTER, puis dire ce que fait l'onde après la digue." : "Toucher l'écran pour placer le curseur sélectionné (ou le faire glisser) ; ◀ ▶ pour l'ajuster finement.";
+      }
+      const boucle = () => { if (!el.isConnected) return; if (S.mode === "cuve" && cuveCv) { S.t += 0.12; dessinerCuve(); } requestAnimationFrame(boucle); };
+      rendre(); requestAnimationFrame(boucle); etat();
+      return { etat: () => S };
+    }
+
+    // =====================================================================
+    // Paillasse 2 : cuve à ondes à deux pointes (vue de dessus, 24 cm × 15 cm)
+    // cfg : { pointes: "deux" | "une" | "choix", f, fReglable, e, eReglable, regle, classer, M }
+    // =====================================================================
+    function bancCuve(el, cfg, evt) {
+      const S = { on: false, deux: cfg.pointes !== "une", strobe: false, f: cfg.f || 15, e: cfg.e || 4, M: null, regle: false, t: 0 };
+      const LX = 24, LY = 15, NX = 240, NY = 150, y0 = 0.6; // cm ; une case = 0,1 cm
+      let d1 = null, d2 = null;
+      el.innerHTML = `<div class="od-banc od-eau" id="oc-b"><span class="od-titre">Cuve à ondes (vue de dessus)</span>
+        <canvas class="od-cv" width="480" height="300" aria-label="Vue de dessus de la cuve à ondes. Toucher la cuve pour placer le point M."></canvas>
+        <div class="od-lect" id="oc-m"></div><div id="oc-ctl" class="stack"></div><div id="oc-juge"></div></div>
+        <p class="small muted">Le stroboscope éclaire la cuve au rythme du vibreur : les rides paraissent immobiles.</p>`;
+      const panneau = el.querySelector("#oc-b"), cv = el.querySelector("canvas"), ctx = cv.getContext("2d");
+      const buf = document.createElement("canvas"); buf.width = NX; buf.height = NY; const bctx = buf.getContext("2d"), img = bctx.createImageData(NX, NY);
+      const src = () => S.deux ? [[LX / 2 - S.e / 2, y0], [LX / 2 + S.e / 2, y0]] : [[LX / 2, y0]];
+      function geom() {
+        const sc = src(); d1 = new Float32Array(NX * NY); d2 = new Float32Array(NX * NY);
+        for (let j = 0; j < NY; j++) for (let i = 0; i < NX; i++) { const x = (i + .5) * LX / NX, y = (j + .5) * LY / NY;
+          d1[j * NX + i] = Math.hypot(x - sc[0][0], y - sc[0][1]); d2[j * NX + i] = sc[1] ? Math.hypot(x - sc[1][0], y - sc[1][1]) : -1; }
+      }
+      function dessiner() {
+        const k = 2 * Math.PI / lamCuve(S.f);
+        for (let p = 0; p < NX * NY; p++) {
+          let v = 0;
+          if (S.on) { const a1 = 1 / Math.sqrt(0.6 + d1[p]); v = a1 * Math.cos(k * d1[p] - S.t);
+            if (d2[p] >= 0) { const a2 = 1 / Math.sqrt(0.6 + d2[p]); v = (v + a2 * Math.cos(k * d2[p] - S.t)) / 2; } v *= 2.2; }
+          v = Math.max(-1, Math.min(1, v)); const f = .5 + .45 * v, q = 4 * p;
+          img.data[q] = 30 + 150 * f; img.data[q + 1] = 90 + 140 * f; img.data[q + 2] = 130 + 120 * f; img.data[q + 3] = 255;
+        }
+        bctx.putImageData(img, 0, 0); ctx.imageSmoothingEnabled = true; ctx.drawImage(buf, 0, 0, cv.width, cv.height);
+        const s = cv.width / LX;
+        src().forEach(([x, y], i) => { ctx.fillStyle = "#FFD24A"; ctx.strokeStyle = "#000"; ctx.beginPath(); ctx.arc(x * s, y * s, 7, 0, 7); ctx.fill(); ctx.stroke();
+          ctx.font = "bold 18px system-ui"; ctx.lineWidth = 4; ctx.textAlign = "center"; const t = S.deux ? "S" + (i + 1) : "S"; ctx.strokeText(t, x * s, y * s + 28); ctx.fillText(t, x * s, y * s + 28); ctx.lineWidth = 1; });
+        if (S.regle) { // règle transparente posée sous la pointe, graduée en cm
+          const x = (S.deux ? LX / 2 - S.e / 2 : LX / 2) * s + 16; ctx.fillStyle = "rgba(255,255,255,.18)"; ctx.fillRect(x, y0 * s, 40, (LY - y0) * s);
+          ctx.strokeStyle = "#FFF"; ctx.fillStyle = "#FFF"; ctx.font = "bold 15px system-ui"; ctx.textAlign = "left";
+          for (let c = 0; c <= LY - y0; c += 0.5) { const y = (y0 + c) * s, l = c % 1 === 0 ? 12 : 6; ctx.beginPath(); ctx.moveTo(x, y); ctx.lineTo(x + l, y); ctx.stroke(); if (c % 2 === 0 && c > 0) ctx.fillText(String(c), x + 15, y + 5); }
+          ctx.fillText("cm", x + 15, y0 * s + 22);
+        }
+        if (S.M) { const sc = src(), [mx, my] = S.M; ctx.strokeStyle = "rgba(255,255,255,.75)"; ctx.setLineDash([4, 3]);
+          sc.forEach(([x, y]) => { ctx.beginPath(); ctx.moveTo(x * s, y * s); ctx.lineTo(mx * s, my * s); ctx.stroke(); }); ctx.setLineDash([]);
+          ctx.fillStyle = "#FFF"; ctx.strokeStyle = "#000"; ctx.beginPath(); ctx.arc(mx * s, my * s, 6, 0, 7); ctx.fill(); ctx.stroke();
+          ctx.font = "bold 19px system-ui"; ctx.lineWidth = 4; ctx.textAlign = "left"; ctx.strokeText("M", mx * s + 10, my * s - 8); ctx.fillText("M", mx * s + 10, my * s - 8); ctx.lineWidth = 1; }
+      }
+      const distances = () => { if (!S.M) return null; const sc = src(), r = (v) => Math.round(v * 10) / 10;
+        const v1 = Math.hypot(S.M[0] - sc[0][0], S.M[1] - sc[0][1]), v2 = sc[1] ? Math.hypot(S.M[0] - sc[1][0], S.M[1] - sc[1][1]) : null;
+        return { d1: r(v1), d2: v2 == null ? null : r(v2), vrai1: v1, vrai2: v2 }; };
+      function majM() {
+        const d = distances(), z = el.querySelector("#oc-m");
+        z.innerHTML = d ? `Point M : d₁ = S1M = <strong>${fr(d.d1, 1)} cm</strong>${d.d2 != null ? ` · d₂ = S2M = <strong>${fr(d.d2, 1)} cm</strong>` : ""}` : (cfg.M ? "Toucher la cuve pour placer le point M." : "");
+        const j = el.querySelector("#oc-juge");
+        j.innerHTML = cfg.classer && d && S.deux ? `<div class="od-choix"><button type="button" class="btn btn-ghost btn-sm" data-z="calme">M est sur une ligne calme</button><button type="button" class="btn btn-ghost btn-sm" data-z="agitee">M est sur une ligne agitée</button></div>` : "";
+        j.querySelectorAll("[data-z]").forEach((b) => b.onclick = () => classer(b.dataset.z));
+      }
+      function classer(zone) {
+        if (!S.on) return refuser(panneau, "Mets d'abord le vibreur en marche.");
+        const d = distances(), lam = lamCuve(S.f), q = (d.vrai2 - d.vrai1) / lam, di = Math.abs(q - Math.round(q)), dh = Math.abs(q - Math.round(q - .5) - .5);
+        if (Math.min(di, dh) > 0.17) return refuser(panneau, "M n'est pas sur une ligne nette : déplace-le sur une ligne bien calme ou bien agitée.");
+        const vraie = di <= dh ? "agitee" : "calme";
+        if (zone !== vraie) return refuser(panneau, vraie === "calme" ? "Regarde bien : autour de M, l'eau bouge-t-elle vraiment ? Active le stroboscope pour mieux voir." : "Regarde bien : autour de M, les rides sont-elles vraiment absentes ?");
+        flash(panneau, true);
+        evt("point", { zone, d1: d.d1, d2: d.d2, lam, q: d.d2 - d.d1 });
+        S.M = null; majM();
+      }
+      function controles() {
+        const z = el.querySelector("#oc-ctl");
+        z.innerHTML = `<div class="od-ctl"><button type="button" class="od-on${S.on ? " on" : ""}" data-on>${S.on ? "Vibreur : ON" : "Vibreur : OFF"}</button>
+            <button type="button" class="od-on${S.strobe ? " on" : ""}" data-st>${S.strobe ? "Stroboscope : ON" : "Stroboscope : OFF"}</button></div>
+          ${cfg.pointes === "choix" ? `<div class="od-ctl"><span>Pointes</span><span class="od-pm"><button type="button" data-p="1" class="${!S.deux ? "sel" : ""}">Une pointe</button><button type="button" data-p="2" class="${S.deux ? "sel" : ""}">Deux pointes</button></span></div>` : ""}
+          <div class="od-ctl"><span>Fréquence <b>f = ${S.f} Hz</b>${cfg.fReglable ? "" : " (fixée)"}</span>${cfg.fReglable ? `<span class="od-pm"><button type="button" data-f="-1" aria-label="Diminuer la fréquence">−</button><button type="button" data-f="1" aria-label="Augmenter la fréquence">+</button></span>` : ""}</div>
+          ${S.deux ? `<div class="od-ctl"><span>Écart des pointes <b>S1S2 = ${fr(S.e, 1)} cm</b></span>${cfg.eReglable ? `<span class="od-pm"><button type="button" data-e="-1" aria-label="Rapprocher les pointes">−</button><button type="button" data-e="1" aria-label="Écarter les pointes">+</button></span>` : ""}</div>` : ""}
+          ${cfg.regle ? `<div class="od-ctl"><button type="button" class="od-on${S.regle ? " on" : ""}" data-r>${S.regle ? "Règle : posée" : "Règle : rangée"}</button></div>` : ""}`;
+        const go = () => { controles(); dessiner(); majM(); etat(); };
+        z.querySelector("[data-on]").onclick = () => { S.on = !S.on; go(); };
+        z.querySelector("[data-st]").onclick = () => { S.strobe = !S.strobe; go(); };
+        z.querySelectorAll("[data-p]").forEach((b) => b.onclick = () => { S.deux = b.dataset.p === "2"; S.M = null; geom(); go(); });
+        z.querySelectorAll("[data-f]").forEach((b) => b.onclick = () => { S.f = Math.max(10, Math.min(30, S.f + +b.dataset.f)); go(); });
+        z.querySelectorAll("[data-e]").forEach((b) => b.onclick = () => { S.e = Math.max(2, Math.min(6, S.e + 0.5 * +b.dataset.e)); geom(); go(); });
+        const r = z.querySelector("[data-r]"); if (r) r.onclick = () => { S.regle = !S.regle; go(); };
+      }
+      cv.addEventListener("pointerdown", (ev) => {
+        if (!cfg.M) return;
+        const r = cv.getBoundingClientRect(), x = (ev.clientX - r.left) / r.width * LX, y = (ev.clientY - r.top) / r.height * LY;
+        if (y < 1.2) return; S.M = [x, y]; dessiner(); majM();
+      });
+      function etat() { evt("etat", { on: S.on, deux: S.deux, strobe: S.strobe, f: S.f, e: S.e, regle: S.regle, lam: lamCuve(S.f) }); }
+      const boucle = () => { if (!el.isConnected) return; if (S.on && !S.strobe) { S.t += 0.16; dessiner(); } requestAnimationFrame(boucle); };
+      geom(); controles(); dessiner(); majM(); requestAnimationFrame(boucle); etat();
+      return { etat: () => S };
+    }
+
+    // =====================================================================
+    // Pages : choix du TP, puis le laboratoire (onglets des objectifs + conclusion)
+    // =====================================================================
+    function vue(niv, ch, labId) {
+      const tp = ch.tp, cle = `${niv}-${ch.id}-tp`, L = tp.labos, cleL = (l) => cle + "-" + l.id;
+      const ouvertL = (i) => modeProf() || L.slice(0, i).every((l) => fait(cleL(l)));
+      const lab = L.find((l) => l.id === labId);
+      if (lab && ouvertL(L.indexOf(lab))) return vueLabo(niv, ch, lab, cle, cleL);
+      view.innerHTML = `<div class="head"><span class="kicker">TP</span><h2>${esc(tp.titre)}</h2><p class="muted">${esc(tp.intro)}</p></div>
+        <div class="stack">${L.map((l, i) => {
+          const ok = fait(cleL(l)), open = ouvertL(i);
+          const inner = `<span class="ico">${SVG.diffraction}</span><span class="txt"><span class="t">${esc(l.titre)}</span><span class="s">${esc(l.sousTitre)}</span><span class="s">${ok ? "Terminé" : open ? "À faire" : "Termine d'abord le TP " + i}</span></span><span class="go">${ok ? SVG.check : open ? "›" : SVG.lock}</span>`;
+          return open ? `<a class="card" href="#c-${niv}-${ch.id}-tp-${l.id}">${inner}</a>` : `<div class="card" aria-disabled="true" style="opacity:.55">${inner}</div>`;
+        }).join("")}</div>
+        <p class="note">Les deux TP se font dans l'ordre. L'étape TP du chapitre est validée quand les deux sont terminés.</p>
+        ${navFin(niv, ch, "tp", !!fait(cle))}`;
+    }
+
+    function vueLabo(niv, ch, lab, cle, cleL) {
+      const p = profil(); p.tp2 = p.tp2 || {};
+      const ck = cleL(lab), rep = p.tp2[ck] = p.tp2[ck] || {};
+      rep.obj = rep.obj || {}; rep.concl = rep.concl || {};
+      if (lab.id === "diff") { rep.mes = rep.mes || {}; rep.obs = rep.obs || []; if (!rep.fil) { rep.fil = { d: FILS[hasard(0, FILS.length - 1)] }; sauver(); } }
+      if (lab.id === "cuve") { rep.pts = rep.pts || []; rep.comptes = rep.comptes || {}; if (!rep.f2) { rep.f2 = [10, 12, 15][hasard(0, 2)]; sauver(); } }
+      const O = lab.objectifs, NC = O.length;
+      O.forEach((o) => { rep.obj[o.id] = rep.obj[o.id] || { t: {}, q: [] }; });
+      const objFait = (o) => o.taches.every((t) => rep.obj[o.id].t[t.id]) && o.questions.every((q, k) => rep.obj[o.id].q.indexOf(k) >= 0);
+      const ongletOuvert = (i) => modeProf() || O.slice(0, i).every(objFait);
+      const conclFaite = () => lab.conclusion.textes.every((x, k) => rep.concl[k]);
+      let actif = O.findIndex((o, i) => !objFait(o) && ongletOuvert(i)); if (actif < 0) actif = NC;
+      let B = null, dernier = {};
+
+      view.innerHTML = `<div class="head"><span class="kicker">${esc(lab.titre)}</span><h2>${esc(lab.sousTitre)}</h2><p class="muted">${esc(lab.intro)}</p></div>
+        <details class="panel tp"><summary><strong>Le TP en classe : matériel et sécurité</strong></summary>
+          <div class="stack" style="margin-top:.7rem"><p>${esc(lab.enClasse.objectif)}</p><ul>${lab.enClasse.materiel.map((m) => `<li>${esc(m)}</li>`).join("")}</ul>
+          <div class="safety"><strong>Sécurité</strong><ul>${lab.enClasse.securite.map((m) => `<li>${esc(m)}</li>`).join("")}</ul></div></div></details>
+        <div class="otabs" id="otabs" role="tablist" style="grid-template-columns:repeat(${NC + 1},1fr)"></div>
+        <div class="stack" id="tp-zone"></div>
+        <div id="tp-nav"></div>`;
+      const majNav = () => {
+        const LL = ch.tp.labos, i = LL.indexOf(lab), suivant = LL.slice(i + 1).concat(LL.slice(0, i)).find((l) => !fait(cleL(l)));
+        const suiv = fait(ck) && suivant && !fait(cle) ? { href: `c-${niv}-${ch.id}-tp-${suivant.id}`, txt: `Passer au ${suivant.titre} ›` } : null;
+        $("tp-nav").innerHTML = navFin(niv, ch, "tp", !!fait(cle), suiv, `<a class="btn btn-ghost" href="#c-${niv}-${ch.id}-tp">Retour au choix des TP</a>`);
+      };
+      function onglets() {
+        $("otabs").innerHTML = htmlOnglets(O, actif, objFait, ongletOuvert, !!fait(ck));
+        brancherOnglets(NC, ongletOuvert, (i) => { actif = i; afficher(); });
+      }
+      function afficher() { onglets(); majNav(); if (actif >= NC) afficherConclusion(); else afficherObjectif(); }
+
+      function afficherObjectif() {
+        const o = O[actif]; dernier = {};
+        $("tp-zone").innerHTML = `<div class="panel mission" id="o-carte"></div><div id="o-banc"></div><div class="stack" id="o-extra"></div><div class="stack" id="o-quest"></div><div class="stack" id="o-retenir"></div>`;
+        carte();
+        const cfg = Object.assign({}, o.banc);
+        if (lab.id === "diff") { cfg.fil = rep.fil.d; B = bancDiff($("o-banc"), cfg, evenement); }
+        else { if (o.id === "c2") cfg.f = rep.f2; B = bancCuve($("o-banc"), cfg, evenement); }
+        extra(); questions(); retenir();
+      }
+      function carte() { const o = O[actif]; $("o-carte").innerHTML = htmlMission(o, actif, rep.obj[o.id], objFait(o)); }
+      function cocher(id) {
+        const o = O[actif], st = rep.obj[o.id];
+        if (st.t[id] || !o.taches.some((t) => t.id === id)) return;
+        st.t[id] = true; sauver(); toast("Manipulation réussie"); carte();
+        if (o.taches.every((t) => st.t[t.id])) questions();
+        verifier();
+      }
+      function verifier() {
+        const o = O[actif], st = rep.obj[o.id];
+        if (objFait(o) && !st.fini) { st.fini = true; sauver(); enregistrer(ck + "-" + o.id, 20, false, true); onglets(); carte(); retenir(); }
+      }
+      function retenir() {
+        const o = O[actif], box = $("o-retenir");
+        if (!objFait(o)) { box.innerHTML = ""; return; }
+        const suiv = actif < NC - 1 ? `Objectif ${actif + 2}` : "Conclusion";
+        box.innerHTML = `<div class="retenir"><strong class="lbl">Je retiens</strong><p>${esc(o.retenir)}</p></div><button class="btn btn-primary" id="btn-osuiv">Passer à : ${suiv}</button>`;
+        $("btn-osuiv").onclick = () => { actif++; afficher(); $("otabs").scrollIntoView({ behavior: "smooth", block: "start" }); };
+      }
+
+      // ---------- Vérification automatique des manipulations ----------
+      const mesures = () => Object.keys(rep.mes || {}).filter((f) => FENTES[f] && !FENTES[f].fil).map((f) => Object.assign({ f }, rep.mes[f])).sort((a, b) => a.a - b.a);
+      function evenement(type, d) {
+        if (actif >= NC) return;
+        const id = O[actif].id;
+        if (type === "etat") dernier = d;
+        if (id === "d1") {
+          if (type === "obs") {
+            rep.obs.push({ a: d.a, lam: d.lam, j: d.jugement }); if (rep.obs.length > 12) rep.obs.shift(); sauver(); extra();
+            if (d.jugement === "marquee") cocher("petite"); else cocher("grande");
+            const memeA = rep.obs.filter((x) => x.a === d.a && x.lam !== d.lam); if (memeA.length) cocher("lambda");
+          }
+          if (type === "etat" && d.mode === "laser" && d.laser && d.fente === "aucune") cocher("sans");
+          if (type === "etat" && d.mode === "laser" && d.laser && d.fente === "f50") cocher("fine");
+        }
+        if (id === "d2" || id === "d3") {
+          if (type === "etat" && d.laser && Math.abs(d.D - 2) < 1e-6) cocher("D2");
+          if (type === "noteL" && d.fente !== "fil") {
+            rep.mes[d.fente] = { a: d.a, L: d.L, D: d.D, profil: d.profil || (rep.mes[d.fente] && rep.mes[d.fente].profil) || false }; sauver(); extra();
+            if (mesures().length >= 4) cocher("quatre");
+            if (mesures().filter((m) => m.profil).length >= 2) cocher("profil");
+          }
+        }
+        if (id === "d4") {
+          if (type === "etat" && d.laser && d.fente === "fil") cocher("fil");
+          if (type === "noteL" && d.fente === "fil") { rep.fil.L = d.L; rep.fil.D = d.D; sauver(); extra(); cocher("mesure"); questions(); }
+        }
+        if (lab.id === "cuve") {
+          if (type === "etat") {
+            if (id === "c1" && d.on && d.deux) cocher("allume");
+            if (id === "c1" && d.on && d.deux && d.strobe) cocher("strobe");
+            if (id === "c2" && d.on && !d.deux) cocher("une");
+            if (id === "c2" && d.on && !d.deux && d.strobe) cocher("fige");
+            if (id === "c2" && d.regle && d.on && d.strobe) cocher("regle");
+            if (id === "c4") extra();
+          }
+          if (type === "point") {
+            if (id === "c1") { rep.c1 = rep.c1 || { calme: 0, agitee: 0 }; rep.c1[d.zone]++; sauver(); if (rep.c1.calme >= 2) cocher("calmes"); if (rep.c1.agitee >= 2) cocher("agitees"); extra(); }
+            if (id === "c3") { rep.pts.push({ zone: d.zone, d1: d.d1, d2: d.d2, lam: d.lam }); if (rep.pts.length > 10) rep.pts.shift(); sauver(); extra();
+              if (rep.pts.filter((x) => x.zone === "calme").length >= 3) cocher("c3"); if (rep.pts.filter((x) => x.zone === "agitee").length >= 3) cocher("a3"); }
+          }
+        }
+      }
+
+      // ---------- Tableaux et outils sous la paillasse ----------
+      function extra() {
+        const o = O[actif], box = $("o-extra");
+        if (o.id === "d1") {
+          box.innerHTML = rep.obs.length ? `<h3>Mes observations (cuve)</h3><div class="table-wrap"><table class="mes-table"><thead><tr><th>a (cm)</th><th>λ (cm)</th><th>a / λ</th><th>Diffraction</th></tr></thead><tbody>
+            ${rep.obs.map((x) => `<tr><td>${fr(x.a, 1)}</td><td>${fr(x.lam, 1)}</td><td>${fr(x.a / x.lam, 1)}</td><td>${x.j === "marquee" ? "marquée" : "faible"}</td></tr>`).join("")}</tbody></table></div>` : "";
+        } else if (o.id === "d2" || o.id === "d3") {
+          const M = mesures();
+          box.innerHTML = `<h3>Mes mesures (laser λ = ${LAMBDA} nm)</h3>` + (M.length ? `<div class="table-wrap"><table class="mes-table"><thead><tr><th>a (µm)</th><th>D (m)</th><th>L (mm)</th><th>θ = L / (2D) (10⁻³ rad)</th><th>1/a (10³ m⁻¹)</th></tr></thead><tbody>
+            ${M.map((m) => `<tr><td>${m.a}</td><td>${fr(m.D, 2)}</td><td>${fr(m.L, 1)}${m.profil ? " ✓" : ""}</td><td>${fr(m.L / (2 * m.D), 2)}</td><td>${fr(1000 / m.a, 1)}</td></tr>`).join("")}</tbody></table></div>
+            ${o.id === "d3" ? `<p class="small muted">✓ : mesure faite avec le profil d'intensité. Une nouvelle mesure remplace l'ancienne.</p>` : `<p class="small muted">Une nouvelle mesure de la même fente remplace l'ancienne.</p>`}` : `<p class="small muted">Aucune mesure pour l'instant.</p>`)
+            + (o.id === "d3" ? `<div class="stack" id="d3-graphe"></div>` : "");
+          if (o.id === "d3") graphe();
+        } else if (o.id === "d4") {
+          const F = rep.fil;
+          box.innerHTML = `<div class="panel c-doc"><strong>Bobine du fabricant</strong><p>Fil de pêche nylon, diamètre annoncé : <strong>0,15 mm</strong> (tolérance du fabricant : ± 10 %).</p></div>
+            <h3>Ma mesure</h3><div class="table-wrap"><table class="mes-table"><thead><tr><th>λ (nm)</th><th>D (m)</th><th>L (mm)</th></tr></thead><tbody><tr><td>${LAMBDA}</td><td>${F.D != null ? fr(F.D, 2) : "…"}</td><td>${F.L != null ? fr(F.L, 1) : "…"}</td></tr></tbody></table></div>`;
+        } else if (o.id === "c1") {
+          const c = rep.c1 || { calme: 0, agitee: 0 };
+          box.innerHTML = `<p class="small">Lignes repérées : <strong>${Math.min(2, c.calme)}/2 calmes</strong> · <strong>${Math.min(2, c.agitee)}/2 agitées</strong></p>`;
+        } else if (o.id === "c3") {
+          const P = rep.pts;
+          box.innerHTML = `<h3>Mes points (λ = 2,0 cm)</h3>` + (P.length ? `<div class="table-wrap"><table class="mes-table"><thead><tr><th>Zone</th><th>d₁ (cm)</th><th>d₂ (cm)</th><th>δ = d₂ − d₁ (cm)</th><th>δ / λ</th></tr></thead><tbody>
+            ${P.map((x) => `<tr><td>${x.zone === "calme" ? "calme" : "agitée"}</td><td>${fr(x.d1, 1)}</td><td>${fr(x.d2, 1)}</td><td>${fr(x.d2 - x.d1, 1)}</td><td>${fr((x.d2 - x.d1) / x.lam, 2)}</td></tr>`).join("")}</tbody></table></div>` : `<p class="small muted">Aucun point pour l'instant : placer M, puis dire s'il est sur une ligne calme ou agitée.</p>`);
+        } else if (o.id === "c4") {
+          const C = rep.comptes, f = dernier.f || 15;
+          box.innerHTML = `<h3>Compter les lignes calmes</h3><p class="small">Compter les lignes calmes (grises, sans rides) qui partent <strong>entre</strong> les deux pointes, puis noter le nombre pour la fréquence affichée.</p>
+            <div class="calc-in"><label class="small" for="c4-n">À f = ${f} Hz :</label><input type="text" id="c4-n" inputmode="numeric" autocomplete="off"><span class="u">lignes</span></div>
+            <button class="btn btn-primary btn-sm" id="c4-ok">Noter</button>
+            ${Object.keys(C).length ? `<div class="table-wrap"><table class="mes-table"><thead><tr><th>f (Hz)</th><th>λ (cm)</th><th>Lignes calmes entre S1 et S2</th></tr></thead><tbody>${Object.keys(C).sort((a, b) => a - b).map((k) => `<tr><td>${k}</td><td>${fr(lamCuve(+k), 2)}</td><td>${C[k]}</td></tr>`).join("")}</tbody></table></div>` : ""}`;
+          $("c4-ok").onclick = () => {
+            const n = parseInt($("c4-n").value, 10), e = dernier.e || 4, lam = lamCuve(f);
+            if (isNaN(n)) { toast("Écris un nombre entier"); return; }
+            let vrai = 0; for (let h = 0.5; h * lam < e; h++) vrai += 2;
+            if (!dernier.on || !dernier.deux) { toast("Mets le vibreur en marche, avec les deux pointes"); return; }
+            if (n !== vrai) { refuser($("o-banc").querySelector(".od-banc"), "Ce n'est pas le bon nombre : active le stroboscope et compte les lignes grises, de chaque côté de la ligne du milieu."); return; }
+            C[f] = n; sauver(); toast("Noté : " + n + " lignes calmes à " + f + " Hz");
+            if (f === 15) cocher("n15"); if (f >= 24) cocher("n25"); extra();
+          };
+        } else box.innerHTML = "";
+      }
+      // Logiciel (objectif 3) : graphique θ = f(1/a), puis modélisation par une droite passant par l'origine
+      function graphe() {
+        const z = $("d3-graphe"); if (!z) return;
+        const M = mesures(), st = rep.obj.d3;
+        if (!st.t.graphe) { z.innerHTML = `<button class="btn btn-primary btn-sm" id="d3-tr" ${M.length >= 4 || modeProf() ? "" : "disabled"}>Tracer θ = f(1/a) dans le logiciel</button>${M.length < 4 ? `<p class="small muted">Il faut au moins 4 fentes mesurées.</p>` : ""}`;
+          $("d3-tr").onclick = () => { cocher("graphe"); graphe(); }; return; }
+        const pts = M.length ? M.map((m) => [1e6 / m.a, m.L * 1e-3 / (2 * m.D)]) : [[25000, 0.0163], [20000, 0.013], [14286, 0.0093], [10000, 0.0065]];
+        const k = pts.reduce((s, [x, y]) => s + x * y, 0) / pts.reduce((s, [x]) => s + x * x, 0);
+        if (st.t.modele) { rep.k = k; sauver(); }
+        const X0 = 46, Y0 = 150, W = 260, Hh = 130, xm = 30000, ym = Math.max(0.02, Math.ceil(Math.max(...pts.map((p) => p[1])) * 1.15 * 200) / 200);
+        const sx = (x) => X0 + x / xm * W, sy = (y) => Y0 - y / ym * Hh;
+        let g = ""; for (let x = 0; x <= xm; x += 5000) g += `<line x1="${sx(x)}" y1="${Y0}" x2="${sx(x)}" y2="${Y0 - Hh}" stroke="currentColor" stroke-opacity=".18"/><text x="${sx(x)}" y="${Y0 + 13}" font-size="9" text-anchor="middle" fill="currentColor">${x / 1000}</text>`;
+        for (let y = 0; y <= ym + 1e-9; y += ym / 4) g += `<line x1="${X0}" y1="${sy(y)}" x2="${X0 + W}" y2="${sy(y)}" stroke="currentColor" stroke-opacity=".18"/><text x="${X0 - 4}" y="${sy(y) + 3}" font-size="9" text-anchor="end" fill="currentColor">${fr(y * 1000, 0)}</text>`;
+        const droite = st.t.modele ? `<line x1="${sx(0)}" y1="${sy(0)}" x2="${sx(xm)}" y2="${sy(k * xm)}" style="stroke:var(--accent)" stroke-width="2"/>` : "";
+        z.innerHTML = `<h3>Logiciel : θ en fonction de 1/a</h3><svg class="ondes" viewBox="0 0 320 172" role="img" aria-label="Graphique de θ en fonction de 1/a : les points sont alignés sur une droite passant par l'origine.">${g}${droite}
+          ${pts.map(([x, y]) => `<circle cx="${sx(x).toFixed(1)}" cy="${sy(y).toFixed(1)}" r="3.5" fill="#E07A2F"/>`).join("")}
+          <text x="${X0 + W}" y="${Y0 - 4}" font-size="9" text-anchor="end" fill="currentColor">1/a (10³ m⁻¹)</text><text x="${X0 - 40}" y="${Y0 - Hh - 6}" font-size="9" fill="currentColor">θ (10⁻³ rad)</text></svg>
+          ${st.t.modele ? `<div class="methode"><strong class="lbl">Modélisation</strong><span>θ = k × (1/a) avec <strong>k = ${fr(k * 1e7, 3)} × 10⁻⁷ m</strong></span></div>` : `<button class="btn btn-primary btn-sm" id="d3-mod">Modéliser par une droite passant par l'origine</button>`}`;
+        const b = $("d3-mod"); if (b) b.onclick = () => { cocher("modele"); rep.k = k; sauver(); graphe(); questions(); };
+      }
+
+      // ---------- Questions (les questions « dyn » utilisent les mesures de l'élève) ----------
+      function questions() {
+        const o = O[actif], st = rep.obj[o.id], box = $("o-quest");
+        const tachesOk = o.taches.every((t) => st.t[t.id]);
+        if (!tachesOk && !modeProf()) { box.innerHTML = `<div class="note">Réaliser les manipulations sur la paillasse : elles sont vérifiées automatiquement. Les questions se débloquent ensuite.</div>`; return; }
+        box.innerHTML = `<h3>Je vérifie que j'ai compris</h3>` + o.questions.map((q, k) => `<div class="ex${st.q.indexOf(k) >= 0 ? " reussi" : ""}" id="oq${k}"><div class="ex-head"><strong>Question ${k + 1}</strong><span class="badge${st.q.indexOf(k) >= 0 ? " ok" : ""}">${st.q.indexOf(k) >= 0 ? "Réussi" : "À faire"}</span></div><div class="stack" id="oqw${k}"></div></div>`).join("");
+        o.questions.forEach((q, k) => {
+          const ok = () => {
+            if (st.q.indexOf(k) < 0) { st.q.push(k); sauver(); enregistrer(ck + "-" + o.id + "-q" + k, 5, false, true); }
+            const x = $("oq" + k); if (x) { x.classList.add("reussi"); const b = x.querySelector(".badge"); b.textContent = "Réussi"; b.classList.add("ok"); }
+            verifier();
+          };
+          const el = $("oqw" + k);
+          if (st.q.indexOf(k) >= 0 && q.type === "dyn") { el.innerHTML = `<p class="small muted">Question réussie.</p>`; return; }
+          if (q.type === "dyn") return dyn(el, q.quoi, ok);
+          monterExemple(el, q, ok);
+        });
+      }
+      const nb = (x, d) => fr(x, d);
+      function dyn(el, quoi, ok) {
+        const M = mesures();
+        if (quoi === "theta") {
+          const m = M.find((x) => x.a === 70) || M[0] || { a: 70, L: 37, D: 2 };
+          const th = m.L * 1e-3 / (2 * m.D);
+          return monterExemple(el, { type: "calcul", contextes: [{ gen: () => ({ texte: `Avec ta mesure pour la fente a = ${m.a} µm (L = ${nb(m.L, 1)} mm, D = ${nb(m.D, 2)} m), calculer l'angle θ = L / (2D).`, rep: th * 1e3, u: "× 10⁻³ rad", tol: 0.03, repTxt: nb(th * 1e3, 2),
+            corr: `θ = L / (2D) = ${nb(m.L * 1e-3, 4)} ÷ (2 × ${nb(m.D, 2)}) = ${nb(th * 1e3, 2)} × 10⁻³ rad (L en mètres !). C'est un petit angle : tan θ ≈ θ.` }) }] }, ok);
+        }
+        if (quoi === "lambdaPente") {
+          const k = rep.k || 6.5e-7;
+          return monterExemple(el, { type: "calcul", contextes: [{ gen: () => ({ texte: `La modélisation donne θ = k × (1/a) avec k = ${nb(k * 1e7, 3)} × 10⁻⁷ m. Comme θ = λ / a, k est égal à λ. Écrire la longueur d'onde mesurée, en nanomètres.`, rep: k * 1e9, u: "nm", tol: 0.02, repTxt: nb(k * 1e9, 0),
+            corr: `λ = k = ${nb(k * 1e7, 3)} × 10⁻⁷ m = ${nb(k * 1e9, 0)} nm.` }) }] }, ok);
+        }
+        if (quoi === "ecart") {
+          const lm = Math.round((rep.k || 6.5e-7) * 1e9), e = Math.abs(lm - LAMBDA) / LAMBDA * 100, et = nb(e, 1);
+          return monterExemple(el, { type: "qcm", variantes: [{ question: `Tu as mesuré λ ≈ ${nb(lm, 0)} nm ; l'étiquette du laser indique 650 nm. Que vaut l'écart relatif |λ(mesurée) − 650| ÷ 650 ?`,
+            reponses: [`${et} %`, `${nb(Math.abs(lm - LAMBDA), 0)} %`, `${nb(e * 10, 1)} %`, `${nb(100 - e, 1)} %`], bonne: 0,
+            explication: `|${nb(lm, 0)} − 650| ÷ 650 × 100 ≈ ${et} %. ${e < 5 ? "Moins de 5 % : la mesure est en bon accord avec l'étiquette." : "L'écart est un peu grand : refaire les mesures avec le profil d'intensité."}` }] }, ok);
+        }
+        const F = rep.fil || { d: 150 };
+        const LF = F.L != null ? F.L : Math.round(2 * LAMBDA * 1e-9 * 2 / (F.d * 1e-6) * 1e3 * 2) / 2, DF = F.D != null ? F.D : 2;
+        const aF = 2 * LAMBDA * 1e-9 * DF / (LF * 1e-3) * 1e6, conforme = Math.abs(aF - ANNONCE) <= 0.10 * ANNONCE;
+        if (quoi === "filA") return monterExemple(el, { type: "calcul", contextes: [{ gen: () => ({ texte: `Avec ta mesure (L = ${nb(LF, 1)} mm, D = ${nb(DF, 2)} m, λ = 650 nm), calculer le diamètre a du fil.`, rep: aF, u: "µm", tol: 0.03, repTxt: nb(aF, 0),
+          corr: `Le fil diffracte comme une fente de même largeur : a = 2 λ D / L = 2 × 6,50 × 10⁻⁷ × ${nb(DF, 2)} ÷ ${nb(LF * 1e-3, 4)} ≈ ${nb(aF * 1e-6 * 1e4, 2)} × 10⁻⁴ m ≈ ${nb(aF, 0)} µm.` }) }] }, ok);
+        if (quoi === "filConforme") return monterExemple(el, { type: "qcm", variantes: [{ question: `Avec le diamètre que tu as calculé à la question 1, le fil est-il conforme ? La bobine annonce 0,15 mm (150 µm) à ± 10 %, soit de 135 à 165 µm.`,
+          reponses: conforme ? ["Oui : le diamètre mesuré est dans l'intervalle annoncé", "Non : il est trop fin", "Non : il est trop épais", "On ne peut pas conclure sans microscope"] : [aF < ANNONCE ? "Non : il est trop fin, en dehors de l'intervalle annoncé" : "Non : il est trop épais, en dehors de l'intervalle annoncé", "Oui : il est dans l'intervalle annoncé", aF < ANNONCE ? "Non : il est trop épais" : "Non : il est trop fin", "On ne peut pas conclure sans microscope"], bonne: 0,
+          explication: `Avec ta mesure, a ≈ ${nb(aF, 0)} µm, qui ${conforme ? "est compris" : "n'est pas compris"} entre 135 et 165 µm.` }] }, ok);
+        if (quoi === "filRedac") {
+          el.innerHTML = `<p class="qtext">Rédiger la réponse au fabricant : le fil est-il conforme ? Justifier avec la mesure.</p><textarea aria-label="Ta réponse"></textarea><button class="btn btn-primary btn-sm" data-ok>J'ai terminé ma réponse</button><div class="fbz stack"></div>`;
+          el.querySelector("[data-ok]").onclick = (e) => {
+            if (el.querySelector("textarea").value.trim().length < 20) { el.querySelector(".fbz").innerHTML = `<p class="error">Rédige au moins deux phrases avant de te corriger.</p>`; return; }
+            e.target.disabled = true; el.querySelector("textarea").readOnly = true;
+            const crit = ["J'ai décrit la mesure : laser de 650 nm, distance D, largeur L de la tache centrale.", "J'ai écrit la relation a = 2 λ D / L et donné le résultat avec son unité.", "J'ai comparé à l'intervalle annoncé (135 à 165 µm) et conclu."];
+            el.querySelector(".fbz").innerHTML = `<div class="feedback ok"><strong>Exemple de réponse</strong><span>« Nous avons éclairé le fil avec un laser de longueur d'onde 650 nm. Sur un écran à ${nb(DF, 2)} m, la tache centrale mesure ${nb(LF, 1)} mm. Le fil diffracte comme une fente de même largeur, donc a = 2 λ D / L ≈ ${nb(aF, 0)} µm. ${conforme ? "Cette valeur est comprise entre 135 et 165 µm : le fil est conforme." : "Cette valeur n'est pas comprise entre 135 et 165 µm : le fil n'est pas conforme à l'étiquette."} »</span></div>
+              <p class="small"><strong>Auto-évaluation :</strong> coche ce que ta réponse contient.</p>${crit.map((c, k) => `<label class="opt" style="grid-template-columns:2rem 1fr"><input type="checkbox" data-c="${k}" style="width:1.3rem;height:1.3rem"><span>${esc(c)}</span></label>`).join("")}<button class="btn btn-ghost btn-sm" data-eval>Valider mon auto-évaluation</button>`;
+            el.querySelector("[data-eval]").onclick = (ev) => {
+              if ([...el.querySelectorAll("[data-c]")].some((c) => !c.checked)) { toast("Complète ta réponse jusqu'à respecter les trois critères, puis coche-les."); el.querySelector("textarea").readOnly = false; e.target.disabled = false; return; }
+              ev.target.disabled = true; ok();
+            };
+          };
+          return;
+        }
+        if (quoi === "lambdaCuve") {
+          const f = rep.f2, lam = lamCuve(f);
+          return monterExemple(el, { type: "calcul", contextes: [{ gen: () => ({ texte: `Le vibreur est réglé sur f = ${f} Hz. Avec la règle, mesurer la distance qui correspond à plusieurs longueurs d'onde (par exemple 4 rides), puis donner λ.`, rep: lam, u: "cm", tol: 0.07, repTxt: nb(lam, 1),
+            corr: `Les rides sont espacées de λ = ${nb(lam, 1)} cm. Mesurer 4 λ (${nb(4 * lam, 1)} cm) puis diviser par 4 est plus précis.` }) }] }, ok);
+        }
+        if (quoi === "vCuve") {
+          const f = rep.f2, lam = lamCuve(f);
+          return monterExemple(el, { type: "calcul", contextes: [{ gen: () => ({ texte: `Avec λ = ${nb(lam, 1)} cm et f = ${f} Hz, calculer la célérité v des ondes à la surface de l'eau, en m/s.`, rep: V_EAU / 100, u: "m/s", tol: 0.05, repTxt: "0,30",
+            corr: `v = λ × f = ${nb(lam / 100, 3)} m × ${f} Hz = 0,30 m/s.` }) }] }, ok);
+        }
+      }
+
+      // ---------- Conclusion ----------
+      function afficherConclusion() {
+        const C = lab.conclusion;
+        $("tp-zone").innerHTML = `<div class="panel mission"><span class="kicker">Conclusion</span><h3>Ce que j'ai compris dans le laboratoire</h3>
+            <p>Compléter la conclusion avec les mots de la banque. Chaque paragraphe reprend un objectif ; l'ensemble correspond à ce que dit le programme.</p>
+            <div class="methode"><strong class="lbl">${esc(C.programme)}</strong><ul>${C.attendus.map((a) => `<li>${esc(a)}</li>`).join("")}</ul></div></div>
+          ${C.textes.map((x, k) => `<div class="ex${rep.concl[k] ? " reussi" : ""}" id="ct${k}"><div class="ex-head"><strong>${esc(x.attendu)}</strong><span class="badge${rep.concl[k] ? " ok" : ""}">${rep.concl[k] ? "Réussi" : "Objectif " + (O.findIndex((o) => o.id === x.obj) + 1)}</span></div><div class="stack" id="ctw${k}"></div></div>`).join("")}
+          <div class="stack" id="c-fin"></div>`;
+        C.textes.forEach((x, k) => {
+          const el = $("ctw" + k);
+          if (rep.concl[k]) { el.innerHTML = `<p class="trous-texte">${esc(x.texte.replace(/\[|\]/g, ""))}</p>`; return; }
+          widgetTrous(el, x.texte, x.pieges, () => { rep.concl[k] = true; sauver(); enregistrer(ck + "-concl" + k, 5, false, true); marquerReussi($("ct" + k)); fin(); });
+        });
+        fin();
+      }
+      function fin() {
+        const z = $("c-fin"); if (!z) return;
+        const C = lab.conclusion, n = C.textes.filter((x, k) => rep.concl[k]).length;
+        if (!conclFaite()) { z.innerHTML = `<div class="level-line">Conclusion complétée <i><b style="width:${Math.round(100 * n / C.textes.length)}%"></b></i>${n}/${C.textes.length}</div>`; return; }
+        z.innerHTML = `<div class="retenir"><strong class="lbl">Ma fiche bilan</strong><ul>${C.textes.map((x) => `<li>${esc(x.texte.replace(/\[|\]/g, ""))}</li>`).join("")}</ul></div>
+          <button class="btn btn-primary" id="btn-tp" ${fait(ck) ? "disabled" : ""}>${fait(ck) ? "TP terminé" : "J'ai terminé ce TP"}</button>`;
+        $("btn-tp").onclick = () => {
+          enregistrer(ck, 40, true, true);
+          if (ch.tp.labos.every((l) => fait(cleL(l)))) { enregistrer(cle, 20, true, true); toast("Les deux TP sont terminés : l'entraînement est débloqué !"); }
+          else toast("TP terminé : le TP suivant est débloqué");
+          onglets(); fin(); majNav();
+        };
+      }
+      afficher();
+    }
+    return { vue, _test: { FENTES, FILS, lamCuve } };
+  })();
   // ======================= TP d'optique (2nde) : banc d'optique et spectromètre =======================
   // Deux paillasses « dans le noir » (on fait le noir dans la salle pour observer les spectres) :
   //  - mode "prisme" : lampe de lumière blanche, banc gradué (fente, lentille), prisme sur un plateau tournant, écran.
