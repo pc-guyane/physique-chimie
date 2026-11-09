@@ -649,6 +649,14 @@ footer { text-align: center; font-size: .85rem; color: var(--muted); display: fl
 .t-nom { font-family: var(--f-display); font-size: 1.02rem; line-height: 1.2; font-weight: 600; }
 .tuile.ouverte .t-nom { flex: 1; min-width: 8rem; font-size: 1.12rem; }
 .t-info { font-size: .82rem; color: var(--muted); }
+/* pourcentages d'avancement (thèmes et chapitres, 09/11/2026) */
+.barre-pct { display: block; height: 5px; border-radius: 99px; background: var(--line); overflow: hidden; margin-top: .3rem; }
+.barre-pct b { display: block; height: 100%; background: var(--c, var(--accent)); border-radius: 99px; }
+.t-prog { display: flex; align-items: center; gap: .45rem; width: 100%; margin-top: auto; }
+.t-prog .barre-pct { flex: 1; margin-top: 0; }
+.t-pct { font-size: .85rem; color: var(--ink); font-variant-numeric: tabular-nums; }
+.tuile.ouverte .t-prog { padding-left: 3.3rem; margin-top: 0; }
+.m-avance { margin-top: .5rem; } .m-avance b { color: var(--ink); font-variant-numeric: tabular-nums; }
 .tuile.ouverte .t-info { width: 100%; padding-left: 3.3rem; margin-top: -.3rem; }
 .t-fl { position: absolute; right: .7rem; top: .8rem; color: var(--c); font-size: 1.5rem; line-height: 1; transition: transform .2s; }
 .tuile.ouverte .t-fl { transform: rotate(90deg); }
@@ -926,7 +934,7 @@ const CONTENU = {
 
         // ======================== 1. RAPPEL ========================
         rappel: {
-          intro: "Révise ce que tu as vu en 5ème et en 4ème sur l'énergie. Chaque jeu change à chaque partie.",
+          intro: "Réviser ce que tu as vu en 5ème et en 4ème sur l'énergie. Chaque jeu change à chaque partie.",
           activites: [
             {
               id: "qcm", type: "qcm", titre: "QCM éclair", desc: "5 questions sur les bases", n: 5,
@@ -950,7 +958,7 @@ const CONTENU = {
               ]
             },
             {
-              id: "relier", type: "relier", titre: "Relie les morceaux de phrases", desc: "Trace un trait entre le début et la fin", n: 5,
+              id: "relier", type: "relier", titre: "Relier les morceaux de phrases", desc: "Tracer un trait entre le début et la fin", n: 5,
               paires: [
                 ["Dans un circuit, le générateur…", "…fournit l'énergie électrique aux autres dipôles."],
                 ["Une lampe convertit l'énergie électrique…", "…en énergie lumineuse et thermique."],
@@ -1100,7 +1108,7 @@ const CONTENU = {
         // Dans les textes à trous de la conclusion, les mots entre crochets [ ] sont les mots à retrouver.
         tp: {
           titre: "Laboratoire",
-          intro: "Sur la paillasse, construis une mini-centrale électrique, fais des mesures et compare les sources d'énergie. Chaque objectif réussi débloque le suivant.",
+          intro: "Sur la paillasse : construire une mini-centrale électrique, faire des mesures et comparer les sources d'énergie. Chaque objectif réussi débloque le suivant.",
           enClasse: {
             objectif: "Montrer qu'une turbine mise en rotation entraîne un alternateur qui produit une tension, puis comparer plusieurs sources d'énergie.",
             materiel: ["Une roue à aubes (turbine) et un alternateur de bicyclette (dynamo)", "Un robinet ou une bouteille d'eau, un ventilateur", "Une petite lampe sur support, des fils de connexion", "Un multimètre utilisé en voltmètre", "Un petit panneau solaire et une lampe de bureau", "Un joulemètre"],
@@ -1110,12 +1118,12 @@ const CONTENU = {
             {
               id: "o1", competence: "Réaliser", titre: "Produire de l'électricité",
               notion: "Cours, partie 1 : turbine et alternateur",
-              but: "Construis une mini-centrale hydraulique qui allume la lampe.",
+              but: "Construire une mini-centrale hydraulique qui allume la lampe.",
               taches: [
-                { id: "tourne", texte: "Glisse la turbine sous le robinet, puis touche le robinet pour l'ouvrir : la turbine tourne." },
-                { id: "couple", texte: "Glisse l'alternateur contre l'axe de la turbine pour les accrocher." },
-                { id: "allume", texte: "Tire un fil depuis une borne ● de l'alternateur jusqu'à une borne de la lampe, puis un deuxième fil : la lampe s'allume." },
-                { id: "ferme", texte: "Ferme le robinet (touche-le jusqu'à 0) et observe la lampe." }
+                { id: "tourne", texte: "Glisser la turbine sous le robinet, puis toucher le robinet pour l'ouvrir : la turbine tourne." },
+                { id: "couple", texte: "Glisser l'alternateur contre l'axe de la turbine pour les accrocher." },
+                { id: "allume", texte: "Tirer un fil depuis une borne ● de l'alternateur jusqu'à une borne de la lampe, puis un deuxième fil : la lampe s'allume." },
+                { id: "ferme", texte: "Fermer le robinet (le toucher jusqu'à 0) et observer la lampe." }
               ],
               questions: [
                 { type: "qcm", variantes: [
@@ -1134,11 +1142,11 @@ const CONTENU = {
             {
               id: "o2", competence: "Mesurer", titre: "Mesurer la tension produite",
               notion: "Cours, partie 1 : l'alternateur",
-              but: "Mesure la tension produite par l'alternateur et découvre de quoi elle dépend.",
+              but: "Mesurer la tension produite par l'alternateur et découvrir de quoi elle dépend.",
               taches: [
-                { id: "branche", texte: "Branche le multimètre aux bornes de l'alternateur : un fil vers COM, un fil vers V." },
-                { id: "reglage", texte: "Ouvre le robinet. Touche une fonction bleue (V⎓ ou V~) autour du bouton du multimètre pour changer de réglage, jusqu'à lire une tension stable." },
-                { id: "mesures", texte: "Touche NOTER pour relever la tension avec 3 débits d'eau différents (1, 2 et 3)." }
+                { id: "branche", texte: "Brancher le multimètre aux bornes de l'alternateur : un fil vers COM, un fil vers V." },
+                { id: "reglage", texte: "Ouvrir le robinet. Toucher une fonction bleue (V⎓ ou V~) autour du bouton du multimètre pour changer de réglage, jusqu'à lire une tension stable." },
+                { id: "mesures", texte: "Toucher NOTER pour relever la tension avec 3 débits d'eau différents (1, 2 et 3)." }
               ],
               questions: [
                 { type: "qcm", variantes: [
@@ -1155,11 +1163,11 @@ const CONTENU = {
             {
               id: "o3", competence: "Comparer", titre: "Changer de source d'énergie",
               notion: "Cours, parties 2, 3 et 6 : sources, centrales, avantages et inconvénients",
-              but: "Allume la lampe avec trois autres sources d'énergie, et observe leurs différences.",
+              but: "Allumer la lampe avec trois autres sources d'énergie, et observer leurs différences.",
               taches: [
-                { id: "vent", texte: "Place le ventilateur face à la turbine et touche-le pour le mettre en marche : la lampe s'allume grâce au vent." },
-                { id: "vapeur", texte: "Arrête le ventilateur. Place la bouilloire face à la turbine et touche-la pour allumer le brûleur. Observe la réserve de combustible et la fumée." },
-                { id: "soleil", texte: "Allume la lampe sans turbine : branche-la au panneau solaire et éclaire le panneau avec la lampe de bureau." }
+                { id: "vent", texte: "Placer le ventilateur face à la turbine et le toucher pour le mettre en marche : la lampe s'allume grâce au vent." },
+                { id: "vapeur", texte: "Arrêter le ventilateur. Placer la bouilloire face à la turbine et la toucher pour allumer le brûleur. Observer la réserve de combustible et la fumée." },
+                { id: "soleil", texte: "Allumer la lampe sans turbine : la brancher au panneau solaire et éclairer le panneau avec la lampe de bureau." }
               ],
               questions: [
                 { type: "qcm", variantes: [
@@ -1180,11 +1188,11 @@ const CONTENU = {
             {
               id: "o4", competence: "Analyser", titre: "Faire le bilan d'énergie",
               notion: "Cours, partie 5 : rien ne se perd",
-              but: "Compare l'énergie reçue par la turbine et l'énergie électrique reçue par la lampe. Où passe la différence ?",
+              but: "Comparer l'énergie reçue par la turbine et l'énergie électrique reçue par la lampe. Où passe la différence ?",
               taches: [
-                { id: "joulemetre", texte: "Branche le joulemètre entre l'alternateur et la lampe : ENTRÉE vers l'alternateur, SORTIE vers la lampe. Ouvre le robinet." },
-                { id: "cent", texte: "Laisse tourner la centrale jusqu'à ce que le compteur de la turbine dépasse 100 J." },
-                { id: "chaleur", texte: "Promène la caméra thermique (attrape-la par sa poignée) sur l'alternateur, puis sur la lampe : trouve ce qui chauffe." }
+                { id: "joulemetre", texte: "Brancher le joulemètre entre l'alternateur et la lampe : ENTRÉE vers l'alternateur, SORTIE vers la lampe. Ouvrir le robinet." },
+                { id: "cent", texte: "Laisser tourner la centrale jusqu'à ce que le compteur de la turbine dépasse 100 J." },
+                { id: "chaleur", texte: "Promener la caméra thermique (l'attraper par sa poignée) sur l'alternateur, puis sur la lampe : trouver ce qui chauffe." }
               ],
               questions: [
                 { type: "releve" },
@@ -1228,7 +1236,7 @@ const CONTENU = {
         // Dans l'ordre croissant de difficulté. Le dernier est un exercice type brevet.
         entrainement: [
           {
-            id: "tri", type: "tri", titre: "Renouvelable ou pas ?", desc: "Trie 8 sources d'énergie", n: 8,
+            id: "tri", type: "tri", titre: "Renouvelable ou pas ?", desc: "Trier 8 sources d'énergie", n: 8,
             items: [
               { source: "Le Soleil", renouvelable: true, pourquoi: "Il brillera encore des milliards d'années." },
               { source: "Le fioul", renouvelable: false, pourquoi: "Il vient du pétrole, formé en millions d'années." },
@@ -1266,7 +1274,7 @@ const CONTENU = {
             ]
           },
           {
-            id: "quifait", type: "relier", titre: "Qui fait quoi ?", desc: "Relie chaque centrale à ce qui la fait fonctionner", n: 5,
+            id: "quifait", type: "relier", titre: "Qui fait quoi ?", desc: "Relier chaque centrale à ce qui la fait fonctionner", n: 5,
             paires: [
               ["Centrale hydraulique", "L'eau d'un fleuve retenue par un barrage"],
               ["Éolienne", "Le vent qui fait tourner les pales"],
@@ -1278,7 +1286,7 @@ const CONTENU = {
           },
           { id: "qcm", type: "qcm-tableur", titre: "Défi QCM", desc: "8 questions tirées au hasard", n: 8 },
           {
-            id: "chaine", type: "chaine", titre: "Construis la chaîne énergétique", desc: "Complète 3 chaînes, sans aide", n: 3,
+            id: "chaine", type: "chaine", titre: "Construire la chaîne énergétique", desc: "Compléter 3 chaînes, sans aide", n: 3,
             chaines: [
               { nom: "Centrale hydraulique", elements: ["S:Eau du barrage", "F:énergie cinétique", "C:Turbine", "F:énergie mécanique", "C:Alternateur", "F:énergie électrique"] },
               { nom: "Éolienne", elements: ["S:Vent", "F:énergie cinétique", "C:Pales et rotor", "F:énergie mécanique", "C:Alternateur", "F:énergie électrique"] },
@@ -1306,17 +1314,17 @@ const CONTENU = {
               { titre: "Document 2 : fonctionnement d'une centrale thermique", texte: "Le fioul est brûlé dans un moteur. Le moteur fait tourner un alternateur, qui produit l'électricité envoyée sur le réseau. Une partie de l'énergie est perdue sous forme de chaleur." }
             ],
             questions: [
-              { type: "multi", points: 2, consigne: "À l'aide du document 1, coche toutes les sources d'énergie renouvelables utilisées en Guyane.",
+              { type: "multi", points: 2, consigne: "À l'aide du document 1, cocher toutes les sources d'énergie renouvelables utilisées en Guyane.",
                 options: [["L'eau du fleuve Sinnamary", true], ["Le fioul", false], ["La lumière du Soleil", true], ["Les résidus de bois", true]],
                 explication: "L'eau, le Soleil et le bois se renouvellent ; le fioul, issu du pétrole, s'épuise." },
               { type: "qcm", points: 1, question: "Quel élément est présent à la fois dans le barrage et dans la centrale thermique ?",
                 reponses: ["Le fioul", "L'alternateur", "Le panneau photovoltaïque", "La retenue d'eau"], bonne: 1,
                 explication: "Dans les deux centrales, un alternateur convertit l'énergie mécanique en énergie électrique." },
-              { type: "chaine", points: 3, consigne: "À l'aide du document 2, complète la chaîne énergétique de la centrale thermique.",
+              { type: "chaine", points: 3, consigne: "À l'aide du document 2, compléter la chaîne énergétique de la centrale thermique.",
                 elements: ["S:Fioul", "F:énergie chimique", "C:Moteur", "F:énergie mécanique", "C:Alternateur", "F:énergie électrique"], trous: [1, 2, 5],
                 distracteurs: ["énergie nucléaire", "Turbine"] },
               { type: "calcul", points: 2, contexte: { objet: "le moteur de la centrale", entree: "d'énergie chimique en une minute", unite: "MJ", min: 300, max: 900, pas: 10, part: [35, 45] }, mode: "dissipee" },
-              { type: "redaction", points: 2, consigne: "La centrale au fioul de Dégrad-des-Cannes doit être remplacée. Donne deux arguments en faveur des sources renouvelables pour produire l'électricité en Guyane.",
+              { type: "redaction", points: 2, consigne: "La centrale au fioul de Dégrad-des-Cannes doit être remplacée. Donner deux arguments en faveur des sources renouvelables pour produire l'électricité en Guyane.",
                 criteres: ["J'ai donné un argument sur le climat (moins de dioxyde de carbone, moins d'effet de serre).", "J'ai donné un argument sur les ressources (le fioul s'épuise et doit être importé ; le Soleil, l'eau et le bois sont disponibles en Guyane)."],
                 elements: "Les sources renouvelables (Soleil, eau, bois) ne s'épuisent pas et sont disponibles sur place, alors que le fioul s'épuise et doit être acheminé jusqu'en Guyane. De plus, brûler du fioul rejette du dioxyde de carbone, qui renforce l'effet de serre." }
             ]
@@ -1336,7 +1344,7 @@ const CONTENU = {
 
         // ======================== 1. RAPPEL ========================
         rappel: {
-          intro: "Révise ce que tu as vu en 4ème sur les mesures électriques et l'énergie. Chaque jeu change à chaque partie.",
+          intro: "Réviser ce que tu as vu en 4ème sur les mesures électriques et l'énergie. Chaque jeu change à chaque partie.",
           activites: [
             {
               id: "qcm", type: "qcm", titre: "QCM éclair", desc: "5 questions sur les mesures et les unités", n: 5,
@@ -1360,7 +1368,7 @@ const CONTENU = {
               ]
             },
             {
-              id: "relier", type: "relier", titre: "Relie les morceaux de phrases", desc: "Trace un trait entre le début et la fin", n: 5,
+              id: "relier", type: "relier", titre: "Relier les morceaux de phrases", desc: "Tracer un trait entre le début et la fin", n: 5,
               paires: [
                 ["Pour mesurer une tension, on utilise…", "…un voltmètre branché en dérivation."],
                 ["Pour mesurer une intensité, on utilise…", "…un ampèremètre branché en série."],
@@ -1531,7 +1539,7 @@ const CONTENU = {
         // Montages de départ : 08_tp.js (w1 à w4). Objets : 07_paillasse.js (générateur, interrupteur, lampes L1 et L2, multimètres, joulemètre).
         tp: {
           titre: "Laboratoire : que veulent dire les watts ?",
-          intro: "Sur la paillasse, branche le générateur 6 V, l'interrupteur et les lampes, mesure U et I, puis découvre ce que veulent dire les watts. Chaque objectif réussi débloque le suivant.",
+          intro: "Sur la paillasse : brancher le générateur 6 V, l'interrupteur et les lampes, mesurer U et I, puis découvrir ce que veulent dire les watts. Chaque objectif réussi débloque le suivant.",
           enClasse: {
             objectif: "Lire une plaque signalétique, mesurer la tension aux bornes d'une lampe et l'intensité qui la traverse, puis vérifier que U × I donne sa puissance.",
             materiel: ["Un générateur 6 V continu (vérifier le réglage sur 6 V)", "Deux lampes sur support : L1 6 V – 0,1 A (0,6 W) et L2 6 V – 0,3 A (1,8 W)", "Un multimètre (fusible vérifié) : utilisé d'abord en voltmètre, puis rebranché en ampèremètre", "Un interrupteur et 7 fils de connexion", "Des photos ou des appareils débranchés avec leur plaque signalétique", "Un joulemètre, s'il est disponible (objectif 4)"],
@@ -1541,11 +1549,11 @@ const CONTENU = {
             {
               id: "w1", competence: "Réaliser", titre: "Allumer la lampe",
               notion: "Cours, partie 1 : la puissance et la plaque signalétique",
-              but: "Lis la plaque de la lampe L1, puis allume-la avec le générateur 6 V, en passant par l'interrupteur.",
+              but: "Lire la plaque de la lampe L1, puis l'allumer avec le générateur 6 V, en passant par l'interrupteur.",
               taches: [
-                { id: "plaque", texte: "Touche la lampe L1 pour lire sa plaque signalétique." },
-                { id: "monte", texte: "Avec 3 fils, relie en série le générateur, l'interrupteur et la lampe L1. Laisse l'interrupteur OUVERT (touche-le pour l'ouvrir ou le fermer)." },
-                { id: "allume", texte: "Ferme l'interrupteur : la lampe L1 s'allume." }
+                { id: "plaque", texte: "Toucher la lampe L1 pour lire sa plaque signalétique." },
+                { id: "monte", texte: "Avec 3 fils, relier en série le générateur, l'interrupteur et la lampe L1. Laisser l'interrupteur OUVERT (le toucher pour l'ouvrir ou le fermer)." },
+                { id: "allume", texte: "Fermer l'interrupteur : la lampe L1 s'allume." }
               ],
               questions: [
                 { type: "qcm", variantes: [
@@ -1566,11 +1574,11 @@ const CONTENU = {
             {
               id: "w2", competence: "Mesurer", titre: "Mesurer U et I",
               notion: "Rappel de 4ème : voltmètre et ampèremètre",
-              but: "Mesure la tension aux bornes de la lampe et l'intensité qui la traverse, pour L1 puis pour L2.",
+              but: "Mesurer la tension aux bornes de la lampe et l'intensité qui la traverse, pour L1 puis pour L2.",
               taches: [
-                { id: "u1", texte: "Règle le multimètre sur V⎓ (voltmètre) et branche-le en dérivation aux bornes de L1 (bornes VΩ et COM). Ferme l'interrupteur, puis touche NOTER." },
-                { id: "i1", texte: "Ouvre l'interrupteur. Retire les deux fils du multimètre et règle-le sur 10A (en rose), en commençant par le plus grand calibre. Rebranche-le en série (bornes 10A et COM) : retire un fil du circuit et mets l'ampèremètre à sa place. Ferme l'interrupteur et touche NOTER." },
-                { id: "l2", texte: "Ouvre l'interrupteur, remplace L1 par L2, puis note U et I pour L2." }
+                { id: "u1", texte: "Régler le multimètre sur V⎓ (voltmètre) et le brancher en dérivation aux bornes de L1 (bornes VΩ et COM). Fermer l'interrupteur, puis toucher NOTER." },
+                { id: "i1", texte: "Ouvrir l'interrupteur. Retirer les deux fils du multimètre et le régler sur 10A (en rose), en commençant par le plus grand calibre. Le rebrancher en série (bornes 10A et COM) : retirer un fil du circuit et mettre l'ampèremètre à sa place. Fermer l'interrupteur et toucher NOTER." },
+                { id: "l2", texte: "Ouvrir l'interrupteur, remplacer L1 par L2, puis noter U et I pour L2." }
               ],
               questions: [
                 { type: "qcm", variantes: [
@@ -1591,11 +1599,11 @@ const CONTENU = {
             {
               id: "w3", competence: "Valider", titre: "Comparer U × I et la puissance indiquée",
               notion: "Cours, partie 2 : calculer une puissance, P = U × I",
-              but: "Compare l'éclat des deux lampes, puis vérifie avec tes mesures que U × I donne la puissance indiquée sur la plaque.",
+              but: "Comparer l'éclat des deux lampes, puis vérifier avec les mesures que U × I donne la puissance indiquée sur la plaque.",
               taches: [
-                { id: "plaque2", texte: "Touche la lampe L2 pour lire sa plaque." },
-                { id: "eclatL1", texte: "Ferme l'interrupteur : L1 s'allume. Observe son éclat." },
-                { id: "eclatL2", texte: "Ouvre l'interrupteur, remplace L1 par L2, puis allume L2. Compare son éclat à celui de L1." }
+                { id: "plaque2", texte: "Toucher la lampe L2 pour lire sa plaque." },
+                { id: "eclatL1", texte: "Fermer l'interrupteur : L1 s'allume. Observer son éclat." },
+                { id: "eclatL2", texte: "Ouvrir l'interrupteur, remplacer L1 par L2, puis allumer L2. Comparer son éclat à celui de L1." }
               ],
               questions: [
                 { type: "produit" },
@@ -1617,10 +1625,10 @@ const CONTENU = {
             {
               id: "w4", competence: "Analyser", titre: "L'énergie dépend de la durée",
               notion: "Cours, partie 4 : l'énergie, E = P × t",
-              but: "Avec le joulemètre, mesure l'énergie reçue par chaque lampe en 20 secondes.",
+              but: "Avec le joulemètre, mesurer l'énergie reçue par chaque lampe en 20 secondes.",
               taches: [
-                { id: "jl2", texte: "Le générateur est déjà relié à l'ENTRÉE du joulemètre. Relie sa SORTIE à la lampe L2, en passant par l'interrupteur. Ferme l'interrupteur et laisse le chrono atteindre 20 s." },
-                { id: "jl1", texte: "Remets le joulemètre à zéro (touche son écran), remplace L2 par L1 et recommence pendant 20 s." }
+                { id: "jl2", texte: "Le générateur est déjà relié à l'ENTRÉE du joulemètre. Relier sa SORTIE à la lampe L2, en passant par l'interrupteur. Fermer l'interrupteur et laisser le chrono atteindre 20 s." },
+                { id: "jl1", texte: "Remettre le joulemètre à zéro (toucher son écran), remplacer L2 par L1 et recommencer pendant 20 s." }
               ],
               questions: [
                 { type: "qcm", variantes: [
@@ -1671,7 +1679,7 @@ const CONTENU = {
         // Dans l'ordre croissant de difficulté. Le dernier est un exercice type brevet.
         entrainement: [
           {
-            id: "unites", type: "relier", titre: "Grandeurs et unités", desc: "Relie chaque grandeur à son unité", n: 5,
+            id: "unites", type: "relier", titre: "Grandeurs et unités", desc: "Relier chaque grandeur à son unité", n: 5,
             paires: [
               ["La puissance P", "s'exprime en watts (W)."],
               ["La tension U", "s'exprime en volts (V)."],
@@ -1704,7 +1712,7 @@ const CONTENU = {
           },
           { id: "qcm", type: "qcm-tableur", titre: "Défi QCM", desc: "8 questions tirées au hasard", n: 8 },
           {
-            id: "calculs", type: "qcm", titre: "Calcule sans te tromper d'unité", desc: "6 calculs : puissance, énergie, coût", n: 6,
+            id: "calculs", type: "qcm", titre: "Calculer sans se tromper d'unité", desc: "6 calculs : puissance, énergie, coût", n: 6,
             questions: [
               { question: "Une console portable fonctionne sous 5 V avec une intensité de 1,5 A. Quelle est sa puissance ?", reponses: ["6,5 W", "7,5 W", "3,3 W", "75 W"], bonne: 1,
                 explication: "P = U × I = 5 × 1,5 = 7,5 W." },
@@ -1746,7 +1754,7 @@ const CONTENU = {
               { type: "qcm", points: 1, question: "À l'aide du document 1, calcule la puissance du climatiseur.",
                 reponses: ["Environ 1 000 W", "234,35 W", "Environ 53 W", "1 000 kWh"], bonne: 0,
                 explication: "P = U × I = 230 × 4,35 ≈ 1 000 W, soit 1 kW." },
-              { type: "multi", points: 2, consigne: "À l'aide des documents 1 et 2, coche toutes les affirmations exactes.",
+              { type: "multi", points: 2, consigne: "À l'aide des documents 1 et 2, cocher toutes les affirmations exactes.",
                 options: [["Climatiseur + ventilateur + box : I ≈ 4,6 A, la multiprise n'est pas surchargée.", true], ["En ajoutant le fer à repasser, I ≈ 16,8 A : la multiprise est surchargée.", true], ["Pour calculer l'intensité, on utilise I = P × U.", false], ["Une multiprise ne chauffe jamais, quel que soit le nombre d'appareils.", false]],
                 explication: "Sans le fer : I = 1 060 ÷ 230 ≈ 4,6 A. Avec le fer : I = 3 860 ÷ 230 ≈ 16,8 A, plus que 16 A. On utilise I = P ÷ U." },
               { type: "qcm", points: 2, question: "Quelle énergie le climatiseur consomme-t-il en une nuit de 8 h ?",
@@ -1755,10 +1763,10 @@ const CONTENU = {
               { type: "qcm", points: 2, question: "À l'aide du document 3, calcule le coût du climatiseur pour 30 nuits.",
                 reponses: [euros(8 * PRIX_KWH), euros(240 / PRIX_KWH), euros(240 * PRIX_KWH), euros(240)], bonne: 2,
                 explication: `En 30 nuits : 8 × 30 = 240 kWh. Coût = 240 × ${euros(PRIX_KWH)} = ${euros(240 * PRIX_KWH)}.` },
-              { type: "chaine", points: 1, consigne: "Complète la chaîne énergétique du ventilateur.",
+              { type: "chaine", points: 1, consigne: "Compléter la chaîne énergétique du ventilateur.",
                 elements: ["S:Réseau électrique", "F:énergie électrique", "C:Ventilateur", "F:énergie mécanique"], trous: [1, 3],
                 distracteurs: ["énergie chimique", "énergie nucléaire"] },
-              { type: "redaction", points: 2, consigne: "Maëlys veut faire baisser la facture. Explique pourquoi le climatiseur coûte cher, puis propose deux éco-gestes.",
+              { type: "redaction", points: 2, consigne: "Maëlys veut faire baisser la facture. Expliquer pourquoi le climatiseur coûte cher, puis proposer deux éco-gestes.",
                 criteres: ["J'ai expliqué que le climatiseur est très puissant (1 000 W, 20 fois plus qu'un ventilateur) et fonctionne longtemps : il consomme beaucoup d'énergie (E = P × t).", "J'ai proposé deux éco-gestes (ventilateur quand c'est possible, climatiseur vers 26 °C avec la porte fermée, éteindre la box et la télévision au lieu de la veille…)."],
                 elements: "Le climatiseur a une grande puissance (1 000 W) et fonctionne 8 h par nuit : il consomme 8 kWh par nuit, 20 fois plus qu'un ventilateur. Pour payer moins : utiliser le ventilateur quand il ne fait pas trop chaud, régler le climatiseur vers 26 °C en fermant la porte, éteindre la box et la télévision au lieu de les laisser en veille." }
             ]
@@ -1779,7 +1787,7 @@ const CONTENU = {
 
         // ======================== 1. RAPPEL ========================
         rappel: {
-          intro: "Révise ce que tu as vu en 4ème sur les transformations chimiques et la combustion, et ce que tu sais déjà des chaînes énergétiques. Chaque jeu change à chaque partie.",
+          intro: "Réviser ce que tu as vu en 4ème sur les transformations chimiques et la combustion, et ce que tu sais déjà des chaînes énergétiques. Chaque jeu change à chaque partie.",
           activites: [
             {
               id: "qcm", type: "qcm", titre: "QCM éclair", desc: "5 questions sur les transformations chimiques", n: 5,
@@ -1803,7 +1811,7 @@ const CONTENU = {
               ]
             },
             {
-              id: "relier", type: "relier", titre: "Relie les morceaux de phrases", desc: "Trace un trait entre le début et la fin", n: 5,
+              id: "relier", type: "relier", titre: "Relier les morceaux de phrases", desc: "Tracer un trait entre le début et la fin", n: 5,
               paires: [
                 ["Les réactifs sont…", "…les espèces consommées pendant la transformation."],
                 ["Les produits sont…", "…les espèces formées pendant la transformation."],
@@ -1847,7 +1855,7 @@ const CONTENU = {
             { t: "p", texte: "L'<strong>énergie chimique</strong> est l'énergie <strong>stockée dans la matière</strong>. Elle est libérée lors des <strong>transformations chimiques</strong>." },
             { t: "p", texte: "Réservoirs d'énergie chimique : le bois, l'essence, le gazole, le gaz, les aliments, les piles et les batteries." },
             { t: "exemple", type: "tri", competence: 1, n: 4,
-              question: "Contient-il de l'énergie chimique ?", oui: "Oui", non: "Non", court: ["Oui", "Non"], consigne: "Pour chaque objet, dis s'il stocke de l'énergie chimique.",
+              question: "Contient-il de l'énergie chimique ?", oui: "Oui", non: "Non", court: ["Oui", "Non"], consigne: "Pour chaque objet, indiquer s'il stocke de l'énergie chimique.",
               items: [
                 { source: "Le bois", oui: true }, { source: "Le vent", oui: false },
                 { source: "L'essence d'une pirogue", oui: true }, { source: "La lumière du Soleil", oui: false },
@@ -1954,7 +1962,7 @@ const CONTENU = {
         // Valeurs simulées : 0,9 V par citron et 0,8 V par gobelet d'eau salée (comme dans le TP et le TD de S29) ; DEL rouge : environ 1,8 V.
         tp: {
           titre: "Laboratoire : peut-on allumer une DEL avec des citrons ?",
-          intro: "Sur la paillasse, fabrique une pile au citron, mesure sa tension, associe des citrons pour allumer une DEL, puis découvre ce que produit une combustion. Chaque objectif réussi débloque le suivant.",
+          intro: "Sur la paillasse : fabriquer une pile au citron, mesurer sa tension, associer des citrons pour allumer une DEL, puis découvrir ce que produit une combustion. Chaque objectif réussi débloque le suivant.",
           enClasse: {
             objectif: "Fabriquer une pile avec deux métaux et un citron, mesurer sa tension, associer des piles en série pour allumer une DEL, puis montrer qu'une combustion consomme du dioxygène et produit du dioxyde de carbone.",
             materiel: ["4 citrons (ou gobelets de vinaigre blanc ou d'eau salée) par binôme", "4 lames de zinc et 4 lames de cuivre, nettoyées au papier abrasif", "Un multimètre utilisé en voltmètre (V⎓, calibre 20 V)", "Une DEL rouge haute luminosité (+ une de rechange)", "6 fils avec pinces crocodiles", "Démonstration du professeur : une bougie, un bocal, de l'eau de chaux, des allumettes"],
@@ -1964,11 +1972,11 @@ const CONTENU = {
             {
               id: "p1", competence: "Réaliser", titre: "Fabriquer une pile au citron",
               notion: "Cours, partie 2 : la pile",
-              but: "Plante deux lames de métaux différents dans le citron, puis mesure la tension de ta pile.",
+              but: "Planter deux lames de métaux différents dans le citron, puis mesurer la tension de la pile.",
               taches: [
-                { id: "plante", texte: "Glisse la lame de zinc, puis la lame de cuivre dans le citron : elles s'y plantent sans se toucher." },
-                { id: "branche", texte: "Règle le multimètre sur V⎓ (touche V⎓, en bleu, autour du bouton). Relie la lame de cuivre à la borne VΩ et la lame de zinc à la borne COM." },
-                { id: "note", texte: "Touche NOTER pour relever la tension de la pile au citron." }
+                { id: "plante", texte: "Glisser la lame de zinc, puis la lame de cuivre dans le citron : elles s'y plantent sans se toucher." },
+                { id: "branche", texte: "Régler le multimètre sur V⎓ (toucher V⎓, en bleu, autour du bouton). Relier la lame de cuivre à la borne VΩ et la lame de zinc à la borne COM." },
+                { id: "note", texte: "Toucher NOTER pour relever la tension de la pile au citron." }
               ],
               questions: [
                 { type: "qcm", variantes: [
@@ -1987,11 +1995,11 @@ const CONTENU = {
             {
               id: "p2", competence: "Comparer", titre: "Qu'est-ce qui compte dans une pile ?",
               notion: "Cours, partie 2 : la pile",
-              but: "Change un seul élément à la fois et compare les tensions : le sens des fils, les métaux, puis la solution.",
+              but: "Changer un seul élément à la fois et comparer les tensions : le sens des fils, les métaux, puis la solution.",
               taches: [
-                { id: "inverse", texte: "Inverse les deux fils du multimètre (zinc vers V, cuivre vers COM), puis touche NOTER." },
-                { id: "memes", texte: "Sors la lame de zinc du citron (glisse-la dehors) et plante la deuxième lame de cuivre à sa place. Rebranche le multimètre aux deux lames, puis touche NOTER." },
-                { id: "sale", texte: "Fabrique une pile dans le gobelet d'eau salée avec une lame de zinc et une lame de cuivre. Mesure sa tension et touche NOTER." }
+                { id: "inverse", texte: "Inverser les deux fils du multimètre (zinc vers V, cuivre vers COM), puis toucher NOTER." },
+                { id: "memes", texte: "Sortir la lame de zinc du citron (la glisser dehors) et planter la deuxième lame de cuivre à sa place. Rebrancher le multimètre aux deux lames, puis toucher NOTER." },
+                { id: "sale", texte: "Fabriquer une pile dans le gobelet d'eau salée avec une lame de zinc et une lame de cuivre. Mesurer sa tension et toucher NOTER." }
               ],
               questions: [
                 { type: "qcm", variantes: [
@@ -2010,11 +2018,11 @@ const CONTENU = {
             {
               id: "p3", competence: "Valider", titre: "Allumer la DEL",
               notion: "Cours, partie 2 : la loi d'additivité des tensions",
-              but: "Associe les citrons en série et mesure la tension totale, puis allume la DEL.",
+              but: "Associer les citrons en série et mesurer la tension totale, puis allumer la DEL.",
               taches: [
-                { id: "deux", texte: "Relie 2 citrons en série : le cuivre du citron 1 au zinc du citron 2. Mesure la tension totale (COM sur le premier zinc, V sur le dernier cuivre) et touche NOTER." },
-                { id: "plus", texte: "Ajoute un 3e, puis un 4e citron en série. Note la tension totale à chaque fois." },
-                { id: "del", texte: "Retire le multimètre et branche la DEL à sa place : patte longue (+) côté cuivre, patte courte (−) côté zinc. Trouve combien de citrons il faut pour qu'elle s'allume." }
+                { id: "deux", texte: "Relier 2 citrons en série : le cuivre du citron 1 au zinc du citron 2. Mesurer la tension totale (COM sur le premier zinc, V sur le dernier cuivre) et toucher NOTER." },
+                { id: "plus", texte: "Ajouter un 3e, puis un 4e citron en série. Noter la tension totale à chaque fois." },
+                { id: "del", texte: "Retirer le multimètre et brancher la DEL à sa place : patte longue (+) côté cuivre, patte courte (−) côté zinc. Trouver combien de citrons il faut pour qu'elle s'allume." }
               ],
               questions: [
                 { type: "qcm", variantes: [
@@ -2037,11 +2045,11 @@ const CONTENU = {
               notion: "Cours, partie 3 : les combustions",
               but: "En classe, c'est le professeur qui fait cette expérience. Ici, tu la réalises toi-même, sans danger, et tu compares avec un bocal témoin qui contient seulement l'air de la salle.",
               taches: [
-                { id: "allume", texte: "Touche la bougie pour l'allumer : la cire brûle." },
-                { id: "eteinte", texte: "Glisse le bocal (à l'envers) sur la bougie allumée. Observe la flamme et les parois du bocal." },
-                { id: "retourne", texte: "Quand la flamme est éteinte, touche le bocal : on le retourne et on le ferme aussitôt, pour garder le gaz produit." },
-                { id: "trouble", texte: "Glisse le flacon d'eau de chaux sur ce bocal pour en verser, puis touche le bocal pour l'agiter, jusqu'à ce que l'eau de chaux change d'aspect." },
-                { id: "temoin", texte: "Fais le même test avec le bocal témoin : verse l'eau de chaux, agite, compare." }
+                { id: "allume", texte: "Toucher la bougie pour l'allumer : la cire brûle." },
+                { id: "eteinte", texte: "Glisser le bocal (à l'envers) sur la bougie allumée. Observer la flamme et les parois du bocal." },
+                { id: "retourne", texte: "Quand la flamme est éteinte, toucher le bocal : on le retourne et on le ferme aussitôt, pour garder le gaz produit." },
+                { id: "trouble", texte: "Glisser le flacon d'eau de chaux sur ce bocal pour en verser, puis toucher le bocal pour l'agiter, jusqu'à ce que l'eau de chaux change d'aspect." },
+                { id: "temoin", texte: "Faire le même test avec le bocal témoin : verser l'eau de chaux, agiter, comparer." }
               ],
               questions: [
                 { type: "qcm", variantes: [
@@ -2100,7 +2108,7 @@ const CONTENU = {
         // Dans l'ordre croissant de difficulté. Le dernier est un exercice type brevet (d'après l'exercice 5 du TD de S29).
         entrainement: [
           {
-            id: "tri", type: "tri", titre: "Rejette du CO₂ ou pas ?", desc: "Trie 8 dispositifs", n: 8,
+            id: "tri", type: "tri", titre: "Rejette du CO₂ ou pas ?", desc: "Trier 8 dispositifs", n: 8,
             question: "En fonctionnant, ce dispositif rejette-t-il du dioxyde de carbone ?", oui: "Rejette du CO₂", non: "Pas de CO₂",
             items: [
               { source: "Le moteur d'une pirogue", oui: true, pourquoi: "L'essence brûle dans le moteur : la combustion produit du CO₂." },
@@ -2119,7 +2127,7 @@ const CONTENU = {
             ]
           },
           {
-            id: "quifait", type: "relier", titre: "Qui convertit quoi ?", desc: "Relie chaque dispositif à sa conversion", n: 5,
+            id: "quifait", type: "relier", titre: "Qui convertit quoi ?", desc: "Relier chaque dispositif à sa conversion", n: 5,
             paires: [
               ["Une pile", "énergie chimique → énergie électrique"],
               ["Le moteur d'une voiture", "énergie chimique de l'essence → énergie cinétique"],
@@ -2151,7 +2159,7 @@ const CONTENU = {
           },
           { id: "qcm", type: "qcm-tableur", titre: "Défi QCM", desc: "8 questions tirées au hasard", n: 8 },
           {
-            id: "chaine", type: "chaine", titre: "Construis la chaîne énergétique", desc: "Complète 3 chaînes, sans aide", n: 3,
+            id: "chaine", type: "chaine", titre: "Construire la chaîne énergétique", desc: "Compléter 3 chaînes, sans aide", n: 3,
             chaines: [
               { nom: "La pile au citron", elements: ["S:Zinc, cuivre, citron", "F:énergie chimique", "C:Pile", "F:énergie électrique"] },
               { nom: "Les piles d'une lampe torche", elements: ["S:Piles", "F:énergie chimique", "C:Piles", "F:énergie électrique"] },
@@ -2191,10 +2199,10 @@ const CONTENU = {
               { titre: "Document 3 : les batteries", texte: "Le jour, les panneaux solaires chargent des batteries. La nuit, les batteries alimentent le village. Chaque batterie a une tension de 12 V ; on en associe plusieurs en série." }
             ],
             questions: [
-              { type: "chaine", points: 2, consigne: "À l'aide du document 2, complète la chaîne énergétique du groupe électrogène.",
+              { type: "chaine", points: 2, consigne: "À l'aide du document 2, compléter la chaîne énergétique du groupe électrogène.",
                 elements: ["S:Gazole + dioxygène", "F:énergie chimique", "C:Moteur + alternateur", "F:énergie électrique"], trous: [1, 3],
                 distracteurs: ["énergie lumineuse", "énergie nucléaire"] },
-              { type: "multi", points: 2, consigne: "À l'aide des documents, coche tous les dispositifs qui rejettent du dioxyde de carbone en fonctionnant.",
+              { type: "multi", points: 2, consigne: "À l'aide des documents, cocher tous les dispositifs qui rejettent du dioxyde de carbone en fonctionnant.",
                 options: [["Le groupe électrogène", true], ["La pirogue à moteur qui transporte le gazole", true], ["Les panneaux solaires", false], ["Les batteries", false]],
                 explication: "Le groupe électrogène et le moteur de la pirogue brûlent un carburant : la combustion produit du CO₂. Les panneaux et les batteries ne brûlent rien." },
               { type: "qcm", points: 1, question: "La nuit, sous quelle forme l'énergie est-elle stockée dans les batteries ?",
@@ -2203,7 +2211,7 @@ const CONTENU = {
               { type: "qcm", points: 2, question: "À l'aide du document 3, calcule la tension de 4 batteries associées en série.",
                 reponses: ["12 V", "16 V", "48 V", "3 V"], bonne: 2,
                 explication: "Loi d'additivité : U = 12 + 12 + 12 + 12 = 4 × 12 = 48 V. (16 V : on a ajouté 4 au lieu de multiplier.)" },
-              { type: "redaction", points: 3, consigne: "Rédige un court paragraphe pour conseiller la commune : panneaux solaires ou groupe électrogène ? Donne au moins deux arguments.",
+              { type: "redaction", points: 3, consigne: "Rédiger un court paragraphe pour conseiller la commune : panneaux solaires ou groupe électrogène ? Donner au moins deux arguments.",
                 criteres: ["J'ai donné un argument sur le climat : le solaire ne rejette pas de CO₂ en fonctionnant, contrairement à la combustion du gazole (effet de serre).", "J'ai donné un argument sur les ressources : le Soleil est renouvelable et abondant en Guyane ; le gazole s'épuise et doit être transporté en pirogue.", "J'ai cité une limite du solaire : il faut des batteries (coût, recyclage) et parfois garder le groupe électrogène en secours."],
                 elements: "Les panneaux solaires utilisent une source renouvelable, abondante en Guyane, et ne rejettent pas de dioxyde de carbone en fonctionnant ; ils évitent aussi de transporter le gazole en pirogue. Mais il faut des batteries pour la nuit (coût, recyclage), et on peut garder le groupe électrogène en secours." }
             ]
@@ -2225,7 +2233,7 @@ const CONTENU = {
         qcm: "L'intensité du courant électrique",
         // ======================== RAPPEL (notions de 5ème) ========================
         rappel: {
-          intro: "Révise ce que tu as vu en 5ème sur les circuits électriques. Chaque jeu change à chaque partie.",
+          intro: "Réviser ce que tu as vu en 5ème sur les circuits électriques. Chaque jeu change à chaque partie.",
           activites: [
             { id: "qcm", type: "qcm", titre: "QCM éclair", desc: "5 questions sur les circuits", n: 5, questions: [
               { question: "Une lampe s'allume si…", reponses: ["elle fait partie d'une boucle fermée avec le générateur", "elle touche le générateur", "un seul fil la relie au générateur", "l'interrupteur est ouvert"], bonne: 0, explication: "Le courant circule seulement dans un circuit fermé : une boucle complète." },
@@ -2237,7 +2245,7 @@ const CONTENU = {
               { question: "Deux lampes sont sur deux boucles différentes du circuit. Elles sont…", reponses: ["en dérivation", "en série", "en court-circuit", "isolées"], bonne: 0, explication: "Plusieurs boucles : dérivation." },
               { question: "Quel est le rôle du générateur ?", reponses: ["Fournir l'énergie électrique au circuit", "Mesurer le courant", "Couper le circuit", "Éclairer"], bonne: 0, explication: "Le générateur (pile, batterie…) fournit l'énergie électrique aux autres dipôles." }
             ] },
-            { id: "relier", type: "relier", titre: "Les symboles normalisés", desc: "Relie chaque symbole à son dipôle", n: 5, paires: [
+            { id: "relier", type: "relier", titre: "Les symboles normalisés", desc: "Relier chaque symbole à son dipôle", n: 5, paires: [
               ["Un cercle barré d'une croix", "La lampe"], ["Un cercle avec la lettre M", "Le moteur"], ["Un triangle contre un trait, avec deux flèches", "La DEL"],
               ["Un grand trait et un petit trait parallèles", "La pile (le générateur)"], ["Un trait levé qui ne touche pas l'autre borne", "L'interrupteur ouvert"], ["Un cercle avec la lettre A", "L'ampèremètre"], ["Un cercle avec la lettre V", "Le voltmètre"]
             ] },
@@ -2252,7 +2260,7 @@ const CONTENU = {
         },
         // ======================== ENTRAÎNEMENT ========================
         entrainement: [
-          { id: "tri", type: "tri", titre: "Série ou dérivation ?", desc: "Trie 8 situations", n: 8, question: "Les dipôles de cette situation sont-ils en série ou en dérivation ?", oui: "En série", non: "En dérivation", items: [
+          { id: "tri", type: "tri", titre: "Série ou dérivation ?", desc: "Trier 8 situations", n: 8, question: "Les dipôles de cette situation sont-ils en série ou en dérivation ?", oui: "En série", non: "En dérivation", items: [
             { source: "Les lampes et les prises d'une maison", oui: false, pourquoi: "Chaque appareil fonctionne seul : elles sont en dérivation." },
             { source: "Une lampe et l'interrupteur qui la commande", oui: true, pourquoi: "L'interrupteur est sur la même boucle que la lampe." },
             { source: "Une vieille guirlande : une lampe grille, tout s'éteint", oui: true, pourquoi: "Une seule boucle : une lampe grillée ouvre tout le circuit." },
@@ -2263,7 +2271,7 @@ const CONTENU = {
             { source: "Les appareils branchés sur une multiprise", oui: false, pourquoi: "Chaque prise de la multiprise est une branche : dérivation." },
             { source: "Les piles d'une lampe torche, bout à bout", oui: true, pourquoi: "Le + de l'une touche le − de la suivante : en série." }
           ] },
-          { id: "unites", type: "relier", titre: "Conversions d'intensité", desc: "Relie les valeurs égales", n: 5, paires: [
+          { id: "unites", type: "relier", titre: "Conversions d'intensité", desc: "Relier les valeurs égales", n: 5, paires: [
             ["0,2 A", "200 mA"], ["45 mA", "0,045 A"], ["1,2 A", "1 200 mA"], ["500 mA", "0,5 A"], ["0,03 A", "30 mA"], ["2 500 mA", "2,5 A"], ["0,008 A", "8 mA"]
           ] },
           { id: "vf", type: "vraifaux", titre: "Vrai ou faux ?", desc: "8 affirmations à juger", n: 8, items: [
@@ -2281,7 +2289,7 @@ const CONTENU = {
             { affirmation: "Le courant « s'use » en traversant une lampe.", vrai: false, explication: "Le courant n'est pas consommé : l'intensité est la même avant et après la lampe." }
           ] },
           { id: "qcm", type: "qcm-tableur", titre: "Défi QCM", desc: "8 questions tirées au hasard", n: 8 },
-          { id: "calculs", type: "qcm", titre: "Calcule les intensités", desc: "6 calculs avec les lois des intensités", n: 6, questions: [
+          { id: "calculs", type: "qcm", titre: "Calculer les intensités", desc: "6 calculs avec les lois des intensités", n: 6, questions: [
             { question: "Deux lampes en dérivation : I₁ = 0,2 A et I₂ = 0,3 A. Que vaut I dans la branche principale ?", reponses: ["0,5 A", "0,1 A", "0,06 A", "0,3 A"], bonne: 0, explication: "I = I₁ + I₂ = 0,2 + 0,3 = 0,5 A." },
             { question: "I = 0,8 A dans la branche principale et I₁ = 0,3 A. Que vaut I₂ ?", reponses: ["1,1 A", "0,5 A", "0,3 A", "0,24 A"], bonne: 1, explication: "I₂ = I − I₁ = 0,8 − 0,3 = 0,5 A." },
             { question: "Trois lampes en série. La première est traversée par 150 mA. Et la troisième ?", reponses: ["50 mA", "450 mA", "150 mA", "0 mA"], bonne: 2, explication: "En série, l'intensité est la même partout : 150 mA." },
@@ -2298,9 +2306,9 @@ const CONTENU = {
             questions: [
               { type: "qcm", points: 1, question: "Pourquoi les lampes du carbet sont-elles branchées en dérivation ?", reponses: ["Pour que chaque lampe fonctionne même si une autre grille ou est éteinte", "Pour que l'intensité soit plus petite", "Pour économiser des fils", "Parce que la batterie l'impose"], bonne: 0, explication: "En dérivation, chaque lampe a sa propre boucle : elle fonctionne indépendamment des autres." },
               { type: "qcm", points: 2, question: "À l'aide du document 1, calcule l'intensité dans la branche principale avec les 3 lampes allumées.", reponses: ["0,5 A", "1,5 A", "0,17 A", "3,5 A"], bonne: 1, explication: "Loi d'additivité : I = 0,5 + 0,5 + 0,5 = 1,5 A." },
-              { type: "multi", points: 2, consigne: "Coche toutes les affirmations exactes.", options: [["Avec 5 lampes, l'intensité dans la branche principale vaut 2,5 A.", true], ["Avec 5 lampes, le fusible de 2 A fond.", true], ["Le fusible se branche en dérivation.", false], ["Pour mesurer l'intensité d'une lampe, on branche l'ampèremètre en série avec elle.", true]], explication: "5 × 0,5 = 2,5 A > 2 A : le fusible fond. Fusible et ampèremètre se branchent en série." },
+              { type: "multi", points: 2, consigne: "Cocher toutes les affirmations exactes.", options: [["Avec 5 lampes, l'intensité dans la branche principale vaut 2,5 A.", true], ["Avec 5 lampes, le fusible de 2 A fond.", true], ["Le fusible se branche en dérivation.", false], ["Pour mesurer l'intensité d'une lampe, on branche l'ampèremètre en série avec elle.", true]], explication: "5 × 0,5 = 2,5 A > 2 A : le fusible fond. Fusible et ampèremètre se branchent en série." },
               { type: "qcm", points: 2, question: "On mesure l'intensité d'une lampe : l'ampèremètre, réglé sur mA, affiche 498. Que conclure ?", reponses: ["I ≈ 0,5 A : la lampe fonctionne normalement", "I = 498 A : la lampe va griller", "I = 4,98 A", "L'ampèremètre est mal branché"], bonne: 0, explication: "498 mA ≈ 0,5 A, comme indiqué dans le document 1." },
-              { type: "redaction", points: 3, consigne: "Kenzo veut ajouter les deux lampes. Explique le problème et propose une solution sûre.", criteres: ["J'ai calculé l'intensité avec 5 lampes (2,5 A) et je l'ai comparée à 2 A.", "J'ai expliqué que le fusible fondrait (ou que les fils chaufferaient) : c'est le rôle de protection du fusible.", "J'ai proposé une solution sûre (deuxième circuit protégé par son propre fusible, lampes moins gourmandes comme des DEL…) sans supprimer le fusible."],
+              { type: "redaction", points: 3, consigne: "Kenzo veut ajouter les deux lampes. Expliquer le problème et proposer une solution sûre.", criteres: ["J'ai calculé l'intensité avec 5 lampes (2,5 A) et je l'ai comparée à 2 A.", "J'ai expliqué que le fusible fondrait (ou que les fils chaufferaient) : c'est le rôle de protection du fusible.", "J'ai proposé une solution sûre (deuxième circuit protégé par son propre fusible, lampes moins gourmandes comme des DEL…) sans supprimer le fusible."],
                 elements: "Avec 5 lampes, I = 5 × 0,5 = 2,5 A dans la branche principale : c'est plus que 2 A, le fusible fondrait. Il ne faut surtout pas le remplacer par un plus gros fusible ni le supprimer : les fils chaufferaient. Solution : faire un second circuit avec son propre fusible, ou utiliser des lampes à DEL qui demandent une intensité plus petite." }
             ] }
         ],
@@ -2401,7 +2409,7 @@ const CONTENU = {
         // TP : montages i1 à i4 dans 08_tp.js. Mesures « libres » : l'ampèremètre peut être placé n'importe où.
         tp: {
           titre: "Laboratoire : l'intensité du courant",
-          intro: "Sur la paillasse, mesure l'intensité avec l'ampèremètre, découvre les lois des intensités en série et en dérivation, puis observe le rôle du fusible. Chaque objectif réussi débloque le suivant.",
+          intro: "Sur la paillasse : mesurer l'intensité avec l'ampèremètre, découvrir les lois des intensités en série et en dérivation, puis observer le rôle du fusible. Chaque objectif réussi débloque le suivant.",
           enClasse: {
             objectif: "Mesurer une intensité avec un ampèremètre, vérifier les lois des intensités dans un circuit en série et dans un circuit avec une dérivation, comprendre le rôle d'un fusible.",
             materiel: ["Un générateur 6 V continu", "Trois lampes sur support : L1 6 V – 0,1 A, L2 et L3 6 V – 0,3 A", "Un multimètre utilisé en ampèremètre (fusible vérifié)", "Un interrupteur, des fils de connexion", "Un porte-fusible et des fusibles de 0,5 A (démonstration)"],
@@ -2411,10 +2419,10 @@ const CONTENU = {
             {
               id: "i1", competence: "Réaliser", titre: "Mesurer une intensité",
               notion: "Cours, parties 2 et 3 : l'intensité, l'ampèremètre",
-              but: "Mesure l'intensité du courant qui traverse la lampe L1, d'abord sur le calibre 10 A, puis sur le calibre 200 mA.",
+              but: "Mesurer l'intensité du courant qui traverse la lampe L1, d'abord sur le calibre 10 A, puis sur le calibre 200 mA.",
               taches: [
-                { id: "a10", texte: "Ouvre l'interrupteur. Règle le multimètre sur 10A (en rose). Retire un fil du circuit et mets l'ampèremètre à sa place (bornes A et COM). Ferme l'interrupteur et touche NOTER." },
-                { id: "ma", texte: "Ouvre l'interrupteur, déplace le fil de la borne 10A vers la borne mA et choisis mA (en rose). Ferme l'interrupteur et touche NOTER : la mesure est plus précise." }
+                { id: "a10", texte: "Ouvrir l'interrupteur. Régler le multimètre sur 10A (en rose). Retirer un fil du circuit et mettre l'ampèremètre à sa place (bornes A et COM). Fermer l'interrupteur et toucher NOTER." },
+                { id: "ma", texte: "Ouvrir l'interrupteur, déplacer le fil de la borne 10A vers la borne mA et choisir mA (en rose). Fermer l'interrupteur et toucher NOTER : la mesure est plus précise." }
               ],
               questions: [
                 { type: "qcm", variantes: [
@@ -2433,7 +2441,7 @@ const CONTENU = {
               notion: "Cours, partie 4 : les lois des intensités",
               but: "Les lampes L1 et L2 sont en série. L'intensité est-elle la même partout ?",
               taches: [
-                { id: "trois", texte: "Place l'ampèremètre à trois endroits différents du circuit (avant L1, entre les lampes, après L2…). À chaque fois, ferme l'interrupteur et touche NOTER." }
+                { id: "trois", texte: "Placer l'ampèremètre à trois endroits différents du circuit (avant L1, entre les lampes, après L2…). À chaque fois, fermer l'interrupteur et toucher NOTER." }
               ],
               questions: [
                 { type: "qcm", variantes: [
@@ -2449,11 +2457,11 @@ const CONTENU = {
             {
               id: "i3", competence: "Valider", titre: "Le circuit avec une dérivation",
               notion: "Cours, partie 4 : loi d'additivité des intensités",
-              but: "Les lampes L1 et L2 sont en dérivation. Compare l'intensité dans la branche principale et dans chaque branche.",
+              but: "Les lampes L1 et L2 sont en dérivation. Comparer l'intensité dans la branche principale et dans chaque branche.",
               taches: [
-                { id: "princ", texte: "Mesure l'intensité I dans la branche principale (celle du générateur)." },
-                { id: "b1", texte: "Mesure l'intensité I₁ dans la branche de la lampe L1." },
-                { id: "b2", texte: "Mesure l'intensité I₂ dans la branche de la lampe L2." }
+                { id: "princ", texte: "Mesurer l'intensité I dans la branche principale (celle du générateur)." },
+                { id: "b1", texte: "Mesurer l'intensité I₁ dans la branche de la lampe L1." },
+                { id: "b2", texte: "Mesurer l'intensité I₂ dans la branche de la lampe L2." }
               ],
               questions: [
                 { type: "qcm", variantes: [
@@ -2470,10 +2478,10 @@ const CONTENU = {
             {
               id: "i4", competence: "Analyser", titre: "Le fusible protège le circuit",
               notion: "Cours, partie 5 : sécurité",
-              but: "Le fusible supporte au plus 0,5 A. Ajoute des lampes en dérivation et observe ce qui se passe.",
+              but: "Le fusible supporte au plus 0,5 A. Ajouter des lampes en dérivation et observer ce qui se passe.",
               taches: [
-                { id: "fond", texte: "Branche la lampe L2, puis la lampe L3, en dérivation sur L1 (aux mêmes bornes). Observe le fusible." },
-                { id: "change", texte: "Retire une lampe pour que l'intensité redevienne assez petite, puis touche le fusible pour le changer : les lampes se rallument." }
+                { id: "fond", texte: "Brancher la lampe L2, puis la lampe L3, en dérivation sur L1 (aux mêmes bornes). Observer le fusible." },
+                { id: "change", texte: "Retirer une lampe pour que l'intensité redevienne assez petite, puis toucher le fusible pour le changer : les lampes se rallument." }
               ],
               questions: [
                 { type: "qcm", variantes: [
@@ -2513,7 +2521,7 @@ const CONTENU = {
         resume: "Voltmètre, additivité des tensions, sécurité",
         qcm: "La tension électrique",
         rappel: {
-          intro: "Révise le chapitre sur l'intensité et les notions de 5ème : circuits, branchements, appareils de mesure.",
+          intro: "Réviser le chapitre sur l'intensité et les notions de 5ème : circuits, branchements, appareils de mesure.",
           activites: [
             { id: "qcm", type: "qcm", titre: "QCM éclair", desc: "5 questions pour réviser", n: 5, questions: [
               { question: "Quelle est l'unité de l'intensité du courant ?", reponses: ["L'ampère (A)", "Le volt (V)", "L'ohm (Ω)", "Le watt (W)"], bonne: 0, explication: "L'intensité se mesure en ampères." },
@@ -2525,7 +2533,7 @@ const CONTENU = {
               { question: "300 mA, c'est…", reponses: ["0,3 A", "3 A", "30 A", "0,03 A"], bonne: 0, explication: "300 ÷ 1 000 = 0,3 A." },
               { question: "Sur le multimètre, quelle couleur repère les fonctions de voltmètre ?", reponses: ["Le bleu", "Le rose", "Le vert", "Le jaune"], bonne: 0, explication: "Voltmètre en bleu, ampèremètre en rose, ohmmètre en vert." }
             ] },
-            { id: "relier", type: "relier", titre: "Grandeurs, unités, appareils", desc: "Relie les morceaux de phrases", n: 5, paires: [
+            { id: "relier", type: "relier", titre: "Grandeurs, unités, appareils", desc: "Relier les morceaux de phrases", n: 5, paires: [
               ["L'intensité se mesure…", "…en ampères, avec un ampèremètre."], ["L'ampèremètre se branche…", "…en série."], ["Dans un circuit en série…", "…l'intensité est la même partout."],
               ["Avec une dérivation…", "…I = I₁ + I₂."], ["Un fusible…", "…fond si l'intensité est trop grande."], ["Le générateur…", "…fournit l'énergie électrique au circuit."]
             ] },
@@ -2537,7 +2545,7 @@ const CONTENU = {
           ]
         },
         entrainement: [
-          { id: "tri", type: "tri", titre: "Danger ou pas ?", desc: "Trie 8 tensions", n: 8, question: "Toucher les bornes de cette source est-il dangereux ?", oui: "Dangereux", non: "Sans danger", items: [
+          { id: "tri", type: "tri", titre: "Danger ou pas ?", desc: "Trier 8 tensions", n: 8, question: "Toucher les bornes de cette source est-il dangereux ?", oui: "Dangereux", non: "Sans danger", items: [
             { source: "Une pile ronde de 1,5 V", oui: false, pourquoi: "Très basse tension : sans danger pour le corps." },
             { source: "Une pile plate de 4,5 V", oui: false, pourquoi: "Très basse tension." },
             { source: "Le générateur du laboratoire réglé sur 6 V", oui: false, pourquoi: "C'est pour cela qu'on travaille en basse tension au laboratoire." },
@@ -2563,7 +2571,7 @@ const CONTENU = {
             { affirmation: "Trois piles de 1,5 V en série donnent 1,5 V.", vrai: false, explication: "1,5 + 1,5 + 1,5 = 4,5 V." }
           ] },
           { id: "qcm", type: "qcm-tableur", titre: "Défi QCM", desc: "8 questions tirées au hasard", n: 8 },
-          { id: "calculs", type: "qcm", titre: "Calcule les tensions", desc: "6 calculs avec la loi d'additivité", n: 6, questions: [
+          { id: "calculs", type: "qcm", titre: "Calculer les tensions", desc: "6 calculs avec la loi d'additivité", n: 6, questions: [
             { question: "Générateur 12 V ; deux lampes en série ; U₁ = 7 V. Que vaut U₂ ?", reponses: ["19 V", "5 V", "7 V", "12 V"], bonne: 1, explication: "U₂ = U − U₁ = 12 − 7 = 5 V." },
             { question: "Trois lampes identiques en série sur un générateur 9 V. Tension aux bornes de chacune ?", reponses: ["9 V", "27 V", "3 V", "4,5 V"], bonne: 2, explication: "9 ÷ 3 = 3 V chacune." },
             { question: "Une lampe et un moteur en série : U_lampe = 2,5 V et U_moteur = 3,5 V. Tension du générateur ?", reponses: ["6 V", "1 V", "8,75 V", "3,5 V"], bonne: 0, explication: "U = 2,5 + 3,5 = 6 V." },
@@ -2580,9 +2588,9 @@ const CONTENU = {
             questions: [
               { type: "qcm", points: 2, question: "À l'aide du document 1, quelle tension les 3 piles fournissent-elles quand elles sont neuves ?", reponses: ["1,5 V", "3 V", "4,5 V", "0,5 V"], bonne: 2, explication: "Loi d'additivité : U = 1,5 + 1,5 + 1,5 = 4,5 V, la tension prévue pour l'ampoule." },
               { type: "qcm", points: 1, question: "Comment Maëlys doit-elle brancher le voltmètre pour mesurer la tension d'une pile ?", reponses: ["En dérivation, aux bornes de la pile (VΩ et COM)", "En série avec la pile", "Sur la borne 10A", "Sans fil, en le posant sur la pile"], bonne: 0, explication: "Un voltmètre se branche en dérivation, bornes VΩ et COM." },
-              { type: "multi", points: 3, consigne: "À l'aide du document 2, coche toutes les affirmations exactes.", options: [["La troisième pile est usée.", true], ["La tension totale des piles est maintenant de 3 V.", true], ["L'ampoule reçoit encore 4,5 V.", false], ["Il suffit de changer la troisième pile.", true]], explication: "U = 1,5 + 1,5 + 0 = 3 V au lieu de 4,5 V : la pile usée est la troisième ; on la remplace." },
+              { type: "multi", points: 3, consigne: "À l'aide du document 2, cocher toutes les affirmations exactes.", options: [["La troisième pile est usée.", true], ["La tension totale des piles est maintenant de 3 V.", true], ["L'ampoule reçoit encore 4,5 V.", false], ["Il suffit de changer la troisième pile.", true]], explication: "U = 1,5 + 1,5 + 0 = 3 V au lieu de 4,5 V : la pile usée est la troisième ; on la remplace." },
               { type: "qcm", points: 1, question: "Pourquoi peut-on toucher sans danger les bornes des piles ?", reponses: ["La tension est très basse (quelques volts)", "Les piles sont en plastique", "Il n'y a pas de courant dans une pile", "La lampe est éteinte"], bonne: 0, explication: "Quelques volts : très basse tension, sans danger, contrairement au secteur (230 V)." },
-              { type: "redaction", points: 3, consigne: "Explique à Maëlys pourquoi sa lampe ne s'allume plus, en utilisant la loi d'additivité des tensions.", criteres: ["J'ai calculé la tension totale : 1,5 + 1,5 + 0 = 3 V.", "J'ai comparé à 4,5 V, la tension prévue pour l'ampoule, et cité la loi d'additivité des tensions.", "J'ai proposé de remplacer la troisième pile."],
+              { type: "redaction", points: 3, consigne: "Expliquer à Maëlys pourquoi sa lampe ne s'allume plus, en utilisant la loi d'additivité des tensions.", criteres: ["J'ai calculé la tension totale : 1,5 + 1,5 + 0 = 3 V.", "J'ai comparé à 4,5 V, la tension prévue pour l'ampoule, et cité la loi d'additivité des tensions.", "J'ai proposé de remplacer la troisième pile."],
                 elements: "Les piles sont en série : d'après la loi d'additivité des tensions, la tension totale est la somme des tensions de chaque pile. Elle vaut 1,5 + 1,5 + 0 = 3 V au lieu de 4,5 V : l'ampoule ne reçoit pas assez de tension. La troisième pile est usée : il faut la remplacer." }
             ] }
         ],
@@ -2681,7 +2689,7 @@ const CONTENU = {
         // TP : montages u1 à u4 dans 08_tp.js. Le voltmètre peut être branché aux bornes de n'importe quel dipôle.
         tp: {
           titre: "Laboratoire : la tension électrique",
-          intro: "Sur la paillasse, mesure des tensions avec le voltmètre, vérifie la loi d'additivité, compare avec un montage en dérivation, puis mène l'enquête de la lampe grillée. Chaque objectif réussi débloque le suivant.",
+          intro: "Sur la paillasse : mesurer des tensions avec le voltmètre, vérifier la loi d'additivité, comparer avec un montage en dérivation, puis mener l'enquête de la lampe grillée. Chaque objectif réussi débloque le suivant.",
           enClasse: {
             objectif: "Mesurer des tensions avec un voltmètre, vérifier la loi d'additivité des tensions dans un circuit en série, comparer avec un montage en dérivation, trouver une lampe grillée.",
             materiel: ["Un générateur 6 V continu", "Trois lampes sur support : L1 6 V – 0,1 A, L2 et L3 6 V – 0,3 A (dont une grillée pour l'enquête)", "Un multimètre utilisé en voltmètre", "Un interrupteur, des fils de connexion"],
@@ -2691,12 +2699,12 @@ const CONTENU = {
             {
               id: "u1", competence: "Mesurer", titre: "Mesurer des tensions",
               notion: "Cours, parties 2 et 3 : le voltmètre, fil et interrupteur",
-              but: "Règle le multimètre sur V⎓, puis mesure la tension aux bornes de plusieurs dipôles. Le voltmètre se branche en dérivation : inutile d'ouvrir le circuit.",
+              but: "Régler le multimètre sur V⎓, puis mesurer la tension aux bornes de plusieurs dipôles. Le voltmètre se branche en dérivation : inutile d'ouvrir le circuit.",
               taches: [
-                { id: "inter", texte: "Interrupteur OUVERT : mesure la tension aux bornes de l'interrupteur, puis touche NOTER." },
-                { id: "gen", texte: "Mesure la tension aux bornes du générateur." },
-                { id: "lampe", texte: "Ferme l'interrupteur et mesure la tension aux bornes de la lampe allumée." },
-                { id: "fil", texte: "Mesure la tension aux bornes d'un fil : branche COM et VΩ aux deux bouts d'un même fil (sur deux bornes reliées par ce fil)." }
+                { id: "inter", texte: "Interrupteur OUVERT : mesurer la tension aux bornes de l'interrupteur, puis toucher NOTER." },
+                { id: "gen", texte: "Mesurer la tension aux bornes du générateur." },
+                { id: "lampe", texte: "Fermer l'interrupteur et mesurer la tension aux bornes de la lampe allumée." },
+                { id: "fil", texte: "Mesurer la tension aux bornes d'un fil : brancher COM et VΩ aux deux bouts d'un même fil (sur deux bornes reliées par ce fil)." }
               ],
               questions: [
                 { type: "qcm", variantes: [
@@ -2713,11 +2721,11 @@ const CONTENU = {
             {
               id: "u2", competence: "Valider", titre: "La loi d'additivité des tensions",
               notion: "Cours, partie 4 : additivité des tensions",
-              but: "Les lampes L1 et L2 sont en série. Mesure les trois tensions et compare.",
+              but: "Les lampes L1 et L2 sont en série. Mesurer les trois tensions et comparer.",
               taches: [
-                { id: "ugen", texte: "Ferme l'interrupteur. Mesure la tension U aux bornes du générateur." },
-                { id: "u1", texte: "Mesure la tension U₁ aux bornes de la lampe L1." },
-                { id: "u2", texte: "Mesure la tension U₂ aux bornes de la lampe L2." }
+                { id: "ugen", texte: "Fermer l'interrupteur. Mesurer la tension U aux bornes du générateur." },
+                { id: "u1", texte: "Mesurer la tension U₁ aux bornes de la lampe L1." },
+                { id: "u2", texte: "Mesurer la tension U₂ aux bornes de la lampe L2." }
               ],
               questions: [
                 { type: "qcm", variantes: [
@@ -2734,11 +2742,11 @@ const CONTENU = {
             {
               id: "u3", competence: "Comparer", titre: "Et en dérivation ?",
               notion: "Cours, partie 5 : des dipôles en dérivation",
-              but: "Cette fois, L1 et L2 sont en dérivation. Mesure les trois tensions et compare avec l'objectif précédent.",
+              but: "Cette fois, L1 et L2 sont en dérivation. Mesurer les trois tensions et comparer avec l'objectif précédent.",
               taches: [
-                { id: "ugen", texte: "Ferme l'interrupteur. Mesure la tension U aux bornes du générateur." },
-                { id: "u1", texte: "Mesure la tension U₁ aux bornes de la lampe L1." },
-                { id: "u2", texte: "Mesure la tension U₂ aux bornes de la lampe L2." }
+                { id: "ugen", texte: "Fermer l'interrupteur. Mesurer la tension U aux bornes du générateur." },
+                { id: "u1", texte: "Mesurer la tension U₁ aux bornes de la lampe L1." },
+                { id: "u2", texte: "Mesurer la tension U₂ aux bornes de la lampe L2." }
               ],
               questions: [
                 { type: "qcm", variantes: [
@@ -2754,10 +2762,10 @@ const CONTENU = {
             {
               id: "u4", competence: "Analyser", titre: "Enquête : la lampe grillée",
               notion: "Cours, parties 3 et 4 : tensions dans un circuit en série",
-              but: "Trois lampes sont en série, interrupteur fermé, mais rien ne s'allume : une lampe est grillée. Trouve-la avec le voltmètre, sans changer les lampes au hasard.",
+              but: "Trois lampes sont en série, interrupteur fermé, mais rien ne s'allume : une lampe est grillée. La trouver avec le voltmètre, sans changer les lampes au hasard.",
               taches: [
-                { id: "mesure", texte: "Mesure la tension aux bornes d'au moins deux lampes." },
-                { id: "repare", texte: "Quand tu as trouvé la lampe grillée, touche-la pour la remplacer." }
+                { id: "mesure", texte: "Mesurer la tension aux bornes d'au moins deux lampes." },
+                { id: "repare", texte: "Une fois la lampe grillée trouvée, la toucher pour la remplacer." }
               ],
               questions: [
                 { type: "qcm", variantes: [
@@ -2797,7 +2805,7 @@ const CONTENU = {
         resume: "Ohmmètre, caractéristique, U = R × I",
         qcm: "La résistance et la loi d'Ohm",
         rappel: {
-          intro: "Révise l'intensité et la tension : appareils, branchements et lois.",
+          intro: "Réviser l'intensité et la tension : appareils, branchements et lois.",
           activites: [
             { id: "qcm", type: "qcm", titre: "QCM éclair", desc: "5 questions pour réviser", n: 5, questions: [
               { question: "Comment se branche un voltmètre ?", reponses: ["En dérivation, bornes VΩ et COM", "En série, bornes 10A et COM", "En série, bornes VΩ et COM", "Sans fil"], bonne: 0, explication: "Le voltmètre se branche en dérivation." },
@@ -2809,7 +2817,7 @@ const CONTENU = {
               { question: "Dans un circuit en série, l'intensité…", reponses: ["est la même partout", "s'additionne", "est nulle", "dépend de l'ordre des lampes"], bonne: 0, explication: "Même intensité en tout point." },
               { question: "Sur le multimètre, quelle couleur repère l'ohmmètre ?", reponses: ["Le vert", "Le bleu", "Le rose", "Le rouge"], bonne: 0, explication: "Voltmètre en bleu, ampèremètre en rose, ohmmètre en vert." }
             ] },
-            { id: "relier", type: "relier", titre: "Les lois de l'électricité", desc: "Relie les morceaux de phrases", n: 5, paires: [
+            { id: "relier", type: "relier", titre: "Les lois de l'électricité", desc: "Relier les morceaux de phrases", n: 5, paires: [
               ["En série, l'intensité…", "…est la même en tout point."], ["En série, la tension du générateur…", "…est la somme des tensions des autres dipôles."], ["Avec une dérivation, l'intensité principale…", "…est la somme des intensités des branches."],
               ["Des dipôles en dérivation…", "…ont la même tension à leurs bornes."], ["Le voltmètre…", "…se branche en dérivation."], ["L'ampèremètre…", "…se branche en série."]
             ] },
@@ -2821,7 +2829,7 @@ const CONTENU = {
           ]
         },
         entrainement: [
-          { id: "unites", type: "relier", titre: "Grandeurs, unités, appareils", desc: "Relie chaque grandeur", n: 5, paires: [
+          { id: "unites", type: "relier", titre: "Grandeurs, unités, appareils", desc: "Relier chaque grandeur", n: 5, paires: [
             ["La résistance R", "se mesure en ohms (Ω), avec un ohmmètre."], ["La tension U", "se mesure en volts (V), avec un voltmètre."], ["L'intensité I", "se mesure en ampères (A), avec un ampèremètre."],
             ["2,2 kΩ", "vaut 2 200 Ω."], ["15 mA", "vaut 0,015 A."], ["La loi d'Ohm", "s'écrit U = R × I."]
           ] },
@@ -2840,7 +2848,7 @@ const CONTENU = {
             { affirmation: "La loi d'Ohm s'applique à n'importe quel dipôle, même une DEL.", vrai: false, explication: "Elle s'applique aux conducteurs ohmiques (les « résistances »)." }
           ] },
           { id: "qcm", type: "qcm-tableur", titre: "Défi QCM", desc: "8 questions tirées au hasard", n: 8 },
-          { id: "calculs", type: "qcm", titre: "Calcule avec la loi d'Ohm", desc: "6 calculs, attention aux unités", n: 6, questions: [
+          { id: "calculs", type: "qcm", titre: "Calculer avec la loi d'Ohm", desc: "6 calculs, attention aux unités", n: 6, questions: [
             { question: "R = 50 Ω et I = 0,2 A. Que vaut U ?", reponses: ["10 V", "250 V", "0,004 V", "50,2 V"], bonne: 0, explication: "U = R × I = 50 × 0,2 = 10 V." },
             { question: "R = 330 Ω et I = 20 mA. Que vaut U ?", reponses: ["6 600 V", "6,6 V", "16,5 V", "0,06 V"], bonne: 1, explication: "I = 0,020 A ; U = 330 × 0,020 = 6,6 V. (6 600 : les mA n'ont pas été convertis.)" },
             { question: "U = 12 V et R = 240 Ω. Que vaut I ?", reponses: ["2 880 A", "20 A", "0,05 A", "0,5 A"], bonne: 2, explication: "I = U ÷ R = 12 ÷ 240 = 0,05 A, soit 50 mA." },
@@ -2858,8 +2866,8 @@ const CONTENU = {
               { type: "qcm", points: 2, question: "À l'aide de la loi d'additivité, quelle est la tension aux bornes de la résistance quand la DEL fonctionne correctement ?", reponses: ["4 V", "8 V", "2 V", "6 V"], bonne: 0, explication: "En série : U_batterie = U_DEL + U_R, donc U_R = 6 − 2 = 4 V." },
               { type: "qcm", points: 2, question: "Avec la loi d'Ohm, calcule la résistance qui donne exactement 20 mA.", reponses: ["0,2 Ω", "200 Ω", "80 Ω", "2 000 Ω"], bonne: 1, explication: "I = 0,020 A ; R = U ÷ I = 4 ÷ 0,020 = 200 Ω." },
               { type: "qcm", points: 2, question: "Quelle résistance du document 2 Kenzo doit-il choisir ?", reponses: ["22 Ω : la DEL brillera plus", "220 Ω : la plus proche de 200 Ω, l'intensité reste inférieure à 20 mA", "2,2 kΩ : plus c'est grand, mieux c'est", "Aucune résistance"], bonne: 1, explication: "Avec 220 Ω, I ≈ 4 ÷ 220 ≈ 18 mA : la DEL brille bien sans griller. Avec 22 Ω, elle grillerait ; avec 2,2 kΩ, elle brillerait à peine." },
-              { type: "multi", points: 1, consigne: "Coche les affirmations exactes.", options: [["La résistance de protection se branche en série avec la DEL.", true], ["On mesure la résistance avec l'ohmmètre, débranchée du circuit.", true], ["La résistance augmente l'intensité dans la DEL.", false]], explication: "En série, la résistance limite l'intensité. L'ohmmètre mesure un dipôle débranché." },
-              { type: "redaction", points: 3, consigne: "Explique à un camarade pourquoi il ne faut pas brancher une DEL seule sur la batterie de 6 V.", criteres: ["J'ai dit que sans résistance, l'intensité serait trop grande (plus de 30 mA) et que la DEL grillerait.", "J'ai expliqué le rôle de la résistance de protection en série : elle limite l'intensité.", "J'ai utilisé la loi d'Ohm ou l'additivité des tensions dans mon explication."],
+              { type: "multi", points: 1, consigne: "Cocher les affirmations exactes.", options: [["La résistance de protection se branche en série avec la DEL.", true], ["On mesure la résistance avec l'ohmmètre, débranchée du circuit.", true], ["La résistance augmente l'intensité dans la DEL.", false]], explication: "En série, la résistance limite l'intensité. L'ohmmètre mesure un dipôle débranché." },
+              { type: "redaction", points: 3, consigne: "Expliquer à un camarade pourquoi il ne faut pas brancher une DEL seule sur la batterie de 6 V.", criteres: ["J'ai dit que sans résistance, l'intensité serait trop grande (plus de 30 mA) et que la DEL grillerait.", "J'ai expliqué le rôle de la résistance de protection en série : elle limite l'intensité.", "J'ai utilisé la loi d'Ohm ou l'additivité des tensions dans mon explication."],
                 elements: "Seule sur 6 V, la DEL recevrait trop de tension : l'intensité dépasserait 30 mA et elle grillerait. La résistance de protection, en série, prend une partie de la tension (4 V, additivité) et limite l'intensité : avec 220 Ω, I = U ÷ R ≈ 4 ÷ 220 ≈ 18 mA, une valeur que la DEL supporte." }
             ] }
         ],
@@ -2947,7 +2955,7 @@ const CONTENU = {
         // TP : montages r1 à r4 dans 08_tp.js (ohmmètre, générateur réglable, deux multimètres pour la caractéristique).
         tp: {
           titre: "Laboratoire : résistance et loi d'Ohm",
-          intro: "Sur la paillasse, mesure des résistances avec l'ohmmètre, observe leur effet sur l'intensité, trace la caractéristique d'une résistance, puis protège une DEL. Chaque objectif réussi débloque le suivant.",
+          intro: "Sur la paillasse : mesurer des résistances avec l'ohmmètre, observer leur effet sur l'intensité, tracer la caractéristique d'une résistance, puis protéger une DEL. Chaque objectif réussi débloque le suivant.",
           enClasse: {
             objectif: "Mesurer une résistance, étudier son effet sur l'intensité, tracer la caractéristique d'un conducteur ohmique et utiliser la loi d'Ohm pour protéger une DEL.",
             materiel: ["Un générateur 6 V et un générateur réglable 0 – 12 V", "Des résistances : 22 Ω, 100 Ω, 220 Ω, 470 Ω, 2,2 kΩ", "Deux multimètres (voltmètre et ampèremètre ; l'un sert aussi d'ohmmètre)", "Une DEL rouge, un interrupteur, des fils de connexion", "Du papier millimétré ou un tableur"],
@@ -2957,10 +2965,10 @@ const CONTENU = {
             {
               id: "r1", competence: "Mesurer", titre: "Mesurer des résistances",
               notion: "Cours, partie 1 : la résistance, l'ohmmètre",
-              but: "Les valeurs des résistances R1, R2 et R3 sont cachées : mesure-les avec l'ohmmètre (fonction Ω en vert, bornes VΩ et COM).",
+              but: "Les valeurs des résistances R1, R2 et R3 sont cachées : les mesurer avec l'ohmmètre (fonction Ω en vert, bornes VΩ et COM).",
               taches: [
-                { id: "un", texte: "Règle le multimètre sur Ω, branche-le aux bornes de R1 et touche NOTER." },
-                { id: "trois", texte: "Mesure aussi R2 et R3. Attention : R3 est encore reliée au générateur. Débranche-la d'abord !" }
+                { id: "un", texte: "Régler le multimètre sur Ω, le brancher aux bornes de R1 et toucher NOTER." },
+                { id: "trois", texte: "Mesurer aussi R2 et R3. Attention : R3 est encore reliée au générateur. La débrancher d'abord !" }
               ],
               questions: [
                 { type: "qcm", variantes: [
@@ -2977,11 +2985,11 @@ const CONTENU = {
             {
               id: "r2", competence: "Comparer", titre: "La résistance freine le courant",
               notion: "Cours, partie 2 : effet sur l'intensité",
-              but: "L'ampèremètre est en série avec R2. Remplace R2 par R1, puis par R3, et compare les intensités.",
+              but: "L'ampèremètre est en série avec R2. Remplacer R2 par R1, puis par R3, et comparer les intensités.",
               taches: [
-                { id: "r2", texte: "Ferme l'interrupteur et touche NOTER : intensité avec R2 (100 Ω)." },
-                { id: "r1", texte: "Ouvre l'interrupteur, remplace R2 par R1 (22 Ω), ferme et note l'intensité." },
-                { id: "r3", texte: "Recommence avec R3 (470 Ω). Si la valeur est petite, passe sur mA : bouton sur mA et fil sur la borne mA." }
+                { id: "r2", texte: "Fermer l'interrupteur et toucher NOTER : intensité avec R2 (100 Ω)." },
+                { id: "r1", texte: "Ouvrir l'interrupteur, remplacer R2 par R1 (22 Ω), fermer et noter l'intensité." },
+                { id: "r3", texte: "Recommencer avec R3 (470 Ω). Si la valeur est petite, passer sur mA : bouton sur mA et fil sur la borne mA." }
               ],
               questions: [
                 { type: "qcm", variantes: [
@@ -2998,10 +3006,10 @@ const CONTENU = {
             {
               id: "r3", competence: "Réaliser", titre: "La caractéristique d'une résistance",
               notion: "Cours, parties 3 et 4 : caractéristique et loi d'Ohm",
-              but: "Ici, deux multimètres : on mesure U et I en même temps pour chaque réglage du générateur. L'ampèremètre est déjà en série avec R ; branche le voltmètre, puis fais varier la tension.",
+              but: "Ici, deux multimètres : on mesure U et I en même temps pour chaque réglage du générateur. L'ampèremètre est déjà en série avec R ; brancher le voltmètre, puis faire varier la tension.",
               taches: [
-                { id: "branche", texte: "Branche le second multimètre en voltmètre (V⎓) aux bornes de la résistance, puis touche NOTER sur l'un des multimètres : le point (U ; I) est noté." },
-                { id: "points", texte: "Change la tension du générateur réglable (boutons − et +) et note au moins 5 points différents." }
+                { id: "branche", texte: "Brancher le second multimètre en voltmètre (V⎓) aux bornes de la résistance, puis toucher NOTER sur l'un des multimètres : le point (U ; I) est noté." },
+                { id: "points", texte: "Changer la tension du générateur réglable (boutons − et +) et noter au moins 5 points différents." }
               ],
               questions: [
                 { type: "qcm", variantes: [
@@ -3018,11 +3026,11 @@ const CONTENU = {
             {
               id: "r4", competence: "Valider", titre: "Protéger une DEL",
               notion: "Cours, parties 4 et 5 : loi d'Ohm, résistance de protection",
-              but: "Allume la DEL avec le générateur 6 V sans la griller : choisis la bonne résistance de protection, puis vérifie la loi d'Ohm.",
+              but: "Allumer la DEL avec le générateur 6 V sans la griller : choisir la bonne résistance de protection, puis vérifier la loi d'Ohm.",
               taches: [
-                { id: "protege", texte: "Branche en série le générateur, l'interrupteur, une résistance et la DEL (patte longue + côté borne + du générateur). Trouve la résistance qui fait bien briller la DEL sans la griller." },
-                { id: "ur", texte: "Mesure la tension aux bornes de la résistance de protection (voltmètre) et touche NOTER." },
-                { id: "i", texte: "Mesure l'intensité qui traverse la DEL (ampèremètre en série) et touche NOTER." }
+                { id: "protege", texte: "Brancher en série le générateur, l'interrupteur, une résistance et la DEL (patte longue + côté borne + du générateur). Trouver la résistance qui fait bien briller la DEL sans la griller." },
+                { id: "ur", texte: "Mesurer la tension aux bornes de la résistance de protection (voltmètre) et toucher NOTER." },
+                { id: "i", texte: "Mesurer l'intensité qui traverse la DEL (ampèremètre en série) et toucher NOTER." }
               ],
               questions: [
                 { type: "qcm", variantes: [
@@ -3073,7 +3081,7 @@ const CONTENU = {
 
         // ======================== 1. RAPPEL (cycle 4 + puissances de 10) ========================
         rappel: {
-          intro: "Révise ce que tu as vu au collège sur la lumière, et les puissances de 10 dont tu auras besoin. Chaque jeu change à chaque partie.",
+          intro: "Réviser ce que tu as vu au collège sur la lumière, et les puissances de 10 dont tu auras besoin. Chaque jeu change à chaque partie.",
           activites: [
             { id: "qcm", type: "qcm", titre: "QCM éclair", desc: "5 questions sur la lumière", n: 5, questions: [
               { question: "Dans un milieu transparent et homogène (air, eau, verre), la lumière se propage…", reponses: ["en ligne droite", "en zigzag", "en cercle", "seulement vers le bas"], bonne: 0, explication: "C'est la propagation rectiligne de la lumière : on la modélise par des rayons lumineux." },
@@ -3087,7 +3095,7 @@ const CONTENU = {
               { question: "650 nm, écrit en mètres, c'est…", reponses: ["6,50 × 10⁻⁷ m", "6,50 × 10⁷ m", "6,50 × 10⁻⁹ m", "650 × 10⁻⁶ m"], bonne: 0, explication: "650 nm = 650 × 10⁻⁹ m = 6,50 × 10⁻⁷ m." },
               { question: "Un arc-en-ciel montre que…", reponses: ["la lumière du Soleil contient plusieurs couleurs", "la pluie est colorée", "le ciel est bleu", "la lumière tourne en rond"], bonne: 0, explication: "Les gouttes de pluie séparent les couleurs contenues dans la lumière blanche du Soleil." }
             ] },
-            { id: "relier", type: "relier", titre: "Puissances de 10", desc: "Relie les valeurs égales", n: 5, paires: [
+            { id: "relier", type: "relier", titre: "Puissances de 10", desc: "Relier les valeurs égales", n: 5, paires: [
               ["1 nanomètre (nm)", "10⁻⁹ m"],
               ["1 micromètre (µm)", "10⁻⁶ m"],
               ["1 millimètre (mm)", "10⁻³ m"],
@@ -3212,10 +3220,10 @@ const CONTENU = {
             {
               id: "s1", competence: "Réaliser", titre: "Décomposer la lumière blanche",
               notion: "Cours, partie 2 : la dispersion par un prisme",
-              but: "Monte le banc d'optique : la lampe éclaire une fente, la lentille rend le faisceau fin, le prisme disperse la lumière. Tourne le prisme pour que le spectre arrive sur l'écran.",
+              but: "Monter le banc d'optique : la lampe éclaire une fente, la lentille rend le faisceau fin, le prisme disperse la lumière. Tourner le prisme pour que le spectre arrive sur l'écran.",
               taches: [
-                { id: "monte", texte: "Allume la lampe, puis place sur le banc la fente et la lentille, dans le bon ordre (le faisceau doit être fin), et le prisme sur le plateau tournant." },
-                { id: "spectre", texte: "Pose l'écran sur son support, puis tourne le prisme (↺ ↻) jusqu'à obtenir un spectre net et entier sur l'écran." }
+                { id: "monte", texte: "Allumer la lampe, puis placer sur le banc la fente et la lentille, dans le bon ordre (le faisceau doit être fin), et le prisme sur le plateau tournant." },
+                { id: "spectre", texte: "Poser l'écran sur son support, puis tourner le prisme (↺ ↻) jusqu'à obtenir un spectre net et entier sur l'écran." }
               ],
               questions: [
                 { type: "qcm", variantes: [
@@ -3236,11 +3244,11 @@ const CONTENU = {
             {
               id: "s2", competence: "Analyser", titre: "Le spectre d'un corps chaud",
               notion: "Cours, partie 4 : le spectre d'un corps chaud",
-              but: "Le filament de la lampe est un corps chaud : plus la tension est grande, plus il est chaud. Avec le spectromètre, observe son spectre à 3 V, à 6 V et à 12 V.",
+              but: "Le filament de la lampe est un corps chaud : plus la tension est grande, plus il est chaud. Avec le spectromètre, observer son spectre à 3 V, à 6 V et à 12 V.",
               taches: [
-                { id: "fibre", texte: "Règle le générateur sur 3 V (bouton +), puis approche le bout de la fibre optique de la fenêtre de la lampe : le spectre s'affiche sur l'ordinateur." },
-                { id: "basse", texte: "À 3 V : place le curseur là où la courbe commence à monter, du côté violet (à gauche), et touche NOTER." },
-                { id: "haute", texte: "Recommence à 6 V, puis à 12 V. Observe aussi la couleur du filament." }
+                { id: "fibre", texte: "Régler le générateur sur 3 V (bouton +), puis approcher le bout de la fibre optique de la fenêtre de la lampe : le spectre s'affiche sur l'ordinateur." },
+                { id: "basse", texte: "À 3 V : placer le curseur là où la courbe commence à monter, du côté violet (à gauche), et toucher NOTER." },
+                { id: "haute", texte: "Recommencer à 6 V, puis à 12 V. Observer aussi la couleur du filament." }
               ],
               questions: [
                 { type: "qcm", variantes: [
@@ -3262,12 +3270,12 @@ const CONTENU = {
             {
               id: "s3", competence: "Mesurer", titre: "Spectres de raies et longueur d'onde",
               notion: "Cours, parties 3 et 5 : longueur d'onde, spectres de raies",
-              but: "Glisse une lampe spectrale sur le support, allume l'alimentation et attends qu'elle chauffe. Avec le curseur, mesure la longueur d'onde de ses raies. Termine avec le laser.",
+              but: "Glisser une lampe spectrale sur le support, allumer l'alimentation et attendre qu'elle chauffe. Avec le curseur, mesurer la longueur d'onde de ses raies. Terminer avec le laser.",
               taches: [
-                { id: "sodium", texte: "Lampe au sodium : mesure la longueur d'onde de sa raie la plus intense (curseur au sommet du pic, puis NOTER)." },
-                { id: "mercure", texte: "Lampe au mercure : mesure au moins 2 raies. Pour changer de lampe : éteins l'alimentation et attends qu'elle refroidisse." },
-                { id: "hydrogene", texte: "Lampe à hydrogène : mesure au moins 2 raies." },
-                { id: "laser", texte: "Laser : place la fibre dans son faisceau et mesure sa longueur d'onde." }
+                { id: "sodium", texte: "Lampe au sodium : mesurer la longueur d'onde de sa raie la plus intense (curseur au sommet du pic, puis NOTER)." },
+                { id: "mercure", texte: "Lampe au mercure : mesurer au moins 2 raies. Pour changer de lampe : éteindre l'alimentation et attendre qu'elle refroidisse." },
+                { id: "hydrogene", texte: "Lampe à hydrogène : mesurer au moins 2 raies." },
+                { id: "laser", texte: "Laser : placer la fibre dans son faisceau et mesurer sa longueur d'onde." }
               ],
               questions: [
                 { type: "qcm", variantes: [
@@ -3290,9 +3298,9 @@ const CONTENU = {
             {
               id: "s4", competence: "Valider", titre: "Enquête : l'enseigne mystère",
               notion: "Cours, partie 5 : identifier un élément grâce à son spectre",
-              but: "Un commerçant de Cayenne veut réparer son enseigne lumineuse. Quel gaz contient son tube ? Mesure ses raies, compare-les aux spectres de référence et justifie ta réponse. Chaque élève a un tube tiré au hasard : celui de ton voisin n'est peut-être pas le même !",
+              but: "Un commerçant de Cayenne veut réparer son enseigne lumineuse. Quel gaz contient son tube ? Mesurer ses raies, les comparer aux spectres de référence et justifier la réponse. Chaque élève a un tube tiré au hasard : celui de ton voisin n'est peut-être pas le même !",
               taches: [
-                { id: "raies", texte: "Pose le tube mystère sur le support, allume-le et mesure au moins 3 raies différentes." }
+                { id: "raies", texte: "Poser le tube mystère sur le support, l'allumer et mesurer au moins 3 raies différentes." }
               ],
               questions: [
                 { type: "mystere" },
@@ -3323,7 +3331,7 @@ const CONTENU = {
         },
         // ======================== 4. ENTRAÎNEMENT ========================
         entrainement: [
-          { id: "couleurs", type: "relier", titre: "Couleur et longueur d'onde", desc: "Relie chaque radiation à son domaine ou à sa couleur", n: 5, paires: [
+          { id: "couleurs", type: "relier", titre: "Couleur et longueur d'onde", desc: "Relier chaque radiation à son domaine ou à sa couleur", n: 5, paires: [
             ["λ = 420 nm", "violet"],
             ["λ = 470 nm", "bleu"],
             ["λ = 530 nm", "vert"],
@@ -3332,7 +3340,7 @@ const CONTENU = {
             ["λ = 1 000 nm", "infrarouge (invisible)"],
             ["λ = 300 nm", "ultraviolet (invisible)"]
           ] },
-          { id: "tri", type: "tri", titre: "Continu ou raies ?", desc: "Trie 8 sources de lumière", n: 8,
+          { id: "tri", type: "tri", titre: "Continu ou raies ?", desc: "Trier 8 sources de lumière", n: 8,
             question: "Quel type de spectre donne cette source ?", oui: "Spectre de raies", non: "Spectre continu", court: ["Raies", "Continu"],
             items: [
               { source: "Le filament d'une lampe à incandescence", oui: false, pourquoi: "C'est un solide très chaud : spectre continu d'origine thermique." },
@@ -3346,7 +3354,7 @@ const CONTENU = {
               { source: "Le fer rouge dans la forge", oui: false, pourquoi: "Un solide chaud : spectre continu." },
               { source: "Une lampe spectrale à hydrogène", oui: true, pourquoi: "Un gaz excité : 4 raies visibles (410, 434, 486 et 656 nm)." }
             ] },
-          { id: "spectres", type: "spectres", titre: "Quel élément ?", desc: "Identifie les gaz grâce à leurs raies", n: 6, melange: 2 },
+          { id: "spectres", type: "spectres", titre: "Quel élément ?", desc: "Identifier les gaz grâce à leurs raies", n: 6, melange: 2 },
           { id: "vf", type: "vraifaux", titre: "Vrai ou faux ?", desc: "8 affirmations à juger", n: 8, items: [
             { affirmation: "La lumière se propage plus vite que le son.", vrai: true, explication: "3,00 × 10⁸ m/s contre environ 340 m/s dans l'air." },
             { affirmation: "La lumière ne peut pas se propager dans le vide.", vrai: false, explication: "Elle s'y propage très bien : c'est ainsi que la lumière du Soleil nous parvient." },
@@ -3382,9 +3390,9 @@ const CONTENU = {
               { type: "qcm", points: 1, question: "Quel type de spectre l'élève a-t-elle observé (document 1) ?", reponses: ["Un spectre de raies d'émission", "Un spectre continu d'origine thermique", "Le spectre de la lumière blanche", "Un spectre infrarouge"], bonne: 0, explication: "Quelques raies colorées sur fond noir : c'est un spectre de raies d'émission." },
               { type: "qcm", points: 2, question: "À l'aide du document 2, quel élément contient la lampe du lampadaire ?", reponses: ["Le sodium", "L'hydrogène", "Le mercure", "Aucun de ces éléments"], bonne: 0, explication: "Toutes les raies du spectre observé correspondent à celles du sodium." },
               { type: "qcm", points: 2, question: "La raie la plus intense est vers 589 nm. Quelle est sa couleur, et à quel domaine appartient-elle ?", reponses: ["Jaune-orangé, domaine visible", "Rouge, domaine infrarouge", "Bleue, domaine visible", "Violette, domaine ultraviolet"], bonne: 0, explication: "589 nm est entre 400 et 800 nm (visible), à la limite du jaune et de l'orange." },
-              { type: "multi", points: 2, consigne: "Coche toutes les affirmations exactes.", options: [["La lampe d'un vieux lampadaire contient un gaz excité.", true], ["Les raies du sodium seraient au même endroit avec un lampadaire de Saint-Laurent-du-Maroni.", true], ["Un filament de lampe à incandescence donnerait aussi un spectre de raies.", false], ["La lumière de ce lampadaire est polychromatique, mais dominée par une couleur.", true]], explication: "Un gaz excité donne des raies, toujours aux mêmes longueurs d'onde ; un filament chaud donne un spectre continu. Plusieurs raies : la lumière est polychromatique." },
+              { type: "multi", points: 2, consigne: "Cocher toutes les affirmations exactes.", options: [["La lampe d'un vieux lampadaire contient un gaz excité.", true], ["Les raies du sodium seraient au même endroit avec un lampadaire de Saint-Laurent-du-Maroni.", true], ["Un filament de lampe à incandescence donnerait aussi un spectre de raies.", false], ["La lumière de ce lampadaire est polychromatique, mais dominée par une couleur.", true]], explication: "Un gaz excité donne des raies, toujours aux mêmes longueurs d'onde ; un filament chaud donne un spectre continu. Plusieurs raies : la lumière est polychromatique." },
               { type: "qcm", points: 2, question: "L'élève est à 30 m du lampadaire. Combien de temps met la lumière pour lui parvenir ?", reponses: ["1,0 × 10⁻⁷ s", "9,0 × 10⁹ s", "0,10 s", "1,0 × 10⁷ s"], bonne: 0, explication: "t = d ÷ c = 30 ÷ 3,00 × 10⁸ = 1,0 × 10⁻⁷ s." },
-              { type: "redaction", points: 3, consigne: "À l'aide des documents 2 et 3, indique un élément chimique présent dans la nébuleuse d'Orion. Justifie ta réponse.", criteres: ["J'ai identifié l'hydrogène.", "J'ai comparé les longueurs d'onde mesurées (410, 434, 486 et 656 nm) avec celles du spectre de référence de l'hydrogène.", "J'ai expliqué que chaque élément a ses propres raies (signature) et que toutes les raies de l'hydrogène sont présentes."],
+              { type: "redaction", points: 3, consigne: "À l'aide des documents 2 et 3, indiquer un élément chimique présent dans la nébuleuse d'Orion. Justifier la réponse.", criteres: ["J'ai identifié l'hydrogène.", "J'ai comparé les longueurs d'onde mesurées (410, 434, 486 et 656 nm) avec celles du spectre de référence de l'hydrogène.", "J'ai expliqué que chaque élément a ses propres raies (signature) et que toutes les raies de l'hydrogène sont présentes."],
                 elements: "Les raies à 410, 434, 486 et 656 nm sont exactement celles du spectre de l'hydrogène (document 2). Comme chaque élément chimique émet des raies qui lui sont propres, comme une empreinte, on en déduit que la nébuleuse d'Orion contient de l'hydrogène. Les autres raies mesurées viennent d'autres éléments." }
             ]
           }
@@ -3404,7 +3412,7 @@ const CONTENU = {
 
         // ======================== 1. RAPPEL ========================
         rappel: {
-          intro: "Révise ce que tu as vu en 1re et au début de l'année : quantités de matière, dilution, équivalence, acides et bases, pH, conductivité. Chaque jeu change à chaque partie.",
+          intro: "Réviser ce que tu as vu en 1re et au début de l'année : quantités de matière, dilution, équivalence, acides et bases, pH, conductivité. Chaque jeu change à chaque partie.",
           activites: [
             {
               id: "qcm", type: "qcm", titre: "QCM éclair", desc: "5 questions sur les bases", n: 5,
@@ -3436,7 +3444,7 @@ const CONTENU = {
               ]
             },
             {
-              id: "relier", type: "relier", titre: "Relie les morceaux de phrases", desc: "Trace un trait entre le début et la fin", n: 5,
+              id: "relier", type: "relier", titre: "Relier les morceaux de phrases", desc: "Tracer un trait entre le début et la fin", n: 5,
               paires: [
                 ["La quantité de matière n…", "…se calcule avec n = m ÷ M."],
                 ["Pendant une dilution…", "…la quantité de matière de soluté se conserve."],
@@ -3612,11 +3620,11 @@ const CONTENU = {
         // Les identifiants des tâches (etal7, prelever, burette, mesures…) sont vérifiés automatiquement par la paillasse.
         tp: {
           titre: "Laboratoire de chimie : deux titrages",
-          intro: "Deux TP à faire dans l'ordre : un titrage suivi au pH-mètre, puis un titrage suivi au conductimètre. Sur la paillasse, glisse les objets pour les déplacer ; touche un objet pour le prendre, puis touche l'endroit où l'utiliser.",
+          intro: "Deux TP à faire dans l'ordre : un titrage suivi au pH-mètre, puis un titrage suivi au conductimètre. Sur la paillasse : glisser les objets pour les déplacer ; toucher un objet pour le prendre, puis toucher l'endroit où l'utiliser.",
           labos: [
             {
               id: "ph", titre: "TP 1 · Suivi pH-métrique", sousTitre: "Quelle est l'acidité du jus de maracudja ?",
-              intro: "Maïlys a pressé des maracudjas achetés au marché de Cayenne. Dilue son jus, puis titre-le en suivant le pH pour trouver sa concentration en acide citrique. Chaque élève reçoit un jus un peu différent.",
+              intro: "Maïlys a pressé des maracudjas achetés au marché de Cayenne. Diluer son jus, puis le titrer en suivant le pH pour trouver sa concentration en acide citrique. Chaque élève reçoit un jus un peu différent.",
               enClasse: {
                 objectif: "Diluer un jus de maracudja, puis déterminer sa concentration en acide citrique par un titrage acide-base suivi au pH-mètre.",
                 materiel: ["Jus de maracudja pressé et filtré", "Bécher de prélèvement, pipette jaugée de 10,0 mL, fiole jaugée de 100,0 mL et son bouchon", "Soude (Na⁺ ; HO⁻) à 0,100 mol·L⁻¹", "Pipette jaugée de 20,0 mL et pipeteur", "Potence et pince, burette graduée de 25 mL, bécher poubelle", "Bécher de 100 mL, agitateur magnétique et barreau aimanté", "pH-mètre et solutions tampons pH 4 et pH 7", "Pissette d'eau distillée"],
@@ -3626,7 +3634,7 @@ const CONTENU = {
                 {
                   id: "p1", competence: "S'approprier", onglet: "S'approprier", titre: "Le problème et le matériel",
                   notion: "Cours, parties 1, 2 et 4 : dilution, principe du titrage, suivi pH-métrique",
-                  but: "Observe les documents, puis réponds aux questions pour préparer la dilution et le titrage.",
+                  but: "Observer les documents, puis répondre aux questions pour préparer la dilution et le titrage.",
                   docs: [
                     { titre: "Document 1 : le jus de Maïlys", img: "marche", lignes: ["Maïlys, élève de terminale à Cayenne, presse des maracudjas achetés au marché. Elle veut savoir si son jus est aussi acide que l'annonce la fiche de la coopérative : « un jus de maracudja mûr contient environ 30 à 50 g d'acide par litre, exprimé en acide citrique »."] },
                     { titre: "Document 2 : l'acide citrique", img: "molecule", lignes: ["L'acide citrique, noté H₃A (M = 192,1 g·mol⁻¹), est le principal acide du jus. Ses trois groupes carboxyle COOH peuvent céder chacun un ion H⁺ (pKa = 3,1 ; 4,8 ; 6,4).", "Avec les ions hydroxyde, il réagit selon une réaction rapide et totale : H₃A + 3 HO⁻ → A³⁻ + 3 H₂O."] },
@@ -3658,14 +3666,14 @@ const CONTENU = {
                 {
                   id: "p2", competence: "Réaliser", onglet: "Diluer", titre: "Diluer le jus 10 fois", banc: "dilution-jus",
                   notion: "Cours, partie 1 : préparer une solution par dilution",
-                  but: "Prépare 100,0 mL de jus dilué 10 fois. Regarde bien le trait de jauge de la pipette et celui de la fiole.",
+                  but: "Préparer 100,0 mL de jus dilué 10 fois. Bien regarder le trait de jauge de la pipette et celui de la fiole.",
                   taches: [
-                    { id: "becher", texte: "Verse un peu de jus pressé dans le bécher de prélèvement (prends le flacon, puis touche le bécher). On ne pipette jamais dans le flacon." },
-                    { id: "pipette", texte: "Fixe le pipeteur sur la pipette de 10,0 mL, aspire le jus dans le bécher de prélèvement, puis ajuste le bas du ménisque sur le trait de jauge, goutte à goutte." },
-                    { id: "jus", texte: "Verse les 10,0 mL de jus dans la fiole jaugée de 100,0 mL." },
-                    { id: "melange", texte: "Complète avec la pissette jusqu'aux deux tiers, puis bouche la fiole, retourne-la pour homogénéiser et enlève le bouchon (touche la fiole)." },
-                    { id: "trait", texte: "Complète avec la pissette jusqu'au bas du col, puis ajuste le bas du ménisque sur le trait de jauge, goutte à goutte (loupe sur la paillasse)." },
-                    { id: "homog", texte: "Bouche la fiole et retourne-la pour homogénéiser : touche la fiole." }
+                    { id: "becher", texte: "Verser un peu de jus pressé dans le bécher de prélèvement (prendre le flacon, puis toucher le bécher). On ne pipette jamais dans le flacon." },
+                    { id: "pipette", texte: "Fixer le pipeteur sur la pipette de 10,0 mL, aspirer le jus dans le bécher de prélèvement, puis ajuster le bas du ménisque sur le trait de jauge, goutte à goutte." },
+                    { id: "jus", texte: "Verser les 10,0 mL de jus dans la fiole jaugée de 100,0 mL." },
+                    { id: "melange", texte: "Compléter avec la pissette jusqu'aux deux tiers, puis boucher la fiole, la retourner pour homogénéiser et enlever le bouchon (toucher la fiole)." },
+                    { id: "trait", texte: "Compléter avec la pissette jusqu'au bas du col, puis ajuster le bas du ménisque sur le trait de jauge, goutte à goutte (loupe sur la paillasse)." },
+                    { id: "homog", texte: "Boucher la fiole et la retourner pour homogénéiser : toucher la fiole." }
                   ],
                   questions: [
                     { type: "qcm", variantes: [
@@ -3682,11 +3690,11 @@ const CONTENU = {
                 {
                   id: "p3", competence: "Réaliser", onglet: "Étalonner", titre: "Étalonner le pH-mètre", banc: "etal",
                   notion: "Cours, partie 4 : le pH-mètre doit être étalonné",
-                  but: "Étalonne le pH-mètre avec deux solutions tampons, en commençant par le tampon pH 7. Regarde ce qu'il affiche avant l'étalonnage.",
+                  but: "Étalonner le pH-mètre avec deux solutions tampons, en commençant par le tampon pH 7. Regarder ce qu'il affiche avant l'étalonnage.",
                   taches: [
-                    { id: "etal7", texte: "Prends la sonde, plonge-la dans le tampon pH 7, puis appuie sur ÉTAL." },
-                    { id: "rince", texte: "Reprends la sonde, place-la au-dessus du bécher poubelle (touche la poubelle), puis rince-la avec la pissette." },
-                    { id: "etal4", texte: "Plonge la sonde dans le tampon pH 4, puis appuie sur ÉTAL." }
+                    { id: "etal7", texte: "Prendre la sonde, la plonger dans le tampon pH 7, puis appuyer sur ÉTAL." },
+                    { id: "rince", texte: "Reprendre la sonde, la placer au-dessus du bécher poubelle (toucher la poubelle), puis la rincer avec la pissette." },
+                    { id: "etal4", texte: "Plonger la sonde dans le tampon pH 4, puis appuyer sur ÉTAL." }
                   ],
                   questions: [
                     { type: "qcm", variantes: [
@@ -3703,13 +3711,13 @@ const CONTENU = {
                 {
                   id: "p4", competence: "Réaliser", onglet: "Titrer", titre: "Monter le titrage, puis titrer", banc: "titrage-ph",
                   notion: "Cours, partie 4 : le suivi pH-métrique",
-                  but: "Tout le matériel est posé sur la paillasse : monte toi-même le titrage, prépare la burette et le bécher, puis verse la soude en suivant le pH. Besoin d'aide ? Touche « Aide au montage ».",
+                  but: "Tout le matériel est posé sur la paillasse : monter soi-même le titrage, préparer la burette et le bécher, puis verser la soude en suivant le pH. Besoin d'aide ? Toucher « Aide au montage ».",
                   taches: [
-                    { id: "monte", texte: "Monte le titrage : glisse la burette dans la pince de la potence, l'agitateur sur le socle sous la burette, puis le bécher de titrage sur l'agitateur." },
-                    { id: "prelever", texte: "Avec la pipette de 20,0 mL et le pipeteur, prélève le jus dilué dans ta fiole, ajuste au trait et verse-le dans le bécher de titrage." },
-                    { id: "burette", texte: "Prépare la burette avec le bécher poubelle dessous (glisse-le sur l'agitateur à la place du bécher de titrage) : rinçage à la soude, remplissage, bulle chassée, zéro ajusté." },
-                    { id: "pret", texte: "Remets le bécher de titrage sous la burette, ajoute le barreau aimanté et 2 jets d'eau distillée, lance l'agitation et plonge la sonde." },
-                    { id: "mesures", texte: "Note le point de départ, puis verse la soude : par 1 mL loin de l'équivalence, par 0,2 mL ou goutte à goutte dans le saut de pH. Continue jusqu'à 4 mL après le saut." }
+                    { id: "monte", texte: "Monter le titrage : glisser la burette dans la pince de la potence, l'agitateur sur le socle sous la burette, puis le bécher de titrage sur l'agitateur." },
+                    { id: "prelever", texte: "Avec la pipette de 20,0 mL et le pipeteur, prélever le jus dilué dans la fiole, ajuster au trait et le verser dans le bécher de titrage." },
+                    { id: "burette", texte: "Préparer la burette avec le bécher poubelle dessous (le glisser sur l'agitateur à la place du bécher de titrage) : rinçage à la soude, remplissage, bulle chassée, zéro ajusté." },
+                    { id: "pret", texte: "Remettre le bécher de titrage sous la burette, ajouter le barreau aimanté et 2 jets d'eau distillée, lancer l'agitation et plonger la sonde." },
+                    { id: "mesures", texte: "Noter le point de départ, puis verser la soude : par 1 mL loin de l'équivalence, par 0,2 mL ou goutte à goutte dans le saut de pH. Continuer jusqu'à 4 mL après le saut." }
                   ],
                   questions: [
                     { type: "qcm", variantes: [
@@ -3730,11 +3738,11 @@ const CONTENU = {
                 {
                   id: "p5", competence: "Analyser", onglet: "Analyser", titre: "Trouver le volume à l'équivalence", outil: "tangentes",
                   notion: "Cours, partie 4 : méthodes des tangentes et de la dérivée",
-                  but: "Exploite ta courbe avec deux méthodes, pas à pas. Le pointeur te permet de lire précisément les coordonnées d'un point.",
+                  but: "Exploiter la courbe avec deux méthodes, pas à pas. Le pointeur permet de lire précisément les coordonnées d'un point.",
                   taches: [
-                    { id: "tangentes", texte: "Méthode des tangentes : trace T₁, puis T₂ parallèle, puis la droite D à égale distance, et place le point E." },
-                    { id: "derivee", texte: "Méthode de la dérivée : calcule une valeur de dpH/dV, puis lis le maximum de la courbe dérivée." },
-                    { id: "ve", texte: "Écris la valeur de Vₑ (à 0,1 mL près)." }
+                    { id: "tangentes", texte: "Méthode des tangentes : tracer T₁, puis T₂ parallèle, puis la droite D à égale distance, et placer le point E." },
+                    { id: "derivee", texte: "Méthode de la dérivée : calculer une valeur de dpH/dV, puis lire le maximum de la courbe dérivée." },
+                    { id: "ve", texte: "Écrire la valeur de Vₑ (à 0,1 mL près)." }
                   ],
                   questions: [
                     { type: "qcm", variantes: [
@@ -3751,7 +3759,7 @@ const CONTENU = {
               ],
               conclusion: {
                 titre: "Le jus de Maïlys est-il aussi acide qu'annoncé ?",
-                intro: "Calcule pas à pas la concentration en acide citrique avec TON volume à l'équivalence, valide ton résultat, puis complète la fiche bilan.",
+                intro: "Calculer pas à pas la concentration en acide citrique avec TON volume à l'équivalence, valider le résultat, puis compléter la fiche bilan.",
                 attendus: [
                   "Réaliser une solution de concentration donnée par dilution (verrerie jaugée).",
                   "Mettre en œuvre le suivi pH-métrique d'un titrage ayant pour support une réaction acide-base.",
@@ -3770,7 +3778,7 @@ const CONTENU = {
             },
             {
               id: "cond", titre: "TP 2 · Suivi conductimétrique", sousTitre: "L'esprit de sel respecte-t-il encore son étiquette ?",
-              intro: "Kenzo a retrouvé un vieux flacon d'esprit de sel dans l'abri de jardin. Dilue-le, titre-le en suivant la conductivité, puis compare ton résultat à l'étiquette.",
+              intro: "Kenzo a retrouvé un vieux flacon d'esprit de sel dans l'abri de jardin. Le diluer, le titrer en suivant la conductivité, puis comparer le résultat à l'étiquette.",
               enClasse: {
                 objectif: "Préparer une solution à partir d'un produit commercial (titre massique et densité), puis la titrer en suivant la conductivité pour vérifier l'étiquette.",
                 materiel: ["Esprit de sel du commerce (acide chlorhydrique, w = 23 % ; d = 1,11), manipulé sous la surveillance du professeur", "Pipettes jaugées de 5,0 mL et de 20,0 mL, pipeteur", "Fiole jaugée de 500,0 mL et son bouchon", "Soude à 0,100 mol·L⁻¹, burette de 25 mL sur potence, bécher poubelle", "Bécher de 400 mL, agitateur magnétique et barreau aimanté", "Conductimètre et sa cellule", "Éprouvette graduée de 250 mL, eau distillée"],
@@ -3780,7 +3788,7 @@ const CONTENU = {
                 {
                   id: "c1", competence: "Analyser", titre: "L'étiquette et la dilution",
                   notion: "Cours, parties 1 et 5 : produit commercial, suivi conductimétrique",
-                  but: "Lis les documents, puis prépare les calculs et le choix de la verrerie.",
+                  but: "Lire les documents, puis préparer les calculs et le choix de la verrerie.",
                   docs: [
                     { titre: "Document 1 : le flacon de l'abri de jardin", lignes: ["Kenzo veut nettoyer la terrasse de la maison familiale, à Matoury. Dans l'abri de jardin, il retrouve un flacon d'esprit de sel (solution d'acide chlorhydrique) entamé depuis longtemps et mal refermé.", "Étiquette : chlorure d'hydrogène HCl, titre massique w = 23 % ; densité d = 1,11. Corrosif. M(HCl) = 36,5 g·mol⁻¹ ; ρ(eau) = 1 000 g·L⁻¹.", "Kenzo se demande si ce flacon respecte encore son étiquette."] },
                     { titre: "Document 2 : le protocole", lignes: ["Le produit est trop concentré pour être titré directement. On le dilue 100 fois : c'est la solution S (500,0 mL).", "On titre V₁ = 20,0 mL de S, additionnés d'environ 200 mL d'eau distillée, par la soude à c₂ = 0,100 mol·L⁻¹, en suivant la conductivité σ. Réaction support : H₃O⁺ + HO⁻ → 2 H₂O."] },
@@ -3806,15 +3814,15 @@ const CONTENU = {
                 {
                   id: "c2", competence: "Réaliser", titre: "Diluer 100 fois, en sécurité", banc: "dilution",
                   notion: "Cours, partie 1 : préparer une solution à partir d'un produit commercial",
-                  but: "Prépare 500,0 mL de solution S en diluant 100 fois l'esprit de sel.",
+                  but: "Préparer 500,0 mL de solution S en diluant 100 fois l'esprit de sel.",
                   taches: [
-                    { id: "epi", texte: "Mets les gants et les lunettes (touche-les)." },
-                    { id: "eau", texte: "Remplis la fiole jaugée d'eau distillée à moitié environ : prends la pissette et touche la fiole." },
-                    { id: "pipette", texte: "Verse un peu d'esprit de sel dans le bécher de prélèvement, fixe le pipeteur sur la pipette de 5,0 mL, aspire et ajuste au trait de jauge, goutte à goutte." },
-                    { id: "acide", texte: "Verse les 5,0 mL d'esprit de sel dans l'eau de la fiole." },
-                    { id: "melange", texte: "Complète à la pissette jusqu'aux deux tiers, puis bouche la fiole, retourne-la pour homogénéiser et enlève le bouchon (touche la fiole)." },
-                    { id: "trait", texte: "Complète à la pissette jusqu'au bas du col, puis ajuste le bas du ménisque sur le trait de jauge, goutte à goutte (loupe sur la paillasse)." },
-                    { id: "homog", texte: "Bouche la fiole et retourne-la pour homogénéiser : touche la fiole." }
+                    { id: "epi", texte: "Mettre les gants et les lunettes (les toucher)." },
+                    { id: "eau", texte: "Remplir la fiole jaugée d'eau distillée à moitié environ : prendre la pissette et toucher la fiole." },
+                    { id: "pipette", texte: "Verser un peu d'esprit de sel dans le bécher de prélèvement, fixer le pipeteur sur la pipette de 5,0 mL, aspirer et ajuster au trait de jauge, goutte à goutte." },
+                    { id: "acide", texte: "Verser les 5,0 mL d'esprit de sel dans l'eau de la fiole." },
+                    { id: "melange", texte: "Compléter à la pissette jusqu'aux deux tiers, puis boucher la fiole, la retourner pour homogénéiser et enlever le bouchon (toucher la fiole)." },
+                    { id: "trait", texte: "Compléter à la pissette jusqu'au bas du col, puis ajuster le bas du ménisque sur le trait de jauge, goutte à goutte (loupe sur la paillasse)." },
+                    { id: "homog", texte: "Boucher la fiole et la retourner pour homogénéiser : toucher la fiole." }
                   ],
                   questions: [
                     { type: "qcm", variantes: [
@@ -3831,13 +3839,13 @@ const CONTENU = {
                 {
                   id: "c3", competence: "Réaliser", titre: "Titrer la solution S", banc: "titrage-cond",
                   notion: "Cours, partie 5 : le suivi conductimétrique",
-                  but: "Prépare le bécher et la burette, puis verse la soude en suivant la conductivité σ.",
+                  but: "Préparer le bécher et la burette, puis verser la soude en suivant la conductivité σ.",
                   taches: [
-                    { id: "prelever", texte: "Avec la pipette de 20,0 mL et le pipeteur, prélève la solution S dans la fiole, ajuste au trait et verse-la dans le bécher de titrage." },
-                    { id: "eau200", texte: "Remplis l'éprouvette au bidon d'eau distillée (200 mL) et verse-la dans le bécher, avant de verser la soude." },
-                    { id: "burette", texte: "Prépare la burette, bécher poubelle dessous : rinçage à la soude, remplissage, bulle chassée, zéro ajusté." },
-                    { id: "pret", texte: "Glisse le bécher poubelle hors de l'agitateur et le bécher de titrage à sa place ; barreau aimanté, agitation en marche, cellule plongée." },
-                    { id: "mesures", texte: "Note le point de départ, puis verse la soude mL par mL, jusqu'à environ 5 mL après l'équivalence (au moins 4 points de chaque côté)." }
+                    { id: "prelever", texte: "Avec la pipette de 20,0 mL et le pipeteur, prélever la solution S dans la fiole, ajuster au trait et la verser dans le bécher de titrage." },
+                    { id: "eau200", texte: "Remplir l'éprouvette au bidon d'eau distillée (200 mL) et la verser dans le bécher, avant de verser la soude." },
+                    { id: "burette", texte: "Préparer la burette, bécher poubelle dessous : rinçage à la soude, remplissage, bulle chassée, zéro ajusté." },
+                    { id: "pret", texte: "Glisser le bécher poubelle hors de l'agitateur et le bécher de titrage à sa place ; barreau aimanté, agitation en marche, cellule plongée." },
+                    { id: "mesures", texte: "Noter le point de départ, puis verser la soude mL par mL, jusqu'à environ 5 mL après l'équivalence (au moins 4 points de chaque côté)." }
                   ],
                   questions: [
                     { type: "qcm", variantes: [
@@ -3854,11 +3862,11 @@ const CONTENU = {
                 {
                   id: "c4", competence: "Analyser", titre: "Deux droites pour trouver Vₑ", outil: "droites",
                   notion: "Cours, partie 5 : exploiter une courbe σ = f(V)",
-                  but: "Trace les deux droites sur ta courbe, puis lis Vₑ à leur intersection.",
+                  but: "Tracer les deux droites sur la courbe, puis lire Vₑ à leur intersection.",
                   taches: [
-                    { id: "droite1", texte: "Trace la droite avant l'équivalence : touche au moins 3 points où σ diminue." },
-                    { id: "droite2", texte: "Trace la droite après l'équivalence : touche au moins 3 points où σ augmente." },
-                    { id: "ve", texte: "Écris Vₑ, l'abscisse du point d'intersection (à 0,1 mL près)." }
+                    { id: "droite1", texte: "Tracer la droite avant l'équivalence : toucher au moins 3 points où σ diminue." },
+                    { id: "droite2", texte: "Tracer la droite après l'équivalence : toucher au moins 3 points où σ augmente." },
+                    { id: "ve", texte: "Écrire Vₑ, l'abscisse du point d'intersection (à 0,1 mL près)." }
                   ],
                   questions: [
                     { type: "qcm", variantes: [
@@ -3875,11 +3883,11 @@ const CONTENU = {
                 {
                   id: "c5", competence: "Programmer", titre: "Les quantités de matière en Python", outil: "python",
                   notion: "Capacité numérique du programme",
-                  but: "Complète le programme qui calcule les quantités de matière des ions en fonction du volume de soude versé. Ses courbes s'affichent ensuite.",
+                  but: "Compléter le programme qui calcule les quantités de matière des ions en fonction du volume de soude versé. Ses courbes s'affichent ensuite.",
                   code: "import numpy as np\nimport matplotlib.pyplot as plt\n\n# solution S titrée, soude titrante\nc1, V1 = 0.063, 20.0e-3\nc2 = 0.100\nn0 = c1 * V1      # H3O+ au départ\n\n# volumes de soude versés (L)\nV2 = np.linspace(0, 25e-3, 51)\nn_HO_verse = [c2 * V2]\n\n# avant, puis après l'équivalence\nn_H3O = np.where(n_HO_verse < n0,\n                 [n0 - n_HO_verse], 0)\nn_HO = np.where(n_HO_verse < n0,\n                0, [n_HO_verse - n0])\n\n# ions spectateurs\nn_Na = c2 * V2\nn_Cl = [n0] + 0 * V2\n\nplt.plot(V2 * 1e3, n_H3O, label=\"H3O+\")\nplt.plot(V2 * 1e3, n_HO, label=\"HO-\")\nplt.legend()\nplt.show()",
                   pieges: ["n0 + n_HO_verse", "c1 * V2", "n_HO_verse"],
                   taches: [
-                    { id: "code", texte: "Complète les trous du programme avec les bons morceaux." }
+                    { id: "code", texte: "Compléter les trous du programme avec les bons morceaux." }
                   ],
                   questions: [
                     { type: "qcm", variantes: [
@@ -3892,7 +3900,7 @@ const CONTENU = {
               ],
               conclusion: {
                 titre: "Le flacon de Kenzo respecte-t-il encore son étiquette ?",
-                intro: "Calcule la concentration du flacon avec TON volume à l'équivalence, compare-la à l'étiquette, puis complète la fiche bilan.",
+                intro: "Calculer la concentration du flacon avec TON volume à l'équivalence, la comparer à l'étiquette, puis compléter la fiche bilan.",
                 attendus: [
                   "Réaliser une solution de concentration donnée en soluté apporté à partir d'une solution de titre massique et de densité fournis.",
                   "Mettre en œuvre le suivi conductimétrique d'un titrage.",
@@ -3919,7 +3927,7 @@ const CONTENU = {
         // Dans l'ordre croissant de difficulté. Le dernier est un exercice type bac.
         entrainement: [
           {
-            id: "vocabulaire", type: "relier", titre: "Le vocabulaire du titrage", desc: "Relie chaque mot à sa définition", n: 5,
+            id: "vocabulaire", type: "relier", titre: "Le vocabulaire du titrage", desc: "Relier chaque mot à sa définition", n: 5,
             paires: [
               ["La solution titrante", "est dans la burette ; sa concentration est connue."],
               ["La solution titrée", "contient l'espèce dont on cherche la quantité."],
@@ -4017,16 +4025,16 @@ const CONTENU = {
               { type: "qcm", points: 2, question: "À l'aide du document 1, calcule la concentration attendue en hydroxyde de sodium du déboucheur.",
                 reponses: ["5,0 mol·L⁻¹", "244 mol·L⁻¹", "6,1 mol·L⁻¹", "0,0061 mol·L⁻¹"], bonne: 2,
                 explication: "c = w × d × ρ(eau) ÷ M = 0,20 × 1,22 × 1 000 ÷ 40,0 = 6,1 mol·L⁻¹." },
-              { type: "multi", points: 2, consigne: "À l'aide des documents 2, 3 et 4, coche toutes les affirmations exactes.",
+              { type: "multi", points: 2, consigne: "À l'aide des documents 2, 3 et 4, cocher toutes les affirmations exactes.",
                 options: [["Avant l'équivalence, chaque ion HO⁻ consommé est remplacé par un ion Cl⁻, moins conducteur : σ diminue.", true], ["Après l'équivalence, on ajoute des ions H₃O⁺ et Cl⁻ qui ne réagissent plus : σ augmente.", true], ["Les ions Na⁺ disparaissent pendant le titrage.", false], ["On ajoute 200 mL d'eau pour rendre la réaction plus rapide.", false]],
                 explication: "λ(Cl⁻) = 7,6 est plus petit que λ(HO⁻) = 19,9. Après l'équivalence, les ions H₃O⁺, très conducteurs, s'accumulent. Na⁺ est spectateur. L'eau rend la dilution négligeable pour obtenir des droites." },
-              { type: "qcm", points: 2, question: "Calcule la concentration c(S) de la solution diluée S.",
+              { type: "qcm", points: 2, question: "Calculer la concentration c(S) de la solution diluée S.",
                 reponses: ["0,042 mol·L⁻¹", "6,0 × 10⁻⁴ mol·L⁻¹", "0,60 mol·L⁻¹", "0,060 mol·L⁻¹"], bonne: 3,
                 explication: "Réaction mole à mole : c(S) × V₁ = c₂ × Vₑ, donc c(S) = 0,050 × 12,0 ÷ 10,0 = 0,060 mol·L⁻¹." },
               { type: "qcm", points: 1, question: "Déduis-en la concentration mesurée c du déboucheur.",
                 reponses: ["6,0 mol·L⁻¹", "0,060 mol·L⁻¹", "0,60 mol·L⁻¹", "60 mol·L⁻¹"], bonne: 0,
                 explication: "Le déboucheur a été dilué 100 fois : c = 100 × 0,060 = 6,0 mol·L⁻¹." },
-              { type: "redaction", points: 2, consigne: "Le déboucheur respecte-t-il son étiquette ? Justifie avec un calcul (document 3).",
+              { type: "redaction", points: 2, consigne: "Le déboucheur respecte-t-il son étiquette ? Justifier avec un calcul (document 3).",
                 criteres: ["J'ai calculé le quotient |c(mesurée) − c(attendue)| ÷ u(c) = |6,0 − 6,1| ÷ 0,2 = 0,5.", "J'ai conclu : le quotient est inférieur à 2, la concentration mesurée est compatible avec l'étiquette."],
                 elements: "Concentration attendue : 6,1 mol·L⁻¹ ; concentration mesurée : 6,0 mol·L⁻¹. Quotient : |6,0 − 6,1| ÷ 0,2 = 0,5. Il est inférieur à 2 : l'écart est petit devant l'incertitude, le déboucheur respecte son étiquette." }
             ]
@@ -5553,6 +5561,45 @@ const QUESTIONS = [
     while (n < RUBRIQUES.length && rubriqueComplete(niv, ch, RUBRIQUES[n].id)) n++;
     return n;
   }
+  // Avancement d'une étape, de 0 à 1 (pourcentages demandés par les élèves de terminale le 09/11/2026).
+  // Calculé uniquement à partir de ce qui est déjà enregistré : rien de nouveau n'est stocké.
+  function fractionEtape(niv, ch, rub) {
+    if (!rubriqueDispo(ch, rub)) return null;
+    if (rubriqueComplete(niv, ch, rub)) return 1;
+    const p = profil(), cle = `${niv}-${ch.id}-${rub}`;
+    if (rub === "rappel" || rub === "entrainement") return nbValidees(niv, ch, rub) / activites(ch, rub).length;
+    if (rub === "cours") { // exemples réussis, puis « Terminer le cours »
+      const ex = ch.cours.blocs.filter((b) => b.t === "exemple").length;
+      return Math.min(ex, (p.cours[cle] || []).length) / (ex + 1);
+    }
+    if (rub === "tp") { // objectifs réussis, conclusion, puis « J'ai terminé le TP » (terminale : les deux laboratoires)
+      const tp2 = p.tp2 || {}, finis = (O, k) => O.filter((o) => ((tp2[k] || {}).obj || {})[o.id] && tp2[k].obj[o.id].fini).length;
+      if (ch.tp.labos) {
+        let n = 0, t = 0;
+        ch.tp.labos.forEach((l) => { const k = cle + "-" + l.id; t += l.objectifs.length + 1; n += fait(k) ? l.objectifs.length + 1 : finis(l.objectifs, k); });
+        return n / (t + 1);
+      }
+      const O = ch.tp.objectifs || [], C = ch.tp.conclusion || { textes: [] }, concl = (tp2[cle] || {}).concl || {};
+      const conclOk = C.textes.every((x, k) => concl[k]) && (!C.chaine || !!concl.chaine);
+      return (finis(O, cle) + (conclOk ? 1 : 0)) / (O.length + 2);
+    }
+    return 0;
+  }
+  // Avancement d'un chapitre en % : moyenne de ses étapes ; 100 % seulement quand tout est terminé.
+  function pctChapitre(niv, ch) {
+    const f = RUBRIQUES.map((r) => fractionEtape(niv, ch, r.id)).filter((x) => x != null);
+    if (!f.length) return 0;
+    const m = f.reduce((a, b) => a + b, 0) / f.length;
+    return m >= 1 ? 100 : Math.min(99, Math.floor(100 * m));
+  }
+  // Avancement d'un thème en % : moyenne des chapitres ouverts du thème (null si aucun n'est ouvert).
+  function pctTheme(niv, chs) {
+    const o = chs.filter((c) => ouvert(niv, c.id));
+    if (!o.length) return null;
+    const m = o.reduce((a, c) => a + pctChapitre(niv, c), 0) / o.length;
+    return m >= 100 ? 100 : Math.floor(m);
+  }
+  const barrePct = (pct, cls) => `<i class="${cls || "barre-pct"}" aria-hidden="true"><b style="width:${pct}%"></b></i>`;
   function rubriqueOuverte(niv, ch, idx) { return modeProf() || idx <= nbEtapesFaites(niv, ch); }
   function rubriqueValidee(niv, ch, idx) { return idx < nbEtapesFaites(niv, ch); }
   function activiteOuverte(niv, ch, rub, i) { return modeProf() || i <= nbValidees(niv, ch, rub); }
@@ -5577,7 +5624,7 @@ const QUESTIONS = [
   // la garde aussi un moment en cache. On compare donc la version de cette page avec le petit fichier version.json
   // publié en même temps : à l'ouverture et à chaque retour sur l'onglet (au plus une fois par minute).
   // Si une version plus récente est en ligne, un bandeau propose de mettre à jour. La progression (pseudo, points…) est conservée.
-  const VERSION_APPLI = "2026-11-08 21:49:15"; // remplacée par la date d'assemblage (assembler.py)
+  const VERSION_APPLI = "2026-11-09 14:38:10"; // remplacée par la date d'assemblage (assembler.py)
   let derniereVerif = 0;
   function verifierMaj() {
     if (!/^https?:$/.test(location.protocol) || VERSION_APPLI.indexOf("__") === 0) return; // fichier ouvert sur l'ordinateur : rien à vérifier
@@ -5671,25 +5718,25 @@ const QUESTIONS = [
   function vueNiveau(niv) {
     const n = niveau(niv); if (!n || !niveauVisible(n)) return vueNiveaux();
     $("brand").textContent = "Physique-Chimie · " + n.nom;
-    const avancement = (ch) => { const dispo = RUBRIQUES.filter((r) => rubriqueDispo(ch, r.id)); return [Math.min(dispo.length, nbEtapesFaites(niv, ch)), dispo.length]; };
     const ligneChapitre = (ch) => {
       if (!ouvert(niv, ch.id)) return `<div class="t-chap ferme" aria-disabled="true"><span class="n">${SVG.lock}</span><span class="t">${esc(ch.titre)}</span><span class="p">Fermé</span></div>`;
-      const [f, t] = avancement(ch), fini = f >= t;
-      return `<a class="t-chap${fini ? " fait" : ""}" href="#c-${niv}-${ch.id}"><span class="n">${fini ? SVG.check : SVG[ch.id] || SVG.etoile}</span><span class="t">${esc(ch.titre)}</span><span class="p">${fini ? "Terminé" : f + "/" + t}</span></a>`;
+      const pct = pctChapitre(niv, ch), fini = pct >= 100;
+      return `<a class="t-chap${fini ? " fait" : ""}" href="#c-${niv}-${ch.id}" aria-label="${esc(ch.titre)} : ${fini ? "terminé" : pct + " %"}"><span class="n">${fini ? SVG.check : SVG[ch.id] || SVG.etoile}</span><span class="t">${esc(ch.titre)}${barrePct(pct)}</span><span class="p">${fini ? "Terminé" : pct + " %"}</span></a>`;
     };
     const tuile = (t, chs) => {
-      const nbOuv = chs.filter((c) => ouvert(niv, c.id)).length;
+      const nbOuv = chs.filter((c) => ouvert(niv, c.id)).length, pct = pctTheme(niv, chs);
       const info = !chs.length ? "Bientôt" : nbOuv ? `${nbOuv} chapitre${nbOuv > 1 ? "s" : ""} ouvert${nbOuv > 1 ? "s" : ""}` : "Pas encore ouvert";
+      const prog = pct == null ? "" : `<span class="t-prog"><b class="t-pct">${pct} %</b>${barrePct(pct)}</span>`;
       const ico = `<span class="t-ico" aria-hidden="true">${ICONES_THEMES[t.id] || SVG.etoile}</span>`;
       if (!chs.length) return `<div class="tuile vide" style="--c:${COULEURS_THEMES[t.id] || "var(--muted)"}" aria-disabled="true">${ico}<span class="t-nom">${esc(t.titre)}</span><span class="t-info">${info}</span></div>`;
       return `<div class="tuile${nbOuv ? "" : " fermee"}" data-th="${t.id}" style="--c:${COULEURS_THEMES[t.id] || "var(--accent)"}">
-          <button type="button" class="t-tete" aria-expanded="false">${ico}<span class="t-nom">${esc(t.titre)}</span><span class="t-info">${info}</span><span class="t-fl" aria-hidden="true">›</span></button>
+          <button type="button" class="t-tete" aria-expanded="false">${ico}<span class="t-nom">${esc(t.titre)}</span><span class="t-info">${info}</span>${prog}<span class="t-fl" aria-hidden="true">›</span></button>
           <div class="t-liste" hidden>${chs.map(ligneChapitre).join("")}</div></div>`;
     };
     // le chapitre 0, commun à toute la classe
     const ch0 = chapitres(niv).find((c) => c.type === "outils");
     const carte0 = !ch0 ? "" : ouvert(niv, ch0.id)
-      ? `<a class="card ch0" href="#c-${niv}-${ch0.id}"><span class="ico">0</span><span class="txt"><span class="t">${esc(ch0.titre)}</span><span class="s">${esc(OUTILS.resume(niv, ch0))}</span></span><span class="go" aria-hidden="true">›</span></a>`
+      ? `<a class="card ch0" href="#c-${niv}-${ch0.id}"><span class="ico">0</span><span class="txt"><span class="t">${esc(ch0.titre)}</span><span class="s">${esc(OUTILS.resume(niv, ch0))}</span>${(() => { const [f, t] = OUTILS.avancement(niv); return t ? `<span class="level-line">${barrePct(Math.round(100 * f / t), "")}${Math.round(100 * f / t)} % des défis réussis</span>` : ""; })()}</span><span class="go" aria-hidden="true">›</span></a>`
       : `<div class="card ch0 off" aria-disabled="true"><span class="ico">0</span><span class="txt"><span class="t">${esc(ch0.titre)}</span><span class="s">Ton professeur l'ouvrira bientôt.</span></span><span class="badge">Fermé</span></div>`;
     // les thèmes, groupés au lycée (spécialité / enseignement scientifique) ; les chapitres sans thème à part
     const groupes = [];
@@ -5750,7 +5797,7 @@ const QUESTIONS = [
       case "vraifaux": return jeuVF(tirer(act.items, act.n || 8), act.titre, ctx);
       case "tri": return jeuTri(tirer(act.items, act.n || 8), act.titre, ctx, act);
       case "relier": {
-        view.innerHTML = page(kicker, act.titre, "Trace un trait entre deux points (ou touche un élément de chaque colonne).") + '<div id="w"></div>';
+        view.innerHTML = page(kicker, act.titre, "Tracer un trait entre deux points (ou toucher un élément de chaque colonne).") + '<div id="w"></div>';
         widgetRelier($("w"), tirer(act.paires, act.n || 5), (erreurs) => {
           const total = erreurs.length, justes = erreurs.filter((e) => e === 0).length;
           resultat({ titre: act.titre + " · paires trouvées du premier coup", score: justes, total, points: justes * 5, ctx });
@@ -5828,7 +5875,7 @@ const QUESTIONS = [
   // --- Tri en deux catégories ---
   // Par défaut : renouvelable ou non (item.renouvelable). Un tri peut définir ses propres catégories :
   // question, oui, non (boutons), court ([« oui » court, « non » court] pour la liste), consigne ; chaque item a alors « oui: true/false ».
-  const TRI_DEFAUT = { question: "Cette source d'énergie est-elle renouvelable ?", oui: "Renouvelable", non: "Non renouvelable", court: ["R", "NR"], consigne: "Pour chaque source, choisis R (renouvelable) ou NR (non renouvelable)." };
+  const TRI_DEFAUT = { question: "Cette source d'énergie est-elle renouvelable ?", oui: "Renouvelable", non: "Non renouvelable", court: ["R", "NR"], consigne: "Pour chaque source, choisir R (renouvelable) ou NR (non renouvelable)." };
   function triCat(d) {
     const T = Object.assign({}, TRI_DEFAUT);
     if (d && d.oui) { T.consigne = ""; T.court = [d.oui, d.non]; }
@@ -5966,7 +6013,7 @@ const QUESTIONS = [
       const avant = el.querySelector(".chain-scroll"), gx = avant ? avant.scrollLeft : 0;
       el.innerHTML = `${ch.nom ? `<p class="qtext">${esc(ch.nom)}</p>` : ""}${legendeChaine}${chaineHTML(ch.elements, { trous, rempli: Object.fromEntries(Object.entries(rempli).map(([k, id]) => [k, pieces[id].x])), etat: etatC, cur: termine ? null : cur, correction: termine, perte: o.perte })}
         ${termine ? "" : `<div class="pool">${pieces.filter((p) => !utilise[p.id]).map((p) => `<button class="piece${p.objet ? " obj" : ""}" data-p="${p.id}">${esc(p.x)}</button>`).join("")}</div>
-        <p class="small muted">Touche une case pour la choisir, puis une étiquette. Touche une case remplie pour la vider.</p>`}
+        <p class="small muted">Toucher une case pour la choisir, puis une étiquette. Toucher une case remplie pour la vider.</p>`}
         <div class="fbz"></div>${termine ? "" : `<button class="btn btn-primary" data-ok ${trous.some((k) => rempli[k] == null) ? "disabled" : ""}>Vérifier</button>`}`;
       el.querySelectorAll(".slot").forEach((b) => b.onclick = () => {
         if (termine) return; const k = +b.dataset.k;
@@ -6184,7 +6231,7 @@ const QUESTIONS = [
       grille += x ? `<div class="cell" id="cc${r}_${c}">${x.num ? `<span class="num">${x.num}</span>` : ""}<input id="ci${r}_${c}" maxlength="2" autocomplete="off" autocapitalize="characters" spellcheck="false" aria-label="Ligne ${r + 1}, colonne ${c + 1}"></div>` : "<div></div>";
     }
     const indices = (s) => d.places.map((m, mi) => m.sens === s ? `<li><button class="clue" data-mi="${mi}"><b>${m.n}</b>${esc(m.indice)} <span class="muted small">(${m.mot.length} lettres)</span></button></li>` : "").join("");
-    view.innerHTML = `<div class="head"><span class="kicker">Rappel</span><h2>${esc(act.titre)}</h2><p class="muted">Touche une définition ou une case, puis écris. Les accents ne comptent pas. La grille change à chaque partie.</p></div>
+    view.innerHTML = `<div class="head"><span class="kicker">Rappel</span><h2>${esc(act.titre)}</h2><p class="muted">Toucher une définition ou une case, puis écrire. Les accents ne comptent pas. La grille change à chaque partie.</p></div>
       <div class="cw" style="grid-template-columns:repeat(${d.C},1fr)">${grille}</div>
       <div class="clues"><div class="stack"><h3>Horizontalement</h3><ol>${indices("H")}</ol></div><div class="stack"><h3>Verticalement</h3><ol>${indices("V")}</ol></div></div>
       <div id="fb"></div><div class="row"><button class="btn btn-ghost" id="btn-aide">Une lettre d'aide</button><button class="btn btn-primary" id="btn-verif">Vérifier</button></div>`;
@@ -6393,19 +6440,22 @@ const QUESTIONS = [
   function vueMenu(niv, ch) {
     const etats = RUBRIQUES.map((r, i) => !rubriqueDispo(ch, r.id) ? "prep" : !rubriqueOuverte(niv, ch, i) ? "verrou" : rubriqueValidee(niv, ch, i) ? "fait" : "ouvert");
     const sousTitre = { verrou: "Bloqué", prep: "Bientôt", ouvert: "À faire", fait: "Terminé" };
+    const pcts = RUBRIQUES.map((r) => { const f = fractionEtape(niv, ch, r.id); return f == null ? null : f >= 1 ? 100 : Math.floor(100 * f); });
+    const pctCh = pctChapitre(niv, ch);
     const noeuds = RUBRIQUES.map((r, i) => {
-      const e = etats[i];
+      const e = etats[i], sous = e === "ouvert" && pcts[i] > 0 ? `En cours · ${pcts[i]} %` : sousTitre[e];
       const badge = e === "fait" ? `<span class="m-badge etoile">${SVG.etoile}</span>` : (e === "verrou" || e === "prep") ? `<span class="m-badge cadenas">${SVG.lock}</span>` : "";
       const inner = `<span class="m-pastille"><svg viewBox="0 0 48 48" aria-hidden="true">${ICONES_ETAPES[r.id]}</svg>${badge}</span>
-        <span class="m-nom">${esc(r.nom)}</span><span class="m-sous">Niveau ${i + 1} · ${sousTitre[e]}</span>`;
-      const label = `Niveau ${i + 1}, ${r.nom} : ${sousTitre[e].toLowerCase()}`;
+        <span class="m-nom">${esc(r.nom)}</span><span class="m-sous">Niveau ${i + 1} · ${sous}</span>`;
+      const label = `Niveau ${i + 1}, ${r.nom} : ${sous.toLowerCase()}`;
       return (e === "ouvert" || e === "fait")
         ? `<a class="m-etape ${e}" data-i="${i}" href="#c-${niv}-${ch.id}-${r.id}" aria-label="${esc(label)}">${inner}</a>`
         : `<button type="button" class="m-etape ${e}" data-i="${i}" aria-disabled="true" aria-label="${esc(label)}">${inner}</button>`;
     }).join("");
     const nb = etats.filter((e) => e === "fait").length;
     view.innerHTML = `<div class="head"><span class="kicker">Chapitre</span><h2>${esc(ch.titre)}</h2>
-        <p class="muted">Valide chaque niveau pour ouvrir le suivant. ${nb ? `Niveaux terminés : ${nb} sur 4.` : ""}</p></div>
+        <p class="muted">Valide chaque niveau pour ouvrir le suivant. ${nb ? `Niveaux terminés : ${nb} sur 4.` : ""}</p>
+        <div class="level-line m-avance"><span>Avancement du chapitre</span>${barrePct(pctCh, "")}<b>${pctCh} %</b></div></div>
       <div class="monde" id="monde"><svg class="m-decor" id="m-decor" aria-hidden="true"></svg>${noeuds}</div>`;
 
     const monde = $("monde"), decor = $("m-decor");
@@ -6454,32 +6504,32 @@ const QUESTIONS = [
   const BX0 = 10, BY0 = 12, BX1 = 320, BY1 = 336, BW = 330, BH = 346;
   const T_AMB = 27; // température de la salle (°C), en Guyane
   const OBJETS = {
-    robinet:     { nom: "Robinet", w: 72, h: 62, bornes: [], role: "Touche-le pour régler le débit d'eau (0 à 3). L'eau qui tombe possède de l'énergie cinétique." },
+    robinet:     { nom: "Robinet", w: 72, h: 62, bornes: [], role: "Le toucher pour régler le débit d'eau (0 à 3). L'eau qui tombe possède de l'énergie cinétique." },
     turbine:     { nom: "Turbine", w: 60, h: 60, bornes: [], role: "Elle est mise en rotation par un fluide en mouvement (eau, vent, vapeur). Son axe peut entraîner un alternateur." },
     alternateur: { nom: "Alternateur", w: 48, h: 48, bornes: [[13, 48], [35, 48]], role: "Un aimant tourne près d'une bobine : il convertit l'énergie mécanique en énergie électrique." },
     lampe:       { nom: "Lampe", w: 42, h: 56, bornes: [[9, 56], [33, 56]], role: "Elle convertit l'énergie électrique en énergie lumineuse, et un peu en chaleur." },
-    multimetre:  { nom: "Multimètre", w: 84, h: 120, bornes: [[52, 120], [72, 120], [12, 120], [32, 120]], noms: ["COM", "VΩ", "10A", "mA"], role: "Utilisé en voltmètre, il se branche aux bornes d'un dipôle. Touche le bouton rond pour changer de réglage." },
-    ventilateur: { nom: "Ventilateur", w: 58, h: 74, bornes: [], role: "Touche-le pour régler sa vitesse (0 à 3). Il souffle vers la droite : c'est le vent de la paillasse." },
-    bouilloire:  { nom: "Bouilloire", w: 70, h: 80, bornes: [], role: "Touche-la pour allumer ou éteindre le brûleur. La vapeur sort du bec, vers la droite. Le brûleur consomme du combustible." },
-    lampeBureau: { nom: "Lampe de bureau", w: 74, h: 72, bornes: [], role: "Touche-la pour l'allumer : elle éclaire vers le bas, comme le Soleil." },
+    multimetre:  { nom: "Multimètre", w: 84, h: 120, bornes: [[52, 120], [72, 120], [12, 120], [32, 120]], noms: ["COM", "VΩ", "10A", "mA"], role: "Utilisé en voltmètre, il se branche aux bornes d'un dipôle. Toucher le bouton rond pour changer de réglage." },
+    ventilateur: { nom: "Ventilateur", w: 58, h: 74, bornes: [], role: "Le toucher pour régler sa vitesse (0 à 3). Il souffle vers la droite : c'est le vent de la paillasse." },
+    bouilloire:  { nom: "Bouilloire", w: 70, h: 80, bornes: [], role: "La toucher pour allumer ou éteindre le brûleur. La vapeur sort du bec, vers la droite. Le brûleur consomme du combustible." },
+    lampeBureau: { nom: "Lampe de bureau", w: 74, h: 72, bornes: [], role: "La toucher pour l'allumer : elle éclaire vers le bas, comme le Soleil." },
     panneau:     { nom: "Panneau solaire", w: 76, h: 40, bornes: [[12, 40], [64, 40]], noms: ["−", "+"], role: "Il convertit directement l'énergie lumineuse en énergie électrique, sans turbine." },
-    joulemetre:  { nom: "Joulemètre", w: 92, h: 58, bornes: [[10, 58], [30, 58], [62, 58], [82, 58]], noms: ["entrée", "entrée", "sortie", "sortie"], role: "Il compte l'énergie électrique qui le traverse, de l'ENTRÉE (générateur) vers la SORTIE (lampe). Touche son écran pour le remettre à zéro." },
+    joulemetre:  { nom: "Joulemètre", w: 92, h: 58, bornes: [[10, 58], [30, 58], [62, 58], [82, 58]], noms: ["entrée", "entrée", "sortie", "sortie"], role: "Il compte l'énergie électrique qui le traverse, de l'ENTRÉE (générateur) vers la SORTIE (lampe). Toucher son écran pour le remettre à zéro." },
     camera:      { nom: "Caméra thermique", w: 86, h: 70, bornes: [], role: "Attrape-la par sa poignée et promène-la sur les objets : elle affiche leur température." },
     // ----- Objets du chapitre 2 (circuit électrique en courant continu) -----
     generateur:  { nom: "Générateur 6 V", w: 76, h: 50, bornes: [[18, 50], [58, 50]], noms: ["−", "+"], role: "Le générateur du laboratoire fournit une tension continue de 6 V. Au laboratoire, on ne branche jamais rien sur une prise du secteur (230 V)." },
-    interrupteur:{ nom: "Interrupteur", w: 60, h: 30, bornes: [[8, 30], [52, 30]], role: "Touche-le pour l'ouvrir ou le fermer. Ouvert, il coupe le circuit : le courant ne passe plus." },
-    ampoule:     { nom: "Lampe", w: 42, h: 56, bornes: [[9, 56], [33, 56]], role: "Touche-la pour lire sa plaque signalétique." },
-    multi:       { nom: "Multimètre", w: 84, h: 120, bornes: [[52, 120], [72, 120], [12, 120], [32, 120]], noms: ["COM", "VΩ", "10A", "mA"], role: "Multimètre de collège. Voltmètre (bleu) : bornes VΩ et COM, en dérivation. Ampèremètre (rose) : bornes 10A ou mA et COM, en série. Ohmmètre (vert) : bornes VΩ et COM, dipôle débranché. Touche une fonction autour du bouton pour la choisir." },
+    interrupteur:{ nom: "Interrupteur", w: 60, h: 30, bornes: [[8, 30], [52, 30]], role: "Le toucher pour l'ouvrir ou le fermer. Ouvert, il coupe le circuit : le courant ne passe plus." },
+    ampoule:     { nom: "Lampe", w: 42, h: 56, bornes: [[9, 56], [33, 56]], role: "La toucher pour lire sa plaque signalétique." },
+    multi:       { nom: "Multimètre", w: 84, h: 120, bornes: [[52, 120], [72, 120], [12, 120], [32, 120]], noms: ["COM", "VΩ", "10A", "mA"], role: "Multimètre de collège. Voltmètre (bleu) : bornes VΩ et COM, en dérivation. Ampèremètre (rose) : bornes 10A ou mA et COM, en série. Ohmmètre (vert) : bornes VΩ et COM, dipôle débranché. Toucher une fonction autour du bouton pour la choisir." },
     // ----- Objets de 4ème (électricité) -----
     resistance:  { nom: "Résistance", w: 64, h: 24, bornes: [[6, 24], [58, 24]], role: "Un conducteur ohmique (une « résistance ») : il freine le courant. Sa valeur, en ohms (Ω), se mesure avec un ohmmètre." },
-    fusible:     { nom: "Fusible 0,5 A", w: 56, h: 26, bornes: [[6, 26], [50, 26]], role: "Il fond si l'intensité qui le traverse dépasse 0,5 A : il coupe alors le circuit et le protège. Touche-le pour le changer quand il a fondu." },
+    fusible:     { nom: "Fusible 0,5 A", w: 56, h: 26, bornes: [[6, 26], [50, 26]], role: "Il fond si l'intensité qui le traverse dépasse 0,5 A : il coupe alors le circuit et le protège. Le toucher pour le changer quand il a fondu." },
     // ----- Objets du chapitre 3 (piles au citron, DEL, combustion de la bougie) -----
     citron:      { nom: "Citron", w: 64, h: 48, bornes: [], role: "Un fruit acide. Plantes-y une lame de zinc et une lame de cuivre, sans qu'elles se touchent : tu obtiens une pile." },
     gobelet:     { nom: "Gobelet d'eau salée", w: 56, h: 60, bornes: [], role: "De l'eau très salée. Comme le jus de citron, elle permet de fabriquer une pile avec deux lames de métaux différents." },
     lameZn:      { nom: "Lame de zinc", court: "zinc", w: 14, h: 64, bornes: [[7, 4]], noms: ["zinc"], role: "Une lame de zinc (Zn). Glisse-la dans un citron pour la planter. Pour la sortir, fais-la glisser hors du citron." },
     lameCu:      { nom: "Lame de cuivre", court: "cuivre", w: 14, h: 64, bornes: [[7, 4]], noms: ["cuivre"], role: "Une lame de cuivre (Cu). Glisse-la dans un citron pour la planter. Pour la sortir, fais-la glisser hors du citron." },
     del:         { nom: "DEL rouge", w: 30, h: 58, bornes: [[9, 58], [21, 50]], noms: ["patte longue (+)", "patte courte (−)"], role: "Elle s'allume si la tension à ses bornes atteint environ 1,8 V, et seulement dans un sens : patte longue (+) côté cuivre, patte courte (−) côté zinc." },
-    bougie:      { nom: "Bougie", w: 30, h: 62, bornes: [], role: "Touche-la pour l'allumer. La cire est le combustible ; elle brûle avec le dioxygène de l'air." },
+    bougie:      { nom: "Bougie", w: 30, h: 62, bornes: [], role: "La toucher pour l'allumer. La cire est le combustible ; elle brûle avec le dioxygène de l'air." },
     bocal:       { nom: "Bocal", w: 64, h: 82, bornes: [], role: "Un bocal en verre. À l'envers, glisse-le sur la bougie allumée pour l'enfermer. À l'endroit et fermé, il garde le gaz qu'il contient : touche-le pour l'agiter." },
     chaux:       { nom: "Eau de chaux", w: 34, h: 60, bornes: [], role: "Elle se trouble (devient blanche) en présence de dioxyde de carbone. Glisse le flacon sur un bocal retourné à l'endroit pour en verser." }
   };
@@ -6573,7 +6623,7 @@ const QUESTIONS = [
           <g id="B-fils"></g><g id="B-pieces"></g><g id="B-filtmp" pointer-events="none"></g><g id="B-fx" pointer-events="none" clip-path="url(#B-clip)"></g><g id="B-top"></g><g id="B-bulles" pointer-events="none"></g>
           <g id="B-reset" class="b-reset" transform="translate(${BX1 - 20} ${BY0 + 2})" role="button" tabindex="0" aria-label="Remettre la paillasse comme au départ"><rect width="18" height="18" rx="5"/><path d="M5 9a4 4 0 104-4H6M6 3v2.5h2.5" /></g>
         </svg>
-        <p class="bench-hint">Glisse les objets. Tire un fil d'une borne <span class="dot-b" aria-hidden="true"></span> à une autre. Touche un fil pour le retirer. Touche un objet pour le commander ou lire son rôle.</p>
+        <p class="bench-hint">Glisser les objets. Tirer un fil d'une borne <span class="dot-b" aria-hidden="true"></span> à une autre. Toucher un fil pour le retirer. Toucher un objet pour le commander ou lire son rôle.</p>
       </div>`;
     const svg = el.querySelector("#B-svg"), gP = el.querySelector("#B-pieces"), gF = el.querySelector("#B-fils"), gX = el.querySelector("#B-fx"), gT = el.querySelector("#B-top"), gB = el.querySelector("#B-bulles"), gTmp = el.querySelector("#B-filtmp");
     let S = null, presetCourant = null, idFil = 0;
@@ -7551,12 +7601,12 @@ const QUESTIONS = [
     const OBJ = {
       fente:    { nom: "Fente", w: 14, h: 44, role: "Une plaque percée d'une fente très fine : elle ne laisse passer qu'un fin pinceau de lumière. Elle se place juste devant la lampe." },
       lentille: { nom: "Lentille", w: 16, h: 48, role: "Une lentille convergente, déjà réglée par le professeur. Placée après la fente, elle donne un faisceau fin et un spectre net." },
-      prisme:   { nom: "Prisme", w: 40, h: 36, role: "Un prisme en verre : il dévie la lumière, et chaque radiation un peu différemment. Pose-le sur le plateau tournant." },
-      ecran:    { nom: "Écran", w: 10, h: 50, role: "Un écran blanc. Pose-le sur son support, là où arrive la lumière qui sort du prisme." },
-      lampeNa:  { nom: "Lampe au sodium", etiq: "Sodium", court: "Na", w: 30, h: 64, gaz: ["Sodium"], role: "Lampe spectrale : du sodium gazeux excité par une décharge électrique. Glisse-la sur le support, puis allume l'alimentation." },
+      prisme:   { nom: "Prisme", w: 40, h: 36, role: "Un prisme en verre : il dévie la lumière, et chaque radiation un peu différemment. Le poser sur le plateau tournant." },
+      ecran:    { nom: "Écran", w: 10, h: 50, role: "Un écran blanc. Le poser sur son support, là où arrive la lumière qui sort du prisme." },
+      lampeNa:  { nom: "Lampe au sodium", etiq: "Sodium", court: "Na", w: 30, h: 64, gaz: ["Sodium"], role: "Lampe spectrale : du sodium gazeux excité par une décharge électrique. La glisser sur le support, puis allumer l'alimentation." },
       lampeHg:  { nom: "Lampe au mercure", etiq: "Mercure", court: "Hg", w: 30, h: 64, gaz: ["Mercure"], uv: true, role: "Lampe spectrale au mercure. Elle émet aussi des ultraviolets : on ne la regarde jamais directement." },
       lampeH:   { nom: "Lampe à hydrogène", etiq: "Hydrogène", court: "H", w: 30, h: 64, gaz: ["Hydrogène"], role: "Lampe spectrale : de l'hydrogène gazeux excité par une décharge électrique." },
-      mystere:  { nom: "Tube mystère", etiq: "Tube mystère", court: "?", w: 30, h: 64, role: "Le tube de l'enseigne lumineuse : quel gaz contient-il ? Mesure ses raies pour le découvrir." },
+      mystere:  { nom: "Tube mystère", etiq: "Tube mystère", court: "?", w: 30, h: 64, role: "Le tube de l'enseigne lumineuse : quel gaz contient-il ? Mesurer ses raies pour le découvrir." },
       laser:    { nom: "Laser rouge", etiq: "Laser", court: "laser", w: 48, h: 26, laser: true, role: "Un laser de classe 2. On ne regarde jamais le faisceau et on ne le dirige jamais vers quelqu'un." }
     };
     const estSource = (t) => /^lampe|^mystere|^laser/.test(t);
@@ -7630,7 +7680,7 @@ const QUESTIONS = [
             <rect x="${X0 - 3}" y="${Y0 - 3}" width="${X1 - X0 + 6}" height="${Y1 - Y0 + 6}" rx="10" class="o-noir"/>
             <g class="o-dessin"></g><g class="o-bulles" pointer-events="none"></g>
           </svg>
-          <p class="bench-hint">La salle est dans le noir. Glisse les objets ; touche un objet pour lire son rôle ; touche les boutons pour les commander.</p>
+          <p class="bench-hint">La salle est dans le noir. Glisser les objets ; toucher un objet pour lire son rôle ; toucher les boutons pour les commander.</p>
           <div class="o-vue"></div>
         </div>`;
       const bench = el.querySelector(".bench"), svg = el.querySelector("svg"), gD = el.querySelector(".o-dessin"), gB = el.querySelector(".o-bulles"), vue = el.querySelector(".o-vue");
@@ -7651,7 +7701,7 @@ const QUESTIONS = [
               <p class="small o-lect" aria-live="polite"></p>
               <div class="o-ctrl"><button class="btn btn-ghost btn-sm" data-c="-5" aria-label="Curseur : 5 nm à gauche">◀◀</button><button class="btn btn-ghost btn-sm" data-c="-1" aria-label="Curseur : 1 nm à gauche">◀</button><button class="btn btn-ghost btn-sm" data-c="1" aria-label="Curseur : 1 nm à droite">▶</button><button class="btn btn-ghost btn-sm" data-c="5" aria-label="Curseur : 5 nm à droite">▶▶</button><button class="btn btn-primary btn-sm" data-c="noter">NOTER</button></div>
               <p class="small o-statut" aria-live="polite"></p>
-              ${M.source === "incand" ? `<p class="small muted">Le logiciel ramène toujours le haut de la courbe à 100 %. Glisse le doigt sur la courbe pour déplacer le curseur.</p>` : `<p class="small muted">Glisse le doigt sur la courbe pour déplacer le curseur, puis place-le au sommet d'un pic.</p>`}</div>`;
+              ${M.source === "incand" ? `<p class="small muted">Le logiciel ramène toujours le haut de la courbe à 100 %. Glisser le doigt sur la courbe pour déplacer le curseur.</p>` : `<p class="small muted">Glisser le doigt sur la courbe pour déplacer le curseur, puis le placer au sommet d'un pic.</p>`}</div>`;
         if (M.mode !== "prisme") brancherOrdi();
         dessiner(); statut();
       }
@@ -8396,7 +8446,7 @@ const QUESTIONS = [
       if (o.id === "w2") {
         box.innerHTML = `<h3>Mes mesures</h3><div class="table-wrap"><table class="mes-table"><thead><tr><th>Lampe</th><th>U (V)</th><th>I (A)</th></tr></thead><tbody>
           ${["L1", "L2"].map((n) => `<tr><td>${n}</td><td>${fU(M[n] && M[n].U)}</td><td>${fI(M[n])}</td></tr>`).join("")}</tbody></table></div>
-          <p class="small muted">Touche NOTER sur le multimètre quand la lampe est allumée. Une nouvelle mesure remplace l'ancienne.</p>`;
+          <p class="small muted">Toucher NOTER sur le multimètre quand la lampe est allumée. Une nouvelle mesure remplace l'ancienne.</p>`;
       } else if (o.id === "w3") {
         const st = rep.obj.w3;
         box.innerHTML = `<h3>Mes mesures et les plaques</h3><div class="table-wrap"><table class="mes-table"><thead><tr><th>Lampe</th><th>U (V)</th><th>I (A)</th><th>Puissance indiquée</th></tr></thead><tbody>
@@ -8473,7 +8523,7 @@ const QUESTIONS = [
     function extraP(box, o) {
       const M = rep.mesP || {}, fV = (v) => v == null ? "…" : virg(v.toFixed(2)).replace("-", "−");
       const table = (lignes, t2) => `<h3>Mes mesures</h3><div class="table-wrap"><table class="mes-table"><thead><tr><th>${t2 || "Pile"}</th><th>U (V)</th></tr></thead><tbody>${lignes.map(([a, v]) => `<tr><td>${a}</td><td>${fV(v)}</td></tr>`).join("")}</tbody></table></div>`;
-      if (o.id === "p1") box.innerHTML = table([["Citron (zinc et cuivre)", M.citron]]) + `<p class="small muted">Touche NOTER sur le multimètre quand il est branché aux deux lames. Une nouvelle mesure remplace l'ancienne.</p>`;
+      if (o.id === "p1") box.innerHTML = table([["Citron (zinc et cuivre)", M.citron]]) + `<p class="small muted">Toucher NOTER sur le multimètre quand il est branché aux deux lames. Une nouvelle mesure remplace l'ancienne.</p>`;
       else if (o.id === "p2") box.innerHTML = table([["Citron, zinc et cuivre (objectif 1)", M.citron], ["Citron, fils inversés", M.inverse], ["Citron, deux lames de cuivre", M.memes], ["Eau salée, zinc et cuivre", M.sale]]);
       else if (o.id === "p3") {
         const S = M.serie || {};
@@ -8664,7 +8714,7 @@ const QUESTIONS = [
       L = null;
       const C = tp.conclusion;
       $("tp-zone").innerHTML = `<div class="panel mission"><span class="kicker">Conclusion</span><h3>Ce que j'ai compris dans le laboratoire</h3>
-          <p>Complète la conclusion avec les mots de la banque. Chaque paragraphe reprend un objectif ; l'ensemble correspond à ce que dit le programme.</p>
+          <p>Compléter la conclusion avec les mots de la banque. Chaque paragraphe reprend un objectif ; l'ensemble correspond à ce que dit le programme.</p>
           <div class="methode"><strong class="lbl">${esc(C.programme || "Le programme (cycle 4)")}</strong><ul>${C.attendus.map((a) => `<li>${esc(a)}</li>`).join("")}</ul></div></div>
         ${C.textes.map((x, k) => `<div class="ex${rep.concl[k] ? " reussi" : ""}" id="ct${k}"><div class="ex-head"><strong>${esc(x.attendu)}</strong><span class="badge${rep.concl[k] ? " ok" : ""}">${rep.concl[k] ? "Réussi" : "Objectif " + (O.findIndex((o) => o.id === x.obj) + 1)}</span></div><div class="stack" id="ctw${k}"></div></div>`).join("")}
         ${C.chaine ? `<div class="ex${rep.concl.chaine ? " reussi" : ""}" id="ct-ch"><div class="ex-head"><strong>Chaîne énergétique</strong><span class="badge${rep.concl.chaine ? " ok" : ""}">${rep.concl.chaine ? "Réussi" : "À faire"}</span></div><div class="stack" id="ctw-ch"></div></div>` : ""}
@@ -8873,7 +8923,7 @@ const QUESTIONS = [
           <svg class="bench-svg" viewBox="0 0 ${BW} ${BH}" role="group" aria-label="Paillasse de chimie : glisse un objet pour le déplacer ; touche-le pour le prendre, puis touche l'endroit où l'utiliser">
             <rect x="3" y="4" width="${BW - 6}" height="${BH - 8}" rx="14" class="b-table"/><rect x="7" y="9" width="${BW - 14}" height="${BH - 18}" rx="10" class="b-zone"/>
             <g class="c-aide"></g><g class="c-cables"></g><g class="c-objets"></g><g class="c-fx" pointer-events="none"></g><g class="c-zoom" pointer-events="none"></g></svg>
-          <p class="bench-hint">Glisse un objet pour le déplacer. Touche un objet pour le prendre, puis touche l'endroit où l'utiliser.</p>
+          <p class="bench-hint">Glisser un objet pour le déplacer. Toucher un objet pour le prendre, puis toucher l'endroit où l'utiliser.</p>
           ${M.montage ? `<div class="c-btns"><button class="btn btn-ghost btn-sm c-aide-btn" aria-expanded="false">Aide au montage</button></div><div class="c-aide-liste"></div>` : ""}
           <div class="c-zoom-btns" hidden></div><div class="c-pres" hidden></div>
           <div class="c-main" aria-live="polite"></div>
@@ -9156,12 +9206,12 @@ const QUESTIONS = [
         if (!M.montage) return;
         const pot = O("pot"), bur = O("bur"), agi = O("agi"), b = bt();
         const etapes = [
-          [true, "Glisse la potence au centre de la paillasse (là où il y a de la place)."],
-          [bur.sur === "pot", "Glisse la burette dans la pince de la potence."],
-          [agi.sur === "pot", "Glisse l'agitateur magnétique sur le socle, sous la burette."],
-          [b.sur === "agi", "Glisse le bécher de titrage sur l'agitateur : la pointe de la burette doit entrer dans le bécher."],
-          [b.barreau, "Mets le barreau aimanté dans le bécher (prends-le, puis touche le bécher)."],
-          [!!(S.sonde && S.sonde.lieu === "bt"), "Plonge la sonde du pH-mètre dans le bécher, sans qu'elle touche le barreau."]
+          [true, "Glisser la potence au centre de la paillasse (là où il y a de la place)."],
+          [bur.sur === "pot", "Glisser la burette dans la pince de la potence."],
+          [agi.sur === "pot", "Glisser l'agitateur magnétique sur le socle, sous la burette."],
+          [b.sur === "agi", "Glisser le bécher de titrage sur l'agitateur : la pointe de la burette doit entrer dans le bécher."],
+          [b.barreau, "Mettre le barreau aimanté dans le bécher (le prendre, puis toucher le bécher)."],
+          [!!(S.sonde && S.sonde.lieu === "bt"), "Plonger la sonde du pH-mètre dans le bécher, sans qu'elle touche le barreau."]
         ];
         if (zAideL) zAideL.innerHTML = S.aide ? `<div class="c-aide-in"><strong>Le montage, étape par étape</strong><ol>${etapes.slice(1).map(([ok, t]) => `<li class="${ok ? "ok" : ""}">${ok ? "✓ " : ""}${esc(t)}</li>`).join("")}</ol><p class="small muted">${esc(etapes[0][1])} Les emplacements sont dessinés en pointillés sur la paillasse.</p><div class="c-illus">${ILLUS.montage}</div></div>` : "";
         if (bAide) { bAide.textContent = S.aide ? "Masquer l'aide au montage" : "Aide au montage"; bAide.setAttribute("aria-expanded", S.aide ? "true" : "false"); }
@@ -10115,7 +10165,7 @@ const QUESTIONS = [
           const e = A.e, z = $("an-etapes");
           const carteE = (n, titre, corps) => `<div class="c-etape${e > n ? " ok" : ""}${n === e ? " cur" : ""}"><span class="c-num">${e > n ? "✓" : n + 1}</span><div class="stack"><strong>${titre}</strong>${corps}</div></div>`;
           z.innerHTML = `<div class="panel c-outil"><strong>Méthode 1 : les tangentes</strong><p class="small">On trace deux tangentes parallèles à la courbe, de part et d'autre du saut de pH, puis la droite parallèle située à égale distance des deux : elle coupe la courbe au point d'équivalence E.</p>
-            ${carteE(0, "Tracer la tangente T₁ avant le saut", e === 0 ? `<p class="small">Fais glisser le pointeur le long de la courbe jusqu'à un point A <b>avant le saut</b>, là où la courbe est régulière (vers V = ${fx(Math.max(1, Math.round(VeVrai - 5)), 0)} mL par exemple). Puis trace la tangente en A.</p><button class="btn btn-primary btn-sm" id="an-t1">Tracer la tangente T₁ en A</button><div class="fbz" id="an-fb"></div>` : `<p class="small">T₁ est tangente à la courbe en A (V = ${fx(A.V1, 2)} mL).</p>`)}
+            ${carteE(0, "Tracer la tangente T₁ avant le saut", e === 0 ? `<p class="small">Faire glisser le pointeur le long de la courbe jusqu'à un point A <b>avant le saut</b>, là où la courbe est régulière (vers V = ${fx(Math.max(1, Math.round(VeVrai - 5)), 0)} mL par exemple). Puis tracer la tangente en A.</p><button class="btn btn-primary btn-sm" id="an-t1">Tracer la tangente T₁ en A</button><div class="fbz" id="an-fb"></div>` : `<p class="small">T₁ est tangente à la courbe en A (V = ${fx(A.V1, 2)} mL).</p>`)}
             ${e >= 1 ? carteE(1, "Tracer T₂, parallèle à T₁ et tangente après le saut", e === 1 ? `<p class="small">La droite en pointillés est parallèle à T₁. Monte-la ou descends-la avec le curseur jusqu'à ce qu'elle <b>touche</b> la courbe après le saut, sans la couper.</p>
               <label class="small" for="an-dec">Position de la droite parallèle</label><input type="range" id="an-dec" min="0" max="10" step="0.05" value="${A.dec != null ? A.dec : 2}">
               <div class="c-btns"><button class="btn btn-ghost btn-xs" data-dec="-0.05" aria-label="Descendre un peu">▼</button><button class="btn btn-ghost btn-xs" data-dec="0.05" aria-label="Monter un peu">▲</button><button class="btn btn-primary btn-sm" id="an-t2">Valider T₂</button></div><div class="fbz" id="an-fb"></div>` : `<p class="small">T₂ est parallèle à T₁ et tangente à la courbe après le saut.</p>`) : ""}
@@ -10222,11 +10272,11 @@ const QUESTIONS = [
         function ctl() {
           const st = rep.obj[O[actif].id].t, deux = st.droite1 && st.droite2;
           $("dr-ctl").innerHTML = `<div class="panel c-outil"><strong>1. Tracer les deux droites</strong>
-              <p class="small">Touche les points qui forment la droite ${mode === 1 ? "<b>avant</b> l'équivalence (σ diminue)" : "<b>après</b> l'équivalence (σ augmente)"} : au moins 3 points, loin de l'équivalence. Touche un point à nouveau pour le retirer.</p>
+              <p class="small">Toucher les points qui forment la droite ${mode === 1 ? "<b>avant</b> l'équivalence (σ diminue)" : "<b>après</b> l'équivalence (σ augmente)"} : au moins 3 points, loin de l'équivalence. Toucher un point à nouveau pour le retirer.</p>
               <div class="c-btns"><button class="btn btn-sm ${mode === 1 && choisir ? "btn-primary" : "btn-ghost"}" data-m="1">Droite 1 (${sel[1].length})</button><button class="btn btn-sm ${mode === 2 && choisir ? "btn-primary" : "btn-ghost"}" data-m="2">Droite 2 (${sel[2].length})</button><button class="btn-link" data-eff>Tout effacer</button></div>
               ${msg ? `<p class="error">${esc(msg)}</p>` : mode === 1 && sel[1].length >= 3 && sel[2].length < 3 ? `<p class="small"><b>Droite 1 tracée.</b> Ajoute d'autres points si tu veux, puis touche « Droite 2 ».</p>` : ""}</div>
             <div class="panel c-outil"><strong>2. Lire Vₑ avec le pointeur</strong>
-              ${deux ? `<p class="small">Place le pointeur sur le point d'intersection des deux droites (glisse-le sur le graphique, puis règle avec les flèches) et lis son abscisse.</p>
+              ${deux ? `<p class="small">Placer le pointeur sur le point d'intersection des deux droites (le glisser sur le graphique, puis régler avec les flèches) et lire son abscisse.</p>
                 <button class="btn ${choisir ? "btn-primary" : "btn-ghost"} btn-sm" data-p>${choisir ? "Utiliser le pointeur" : "Revenir au choix des points"}</button>
                 <div class="calc-in"><label class="small" for="ve-in">Vₑ =</label><input type="text" id="ve-in" inputmode="decimal" autocomplete="off"><span class="u">mL</span></div>
                 <button class="btn btn-primary btn-sm" id="ve-ok">Vérifier</button><div class="fbz" id="ve-fb"></div>` : `<p class="small muted">Trace d'abord les deux droites.</p>`}</div>`;
@@ -10640,7 +10690,7 @@ const QUESTIONS = [
     function pSci(diff) {
       const m = pick([2, 3, 4, 5, 6, 7, 8, 9, 15, 25, 35, 45, 75]), x = N(m, diff === 1 ? hasard(1, 3) : nz(-3, 4)), a = sci(x), n = ordre(x);
       const brut = m >= 10 ? `${m}${NB}×${NB}${puiss(x.e)}` : null;
-      return { q: `Écris ${dec(x)} en notation scientifique.`, a, d: trois(a, [brut, sci(decale(x, 1)), sci(decale(x, -1)), n ? `${dec(N(x.m, x.e - n))}${NB}×${NB}${puiss(-n)}` : null, sci(decale(x, 2)), sci(decale(x, -2))]),
+      return { q: `Écrire ${dec(x)} en notation scientifique.`, a, d: trois(a, [brut, sci(decale(x, 1)), sci(decale(x, -1)), n ? `${dec(N(x.m, x.e - n))}${NB}×${NB}${puiss(-n)}` : null, sci(decale(x, 2)), sci(decale(x, -2))]),
         e: `Notation scientifique : a × 10ⁿ avec a entre 1 et 10. Ici ${a}.`, vf: `En notation scientifique, ${dec(x)} = {}` };
     }
     function pProduitSci(diff) {
@@ -10756,11 +10806,17 @@ const QUESTIONS = [
     const MODES = [
       { id: "echauffement", titre: "Échauffement", desc: "10 questions, sans chrono, avec la correction" },
       { id: "chrono", titre: "Contre la montre", desc: "Un maximum de bonnes réponses avant la fin du temps" },
-      { id: "eclair", titre: "Vrai ou faux éclair", desc: "Réponds avant la fin de la barre · 3 vies" }
+      { id: "eclair", titre: "Vrai ou faux éclair", desc: "Répondre avant la fin de la barre · 3 vies" }
     ];
     const objectif = (niv, mode) => NIV[niv].objectifs[mode];
     const cleDe = (niv, partie, mode) => `${niv}-outils-${partie}${mode ? "-" + mode : ""}`;
     const record = (cle) => profil().records[cle];
+    // Avancement du chapitre 0 : défis réussis (3 façons de jouer par partie + le grand défi) → [réussis, total]
+    function avancement(niv) {
+      if (!NIV[niv]) return [0, 0];
+      const cles = NIV[niv].parties.flatMap((P) => MODES.map((m) => cleDe(niv, P.id, m.id))).concat([cleDe(niv, "defi")]);
+      return [cles.filter(fait).length, cles.length];
+    }
     function resume(niv) { return NIV[niv] ? NIV[niv].parties.map((p) => p.titre).join(" · ") + " · tout de tête !" : ""; }
 
     function vue(niv, ch, partie, mode) {
@@ -10912,9 +10968,10 @@ const QUESTIONS = [
       const cle = cleDe(niv, P ? P.id : "defi", mode === "defi" ? null : mode), but = objectif(niv, mode), retour = P ? `c-${niv}-outils-${P.id}` : `c-${niv}-outils`;
       const parties = P ? [P.id] : NIV[niv].parties.map((p) => p.id);
       const DUREE = NIV[niv].college ? 90 : 60, DMAX = NIV[niv].college ? 2 : 3; // temps du chrono (s) et difficulté maximale
-      const tEclair = (score) => 1000 * Math.max(4, 9 - 0.2 * score), T_DEFI = 20000;
-      const regle = { chrono: `Tu as ${DUREE} secondes. Réponds juste à un maximum de questions : une erreur fait perdre du temps. Objectif : ${but} bonnes réponses.`,
-        eclair: `Vrai ou faux ? Réponds avant que la barre se vide. Elle va de plus en plus vite. Tu as 3 vies. Objectif : ${but} bonnes réponses.`,
+      // Vrai ou faux éclair : 19 s au départ, puis un peu moins à chaque bonne réponse, jamais moins de 14 s (+10 s le 09/11/2026, retour des élèves de terminale)
+      const tEclair = (score) => 1000 * Math.max(14, 19 - 0.2 * score), T_DEFI = 20000;
+      const regle = { chrono: `Tu as ${DUREE} secondes. Répondre juste à un maximum de questions : une erreur fait perdre du temps. Objectif : ${but} bonnes réponses.`,
+        eclair: `Vrai ou faux ? Répondre avant que la barre se vide. Elle va de plus en plus vite. Tu as 3 vies. Objectif : ${but} bonnes réponses.`,
         defi: `Questions des trois parties, de plus en plus difficiles, 20 secondes chacune. Tu as 3 vies. Objectif : ${but} bonnes réponses.` }[mode];
       view.innerHTML = `<div class="head"><span class="kicker">Chapitre 0</span><h2>${esc(titre)}</h2><p class="muted">${esc(regle)}</p></div>
         <div class="panel o-pret"><p><strong>Pas de calculatrice, pas de brouillon : tout de tête !</strong></p><button class="btn btn-primary" id="o-go">Je suis prêt, c'est parti !</button></div>`;
@@ -10997,7 +11054,7 @@ const QUESTIONS = [
       }
     }
 
-    return { vue, resume, _test: { NIV, question, serie, dec, sci, N, lire } };
+    return { vue, resume, avancement, _test: { NIV, question, serie, dec, sci, N, lire } };
   })();
   // ======================= Guichet des données (préparation de la V2) =======================
   // TOUT ce que l'appli lit ou enregistre passe par ce guichet : la progression de l'élève,
