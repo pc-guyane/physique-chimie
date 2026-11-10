@@ -152,8 +152,42 @@ textarea { min-height: 5rem; resize: vertical; }
 .gains { display: flex; gap: .5rem; flex-wrap: wrap; }
 .review-item { border-left: 4px solid var(--bad); background: var(--surface); border-radius: 0 12px 12px 0; padding: .7rem .9rem; display: flex; flex-direction: column; gap: .3rem; }
 .review-item .ans { color: var(--good); font-weight: 700; }
+/* Revoir mes réponses et la correction (fin d'exercice) */
+.rv-appel { display: flex; flex-direction: column; align-items: stretch; gap: .35rem; background: var(--accent-soft); border-radius: var(--r); padding: .9rem; }
+.rv-appel .btn svg { width: 1.25rem; height: 1.25rem; margin-right: .45rem; vertical-align: -.25rem; }
+.rv-appel .small { text-align: center; }
+.rv-aide .rv-v { color: var(--good); } .rv-aide .rv-r { color: var(--bad); }
+.rv-filtre { display: inline-flex; gap: .25rem; background: var(--line); padding: .25rem; border-radius: 999px; align-self: flex-start; }
+.rv-filtre button { border: 0; background: transparent; color: var(--ink); font: inherit; font-weight: 700; font-size: .9rem; padding: .45rem .9rem; border-radius: 999px; cursor: pointer; }
+.rv-filtre button.on { background: var(--surface); color: var(--accent); box-shadow: 0 1px 3px rgba(0,0,0,.12); }
+.rv-item { background: var(--surface); border: 1px solid var(--line); border-left: 5px solid var(--good); border-radius: 0 var(--r) var(--r) 0; padding: .8rem .9rem; display: flex; flex-direction: column; gap: .6rem; }
+.rv-item.ko { border-left-color: var(--bad); } .rv-item.doc { border-left-color: var(--line); }
+.rv-tete { display: flex; justify-content: space-between; align-items: center; gap: .5rem; }
+.rv-tete strong { font-family: var(--f-display); }
+.badge.ko { background: var(--bad-soft); color: var(--bad); }
+.rv-photo { pointer-events: none; display: flex; flex-direction: column; gap: .6rem; min-width: 0; }
+.rv-photo .chain-scroll { pointer-events: auto; }
+.rv-photo > .panel { border: 0; padding: 0; background: transparent; box-shadow: none; }
+.rv-photo .btn.good, .rv-photo .btn.bad, .vf .btn.pris:disabled { opacity: 1; }
+.rv-photo input:disabled { opacity: 1; color: var(--ink); -webkit-text-fill-color: var(--ink); }
+.rv-photo .o-carte { animation: none; }
+.rv-item.doc .rv-photo, .rv-docs { pointer-events: auto; } .rv-docs summary { cursor: pointer; font-weight: 700; color: var(--accent); }
+.rv-docs > .panel { margin-top: .6rem; }
+.rv-paire { display: grid; grid-template-columns: 1fr auto 1fr; gap: .5rem; align-items: center; }
+.rv-paire .rv-fl { color: var(--muted); } .rv-paire .rv-bon { color: var(--good); font-weight: 700; }
+.vf .btn.pris.good { background: var(--good-soft); border-color: var(--good); color: var(--good); }
+.vf .btn.pris.bad { background: var(--bad-soft); border-color: var(--bad); color: var(--bad); }
 
 /* Mots croisés */
+.cw-aides { display: flex; flex-wrap: wrap; gap: .5rem; }
+.cw-aides .btn svg { width: 1.1rem; height: 1.1rem; margin-right: .35rem; vertical-align: -.2rem; }
+.cw-banque { background: var(--sun-soft); border-radius: var(--r); padding: .7rem .8rem; display: flex; flex-direction: column; gap: .5rem; }
+.cw-banque p { margin: 0; }
+.cw-mots { display: flex; flex-wrap: wrap; gap: .4rem; }
+.cw-mot { font-family: var(--f-lcd); font-weight: 700; letter-spacing: .06em; background: var(--surface); border: 1.5px solid var(--line); border-radius: 8px; padding: .25rem .5rem; display: inline-flex; align-items: baseline; gap: .3rem; }
+.cw-mot small { font-family: var(--f-body); font-size: .7rem; color: var(--muted); letter-spacing: 0; }
+.cw-mot.trouve { text-decoration: line-through; color: var(--muted); border-color: var(--good); background: var(--good-soft); }
+.cw .cell.aide input { color: var(--sun-ink); }
 .cw { display: grid; gap: 2px; width: 100%; max-width: 30rem; margin: 0 auto; }
 .cw > div { aspect-ratio: 1; min-width: 0; position: relative; }
 .cw .cell { background: var(--surface); border: 1px solid var(--muted); border-radius: 3px; }
@@ -823,6 +857,52 @@ a.t-chap:hover { border-color: var(--c); }
 .mv-proto-l { margin: 0; padding-left: 1.4rem; display: flex; flex-direction: column; gap: .25rem; } .mv-proto-l:empty { display: none; }
 .mv-proto-l li { background: var(--good-soft); border-radius: 8px; padding: .3rem .5rem; }
 .opt.mv-p { grid-template-columns: 1fr; }
+/* Paillasse de pesée, version 2 (10/11) : bandeau des étapes, boutons posés sur la paillasse, loupe, sélection */
+.bench.mv { gap: .5rem; }
+.mv-guide { display: grid; grid-template-columns: 2.4rem 1fr; gap: .6rem; align-items: center; min-height: 3.6rem; padding: .5rem .7rem; border-radius: 12px;
+  background: var(--surface); border: 1px solid var(--line); border-left: 5px solid var(--accent); font-size: .92rem; line-height: 1.3; transition: background .25s, border-color .25s; }
+.mv-guide.neuf { animation: mv-g-in .35s ease-out; }
+@keyframes mv-g-in { from { opacity: .3; transform: translateY(-4px); } }
+.mv-g-ico { width: 2.4rem; height: 2.4rem; border-radius: 50%; display: grid; place-items: center; font-weight: 800; font-size: .82rem; background: var(--accent-soft); color: var(--accent); font-family: var(--f-display); }
+.mv-guide.g-ok { border-left-color: var(--good); background: var(--good-soft); } .mv-guide.g-ok .mv-g-ico { background: var(--good); color: var(--surface); font-size: 1.1rem; }
+.mv-guide.g-ko { border-left-color: var(--bad); background: var(--bad-soft); } .mv-guide.g-ko .mv-g-ico { background: var(--bad); color: var(--surface); font-size: 1.1rem; }
+.mv-guide.g-info .mv-g-ico { font-style: italic; font-family: Georgia, serif; font-size: 1.1rem; }
+.mv-guide.g-fin { border-left-color: var(--good); } .mv-guide.g-fin .mv-g-ico { background: var(--good-soft); color: var(--good); font-size: 1.1rem; }
+.mv-scene { position: relative; }
+.mv-cmd { position: absolute; z-index: 3; display: flex; flex-direction: column; gap: .3rem; padding: .45rem; background: var(--surface); border: 1.5px solid var(--accent);
+  border-radius: 12px; box-shadow: 0 3px 10px rgba(0,0,0,.18); font-size: .8rem; line-height: 1.2; animation: mv-g-in .3s ease-out; }
+.mv-cmd .mv-c-t { font-size: .82rem; color: var(--accent); }
+.mv-cmd .mv-c-st { font-size: .74rem; color: var(--muted); }
+.mv-cmd { box-sizing: border-box; } .mv-cmd .mv-c-row { display: flex; flex-wrap: wrap; gap: .25rem; align-items: center; }
+.mv-cmd .mv-c-row .btn { flex: 1 1 0; min-width: 0; padding: .15rem .1rem; font-size: .72rem; min-height: 2.6rem; white-space: nowrap; display: flex; flex-direction: column; align-items: center; justify-content: center; line-height: 1; gap: .1rem; }
+.mv-cmd .mv-c-row .btn b { font-size: 1.05rem; } .mv-cmd .mv-c-row .btn small { font-size: .62rem; font-weight: 600; }
+.mv-cmd .mv-c-row input { width: 100%; min-width: 0; padding: .3rem .4rem; font-size: .95rem; }
+.mv-cmd .btn-link { align-self: center; font-size: .78rem; padding: .1rem 0; }
+.mv-cmd .btn { touch-action: none; user-select: none; -webkit-user-select: none; -webkit-touch-callout: none; }
+.mv-verser { display: flex; flex-direction: column; align-items: center; gap: 0; min-height: 2.9rem; font-size: .95rem; padding: .25rem .3rem; }
+.mv-verser small { font-size: .66rem; font-weight: 600; opacity: .85; }
+.mv-verser.actif { filter: brightness(.85); transform: scale(.97); box-shadow: inset 0 0 0 3px rgba(255,255,255,.4); }
+.mv-verrou { position: absolute; inset: 0; z-index: 4; display: grid; place-items: center; padding: 1rem; background: rgba(128,128,128,.35); background: color-mix(in srgb, var(--bg) 78%, transparent);
+  backdrop-filter: blur(2px); -webkit-backdrop-filter: blur(2px); border-radius: 14px; text-align: center; }
+.mv-verrou > div { background: var(--surface); border: 2px solid var(--accent); border-radius: 14px; padding: .9rem 1rem; max-width: 16rem; box-shadow: 0 3px 10px rgba(0,0,0,.15); }
+.mv-verrou p { margin: .3rem 0 0; font-size: .92rem; } .mv-v-ico { font-size: 1.6rem; }
+.mv-halo { fill: var(--accent-soft); fill-opacity: .55; stroke: var(--accent); stroke-width: 2; stroke-dasharray: 5 3; animation: c-pulse 1.2s ease-in-out infinite; }
+.bench.mv .mv-obj.sel { cursor: grabbing; }
+.mv-plat.cible { stroke: var(--accent); stroke-width: 2.4; }
+.mv-filet { fill: none; stroke-width: 3; stroke-linecap: round; stroke-dasharray: 7 3; opacity: .9; }
+.mv-etagere { fill: var(--metal); opacity: .7; }
+.mv-ombre { fill: var(--ink); opacity: .08; }
+.mv-coupelle { fill: var(--surface); stroke: var(--ink); stroke-width: 1.4; stroke-linejoin: round; }
+.mv-pip { fill: var(--surface); fill-opacity: .8; stroke: var(--ink); stroke-width: 1; }
+.mv-poire { fill: #C8423A; stroke: var(--ink); stroke-width: 1; }
+.mv-z-t { font-size: 9px; fill: var(--ink); font-family: var(--f-body); font-weight: 700; paint-order: stroke; stroke: var(--surface); stroke-width: 2.5px; }
+.mv-proto-panel { border: 2px solid var(--accent); }
+.mv-proto-c { list-style: none; margin: .3rem 0 0; padding: 0; display: flex; flex-direction: column; gap: .3rem; }
+.mv-proto-c li { display: grid; grid-template-columns: 1.7rem 1fr; gap: .5rem; align-items: center; font-size: .92rem; padding: .3rem .4rem; border-radius: 8px; }
+.mv-proto-c .tick { width: 1.7rem; height: 1.7rem; border-radius: 50%; display: grid; place-items: center; font-size: .8rem; font-weight: 700; border: 1.5px solid var(--line); color: var(--muted); }
+.mv-proto-c .tick svg { width: 1rem; height: 1rem; }
+.mv-proto-c li.fait { color: var(--muted); } .mv-proto-c li.fait .tick { background: var(--good); border-color: var(--good); color: var(--surface); }
+.mv-proto-c li.cur { background: var(--accent-soft); font-weight: 600; } .mv-proto-c li.cur .tick { border-color: var(--accent); color: var(--accent); }
 </style>
 </head><body>
 
@@ -865,7 +945,7 @@ const REGLAGES = {
     "4e-intensite": false,  // 4ème : l'intensité du courant électrique (cours + TP)
     "4e-tension": true,     // 4ème : la tension électrique (cours + TP)
     "4e-ohm": false,        // 4ème : la résistance et la loi d'Ohm (cours + TP)
-    "4e-masse": false,      // 4ème : la masse volumique (rappel, cours, TP « l'or des fous et le liquide mystère », entraînement)
+    "4e-masse": true,       // 4ème : la masse volumique (rappel, cours, TP « l'or des fous et le liquide mystère », entraînement)
     "2nde-spectre": true,   // 2nde : le spectre de la lumière (rappel, cours, TP « Le laboratoire des lumières », entraînement)
     "tle-titrages": true,   // Terminale : analyser un système par des méthodes chimiques (titrages)
     "tle-diffraction": false // Terminale : diffraction et interférences (rappel, cours, 2 TP, entraînement)
@@ -3903,7 +3983,7 @@ const CONTENU = {
         // ======================== TP (paillasse 08_masse.js : objectifs m1 à m4) ========================
         tp: {
           titre: "Laboratoire : l'or des fous et le liquide mystère",
-          intro: "Sur la paillasse : peser avec la balance, mesurer des volumes avec l'éprouvette, démasquer une fausse pépite d'or, puis identifier un liquide mystère. Chaque objectif réussi débloque le suivant.",
+          intro: "Sur la paillasse : peser avec la balance, mesurer des volumes avec l'éprouvette, démasquer une fausse pépite d'or, puis identifier un liquide mystère. Le bandeau au-dessus de la paillasse indique l'étape à faire. Chaque objectif réussi débloque le suivant.",
           finTP: "TP terminé : l'entraînement est débloqué !",
           enClasse: {
             objectif: "Mesurer une masse et un volume, montrer que la masse est proportionnelle au volume, puis proposer et mettre en œuvre un protocole pour déterminer la masse volumique d'un solide et d'un liquide et les identifier.",
@@ -3916,8 +3996,8 @@ const CONTENU = {
               notion: "Cours, parties 1 et 2 : masse, volume, masse volumique",
               but: "Mesurer la masse de 50 mL d'eau avec la balance et l'éprouvette, puis calculer la masse volumique de l'eau.",
               taches: [
-                { id: "tare", texte: "Glisser l'éprouvette vide sur le plateau de la balance, puis toucher TARE : la balance affiche 0.0 g." },
-                { id: "remplir", texte: "Glisser le flacon d'eau sur l'éprouvette et verser jusqu'à 50 mL. Finir au compte-gouttes, en regardant la loupe." },
+                { id: "tare", texte: "Poser l'éprouvette vide sur le plateau de la balance (la toucher, puis toucher la balance), puis toucher TARE : la balance affiche 0.0 g." },
+                { id: "remplir", texte: "Amener le flacon d'eau sur l'éprouvette. Maintenir « Verser » jusqu'à environ 45 mL, puis finir au compte-gouttes en regardant la loupe : le bas du ménisque sur le trait 50." },
                 { id: "noter", texte: "Toucher NOTER sur la balance pour relever la masse de 50 mL d'eau." }
               ],
               questions: [
@@ -3936,7 +4016,7 @@ const CONTENU = {
               notion: "Cours, partie 1 : la proportionnalité",
               but: "Mesurer la masse de plusieurs volumes d'eau et regarder le graphique.",
               taches: [
-                { id: "trois", texte: "Mesurer la masse d'au moins 3 volumes d'eau différents (par exemple 20 mL, 40 mL et 80 mL) : tarer l'éprouvette vide, verser, puis toucher NOTER à chaque fois." }
+                { id: "trois", texte: "Tarer l'éprouvette vide sur la balance, puis verser l'eau en plusieurs fois (par exemple vers 20 mL, 40 mL, puis 80 mL) en touchant NOTER à chaque fois : au moins 3 mesures." }
               ],
               questions: [
                 { type: "qcm", variantes: [
@@ -3956,9 +4036,9 @@ const CONTENU = {
               notion: "Cours, partie 4 : identifier une matière",
               but: "Une pierre dorée a été trouvée près d'une crique. Mesurer sa masse et son volume pour savoir si c'est de l'or.",
               taches: [
-                { id: "masse", texte: "Poser la pierre seule sur le plateau (la balance doit afficher 0.0 g quand le plateau est vide) et toucher NOTER." },
-                { id: "v1", texte: "Verser environ 50 mL d'eau dans l'éprouvette (posée à côté de la balance), puis toucher NOTER V₁ sous la loupe." },
-                { id: "v2", texte: "Glisser la pierre dans l'éprouvette : le niveau monte. Toucher NOTER V₂ sous la loupe." }
+                { id: "masse", texte: "Peser la pierre : la poser seule sur le plateau de la balance (qui affiche 0.0 g à vide), puis toucher NOTER." },
+                { id: "v1", texte: "Verser environ 50 mL d'eau dans l'éprouvette (elle reste sur la paillasse), reposer le flacon, puis lire V₁ sur la loupe et le noter." },
+                { id: "v2", texte: "Plonger la pierre dans l'éprouvette (la toucher, puis toucher l'éprouvette) : elle glisse le long du verre penché et le niveau monte. Lire V₂ sur la loupe et le noter." }
               ],
               questions: [
                 { type: "masse", calc: "vol3" },
@@ -3972,9 +4052,9 @@ const CONTENU = {
               notion: "Cours, partie 4 : identifier, flotter ou couler",
               but: "Le professeur a coloré un liquide mystère. Proposer un protocole pour mesurer sa masse volumique, le mettre en œuvre, puis le verser sur de l'eau.",
               taches: [
-                { id: "protocole", texte: "Remettre dans l'ordre les étapes du protocole (sous la paillasse)." },
-                { id: "mesure", texte: "Mettre en œuvre le protocole avec le liquide mystère (au moins 20 mL), puis toucher NOTER sur la balance." },
-                { id: "verse", texte: "Glisser le flacon du liquide mystère sur le bécher d'eau et observer où il se place." }
+                { id: "protocole", texte: "Remettre dans l'ordre les étapes du protocole (au-dessus de la paillasse)." },
+                { id: "mesure", texte: "Suivre le protocole sur la paillasse avec le liquide mystère (au moins 20 mL), jusqu'à toucher NOTER sur la balance." },
+                { id: "verse", texte: "Verser un peu de liquide mystère dans le bécher d'eau (toucher le flacon, puis le bécher) et observer où il se place." }
               ],
               questions: [
                 { type: "masse", calc: "rho4" },
@@ -7086,6 +7166,9 @@ const QUESTIONS = [
     diffraction: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 4v6M3 14v6"/><path d="M8 12a4 4 0 0 0 0-.01M8 8a6 6 0 0 1 0 8M11 5a9 9 0 0 1 0 14M14 2.5a12 12 0 0 1 0 19"/></svg>',
     titrages: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 3h6M10 3v6l-5 10a2 2 0 002 3h10a2 2 0 002-3l-5-10V3M7 15h10"/></svg>',
     masse: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5.5 21l2-11h9l2 11z"/><circle cx="12" cy="6" r="2.6"/><path d="M10.5 15.5h3"/></svg>',
+    revue: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 4h9a2 2 0 012 2v14H6a2 2 0 01-2-2V9"/><path d="M4 4l4 4M8 4L4 8"/><path d="M9 12l2 2 4-4"/></svg>',
+    livre: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5a2 2 0 012-2h13v16H6a2 2 0 00-2 2zM4 5v16M8 7h7M8 11h7"/></svg>',
+    ampoule: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18h6M10 21h4M12 3a6 6 0 00-3.5 10.9c.6.5 1 1.2 1 2.1h5c0-.9.4-1.6 1-2.1A6 6 0 0012 3z"/></svg>',
     check: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12l5 5 9-10"/></svg>',
     outils: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 17L17 3l4 4L7 21H3z"/><path d="M7 13l2 2M10 10l2 2M13 7l2 2"/></svg>'
   };
@@ -7282,6 +7365,7 @@ const QUESTIONS = [
     const [k, niv] = parts;
     if (k === "c" && parts.length === 3) return "n-" + niv; // un chapitre revient à la page de sa classe
     if (k === "c" && parts.length > 3) return parts.slice(0, -1).join("-");
+    if (k === "p" && parts[2] === "tests") return parts.slice(0, 2).join("-"); // V2 de test : la page d'un test revient à la classe
     if (k === "p" && parts.length > 2) return parts.slice(0, -1).join("-"); // V2 de test : pages de l'espace prof
     return "";
   }
@@ -7293,7 +7377,7 @@ const QUESTIONS = [
   // la garde aussi un moment en cache. On compare donc la version de cette page avec le petit fichier version.json
   // publié en même temps : à l'ouverture et à chaque retour sur l'onglet (au plus une fois par minute).
   // Si une version plus récente est en ligne, un bandeau propose de mettre à jour. La progression (pseudo, points…) est conservée.
-  const VERSION_APPLI = "2026-11-09 21:55:53"; // remplacée par la date d'assemblage (assembler.py)
+  const VERSION_APPLI = "2026-11-10 18:34:24"; // remplacée par la date d'assemblage (assembler.py)
   let derniereVerif = 0;
   function verifierMaj() {
     if (!/^https?:$/.test(location.protocol) || VERSION_APPLI.indexOf("__") === 0) return; // fichier ouvert sur l'ordinateur : rien à vérifier
@@ -7467,9 +7551,12 @@ const QUESTIONS = [
       case "tri": return jeuTri(tirer(act.items, act.n || 8), act.titre, ctx, act);
       case "relier": {
         view.innerHTML = page(kicker, act.titre, "Tracer un trait entre deux points (ou toucher un élément de chaque colonne).") + '<div id="w"></div>';
-        widgetRelier($("w"), tirer(act.paires, act.n || 5), (erreurs) => {
+        const paires = tirer(act.paires, act.n || 5);
+        widgetRelier($("w"), paires, (erreurs) => {
           const total = erreurs.length, justes = erreurs.filter((e) => e === 0).length;
-          resultat({ titre: act.titre + " · paires trouvées du premier coup", score: justes, total, points: justes * 5, ctx });
+          const photos = paires.map((pr, k) => ({ ok: erreurs[k] === 0, titre: "Paire " + (k + 1), pts: erreurs[k] === 0 ? "Du premier coup" : erreurs[k] + " essai" + (erreurs[k] > 1 ? "s" : "") + " raté" + (erreurs[k] > 1 ? "s" : ""),
+            node: h(`<div class="rv-paire"><span>${esc(pr[0])}</span><span class="rv-fl" aria-hidden="true">⟷</span><span class="rv-bon">${esc(pr[1])}</span></div>`) }));
+          resultat({ titre: act.titre + " · paires trouvées du premier coup", score: justes, total, points: justes * 5, photos, ctx });
         });
         return;
       }
@@ -7510,13 +7597,73 @@ const QUESTIONS = [
     const gains = gain > 0 ? ["+" + gain + " points"] : [];
     if (ancien != null && pct > ancien) gains.push("Nouveau record");
     if (reussi && !dejaFait) gains.push(o.ctx.libre ? "Défi réussi" : o.ctx.dernier ? "Étape terminée" : "Jeu suivant débloqué");
+    // Avec les « photos » des questions, la liste « À revoir » est remplacée par le bouton « Revoir mes réponses et la correction »
+    const revue = o.photos && o.photos.length;
+    const ecran = () => {
     view.innerHTML = `<div class="score"><span class="muted small">${esc(o.titre)}</span><div class="big">${o.score}<small> / ${o.total}</small></div>
       <h2>${msg}</h2>${gains.length ? `<div class="gains">${gains.map((g) => `<span class="chip sun">${esc(g)}</span>`).join("")}</div>` : ""}
       ${meilleurTxt ? `<p class="small muted">Ta meilleure tentative reste enregistrée : ${esc(meilleurTxt)}.</p>` : ""}
       ${!valide ? `<p class="small muted">Il faut au moins ${seuil()} % pour ${o.ctx.libre ? "réussir ce défi" : "débloquer la suite"}.</p>` : ""}</div>
-      ${o.revoir && o.revoir.length ? `<h3>À revoir</h3><div class="stack">${o.revoir.map((r) => `<div class="review-item"><span>${esc(r.q)}</span><span class="ans">${esc(r.a)}</span>${r.e ? `<span class="muted small">${esc(r.e)}</span>` : ""}</div>`).join("")}</div>` : ""}
+      ${revue ? boutonRevue(o.photos) : ""}
+      ${!revue && o.revoir && o.revoir.length ? `<h3>À revoir</h3><div class="stack">${o.revoir.map((r) => `<div class="review-item"><span>${esc(r.q)}</span><span class="ans">${esc(r.a)}</span>${r.e ? `<span class="muted small">${esc(r.e)}</span>` : ""}</div>`).join("")}</div>` : ""}
       <div class="row"><button class="btn btn-ghost" id="btn-rejouer">Rejouer (nouvelle version)</button>${valide || o.ctx.libre ? `<a class="btn btn-primary" href="#${o.ctx.suivant}">${o.ctx.libSuite || (o.ctx.dernier ? "Retour au chapitre" : "Jeu suivant")}</a>` : ""}</div>`;
     $("btn-rejouer").onclick = () => rendre();
+    if (revue) $("btn-revue").onclick = () => vueRevue(o.photos, o.titre, o.score + " / " + o.total, ecran);
+    };
+    ecran();
+  }
+
+  // ======================= Revoir mes réponses et la correction (fin d'exercice) =======================
+  // Pendant le jeu, chaque question est « photographiée » juste après la réponse : la réponse de l'élève
+  // (en rouge si elle est fausse), la bonne réponse (en vert) et l'explication. En fin d'exercice, le bouton
+  // « Revoir mes réponses et la correction » affiche toutes les photos (filtre « Mes erreurs »), sans rien rejouer.
+  // photo : { ok (true / false / null si non noté), node (copie de la question), titre (facultatif), pts (facultatif) }
+  function photo(el, ok, titre, pts) {
+    const c = el.cloneNode(true); // les cases et les réponses tapées sont recopiées avec la question
+    c.removeAttribute("id"); c.querySelectorAll("[id]").forEach((x) => x.removeAttribute("id"));
+    c.querySelectorAll("[data-ok], [data-eval], .btn-sm").forEach((b) => { if (b.tagName === "BUTTON") b.remove(); }); // boutons « Vérifier », « Nouvel exemple »…
+    return { ok, node: c, titre, pts };
+  }
+  function boutonRevue(photos) {
+    const notees = photos.filter((x) => x.ok != null), err = notees.filter((x) => !x.ok).length;
+    return `<div class="rv-appel"><button class="btn btn-primary" id="btn-revue">${SVG.revue}Revoir mes réponses et la correction</button>
+      <span class="small muted">${notees.length} question${notees.length > 1 ? "s" : ""}${err ? ` · ${err} erreur${err > 1 ? "s" : ""} à comprendre` : " · aucune erreur"}</span></div>`;
+  }
+  function vueRevue(photos, titre, score, retour, opts) {
+    opts = opts || {};
+    const notees = photos.filter((x) => x.ok != null), nErr = notees.filter((x) => !x.ok).length;
+    let filtre = "tout", num = 0;
+    const items = photos.map((x) => {
+      const n = x.ok == null ? null : ++num;
+      return { x, n };
+    });
+    view.innerHTML = `<div class="head"><span class="kicker">Correction</span><h2>Revoir mes réponses</h2><p class="muted">${esc(titre)}${score ? " · " + esc(score) : ""}</p></div>
+      <p class="small muted rv-aide">En <b class="rv-v">vert</b> : la bonne réponse. En <b class="rv-r">rouge</b> : ta réponse quand elle est fausse.</p>
+      ${nErr && nErr < notees.length ? `<div class="rv-filtre" role="group" aria-label="Afficher"><button class="on" data-f="tout">Tout (${notees.length})</button><button data-f="err">Mes erreurs (${nErr})</button></div>` : ""}
+      <div class="stack" id="rv-liste"></div>
+      <div class="row"><button class="btn btn-primary" id="btn-rv-retour">‹ Revenir à mon résultat</button></div>`;
+    const liste = $("rv-liste");
+    function dessiner() {
+      liste.innerHTML = "";
+      items.forEach(({ x, n }) => {
+        if (filtre === "err" && x.ok !== false) return;
+        const a = document.createElement("article");
+        a.className = "rv-item " + (x.ok == null ? "doc" : x.ok ? "ok" : "ko");
+        const etiq = x.ok == null ? "" : x.pts || (x.ok ? "Juste" : "À revoir");
+        a.innerHTML = `<div class="rv-tete"><strong>${esc(x.titre || "Question " + n)}</strong>${etiq ? `<span class="badge ${x.ok ? "ok" : "ko"}">${esc(etiq)}</span>` : ""}</div>`;
+        const corps = document.createElement("div"); corps.className = "rv-photo";
+        const copie = x.node.cloneNode(true);
+        if (x.ok != null) copie.querySelectorAll("button, input, textarea, select, [tabindex]").forEach((y) => { y.tabIndex = -1; if (y.tagName === "TEXTAREA" || y.tagName === "INPUT") y.readOnly = true; });
+        corps.appendChild(copie);
+        a.appendChild(corps); liste.appendChild(a);
+      });
+      marquerDefilement(liste);
+    }
+    view.querySelectorAll("[data-f]").forEach((b) => b.onclick = () => {
+      filtre = b.dataset.f; view.querySelectorAll("[data-f]").forEach((y) => y.classList.toggle("on", y === b)); dessiner();
+    });
+    $("btn-rv-retour").onclick = () => { retour(); window.scrollTo(0, 0); };
+    dessiner(); window.scrollTo(0, 0);
   }
 
   // ======================= Widgets réutilisables =======================
@@ -7539,6 +7686,7 @@ const QUESTIONS = [
     el.querySelectorAll("[data-v]").forEach((b) => b.onclick = () => {
       const ok = (b.dataset.v === "1") === it.vrai;
       el.querySelectorAll("[data-v]").forEach((x) => { x.disabled = true; });
+      b.classList.add("pris", ok ? "good" : "bad");
       el.querySelector(".fbz").innerHTML = `<div class="feedback ${ok ? "ok" : "ko"}"><strong>${ok ? "Exact !" : "Non :"} c'est ${it.vrai ? "vrai" : "faux"}.</strong><span>${esc(it.explication || "")}</span></div>`;
       onRep(ok);
     });
@@ -7755,11 +7903,11 @@ const QUESTIONS = [
     return `<div class="stack"><div class="meta"><span>${esc(titre)}</span><span>${i + 1} / ${n}</span></div><div class="progress"><i style="width:${Math.round(100 * i / n)}%"></i></div></div>`;
   }
   function suiteSimple(liste, titre, ctx, monter, revoirDe) {
-    let i = 0, justes = 0; const rates = [];
+    let i = 0, justes = 0; const rates = [], photos = [];
     function etape() {
       view.innerHTML = enTete(titre, i, liste.length) + `<div class="panel" id="w"></div><button class="btn btn-primary" id="btn-next" hidden>${i === liste.length - 1 ? "Voir mon résultat" : "Suivant"}</button>`;
-      monter($("w"), liste[i], (ok) => { if (ok) justes++; else rates.push(liste[i]); const n = $("btn-next"); n.hidden = false; n.focus(); });
-      $("btn-next").onclick = () => { if (i < liste.length - 1) { i++; etape(); window.scrollTo(0, 0); } else resultat({ titre, score: justes, total: liste.length, revoir: rates.map(revoirDe), ctx }); };
+      monter($("w"), liste[i], (ok) => { if (ok) justes++; else rates.push(liste[i]); photos.push(photo($("w"), ok)); const n = $("btn-next"); n.hidden = false; n.focus(); });
+      $("btn-next").onclick = () => { if (i < liste.length - 1) { i++; etape(); window.scrollTo(0, 0); } else resultat({ titre, score: justes, total: liste.length, revoir: rates.map(revoirDe), photos, ctx }); };
     }
     etape();
   }
@@ -7783,7 +7931,7 @@ const QUESTIONS = [
       el.querySelectorAll("[data-v]").forEach((b) => b.onclick = () => {
         const ok = (b.dataset.v === "1") === triVal(it);
         $("choix").hidden = true;
-        el.querySelector(".fbz").innerHTML = `<div class="feedback ${ok ? "ok" : "ko"}"><strong>${ok ? "Exact !" : "Eh non…"} ${esc(triVal(it) ? T.oui : T.non)}.</strong><span>${esc(it.pourquoi || "")}</span></div>`;
+        el.querySelector(".fbz").innerHTML = `<div class="feedback ${ok ? "ok" : "ko"}"><strong>${ok ? "Exact !" : "Eh non…"} ${esc(triVal(it) ? T.oui : T.non)}.</strong>${ok ? "" : `<span class="small">Ta réponse : ${esc(b.dataset.v === "1" ? T.oui : T.non)}.</span>`}<span>${esc(it.pourquoi || "")}</span></div>`;
         fin(ok);
       });
     }, (it) => ({ q: it.source, a: triVal(it) ? T.oui : T.non, e: it.pourquoi }));
@@ -7819,22 +7967,22 @@ const QUESTIONS = [
   }
   function jeuChaines(act, ctx) {
     const liste = tirer(act.chaines, act.n || 3);
-    let i = 0, justes = 0, total = 0;
+    let i = 0, justes = 0, total = 0; const photos = [];
     function etape() {
       view.innerHTML = enTete(act.titre, i, liste.length) + `<div class="panel" id="w"></div><button class="btn btn-primary" id="btn-next" hidden>${i === liste.length - 1 ? "Voir mon résultat" : "Chaîne suivante"}</button>`;
-      widgetChaine($("w"), liste[i], { mode: "note", distracteurs: act.distracteurs, nbDistracteurs: 2 }, (j, t) => { justes += j; total += t; $("btn-next").hidden = false; });
-      $("btn-next").onclick = () => { if (i < liste.length - 1) { i++; etape(); window.scrollTo(0, 0); } else resultat({ titre: act.titre + " · cases justes", score: justes, total, points: justes * 2, ctx }); };
+      widgetChaine($("w"), liste[i], { mode: "note", distracteurs: act.distracteurs, nbDistracteurs: 2 }, (j, t) => { justes += j; total += t; photos.push(photo($("w"), j === t, "Chaîne " + (i + 1), j + " / " + t)); $("btn-next").hidden = false; });
+      $("btn-next").onclick = () => { if (i < liste.length - 1) { i++; etape(); window.scrollTo(0, 0); } else resultat({ titre: act.titre + " · cases justes", score: justes, total, points: justes * 2, photos, ctx }); };
     }
     etape();
   }
   function jeuCalculs(act, ctx) {
     const liste = Array.from({ length: act.n || 4 }, () => act.contextes[hasard(0, act.contextes.length - 1)]);
-    let i = 0, justes = 0; const rates = [];
+    let i = 0, justes = 0; const rates = [], photos = [];
     function etape() {
       view.innerHTML = enTete(act.titre, i, liste.length) + `${act.rappel === null ? "" : `<div class="methode"><strong class="lbl">Rappel</strong><span>${act.rappel || "Énergie reçue = énergie utile + énergie dissipée"}</span></div>`}
         <div class="panel" id="w"></div><button class="btn btn-primary" id="btn-next" hidden>${i === liste.length - 1 ? "Voir mon résultat" : "Calcul suivant"}</button>`;
-      widgetCalcul($("w"), liste[i], null, (ok, q) => { if (ok) justes++; else rates.push({ q: q.texte, a: (q.repTxt || nombre(q.rep)) + " " + q.u, e: q.corr }); const n = $("btn-next"); n.hidden = false; n.focus(); });
-      $("btn-next").onclick = () => { if (i < liste.length - 1) { i++; etape(); window.scrollTo(0, 0); } else resultat({ titre: act.titre, score: justes, total: liste.length, points: justes * 15, revoir: rates, ctx }); };
+      widgetCalcul($("w"), liste[i], null, (ok, q) => { if (ok) justes++; else rates.push({ q: q.texte, a: (q.repTxt || nombre(q.rep)) + " " + q.u, e: q.corr }); photos.push(photo($("w"), ok, "Calcul " + (i + 1))); const n = $("btn-next"); n.hidden = false; n.focus(); });
+      $("btn-next").onclick = () => { if (i < liste.length - 1) { i++; etape(); window.scrollTo(0, 0); } else resultat({ titre: act.titre, score: justes, total: liste.length, points: justes * 15, revoir: rates, photos, ctx }); };
     }
     etape();
   }
@@ -7903,13 +8051,23 @@ const QUESTIONS = [
       grille += x ? `<div class="cell" id="cc${r}_${c}">${x.num ? `<span class="num">${x.num}</span>` : ""}<input id="ci${r}_${c}" maxlength="2" autocomplete="off" autocapitalize="characters" spellcheck="false" aria-label="Ligne ${r + 1}, colonne ${c + 1}"></div>` : "<div></div>";
     }
     const indices = (s) => d.places.map((m, mi) => m.sens === s ? `<li><button class="clue" data-mi="${mi}"><b>${m.n}</b>${esc(m.indice)} <span class="muted small">(${m.mot.length} lettres)</span></button></li>` : "").join("");
+    // Aides (10/11) : la banque de mots (les mots à placer, barrés quand ils sont justes dans la grille ; ne coûte rien)
+    // et « Une lettre pour ce mot » (la prochaine lettre manquante ou fausse du mot choisi ; ce mot ne compte plus dans le score).
+    const banque = d.places.map((m, mi) => ({ mot: m.mot, mi })).sort((a, b) => a.mot.length - b.mot.length || a.mot.localeCompare(b.mot));
     view.innerHTML = `<div class="head"><span class="kicker">Rappel</span><h2>${esc(act.titre)}</h2><p class="muted">Toucher une définition ou une case, puis écrire. Les accents ne comptent pas. La grille change à chaque partie.</p></div>
+      <div class="cw-aides"><button class="btn btn-ghost btn-sm" id="btn-banque" aria-expanded="false">${SVG.livre}Banque de mots</button><button class="btn btn-ghost btn-sm" id="btn-aide">${SVG.ampoule}Une lettre pour ce mot</button></div>
+      <div class="cw-banque" id="cw-banque" hidden><p class="small muted">Les ${banque.length} mots à placer (barrés quand ils sont justes dans la grille). Compte les lettres : chaque définition dit combien il en faut.</p>
+        <div class="cw-mots">${banque.map((b) => `<span class="cw-mot" data-mi="${b.mi}">${b.mot}<small>${b.mot.length}</small></span>`).join("")}</div></div>
       <div class="cw" style="grid-template-columns:repeat(${d.C},1fr)">${grille}</div>
       <div class="clues"><div class="stack"><h3>Horizontalement</h3><ol>${indices("H")}</ol></div><div class="stack"><h3>Verticalement</h3><ol>${indices("V")}</ol></div></div>
-      <div id="fb"></div><div class="row"><button class="btn btn-ghost" id="btn-aide">Une lettre d'aide</button><button class="btn btn-primary" id="btn-verif">Vérifier</button></div>`;
+      <div id="fb"></div><div class="row"><button class="btn btn-primary" id="btn-verif">Vérifier</button></div>`;
     let motActif = 0, aides = 0, verifs = 0; const aidees = new Set();
     const inp = (r, c) => $("ci" + r + "_" + c);
     const caseDe = (m, k) => [m.l + (m.sens === "V" ? k : 0), m.c + (m.sens === "H" ? k : 0)];
+    const motJuste = (m) => { for (let k = 0; k < m.mot.length; k++) { const [r, c] = caseDe(m, k); if (inp(r, c).value !== m.mot[k]) return false; } return true; };
+    const majBanque = () => view.querySelectorAll(".cw-mot").forEach((e) => e.classList.toggle("trouve", motJuste(d.places[+e.dataset.mi])));
+    view.querySelector(".cw").addEventListener("input", majBanque); // la grille est refaite à chaque partie : pas d'écouteur qui traîne
+    $("btn-banque").onclick = (e) => { const b = $("cw-banque"); b.hidden = !b.hidden; e.currentTarget.setAttribute("aria-expanded", !b.hidden); majBanque(); };
     function surligner(mi) {
       motActif = mi;
       view.querySelectorAll(".cw .cell").forEach((e) => e.classList.remove("act"));
@@ -7936,8 +8094,18 @@ const QUESTIONS = [
     });
     view.querySelectorAll(".clue").forEach((b) => b.onclick = () => { const mi = +b.dataset.mi, m = d.places[mi]; surligner(mi); inp(m.l, m.c).focus(); });
     $("btn-aide").onclick = () => {
-      const vides = Object.values(cells).filter((x) => inp(x.r, x.c).value !== x.lettre); if (!vides.length) return;
-      const x = vides[hasard(0, vides.length - 1)]; inp(x.r, x.c).value = x.lettre; $("cc" + x.r + "_" + x.c).classList.remove("ko"); aides++; aidees.add(x.r + "_" + x.c);
+      // le mot choisi (ou, s'il est déjà juste, le prochain mot incomplet) : on écrit sa première lettre manquante ou fausse
+      const ordre = d.places.map((m, mi) => mi).sort((a, b) => ((a - motActif + d.places.length) % d.places.length) - ((b - motActif + d.places.length) % d.places.length));
+      const mi = ordre.find((i) => !motJuste(d.places[i])); if (mi == null) return;
+      const m = d.places[mi]; surligner(mi);
+      for (let k = 0; k < m.mot.length; k++) {
+        const [r, c] = caseDe(m, k), el = inp(r, c);
+        if (el.value === m.mot[k]) continue;
+        el.value = m.mot[k]; const box = $("cc" + r + "_" + c); box.classList.remove("ko"); box.classList.add("aide");
+        aides++; aidees.add(r + "_" + c); majBanque();
+        $("fb").innerHTML = `<div class="feedback ok"><strong>Une lettre pour le ${m.n} ${m.sens === "H" ? "horizontal" : "vertical"}</strong><span>Ce mot ne comptera plus dans ton score, mais il t'aide à trouver les autres.</span></div>`;
+        return;
+      }
     };
     $("btn-verif").onclick = () => {
       verifs++; let justes = 0, total = 0;
@@ -7989,7 +8157,12 @@ const QUESTIONS = [
         };
       }
     });
-    $("btn-note").onclick = () => resultat({ titre: typeExam + " · ta note", score: notes.reduce((s, n) => s + n, 0), total, points: notes.reduce((s, n) => s + n, 0) * 6, note: true, ctx });
+    $("btn-note").onclick = () => {
+      const docs = act.documents.length ? [{ ok: null, titre: act.documents.length > 1 ? "Les documents" : "Le document",
+        node: h(`<details class="rv-docs"><summary>Afficher ${act.documents.length > 1 ? "les documents" : "le document"}</summary>${[...view.querySelectorAll(".panel")].filter((x) => !/^bq/.test(x.id)).map((x) => x.outerHTML).join("")}</details>`) }] : [];
+      const photos = docs.concat(act.questions.map((q, i) => photo($("bw" + i), notes[i] === q.points, "Question " + (i + 1), notes[i] + " / " + q.points + " pt" + (q.points > 1 ? "s" : ""))));
+      resultat({ titre: typeExam + " · ta note", score: notes.reduce((s, n) => s + n, 0), total, points: notes.reduce((s, n) => s + n, 0) * 6, note: true, photos, ctx });
+    };
   }
 
   // ======================= Bas de page commun (Cours, TP) =======================
@@ -9256,31 +9429,36 @@ const QUESTIONS = [
       compteurs: () => { const jm = objet("joulemetre"); return { Ein: S.Ein, Ej: jm ? jm.E : 0 }; }
     };
   }
-  // ======================= TP de 4ème « La masse volumique » : balance électronique et éprouvette graduée =======================
-  // Une paillasse « de pesée » :
-  //  - une balance (précision 0,1 g) avec ses touches TARE et NOTER ;
-  //  - une éprouvette graduée de 100 mL (masse à vide 118,6 g), à poser sur le plateau ou à côté ;
-  //  - des flacons (eau, liquide mystère) : on glisse un flacon sur l'éprouvette, puis on verse avec les boutons
-  //    « Verser 10 mL », « Verser 1 mL » (compte-gouttes), « Retirer 1 mL » ;
-  //  - une pierre dorée (objectif 3) que l'on pèse puis que l'on plonge dans l'eau ;
-  //  - un bécher d'eau (objectif 4) : on y verse le liquide mystère pour voir s'il reste au-dessus ou coule.
-  // Sous la paillasse : la LOUPE sur les graduations (lecture au bas du ménisque) et les boutons pour verser.
-  // Événements envoyés au TP (08_tp.js → MASSE.evenement) : "etat" (4 fois par seconde), "noterM" (touche NOTER de la balance),
-  // "noterV" (NOTER sous la loupe, avec la lecture de l'élève), "verseBecher". La réponse { ok, txt } s'affiche sous la paillasse.
-  // Les masses volumiques viennent du module MASSEVOL (03_contenu.html).
+  // ======================= TP de 4ème « La masse volumique » : la paillasse de pesée =======================
+  // Version 2 (10/11/2026), refaite après les retours de l'enseignant :
+  //  - plus aucune bulle de texte sur la paillasse : un BANDEAU au-dessus de la paillasse affiche l'étape en cours
+  //    (« Étape 2 / 3 : … ») et, quelques secondes, les messages (réussi, impossible, conseil) ;
+  //  - on prend un objet en le TOUCHANT (il est entouré), puis on touche l'endroit où le poser ou le verser ;
+  //    on peut aussi le faire GLISSER (même effet) ;
+  //  - verser : le flacon vient au-dessus de l'éprouvette ; on MAINTIENT « Verser » (le flacon se penche, le liquide coule,
+  //    le niveau monte), on relâche pour arrêter, puis on ajuste au COMPTE-GOUTTES ; les boutons sont posés sur la paillasse ;
+  //  - une LOUPE (bulle zoom) sur la paillasse, à côté de l'éprouvette, montre le ménisque et les graduations (1 mL) ;
+  //  - animations : flacon qui se penche, filet de liquide, gouttes, éprouvette inclinée où glisse la pierre,
+  //    bécher où le liquide mystère coule ou reste au-dessus, plateau qui s'enfonce, affichage qui monte ;
+  //  - l'ORDRE des étapes est respecté : le TP (MASSE.evenement, « permis ») refuse ce qui vient trop tôt, avec une explication.
+  // Objets : balance 0,1 g (TARE, NOTER), éprouvette de 100 mL (118,6 g à vide), flacons sur l'étagère, pierre dorée
+  // sur sa coupelle (objectif 3), bécher d'eau (objectif 4).
+  // Événements envoyés au TP : "etat" (4 fois par seconde), "guide" (étape en cours), "permis" (action autorisée ?),
+  // "noterM" (NOTER de la balance), "noterV" (lecture du volume par l'élève, objectif 3), "verseBecher", "vide".
   const MASSE = (() => {
     const W = 330, H = 346, X0 = 10, Y0 = 12, X1 = 320, Y1 = 336;
     const f1 = (v) => (+v).toFixed(1);
     const fr = MASSEVOL.fr;
-    const M_EPR = 118.6, VMAX = 100;
-    const EW = 40, EH = 168, YZ = 146, PX = 1.3;       // éprouvette : boîte, niveau du zéro, pixels par mL
-    const yNiv = (v) => YZ - v * PX;
-    const PL = { x: 32, y: 236, w: 116, h: 10 }, CXP = 90; // plateau de la balance
-    const BAL = { x: 18, y: 246, w: 144, h: 84 };
-    const LCD = { x: 32, y: 256, w: 116, h: 26 }, BT = { tare: { x: 32, y: 292, w: 54, h: 30 }, noter: { x: 94, y: 292, w: 54, h: 30 } };
-    const EPR_LIBRE = { x: 196, y: 38 }, EPR_PL = { x: CXP - EW / 2, y: PL.y - EH };
-    const FW = 30, FH = 58, PW = 26, PH = 18;
-    const BEC = { x: 240, y: 92, w: 66, h: 76 };
+    const M_EPR = 118.6, VMAX = 100, GOUTTE = 0.2, DEBIT = 8;     // g ; mL ; mL par goutte ; mL par seconde
+    const EW = 40, EH = 168, YZ = 146, PX = 1.3;                // éprouvette : boîte, zéro (local), pixels par mL
+    const PL = { x: 32, y: 240, w: 116, h: 10 }, CXP = 90;      // plateau de la balance
+    const BAL = { x: 18, y: 250, w: 144, h: 80 };
+    const LCD = { x: 32, y: 258, w: 116, h: 26 }, BT = { tare: { x: 32, y: 292, w: 54, h: 30 }, noter: { x: 94, y: 292, w: 54, h: 30 } };
+    const POS = { plateau: { x: CXP - EW / 2, y: PL.y - EH }, place: { x: 180, y: 332 - EH } };
+    const FW = 30, FH = 58, ETAGERE = { x: 230, y: 14, w: 88, h: 84 }, FL_HOME = [{ x: 262, y: 26 }, { x: 232, y: 26 }];
+    const PW = 26, PH = 18, COUPELLE = { x: 140, y: 58, w: 48, h: 10 }, P_HOME = { x: 151, y: 42 };
+    const BEC = { x: 244, y: 248, w: 66, h: 76 };
+    const ZR = 46, ZK = 9;                                       // loupe : rayon, pixels par mL
     const LIQ = {
       eau: { nom: "l'eau", etiq: "Eau", rho: 0.998, coul: "#3B8FD9", op: 0.5 },
       huile: { nom: "l'huile de tournesol", etiq: "Huile", rho: 0.92, coul: "#E8C547", op: 0.85 },
@@ -9288,15 +9466,9 @@ const QUESTIONS = [
       miel: { nom: "le miel", etiq: "Miel", rho: 1.42, coul: "#D99A1E", op: 0.9 }
     };
     const COUL_MYST = "#8E5BC8";
-    const MONTAGES = { m1: { flacons: ["eau"] }, m2: { flacons: ["eau"] }, m3: { flacons: ["eau"], pierre: true, noterV: true }, m4: { flacons: ["mystere"], becher: true } };
+    const MONTAGES = { m1: { flacons: ["eau"] }, m2: { flacons: ["eau"] }, m3: { flacons: ["eau"], pierre: true, lecture: true }, m4: { flacons: ["mystere"], becher: true } };
     const MYSTERES = ["huile", "sirop", "miel"];
-    const ROLE = {
-      balance: "La balance électronique, précise à 0,1 g. TARE remet l'affichage à zéro avec ce qui est posé dessus ; NOTER relève la mesure.",
-      eprouvette: "Une éprouvette graduée de 100 mL (1 graduation = 1 mL). La glisser sur le plateau de la balance, ou la laisser à côté. Lire le volume sur la loupe, sous la paillasse.",
-      pierre: "Une pierre dorée trouvée près d'une crique. Est-ce de l'or ? La peser seule sur le plateau, puis la glisser dans l'eau de l'éprouvette.",
-      becher: "Un bécher d'eau colorée. Y glisser le flacon du liquide mystère : le liquide reste-t-il au-dessus ou coule-t-il ?",
-      flacon: "Un flacon de liquide. Le glisser sur l'éprouvette pour verser."
-    };
+    const ease = (p) => p < 0.5 ? 2 * p * p : 1 - Math.pow(-2 * p + 2, 2) / 2;
 
     // Tirages gardés avec le TP de l'élève (liquide mystère, pierre)
     function options(rep, sauver) {
@@ -9309,40 +9481,43 @@ const QUESTIONS = [
     const liqDe = (cle, opts) => cle === "mystere" ? Object.assign({}, LIQ[opts.mystere || "sirop"], { nom: "le liquide mystère", etiq: "?", coul: COUL_MYST, op: 0.8 }) : LIQ[cle];
 
     // ======================= La paillasse =======================
+    let nBanc = 0;
     function banc(el, surEvt) {
+      const uid = "mv" + (++nBanc);
       el.innerHTML = `<div class="bench mv">
-          <svg class="bench-svg" viewBox="0 0 ${W} ${H}" role="group" aria-label="Paillasse : une balance, une éprouvette graduée et des flacons. Glisser les objets, toucher les touches de la balance.">
-            <rect x="3" y="4" width="${W - 6}" height="${H - 8}" rx="14" class="b-table"/>
-            <rect x="${X0 - 3}" y="${Y0 - 3}" width="${X1 - X0 + 6}" height="${Y1 - Y0 + 6}" rx="10" class="b-zone"/>
-            <g class="mv-dessin"></g><g class="mv-bulles" pointer-events="none"></g>
-          </svg>
-          <p class="bench-hint">Glisser les objets. Glisser un flacon sur l'éprouvette pour verser. Toucher un objet pour lire son rôle.</p>
-          <div class="mv-sous">
-            <div class="mv-loupe"><div class="mv-l-t"><strong class="small">Loupe sur l'éprouvette</strong><span class="small muted">lire au bas du ménisque</span></div><div class="mv-l-f"></div><div class="mv-l-n"></div></div>
-            <div class="mv-verse"><p class="small mv-main"></p><div class="c-btns">
-                <button class="btn btn-primary btn-sm" data-c="v10">Verser 10 mL</button><button class="btn btn-primary btn-sm" data-c="v1">Verser 1 mL</button>
-                <button class="btn btn-ghost btn-sm" data-c="r1">Retirer 1 mL</button><button class="btn btn-ghost btn-sm" data-c="reposer">Reposer le flacon</button></div>
-              <button class="btn-link" data-c="vider">Vider et rincer l'éprouvette</button></div>
-            <p class="small mv-statut" aria-live="polite"></p>
+          <div class="mv-guide" aria-live="polite"><span class="mv-g-ico"></span><span class="mv-g-txt"></span></div>
+          <div class="mv-scene">
+            <svg class="bench-svg" viewBox="0 0 ${W} ${H}" role="group" aria-label="Paillasse : une balance, une éprouvette graduée et des flacons. Toucher un objet pour le prendre, puis toucher l'endroit où le poser.">
+              <defs><clipPath id="${uid}-tube"><rect class="mv-clip-tube" x="10" y="4" width="20" height="${YZ - 4}"/></clipPath>                <clipPath id="${uid}-zoom"><circle r="${ZR}"/></clipPath></defs>
+              <rect x="3" y="4" width="${W - 6}" height="${H - 8}" rx="14" class="b-table"/>
+              <rect x="${X0 - 3}" y="${Y0 - 3}" width="${X1 - X0 + 6}" height="${Y1 - Y0 + 6}" rx="10" class="b-zone"/>
+              <g class="mv-fond"></g><g class="mv-dessin"></g><g class="mv-zoom" pointer-events="none"></g>
+            </svg>
+            <div class="mv-cmd" hidden></div>
+            <div class="mv-verrou" hidden></div>
           </div>
+          <p class="bench-hint">Toucher un objet pour le prendre, puis toucher l'endroit où le poser (ou le faire glisser).</p>
         </div>`;
-      const bench = el.querySelector(".bench"), svg = el.querySelector("svg"), gD = el.querySelector(".mv-dessin"), gB = el.querySelector(".mv-bulles");
-      const zLoupe = el.querySelector(".mv-l-f"), zNoter = el.querySelector(".mv-l-n"), zMain = el.querySelector(".mv-main"), zStatut = el.querySelector(".mv-statut");
+      const bench = el.querySelector(".bench"), scene = el.querySelector(".mv-scene"), svg = el.querySelector("svg");
+      const gF = el.querySelector(".mv-fond"), gD = el.querySelector(".mv-dessin"), gZ = el.querySelector(".mv-zoom");
+      const zGuide = el.querySelector(".mv-guide"), zCmd = el.querySelector(".mv-cmd"), zVerrou = el.querySelector(".mv-verrou");
+      const clipTube = el.querySelector(".mv-clip-tube");
       let S = null, M = null, opts = {}, geste = null;
 
       function charger(montage, o) {
         M = montage; opts = o || {};
-        S = { t: 0, tare: 0, aff: 0, bulle: null, hoche: null, verse: null, flux: 0, lecture: false,
-          epr: { x: EPR_LIBRE.x, y: EPR_LIBRE.y, place: "libre", V: 0, vis: 0, liq: null },
-          pierre: M.pierre ? { x: 200, y: 304, place: "libre" } : null,
-          flacons: M.flacons.map((c, k) => ({ id: "f" + k, liq: c, x: 276 - k * 40, y: 268, x0: 276 - k * 40, y0: 268 })),
-          becher: M.becher ? { couches: [] } : null };
-        S.aff = 0;
-        zStatut.textContent = ""; zStatut.className = "small mv-statut";
-        dessiner(); majSous(true);
+        S = { t: 0, tare: 0, aff: 0, sel: null, hoche: null, anims: [], msg: null, flux: false, gouttes: [], cg: null, ride: 0, cmdCle: "", guide: null,
+          epr: { x: POS.place.x, y: POS.place.y, place: "place", V: 0, vis: 0, liq: null, tilt: 0, pierre: false, ps: 0 },
+          fl: M.flacons.map((c, k) => ({ id: "f" + k, liq: c, hx: FL_HOME[k].x, hy: FL_HOME[k].y, nx: FL_HOME[k].x + FW / 2, ny: FL_HOME[k].y, ang: 0, mode: null })),
+          pierre: M.pierre ? { x: P_HOME.x, y: P_HOME.y, place: "coupelle" } : null,
+          bec: M.becher ? { couches: [], flux: null } : null,
+          verse: null };
+        dessinerFond(); dessiner(); majGuide(true); majCmd(true);
       }
+      // ---------- Petites aides ----------
+      const fl = (id) => S.fl.find((f) => f.id === id);
       const pierreDans = () => !!(S.pierre && S.pierre.place === "epr");
-      const niveau = () => S.epr.V + (pierreDans() ? opts.pierre.V : 0);
+      const niveau = () => S.epr.V + (S.epr.pierre ? opts.pierre.V : 0);
       const surPlateau = () => S.epr.place === "plateau" ? "eprouvette" : S.pierre && S.pierre.place === "plateau" ? "pierre" : null;
       function brut() {
         const p = surPlateau();
@@ -9351,376 +9526,553 @@ const QUESTIONS = [
         return 0;
       }
       const net = () => Math.round((brut() - S.tare) * 10) / 10;
-      const stable = () => Math.abs(S.aff - net()) < 0.05 && Math.abs(S.epr.vis - niveau()) < 0.05 && !(S.verse && S.verse.anim);
+      const occupe = () => S.anims.length > 0;
+      const stable = () => Math.abs(S.aff - net()) < 0.05 && Math.abs(S.epr.vis - niveau()) < 0.05 && !occupe() && !S.flux && !S.gouttes.length;
+      function anime(dur, step, fin, lineaire) { S.anims.push({ t0: S.t, dur, step, fin, lin: !!lineaire }); }
+      const enMain = () => S.verse && S.verse.cible === "epr" ? S.verse.f : null;
+      const bouche = () => ({ x: S.epr.x + EW / 2, y: S.epr.y + 4 });                        // ouverture de l'éprouvette
+      const surfaceY = (v) => S.epr.y + YZ - (v == null ? S.epr.vis : v) * PX;               // niveau du liquide (éprouvette droite)
+      function etatCourant() {
+        return { plateau: surPlateau(), net: net(), stable: stable(), tareEpr: Math.abs(S.tare - M_EPR) < 0.05, tareVide: Math.abs(S.tare) < 0.05,
+          V: Math.round(S.epr.V * 100) / 100, liquide: S.epr.liq, niveau: Math.round(niveau() * 100) / 100, pierreDans: pierreDans(), placeEpr: S.epr.place };
+      }
+      // Le TP refuse-t-il cette action à cette étape ? (renvoie le texte du refus, ou rien)
+      const refus = (action, extra) => { const r = surEvt("permis", Object.assign(etatCourant(), { action }, extra || {})); return r && r.txt ? r.txt : null; };
 
-      // ---------- Bulles et signaux ----------
-      function bulle(texte, cible, duree, genre) {
-        S.bulle = { texte, cible, fin: S.t + (duree || 3.2) };
-        if (genre) signalPaillasse(bench, genre);
-        if (genre === "ko" && cible) S.hoche = { id: cible, t0: performance.now() };
-        dessinerBulle();
+      // ---------- Le bandeau (consigne de l'étape, messages) ----------
+      function dire(genre, txt, duree) {
+        S.msg = { genre, txt, fin: S.t + (duree || 3.6) };
+        if (genre === "ok" || genre === "ko") signalPaillasse(bench, genre);
+        majGuide(true);
       }
-      function boite(id) {
-        if (id === "epr") return { x: S.epr.x, y: S.epr.y, w: EW, h: EH };
-        if (id === "pierre") return { x: S.pierre.x, y: S.pierre.y, w: PW, h: PH };
-        if (id === "becher") return BEC;
-        if (id === "balance") return BAL;
-        const f = S.flacons.find((x) => x.id === id); return f ? { x: f.x, y: f.y, w: FW, h: FH } : null;
-      }
-      function dessinerBulle() {
-        const b = S.bulle;
-        if (!b || S.t > b.fin) { gB.innerHTML = ""; return; }
-        const mots = b.texte.split(" "), lignes = [""];
-        mots.forEach((m) => { if ((lignes[lignes.length - 1] + " " + m).length > 36) lignes.push(m); else lignes[lignes.length - 1] = (lignes[lignes.length - 1] + " " + m).trim(); });
-        const w = 212, h = 12 + lignes.length * 13, o = b.cible ? boite(b.cible) : null;
-        let x = o ? o.x + o.w / 2 - w / 2 : W / 2 - w / 2, y = o ? o.y - h - 8 : Y0 + 8;
-        if (y < Y0) y = Math.min(Y1 - h, (o ? o.y + Math.min(o.h, 60) : 0) + 10);
-        x = Math.max(X0, Math.min(X1 - w, x));
-        gB.innerHTML = `<g transform="translate(${f1(x)} ${f1(y)})"><rect width="${w}" height="${h}" rx="8" class="b-bulle"/>${lignes.map((l, i) => `<text x="9" y="${16 + i * 13}" class="b-bulle-t">${esc(l)}</text>`).join("")}</g>`;
+      function refuser(id, txt) { S.sel = null; dire("ko", txt, 4.2); if (id) S.hoche = { id, t0: performance.now() }; }
+      const ICO = { ok: "✓", ko: "!", info: "i", fin: "✓" };
+      let cleGuide = "";
+      function majGuide(force) {
+        let genre, ico, txt;
+        const g = S.guide = surEvt("guide", etatCourant()) || S.guide || {};
+        zVerrou.hidden = !g.verrou;
+        if (S.msg && S.t < S.msg.fin) { genre = S.msg.genre; ico = ICO[genre]; txt = S.msg.txt; }
+        else {
+          S.msg = null;
+          if (g.fini) { genre = "fin"; ico = "✓"; txt = g.texte || "Manipulations terminées : réponds aux questions sous la paillasse."; }
+          else { genre = "etape"; ico = g.n ? `${g.i}/${g.n}` : "•"; txt = (g.n ? `<b>Étape ${g.i} sur ${g.n}.</b> ` : "") + esc(g.texte || ""); }
+          if (g.verrou) zVerrou.innerHTML = `<div><span class="mv-v-ico" aria-hidden="true">🔒</span><p>${esc(g.verrou)}</p></div>`;
+        }
+        const cle = genre + "|" + txt;
+        if (!force && cle === cleGuide) return;
+        cleGuide = cle;
+        zGuide.className = "mv-guide g-" + genre;
+        zGuide.querySelector(".mv-g-ico").textContent = ico;
+        zGuide.querySelector(".mv-g-txt").innerHTML = genre === "etape" ? txt : esc(txt);
+        zGuide.classList.remove("neuf"); void zGuide.offsetWidth; zGuide.classList.add("neuf");
       }
 
       // ---------- Dessin ----------
-      function dessiner() {
-        let s = "";
-        s += dessinBalance();
-        if (S.becher) s += dessinBecher();
-        if (S.pierre && S.pierre.place !== "epr") s += dessinPierre();
-        s += dessinEprouvette();
-        S.flacons.forEach((f) => { s += dessinFlacon(f); });
-        s += `<g class="b-reset" data-act="reset" transform="translate(${X1 - 22} ${Y0 + 4})" role="button" aria-label="Remettre la paillasse comme au départ"><rect width="18" height="18" rx="5"/><path d="M5 9a4 4 0 104-4H6M6 3v2.5h2.5"/></g>`;
-        gD.innerHTML = s;
-        dessinerBulle();
+      // Le fond (zones où l'on pose les objets) ne change pas : dessiné une fois.
+      function dessinerFond() {
+        let s = `<rect x="${ETAGERE.x}" y="${ETAGERE.y}" width="${ETAGERE.w}" height="${ETAGERE.h + 10}" fill="transparent" data-cible="etagere"/>
+          <rect x="${ETAGERE.x + 2}" y="${ETAGERE.y + ETAGERE.h - 4}" width="${ETAGERE.w - 4}" height="5" rx="2" class="mv-etagere" pointer-events="none"/>
+          <rect x="${POS.place.x - 12}" y="${POS.place.y - 10}" width="${EW + 24}" height="${EH + 12}" fill="transparent" data-cible="place"/>
+          <ellipse cx="${POS.place.x + EW / 2}" cy="${POS.place.y + EH - 2}" rx="26" ry="4" class="mv-ombre" pointer-events="none"/>
+          <rect x="${BAL.x}" y="${PL.y - 120}" width="${BAL.w}" height="${BAL.y + BAL.h - PL.y + 120}" fill="transparent" data-cible="balance"/>`;
+        if (M.pierre) s += `<rect x="${COUPELLE.x - 8}" y="${COUPELLE.y - 30}" width="${COUPELLE.w + 16}" height="44" fill="transparent" data-cible="coupelle"/>
+          <path d="M${COUPELLE.x} ${COUPELLE.y}h${COUPELLE.w}l-6 ${COUPELLE.h}h-${COUPELLE.w - 12}z" class="mv-coupelle" pointer-events="none"/>
+          <text x="${COUPELLE.x + COUPELLE.w / 2}" y="${COUPELLE.y + 22}" text-anchor="middle" class="mv-nom" pointer-events="none">Coupelle</text>`;
+        if (M.becher) s += `<rect x="${BEC.x - 10}" y="${BEC.y - 40}" width="${BEC.w + 20}" height="${BEC.h + 52}" fill="transparent" data-cible="becher"/>`;
+        gF.innerHTML = s;
       }
       const dh = (id) => decalHoche(S.hoche, id);
+      function dessiner() {
+        let s = dessinBalance();
+        if (S.bec) s += dessinBecher();
+        if (S.pierre && S.pierre.place !== "epr") s += dessinPierre();
+        s += dessinEprouvette();
+        S.gouttes.forEach((g) => { s += `<circle cx="${f1(g.x)}" cy="${f1(g.y)}" r="2.2" fill="${g.coul}"/>`; });
+        if (S.cg) s += dessinCompteGouttes();
+        S.fl.forEach((f) => { s += dessinFlacon(f); });
+        s += `<g class="b-reset" data-act="reset" transform="translate(${X0 + 2} ${Y0 + 2})" role="button" aria-label="Remettre la paillasse comme au départ"><rect width="18" height="18" rx="5"/><path d="M5 9a4 4 0 104-4H6M6 3v2.5h2.5"/></g>`;
+        gD.innerHTML = s;
+        dessinerZoom();
+      }
       function dessinBalance() {
-        const v = S.aff, txt = (Math.abs(v) < 0.05 ? 0 : v).toFixed(1);
+        const charge = surPlateau() ? 1.6 : 0, v = S.aff, txt = (Math.abs(v) < 0.05 ? 0 : v).toFixed(1);
         const bouton = (b, k, t, l) => `<g class="mv-btn" data-act="${k}" role="button" aria-label="${l}"><rect x="${b.x}" y="${b.y}" width="${b.w}" height="${b.h}" rx="7"/><text x="${b.x + b.w / 2}" y="${b.y + 19}" text-anchor="middle">${t}</text></g>`;
-        return `<g data-obj="balance" transform="translate(${f1(dh("balance"))} 0)"><rect x="${BAL.x}" y="${BAL.y}" width="${BAL.w}" height="${BAL.h}" rx="10" class="mv-bal"/>
-            <rect x="${CXP - 30}" y="${PL.y + PL.h - 1}" width="60" height="4" class="b-metal"/>
-            <rect x="${PL.x}" y="${PL.y}" width="${PL.w}" height="${PL.h}" rx="3" class="mv-plat"/>
-            <rect x="${LCD.x}" y="${LCD.y}" width="${LCD.w}" height="${LCD.h}" rx="4" class="b-lcd"/>
-            <text x="${LCD.x + LCD.w - 22}" y="${LCD.y + 19}" text-anchor="end" class="b-lcd-t">${txt}</text><text x="${LCD.x + LCD.w - 8}" y="${LCD.y + 19}" text-anchor="end" class="b-lcd-m">g</text>
-            ${stable() ? `<text x="${LCD.x + 6}" y="${LCD.y + 11}" class="b-lcd-m">●</text>` : ""}</g>
+        return `<g transform="translate(${f1(dh("balance"))} 0)"><rect x="${BAL.x}" y="${BAL.y}" width="${BAL.w}" height="${BAL.h}" rx="10" class="mv-bal" pointer-events="none"/>
+            <rect x="${CXP - 30}" y="${PL.y + PL.h - 1 + charge}" width="60" height="${4 - charge}" class="b-metal" pointer-events="none"/>
+            <rect x="${PL.x}" y="${f1(PL.y + charge)}" width="${PL.w}" height="${PL.h}" rx="3" class="mv-plat${S.sel && (S.sel === "epr" || S.sel === "pierre") ? " cible" : ""}" pointer-events="none"/>
+            <rect x="${LCD.x}" y="${LCD.y}" width="${LCD.w}" height="${LCD.h}" rx="4" class="b-lcd" pointer-events="none"/>
+            <text x="${LCD.x + LCD.w - 22}" y="${LCD.y + 19}" text-anchor="end" class="b-lcd-t" pointer-events="none">${txt}</text><text x="${LCD.x + LCD.w - 8}" y="${LCD.y + 19}" text-anchor="end" class="b-lcd-m" pointer-events="none">g</text>
+            ${stable() ? `<text x="${LCD.x + 6}" y="${LCD.y + 11}" class="b-lcd-m" pointer-events="none">●</text>` : ""}</g>
           ${bouton(BT.tare, "tare", "TARE", "Touche TARE : remettre l'affichage à zéro")}${bouton(BT.noter, "noter", "NOTER", "Touche NOTER : relever la masse")}`;
       }
-      function corpsLiquide(x, yTop, yBas, liq, lg) {
-        const L = liqDe(liq, opts);
-        return `<path d="M${x} ${f1(yTop - 2)}Q${x + lg / 2} ${f1(yTop + 3)} ${x + lg} ${f1(yTop - 2)}V${f1(yBas)}H${x}Z" fill="${L.coul}" opacity="${L.op}"/>`;
-      }
+      // L'éprouvette : le verre tourne autour de son pied (pierre), le liquide reste horizontal (dessiné dans la page, découpé par le tube).
       function dessinEprouvette() {
-        const E = S.epr, x = E.x + dh("epr"), y = E.y, tenu = geste && geste.o === "epr";
-        let s = `<g class="mv-obj${tenu ? " tenu" : ""}" data-obj="epr" transform="translate(${f1(x)} ${f1(y)})"><rect x="-8" y="-8" width="${EW + 16}" height="${EH + 12}" fill="transparent"/>`;
-        // liquide (et la pierre au fond)
-        const nv = E.vis;
-        if (nv > 0.05 && E.liq) s += corpsLiquide(10, yNiv(nv), YZ, E.liq, 20);
-        if (pierreDans()) s += `<path d="M12 ${YZ}l2-7 6-3 6 2 2 8z" class="mv-pierre"/>`;
-        // flux qui tombe du flacon
-        if (S.verse && S.verse.cible === "epr" && S.flux > 0) { const L = liqDe(S.verse.f.liq, opts); s += `<rect x="18.5" y="-14" width="3" height="${f1(Math.max(0, yNiv(nv) + 14))}" fill="${L.coul}" opacity=".9" rx="1.5"/>`; }
-        // verre
+        const E = S.epr, x = E.x + dh("epr"), y = E.y, tr = `translate(${f1(x)} ${f1(y)}) rotate(${f1(E.tilt)} ${EW / 2} ${EH})`;
+        const sel = S.sel === "epr", cible = S.sel && S.sel !== "epr" && S.sel !== "balance";
+        clipTube.setAttribute("transform", tr);
+        let s = "";
+        if (E.vis > 0.05 && E.liq) {
+          const L = liqDe(E.liq, opts), r = (E.tilt * Math.PI) / 180, lx = 20, ly = YZ - E.vis * PX;   // point de l'axe au niveau du liquide
+          const sy = y + EH + (lx - EW / 2) * Math.sin(r) + (ly - EH) * Math.cos(r);
+          const men = Math.abs(E.tilt) < 0.5 ? `<path d="M${f1(x + 10)} ${f1(sy - 2)}Q${f1(x + 20)} ${f1(sy + 2.5)} ${f1(x + 30)} ${f1(sy - 2)}V${f1(sy + 4)}H${f1(x + 10)}Z" fill="${L.coul}" opacity="${L.op}"/>` : "";
+          s += `<g clip-path="url(#${uid}-tube)"><rect x="${f1(x - 60)}" y="${f1(sy + (men ? 3 : 0))}" width="160" height="${EH + 60}" fill="${L.coul}" opacity="${L.op}"/>${men}
+            ${S.ride > 0 ? `<ellipse cx="${f1(x + 20)}" cy="${f1(sy)}" rx="${f1(4 + 5 * (1 - S.ride))}" ry="1.4" fill="none" stroke="#fff" stroke-opacity="${f1(0.8 * S.ride)}" stroke-width="1"/>` : ""}</g>`;
+        }
+        s += `<g class="mv-obj${sel ? " sel" : ""}${cible ? " cible" : ""}" data-obj="epr" transform="${tr}"><rect x="-10" y="-14" width="${EW + 20}" height="${EH + 20}" fill="transparent"/>`;
+        if (sel) s += `<rect x="-6" y="-8" width="${EW + 12}" height="${EH + 12}" rx="8" class="mv-halo"/>`;
+        if (E.pierre || E.ps > 0) { const py = 6 + E.ps * (YZ - 16); s += `<g transform="translate(13 ${f1(py)})"><path d="M0 10l2-6 6-3 5 2 2 7z" class="mv-pierre"/></g>`; }
         s += `<path d="M10 4V${YZ}H30V4" class="c-verre-o"/><path d="M6 4H34M7 4Q8 0 11 1" class="c-fin"/>
           <rect x="10" y="${YZ}" width="20" height="6" class="mv-verre-f"/><rect x="15" y="${YZ + 6}" width="10" height="6" class="mv-verre-f"/><rect x="1" y="${YZ + 12}" width="38" height="${EH - YZ - 12}" rx="3" class="mv-verre-f"/>`;
         for (let v = 5; v <= VMAX; v += 5) {
-          const yy = f1(yNiv(v)), lab = v % 20 === 0;
+          const yy = f1(YZ - v * PX), lab = v % 20 === 0;
           s += `<line x1="${lab ? 20 : v % 10 === 0 ? 23 : 25}" x2="30" y1="${yy}" y2="${yy}" class="c-grad"/>`;
           if (lab) s += `<text x="17" y="${f1(+yy + 2.5)}" text-anchor="end" class="c-grad-t">${v}</text>`;
         }
-        s += `<text x="${EW / 2}" y="${EH - 3}" text-anchor="middle" class="mv-petit">100 mL</text>`;
-        if (E.place === "libre" && !tenu) s += `<text x="${EW / 2}" y="${EH + 11}" text-anchor="middle" class="mv-nom">Éprouvette</text>`;
-        return s + `</g>`;
-      }
-      function dessinFlacon(f) {
-        const L = liqDe(f.liq, opts), tenu = geste && geste.o === f.id;
-        let tr = `translate(${f1(f.x + dh(f.id))} ${f1(f.y)})`;
-        if (S.verse && S.verse.f === f) {
-          const c = S.verse.cible === "epr" ? { x: S.epr.x + 20, y: S.epr.y } : { x: BEC.x + BEC.w / 2, y: BEC.y };
-          tr = `translate(${f1(c.x - 2)} ${f1(c.y - 18)}) rotate(${S.verse.cible === "epr" ? -118 : 118}) translate(-${FW / 2} -2)`;
-        }
-        const nom = !tenu && !(S.verse && S.verse.f === f) ? `<text x="${FW / 2}" y="${FH + 11}" text-anchor="middle" class="mv-nom">${f.liq === "mystere" ? "Liquide mystère" : L.etiq}</text>` : "";
-        return `<g class="mv-obj${tenu ? " tenu" : ""}" data-obj="${f.id}" transform="${tr}"><rect x="-8" y="-6" width="${FW + 16}" height="${FH + 12}" fill="transparent"/>
-          <path d="M11 0H19V10L28 20V${FH - 3}Q28 ${FH} 25 ${FH}H5Q2 ${FH} 2 ${FH - 3}V20L11 10Z" class="c-verre"/>
-          <path d="M3 30H27V${FH - 3}Q27 ${FH - 1} 25 ${FH - 1}H5Q3 ${FH - 1} 3 ${FH - 3}Z" fill="${L.coul}" opacity="${L.op}"/>
-          <path d="M11 0H19V10L28 20V${FH - 3}Q28 ${FH} 25 ${FH}H5Q2 ${FH} 2 ${FH - 3}V20L11 10Z" class="c-verre-o"/>
-          <rect x="5" y="34" width="20" height="13" rx="2" class="c-etiq"/><text x="15" y="44" text-anchor="middle" class="c-etiq-t">${f.liq === "mystere" ? "?" : L.etiq}</text>${nom}</g>`;
-      }
-      function dessinPierre() {
-        const P = S.pierre, tenu = geste && geste.o === "pierre";
-        const x = P.x, y = P.y;
-        return `<g class="mv-obj${tenu ? " tenu" : ""}" data-obj="pierre" transform="translate(${f1(x + dh("pierre"))} ${f1(y)})"><rect x="-10" y="-10" width="${PW + 20}" height="${PH + 20}" fill="transparent"/>
-          <path d="M1 ${PH}L3 6L11 1L20 3L25 10L24 ${PH}Z" class="mv-pierre"/><path d="M8 5L12 11L19 8M12 11L10 ${PH}" class="mv-pierre-l"/>
-          ${P.place === "libre" && !tenu ? `<text x="${PW / 2}" y="${PH + 12}" text-anchor="middle" class="mv-nom">Pierre dorée</text>` : ""}</g>`;
-      }
-      function dessinBecher() {
-        const B = BEC, fond = B.y + B.h - 4, eauH = 34;
-        let s = `<g data-obj="becher">`;
-        const C = S.becher.couches, dessous = C.filter((c) => c.rho > 1), dessus = C.filter((c) => c.rho <= 1);
-        let y = fond;
-        dessous.forEach((c) => { const hh = c.h * Math.min(1, c.a); s += `<rect x="${B.x + 3}" y="${f1(y - hh)}" width="${B.w - 6}" height="${f1(hh)}" fill="${c.coul}" opacity="${c.op}"/>`; y -= hh; });
-        s += `<rect x="${B.x + 3}" y="${f1(y - eauH)}" width="${B.w - 6}" height="${eauH}" fill="${LIQ.eau.coul}" opacity=".45"/>`; y -= eauH;
-        dessus.forEach((c) => { const hh = c.h * Math.min(1, c.a); s += `<rect x="${B.x + 3}" y="${f1(y - hh)}" width="${B.w - 6}" height="${f1(hh)}" fill="${c.coul}" opacity="${c.op}"/>`; y -= hh; });
-        // gouttes qui tombent pendant le versement
-        C.forEach((c) => { if (c.a < 1) { const k = c.a; const yg = c.rho > 1 ? B.y + 10 + k * (fond - B.y - 14) : B.y + 10 + k * 14; s += `<circle cx="${B.x + B.w / 2 - 6}" cy="${f1(yg)}" r="3" fill="${c.coul}"/><circle cx="${B.x + B.w / 2 + 5}" cy="${f1(yg - 8)}" r="2.4" fill="${c.coul}"/>`; } });
-        s += `<path d="M${B.x} ${B.y}V${B.y + B.h - 4}Q${B.x} ${B.y + B.h} ${B.x + 4} ${B.y + B.h}H${B.x + B.w - 4}Q${B.x + B.w} ${B.y + B.h} ${B.x + B.w} ${B.y + B.h - 4}V${B.y}" class="c-verre-o"/>
-          <path d="M${B.x - 3} ${B.y}H${B.x + B.w + 3}" class="c-fin"/><text x="${B.x + B.w / 2}" y="${B.y + B.h + 12}" text-anchor="middle" class="mv-nom">Bécher d'eau</text></g>`;
+        s += `<text x="${EW / 2}" y="${EH - 3}" text-anchor="middle" class="mv-petit">100 mL</text></g>`;
+        if (E.place === "place" && !E.liq && !geste) s += `<text x="${f1(x + EW / 2)}" y="${f1(y - 8)}" text-anchor="middle" class="mv-nom" pointer-events="none">Éprouvette</text>`;
         return s;
       }
+      // Un flacon : on garde le point du goulot (nx, ny) et l'angle ; le liquide reste horizontal quand il se penche.
+      const trFlacon = (f) => `translate(${f1(f.nx + dh(f.id))} ${f1(f.ny)}) rotate(${f1(f.ang)}) translate(${-FW / 2} 0)`;
+      const INT_FL = `M12 1H18V10L27 19V${FH - 3}Q27 ${FH - 1} 25 ${FH - 1}H5Q3 ${FH - 1} 3 ${FH - 3}V19L12 10Z`;
+      function dessinFlacon(f) {
+        const L = liqDe(f.liq, opts), sel = S.sel === f.id, tr = trFlacon(f), r = (f.ang * Math.PI) / 180;
+        // niveau du liquide : un peu moins de la moitié du flacon, mesurée dans la page
+        const pts = [[3, 19], [27, 19], [3, FH - 1], [27, FH - 1], [12, 1], [18, 1]].map(([a, b]) => { const u = a - FW / 2, v = b; return f.ny + u * Math.sin(r) + v * Math.cos(r); });
+        const ymin = Math.min(...pts), ymax = Math.max(...pts), yl = ymax - 0.46 * (ymax - ymin);
+        let s = "";
+        s += `<g class="mv-obj${sel ? " sel" : ""}" data-obj="${f.id}" transform="${tr}"><rect x="-8" y="-6" width="${FW + 16}" height="${FH + 12}" fill="transparent"/>
+          ${sel ? `<rect x="-5" y="-5" width="${FW + 10}" height="${FH + 10}" rx="8" class="mv-halo"/>` : ""}
+          <path d="${INT_FL}" class="c-verre"/></g>
+          <g pointer-events="none"><clipPath id="${uid}-c${f.id}"><path d="${INT_FL}" transform="${tr}"/></clipPath>
+            <rect x="${f1(f.nx - 80)}" y="${f1(yl)}" width="160" height="120" fill="${L.coul}" opacity="${L.op}" clip-path="url(#${uid}-c${f.id})"/></g>
+          <g pointer-events="none" transform="${tr}"><path d="M11 0H19V10L28 20V${FH - 3}Q28 ${FH} 25 ${FH}H5Q2 ${FH} 2 ${FH - 3}V20L11 10Z" class="c-verre-o"/>
+          <rect x="5" y="34" width="20" height="13" rx="2" class="c-etiq"/><text x="15" y="44" text-anchor="middle" class="c-etiq-t">${f.liq === "mystere" ? "?" : L.etiq}</text></g>`;
+        if (!f.mode && Math.abs(f.ny - f.hy) < 1 && !sel) s += `<text x="${f.hx + FW / 2}" y="${f.hy + FH + 11}" text-anchor="middle" class="mv-nom" pointer-events="none">${f.liq === "mystere" ? "Liquide mystère" : L.etiq}</text>`;
+        // filet de liquide qui coule du goulot
+        if (f.flux) {
+          const L2 = liqDe(f.liq, opts), b = f.flux, cx = f.nx + 7, cy = f.ny + 3;
+          s += `<path d="M${f1(cx)} ${f1(cy)}Q${f1(b.x + 2)} ${f1(cy + 2)} ${f1(b.x)} ${f1(Math.min(b.y, cy + 18))}L${f1(b.x)} ${f1(b.y)}" class="mv-filet" stroke="${L2.coul}" style="stroke-dashoffset:${f1(-S.t * 70)}"/>`;
+        }
+        return s;
+      }
+      function dessinPierre() {
+        const P = S.pierre, sel = S.sel === "pierre";
+        return `<g class="mv-obj${sel ? " sel" : ""}" data-obj="pierre" transform="translate(${f1(P.x + dh("pierre"))} ${f1(P.y)})"><rect x="-10" y="-12" width="${PW + 20}" height="${PH + 22}" fill="transparent"/>
+          ${sel ? `<rect x="-5" y="-5" width="${PW + 10}" height="${PH + 10}" rx="7" class="mv-halo"/>` : ""}
+          <path d="M1 ${PH}L3 6L11 1L20 3L25 10L24 ${PH}Z" class="mv-pierre"/><path d="M8 5L12 11L19 8M12 11L10 ${PH}" class="mv-pierre-l"/></g>`;
+      }
+      function dessinCompteGouttes() {
+        const b = bouche(), k = S.cg.presse || 0, x = b.x + 1, y = b.y - 6, L = liqDe(S.cg.liq, opts);
+        return `<g pointer-events="none"><rect x="${f1(x - 2.5)}" y="${f1(y - 40)}" width="5" height="38" rx="1.5" class="mv-pip"/><path d="M${f1(x - 2.5)} ${f1(y - 2)}L${f1(x)} ${f1(y + 3)}L${f1(x + 2.5)} ${f1(y - 2)}" class="mv-pip"/>
+          <rect x="${f1(x - 1.6)}" y="${f1(y - 22)}" width="3.2" height="20" fill="${L.coul}" opacity=".8"/>
+          <ellipse cx="${f1(x)}" cy="${f1(y - 47)}" rx="${f1(5.5 + 1.5 * k)}" ry="${f1(8 - 3 * k)}" class="mv-poire"/></g>`;
+      }
+      function dessinBecher() {
+        const B = BEC, fond = B.y + B.h - 4, eauH = 34, C = S.bec.couches;
+        let s = `<g data-cible="becher">`, y = fond;
+        const dessous = C.filter((c) => c.rho > 1), dessus = C.filter((c) => c.rho <= 1);
+        dessous.forEach((c) => { const hh = c.h * c.a; s += `<rect x="${B.x + 3}" y="${f1(y - hh)}" width="${B.w - 6}" height="${f1(hh)}" fill="${c.coul}" opacity="${c.op}"/>`; y -= hh; });
+        const yEau = y - eauH;
+        s += `<rect x="${B.x + 3}" y="${f1(yEau)}" width="${B.w - 6}" height="${eauH}" fill="${LIQ.eau.coul}" opacity=".45"/>`; y = yEau;
+        dessus.forEach((c) => { const hh = c.h * c.a; s += `<rect x="${B.x + 3}" y="${f1(y - hh)}" width="${B.w - 6}" height="${f1(hh)}" fill="${c.coul}" opacity="${c.op}"/>`; y -= hh; });
+        // gouttelettes qui remontent (liquide léger) ou qui tombent (liquide lourd)
+        C.forEach((c) => { if (c.a < 1) for (let k = 0; k < 4; k++) { const q = (c.a * 3 + k / 4) % 1; const gy = c.rho > 1 ? yEau + q * (fond - yEau) : fond - 6 - q * (fond - 6 - yEau); s += `<circle cx="${f1(B.x + 18 + k * 10)}" cy="${f1(gy)}" r="2.6" fill="${c.coul}" opacity=".9"/>`; } });
+        s += `<path d="M${B.x} ${B.y}V${B.y + B.h - 4}Q${B.x} ${B.y + B.h} ${B.x + 4} ${B.y + B.h}H${B.x + B.w - 4}Q${B.x + B.w} ${B.y + B.h} ${B.x + B.w} ${B.y + B.h - 4}V${B.y}" class="c-verre-o"/>
+          <path d="M${B.x - 3} ${B.y}H${B.x + B.w + 3}" class="c-fin"/><text x="${B.x + B.w / 2}" y="${B.y + B.h + 11}" text-anchor="middle" class="mv-nom">Bécher d'eau</text></g>`;
+        S.bec.surface = yEau;
+        return s;
+      }
+      // ---------- La loupe sur la paillasse ----------
+      function dessinerZoom() {
+        const E = S.epr;
+        if (!E.liq || E.vis < 0.3 || Math.abs(E.tilt) > 0.5 || (geste && geste.bouge && geste.id === "epr")) { gZ.innerHTML = ""; S.zoom = null; return; }
+        const L = liqDe(E.liq, opts), lv = E.vis, Ax = E.x + 30, Ay = surfaceY();
+        const cx = E.x + EW + 8 + ZR <= W - ZR - 2 ? E.x + EW + 8 + ZR : E.x - 8 - ZR;
+        const cy = Math.max(Y0 + ZR + 2, Math.min(Y1 - ZR - 14, Ay));
+        S.zoom = { cx, cy };
+        const w = 36, xg = -w / 2, xd = w / 2, mq = 4;
+        let grad = "";
+        for (let v = Math.ceil(lv - ZR / ZK - 1); v <= lv + ZR / ZK + 1; v++) {
+          if (v < 0 || v > VMAX) continue;
+          const y = (lv - v) * ZK, cinq = v % 5 === 0;
+          grad += `<line x1="${xg}" x2="${xg + (v % 10 === 0 ? 16 : cinq ? 12 : 7)}" y1="${f1(y)}" y2="${f1(y)}" class="c-z-grad${cinq ? " zero" : ""}"/>`;
+          if (cinq) grad += `<text x="${xg + 19}" y="${f1(y + 3.5)}" class="mv-z-t">${v}</text>`;
+        }
+        gZ.innerHTML = `<g class="c-zoom-in"><circle cx="${f1(Ax)}" cy="${f1(Ay)}" r="7" class="c-z-cible"/>
+          <line x1="${f1(Ax + (cx > Ax ? 7 : -7))}" y1="${f1(Ay)}" x2="${f1(cx + (cx > Ax ? -ZR : ZR))}" y2="${f1(cy)}" class="c-z-lien"/>
+          <g transform="translate(${f1(cx)} ${f1(cy)})"><circle r="${ZR + 3}" class="c-z-fond"/>
+            <g clip-path="url(#${uid}-zoom)"><rect x="${xg}" y="${-ZR}" width="${w}" height="${2 * ZR}" class="c-z-verre"/>
+              <path d="M${xg} ${-mq}Q0 ${mq} ${xd} ${-mq}V${ZR}H${xg}z" fill="${L.coul}" opacity="${Math.min(0.85, L.op + 0.15)}"/><path d="M${xg} ${-mq}Q0 ${mq} ${xd} ${-mq}" class="c-menisque"/>
+              <line x1="${xg}" x2="${xg}" y1="${-ZR}" y2="${ZR}" class="c-z-paroi"/><line x1="${xd}" x2="${xd}" y1="${-ZR}" y2="${ZR}" class="c-z-paroi"/>${grad}</g>
+            <circle r="${ZR}" class="c-z-bord"/><text x="0" y="${ZR + 12}" class="c-z-legende" text-anchor="middle">loupe : bas du ménisque</text></g></g>`;
+      }
 
-      // ---------- Sous la paillasse : loupe et versement ----------
-      let cleLoupe = "";
-      function majSous(force) {
-        const E = S.epr, lv = E.vis, liq = E.liq ? liqDe(E.liq, opts) : null;
-        const cle = [Math.round(lv * 20), E.liq, pierreDans()].join("|");
-        if (force || cle !== cleLoupe) {
-          cleLoupe = cle;
-          if (!liq || lv < 0.05) zLoupe.innerHTML = `<p class="small muted mv-vide">L'éprouvette est vide.</p>`;
-          else { const lo = Math.max(0, Math.min(VMAX - 12, Math.round(lv) - 6)); zLoupe.innerHTML = MASSEVOL.figEprouvette(lv, 1, 10, lo, lo + 12, { H: 168, coul: liq.coul, op: liq.op }); }
+      // ---------- Les boutons posés sur la paillasse (verser, compte-gouttes, lecture, vider) ----------
+      function majCmd(force) {
+        const f = enMain(), E = S.epr, g = S.guide || {};
+        let genre = "";
+        if (f && !occupe()) genre = "verse";
+        else if (!f && !occupe() && M.lecture && E.liq && E.V > 0 && g.lecture) genre = "lire";
+        else if (!f && !occupe() && S.sel === "epr" && (E.V > 0 || E.pierre)) genre = "vider";
+        const cle = genre + "|" + (f ? f.liq : "") + "|" + E.place + "|" + (g.lecture || "");
+        if (!genre) { zCmd.hidden = true; S.cmdCle = ""; return; }
+        if (force || cle !== S.cmdCle) {
+          S.cmdCle = cle;
+          if (genre === "verse") {
+            zCmd.innerHTML = `<button type="button" class="btn btn-primary btn-sm mv-verser" data-c="verser">Verser<small>maintenir appuyé</small></button>
+              <div class="mv-c-row" title="Compte-gouttes"><button type="button" class="btn btn-ghost btn-sm" data-c="plus" aria-label="Ajouter une goutte"><b>+</b><small>goutte</small></button><button type="button" class="btn btn-ghost btn-sm" data-c="moins" aria-label="Retirer une goutte"><b>−</b><small>goutte</small></button></div>
+              <button type="button" class="btn-link" data-c="reposer">Reposer</button>`;
+            brancherVerser(zCmd.querySelector("[data-c=verser]"));
+            [["plus", 1], ["moins", -1]].forEach(([c, s]) => repeter(zCmd.querySelector(`[data-c=${c}]`), () => goutte(s)));
+            zCmd.querySelector("[data-c=reposer]").onclick = () => reposer();
+          } else if (genre === "lire") {
+            zCmd.innerHTML = `<strong class="mv-c-t">Lire ${g.lecture}</strong><span class="mv-c-st">Regarde la loupe, au bas du ménisque :</span>
+              <div class="mv-c-row"><input type="text" inputmode="decimal" autocomplete="off" aria-label="Volume lu en mL"><span class="u">mL</span></div>
+              <button type="button" class="btn btn-primary btn-sm" data-c="noterV">Noter ${g.lecture}</button>`;
+            const inp = zCmd.querySelector("input"), ok = () => noterLecture(inp);
+            zCmd.querySelector("[data-c=noterV]").onclick = ok; inp.addEventListener("keydown", (e) => { if (e.key === "Enter") ok(); });
+          } else {
+            zCmd.innerHTML = `<strong class="mv-c-t">Éprouvette en main</strong><span class="mv-c-st">Touche la balance ou sa place pour la poser.</span>
+              <button type="button" class="btn btn-ghost btn-sm" data-c="vider">Vider et rincer</button>`;
+            zCmd.querySelector("[data-c=vider]").onclick = () => vider();
+          }
+          zCmd.hidden = false;
         }
-        if (force) {
-          zNoter.innerHTML = M.noterV ? `<button class="btn btn-primary btn-sm" data-c="noterV">NOTER le volume</button><div class="mv-lire"></div>` : "";
-          const b = zNoter.querySelector("[data-c=noterV]"); if (b) b.onclick = demanderLecture;
+        placerCmd();
+      }
+      // Les boutons se posent dans une zone libre de la paillasse : à droite si l'éprouvette est sur la balance, à gauche sinon.
+      function placerCmd() {
+        const rs = svg.getBoundingClientRect(), rp = scene.getBoundingClientRect(), k = rs.width / W;
+        const zone = S.epr.place === "plateau" || (S.verse && S.verse.cible === "becher") ? { x: 214, y: 90, w: 104 } : { x: 14, y: 40, w: 112 };
+        zCmd.style.width = Math.round(zone.w * k) + "px";
+        zCmd.style.left = Math.round(zone.x * k + rs.left - rp.left) + "px";
+        zCmd.style.top = Math.round(zone.y * k + rs.top - rp.top) + "px";
+      }
+      // « Verser » : tant qu'on appuie, le flacon se penche et le liquide coule.
+      function brancherVerser(b) {
+        const debut = (e) => { e.preventDefault(); if (occupe()) return; const r = refus("verserEpr", { liquideVerse: enMain().liq }); if (r) { refuser("epr", r); return; } S.flux = true; b.classList.add("actif"); try { b.setPointerCapture(e.pointerId); } catch (er) {} };
+        const fin = () => { S.flux = false; b.classList.remove("actif"); };
+        b.addEventListener("pointerdown", debut); b.addEventListener("pointerup", fin); b.addEventListener("pointercancel", fin); b.addEventListener("lostpointercapture", fin);
+        b.addEventListener("contextmenu", (e) => e.preventDefault());
+        b.addEventListener("keydown", (e) => { if ((e.key === " " || e.key === "Enter") && !e.repeat) { const r = refus("verserEpr", { liquideVerse: enMain().liq }); if (r) { refuser("epr", r); return; } S.flux = true; } });
+        b.addEventListener("keyup", fin);
+      }
+      // Bouton qui se répète quand on le maintient (compte-gouttes)
+      function repeter(b, f) {
+        let t1 = null, t2 = null;
+        const stop = () => { clearTimeout(t1); clearInterval(t2); t1 = t2 = null; };
+        b.addEventListener("pointerdown", (e) => { e.preventDefault(); stop(); f(); t1 = setTimeout(() => { t2 = setInterval(f, 110); }, 380); });
+        ["pointerup", "pointercancel", "pointerleave"].forEach((ev) => b.addEventListener(ev, stop));
+        b.addEventListener("keydown", (e) => { if (e.key === " " || e.key === "Enter") { e.preventDefault(); f(); } });
+      }
+
+      // ---------- Actions ----------
+      function selectionner(id) {
+        if (S.sel === id) { S.sel = null; dessiner(); majCmd(); return; }
+        if (id === "epr") { const r = refus("prendreEpr"); if (r) { refuser("epr", r); return; } }
+        if (fl(id)) { const r = refus("prendreFlacon"); if (r) { refuser(id, r); return; } }
+        if (id === "pierre" && pierreDans()) { dire("info", "La pierre est au fond de l'éprouvette. Pour la récupérer, vider l'éprouvette."); return; }
+        S.sel = id;
+        const f = fl(id);
+        dire("info", f ? `${f.liq === "mystere" ? "Liquide mystère" : "Flacon d'eau"} en main : touche l'éprouvette pour verser${S.bec ? ", ou le bécher d'eau" : ""}.`
+          : id === "epr" ? "Éprouvette en main : touche le plateau de la balance, ou sa place sur la paillasse."
+          : "Pierre en main : touche le plateau de la balance" + (M.pierre ? ", l'éprouvette pour l'y plonger, ou sa coupelle." : "."), 3);
+        dessiner(); majCmd();
+      }
+      // Que faire de l'objet en main sur cette cible ?
+      function agir(id, cible) {
+        if (id === "epr") {
+          if (cible === "balance") return poserEpr("plateau");
+          if (cible === "place") return poserEpr("place");
+          return false;
         }
-        const v = S.verse && S.verse.cible === "epr" ? S.verse.f : null;
-        zMain.innerHTML = v ? `En main : <strong>flacon ${v.liq === "mystere" ? "du liquide mystère" : "d'" + liqDe(v.liq, opts).etiq.toLowerCase()}</strong>. Verser, puis reposer le flacon.`
-          : `Pour verser : glisser un flacon sur l'éprouvette.`;
-        el.querySelectorAll(".mv-verse [data-c]").forEach((b) => {
-          const c = b.dataset.c;
-          b.disabled = c === "vider" ? !(E.V > 0 || pierreDans()) : c === "r1" ? !(v && E.V >= 1) : !v;
+        if (id === "pierre") {
+          if (cible === "epr") return plonger();
+          if (cible === "balance") return poserPierre("plateau");
+          if (cible === "coupelle") return poserPierre("coupelle");
+          return false;
+        }
+        const f = fl(id); if (!f) return false;
+        if (cible === "epr") return prendreVerse(f);
+        if (cible === "becher" && S.bec) return verserBecher(f);
+        if (cible === "etagere") { S.sel = null; dessiner(); return true; }
+        return false;
+      }
+      function poserEpr(ou) {
+        const E = S.epr;
+        if (ou === "plateau" && S.pierre && S.pierre.place === "plateau") { refuser("balance", "Le plateau est déjà occupé par la pierre : retire-la d'abord."); return true; }
+        if (E.place === ou) { S.sel = null; dessiner(); majCmd(); return true; }
+        if (ou === "plateau") { const r = refus("plateauEpr"); if (r) { refuser("epr", r); return true; } }
+        S.sel = null; E.place = ou;
+        const p = POS[ou], x0 = E.x, y0 = E.y, haut = Math.min(y0, p.y) - 24;
+        anime(0.6, (q) => { E.x = x0 + (p.x - x0) * q; E.y = q < 0.5 ? y0 + (haut - y0) * (q * 2) : haut + (p.y - haut) * ((q - 0.5) * 2); }, () => {
+          dire("ok", ou === "plateau" ? "Éprouvette posée sur le plateau." : "Éprouvette posée sur la paillasse.", 2.2);
         });
+        return true;
       }
-      el.querySelectorAll(".mv-verse [data-c]").forEach((b) => b.onclick = () => commande(b.dataset.c));
-      function dire(ok, txt) { zStatut.textContent = txt; zStatut.className = "small mv-statut " + (ok ? "ok" : "ko"); signalPaillasse(bench, ok ? "ok" : "ko"); }
-      function commande(c) {
-        const E = S.epr, v = S.verse && S.verse.cible === "epr" ? S.verse.f : null;
-        if (c === "reposer") { reposer(); return; }
-        if (c === "vider") {
-          if (S.verse) reposer();
-          E.V = 0; E.liq = null;
-          if (pierreDans()) { S.pierre.place = "libre"; S.pierre.x = 200; S.pierre.y = 304; }
-          bulle("L'éprouvette est vidée et rincée.", "epr", 1.8);
-          dessiner(); majSous(); return;
+      function poserPierre(ou) {
+        const P = S.pierre;
+        if (ou === "plateau") {
+          if (S.epr.place === "plateau") { refuser("balance", "Le plateau est occupé par l'éprouvette : la pierre se pèse seule."); return true; }
+          const r = refus("plateauPierre"); if (r) { refuser("pierre", r); return true; }
         }
-        if (!v) return;
-        const add = c === "v10" ? 10 : c === "v1" ? 1 : -1;
-        if (add > 0 && niveau() + add > VMAX) { bulle("Attention : l'éprouvette déborderait ! Elle contient au plus 100 mL.", "epr", 2.8, "ko"); return; }
-        if (add < 0 && E.V < 1) return;
-        E.V += add; E.liq = E.V > 0 ? v.liq : null;
-        if (add > 0) S.flux = add === 10 ? 0.7 : 0.35;
-        dessiner(); majSous();
+        S.sel = null; P.place = ou;
+        const cx = ou === "plateau" ? CXP - PW / 2 : P_HOME.x, cy = ou === "plateau" ? PL.y - PH + 2 : P_HOME.y, x0 = P.x, y0 = P.y, haut = Math.min(y0, cy) - 20;
+        anime(0.55, (q) => { P.x = x0 + (cx - x0) * q; P.y = q < 0.5 ? y0 + (haut - y0) * q * 2 : haut + (cy - haut) * (q - 0.5) * 2; }, () => dire("ok", ou === "plateau" ? "Pierre posée sur le plateau." : "Pierre reposée sur sa coupelle.", 2));
+        return true;
       }
-      function reposer() {
-        if (!S.verse) return;
-        const f = S.verse.f; f.x = f.x0; f.y = f.y0; S.verse = null; S.flux = 0; dessiner(); majSous();
+      // Le flacon vient au-dessus de l'éprouvette, prêt à verser
+      function prendreVerse(f) {
+        const E = S.epr;
+        if (E.V > 0.05 && E.liq && E.liq !== f.liq) { refuser("epr", "L'éprouvette contient déjà un autre liquide : vide-la d'abord (touche-la, puis « Vider et rincer »)."); return true; }
+        const r = refus("verserEpr", { liquideVerse: f.liq, approche: true }); if (r) { refuser(f.id, r); return true; }
+        if (S.verse) reposer(true);
+        S.sel = null; S.verse = { f, cible: "epr" }; f.mode = "epr";
+        const b = bouche(), nx0 = f.nx, ny0 = f.ny, a0 = f.ang, tx = b.x - 12, ty = b.y - 10;
+        anime(0.6, (q) => { f.nx = nx0 + (tx - nx0) * q; f.ny = ny0 + (ty - ny0) * q - 26 * Math.sin(Math.PI * q); f.ang = a0 + (75 - a0) * q; }, () => {
+          dire("info", "Maintiens « Verser » : le flacon se penche et le liquide coule. Relâche pour arrêter, puis termine au compte-gouttes en regardant la loupe.", 5);
+          majCmd(true);
+        });
+        majCmd();
+        return true;
       }
-      // Lecture de l'élève (objectif 3) : il écrit le volume qu'il lit sur la loupe
-      function demanderLecture() {
-        const z = zNoter.querySelector(".mv-lire");
-        if (!S.epr.liq || S.epr.V < 1) { dire(false, "L'éprouvette est vide : verse d'abord de l'eau."); return; }
-        if (!stable()) { dire(false, "Attends que le niveau soit stable."); return; }
-        z.innerHTML = `<label class="small" for="mv-lu">Je lis sur la loupe :</label><div class="calc-in"><input type="text" id="mv-lu" inputmode="decimal" autocomplete="off"><span class="u">mL</span><button class="btn btn-primary btn-sm" data-ok>OK</button></div>`;
-        const inp = z.querySelector("input"); inp.focus();
-        const valider = () => {
-          const lu = parseFloat(inp.value.replace(/\s| /g, "").replace(",", "."));
-          if (isNaN(lu)) { dire(false, "Écris un nombre, par exemple 52."); return; }
-          if (Math.abs(lu - niveau()) > 0.01) { dire(false, `Ce n'est pas tout à fait ça : regarde le bas du ménisque. Une petite graduation vaut 1 mL ; compte-les à partir du nombre écrit juste en dessous.`); return; }
-          const r = surEvt("noterV", { lu, niveau: niveau(), V: S.epr.V, liquide: S.epr.liq, pierreDans: pierreDans() }) || { ok: true, txt: "Volume noté." };
-          dire(r.ok, r.txt); if (r.ok) z.innerHTML = "";
-        };
-        z.querySelector("[data-ok]").onclick = valider; inp.addEventListener("keydown", (e) => { if (e.key === "Enter") valider(); });
+      function reposer(vite) {
+        const f = S.verse && S.verse.f; if (!f) return;
+        S.verse = null; S.flux = false; f.flux = null; f.mode = null; S.cg = null;
+        const nx0 = f.nx, ny0 = f.ny, a0 = f.ang, tx = f.hx + FW / 2, ty = f.hy;
+        if (vite) { f.nx = tx; f.ny = ty; f.ang = 0; }
+        else anime(0.55, (q) => { f.nx = nx0 + (tx - nx0) * q; f.ny = ny0 + (ty - ny0) * q - 20 * Math.sin(Math.PI * q); f.ang = a0 * (1 - q); }, () => { majCmd(); });
+        majCmd();
+      }
+      function goutte(sens) {
+        const f = enMain(), E = S.epr; if (!f || occupe()) return;
+        if (sens > 0) {
+          const r = refus("verserEpr", { liquideVerse: f.liq }); if (r) { refuser("epr", r); return; }
+          if (niveau() + GOUTTE > VMAX) { refuser("epr", "L'éprouvette est pleine : elle déborderait !"); return; }
+        } else if (E.V < GOUTTE - 1e-9) return;
+        S.cg = { liq: f.liq, fin: S.t + 1.4, presse: 1 };
+        const b = bouche();
+        if (sens > 0) S.gouttes.push({ x: b.x + 1, y: b.y + 1, y1: surfaceY(), v: 0, coul: liqDe(f.liq, opts).coul });
+        else { E.V = Math.max(0, Math.round((E.V - GOUTTE) * 100) / 100); if (E.V === 0) E.liq = null; }
+      }
+      function vider() {
+        const r = refus("vider"); if (r) { refuser("epr", r); return; }
+        const E = S.epr, V0 = E.V; S.sel = null;
+        anime(1.1, (q) => { E.tilt = 28 * Math.sin(Math.PI * Math.min(1, q * 1.05)); E.V = V0 * (1 - Math.min(1, q * 1.4)); E.vis = E.V; }, () => {
+          E.V = 0; E.vis = 0; E.liq = null; E.tilt = 0;
+          if (E.pierre) { E.pierre = false; E.ps = 0; S.pierre.place = "coupelle"; S.pierre.x = P_HOME.x; S.pierre.y = P_HOME.y; }
+          dire("ok", "L'éprouvette est vidée et rincée.", 2); surEvt("vide", {});
+        });
+        majCmd();
+      }
+      // La pierre glisse le long de l'éprouvette penchée (sans tomber d'en haut : le verre pourrait casser)
+      function plonger() {
+        const E = S.epr, P = S.pierre;
+        if (!E.liq || E.V < 10) { refuser("epr", "Verse d'abord environ 50 mL d'eau dans l'éprouvette : c'est la montée du niveau qui donnera le volume de la pierre."); return true; }
+        if (niveau() + opts.pierre.V > VMAX) { refuser("epr", "Il y a trop d'eau : l'éprouvette déborderait."); return true; }
+        const r = refus("plonger"); if (r) { refuser("pierre", r); return true; }
+        S.sel = null; P.place = "main";
+        const b = bouche(), x0 = P.x, y0 = P.y, tx = b.x - PW / 2 - 18, ty = b.y - 24;
+        anime(0.5, (q) => { P.x = x0 + (tx - x0) * q; P.y = y0 + (ty - y0) * q - 20 * Math.sin(Math.PI * q); }, () => {
+          anime(0.45, (q) => { E.tilt = -24 * q; P.x = tx + 12 * q; P.y = ty + 10 * q; }, () => {
+            P.place = "epr"; E.ps = 0.001;
+            const yl = (YZ - E.V * PX - 6) / (YZ - 16);
+            anime(1.1, (q) => { E.ps = q * q; if (!E.pierre && E.ps >= yl) { E.pierre = true; S.ride = 1; } }, () => {
+              E.pierre = true; E.ps = 1;
+              anime(0.45, (q) => { E.tilt = -24 * (1 - q); }, () => { E.tilt = 0; dire("ok", "La pierre est au fond : le niveau de l'eau est monté.", 2.6); });
+            }, true);
+          });
+        });
+        return true;
+      }
+      function verserBecher(f) {
+        const r = refus("verserBecher", { liquideVerse: f.liq }); if (r) { refuser(f.id, r); return true; }
+        if (S.verse) reposer(true);
+        S.sel = null; S.verse = { f, cible: "becher" }; f.mode = "bec";
+        const L = liqDe(f.liq, opts), tx = BEC.x + 22, ty = BEC.y - 12, nx0 = f.nx, ny0 = f.ny;
+        anime(0.6, (q) => { f.nx = nx0 + (tx - nx0) * q; f.ny = ny0 + (ty - ny0) * q - 20 * Math.sin(Math.PI * q); f.ang = 118 * Math.max(0, (q - 0.4) / 0.6); }, () => {
+          const c = f.liq !== "eau" ? { liq: f.liq, rho: L.rho, coul: L.coul, op: L.op, h: 12, a: 0 } : null;
+          if (c) S.bec.couches.push(c);
+          anime(1.4, (q) => { f.flux = { x: BEC.x + BEC.w / 2, y: c && c.rho > 1 ? BEC.y + BEC.h - 6 - (c ? c.h * c.a : 0) : (S.bec.surface || BEC.y + 30) }; if (c) c.a = q; }, () => {
+            f.flux = null;
+            const nx1 = f.nx, ny1 = f.ny;
+            anime(0.6, (q) => { f.ang = 118 * (1 - q); f.nx = nx1 + (f.hx + FW / 2 - nx1) * q; f.ny = ny1 + (f.hy - ny1) * q - 20 * Math.sin(Math.PI * q); }, () => {
+              f.mode = null; S.verse = null;
+              dire("info", f.liq === "mystere" ? "Observe bien : où le liquide mystère s'est-il placé ?" : "C'est de l'eau : elle se mélange à l'eau du bécher.", 3.4);
+              surEvt("verseBecher", { liquide: f.liq, rho: L.rho });
+            });
+          }, true);
+        });
+        return true;
+      }
+      function noterLecture(inp) {
+        const lu = parseFloat(inp.value.replace(/\s| /g, "").replace(",", "."));
+        if (isNaN(lu)) { dire("ko", "Écris le volume lu, par exemple 52."); return; }
+        if (!stable()) { dire("ko", "Attends que le niveau soit stable."); return; }
+        if (Math.abs(lu - niveau()) > 0.5) { refuser("epr", "Ce n'est pas tout à fait ça : regarde le bas du ménisque dans la loupe. Une petite graduation vaut 1 mL ; compte à partir du nombre écrit juste en dessous."); return; }
+        const r = surEvt("noterV", Object.assign(etatCourant(), { lu })) || { ok: true, txt: "Volume noté." };
+        dire(r.ok ? "ok" : "ko", r.txt, 4); if (r.ok) inp.value = "";
+        majGuide(); majCmd(true);
+      }
+      function action(a) {
+        if (a === "reset") { charger(M, opts); dire("info", "La paillasse est remise comme au départ.", 2); surEvt("reset", {}); return; }
+        if (occupe()) return;
+        if (a === "tare") {
+          S.tare = brut(); S.aff = 0; S.flashTare = S.t;
+          dire("ok", surPlateau() ? "Tare faite : la balance affiche 0.0 g avec ce qui est posé dessus." : "Tare faite : la balance affiche 0.0 g, plateau vide.", 2.6);
+          dessiner(); return;
+        }
+        if (a === "noter") {
+          if (!stable()) { dire("ko", "Attends que l'affichage de la balance soit stable (le point ● s'allume)."); return; }
+          const r = surEvt("noterM", etatCourant()) || { ok: true, txt: "Masse notée : " + fr(net(), 1) + " g." };
+          if (!r.ok) S.hoche = { id: "balance", t0: performance.now() };
+          dire(r.ok ? "ok" : "ko", r.txt, 4.2);
+        }
       }
 
-      // ---------- Gestes ----------
+      // ---------- Gestes : toucher puis toucher, ou glisser ----------
       const pt = (e) => { const p = versPaillasse(svg, e.clientX, e.clientY); return [p.x, p.y]; };
       function quoiSous(cible) {
-        const g = cible && cible.closest ? cible.closest("[data-act],[data-obj]") : null;
+        const g = cible && cible.closest ? cible.closest("[data-act],[data-obj],[data-cible]") : null;
         if (!g || !svg.contains(g)) return null;
-        if (g.dataset.act) return { type: "act", act: g.dataset.act };
-        return { type: "obj", id: g.dataset.obj };
+        if (g.dataset.act) return { act: g.dataset.act };
+        if (g.dataset.obj) return { id: g.dataset.obj };
+        return { cible: g.dataset.cible };
       }
-      const flacon = (id) => S.flacons.find((f) => f.id === id);
-      const deplacable = (id) => id === "epr" || (id === "pierre" && S.pierre.place !== "epr") || !!flacon(id);
+      // Cible sous un point (pour le glisser-déposer)
+      function cibleEn(x, y, id) {
+        const E = S.epr, dans = (b, m) => x > b.x - m && x < b.x + b.w + m && y > b.y - m && y < b.y + b.h + m;
+        if (id !== "epr" && dans({ x: E.x, y: E.y - 20, w: EW, h: EH + 20 }, 16)) return "epr";
+        if (S.bec && dans(BEC, 16)) return "becher";
+        if (x > BAL.x - 6 && x < BAL.x + BAL.w + 6 && y > PL.y - 130 && y < BAL.y + BAL.h) return "balance";
+        if (dans({ x: POS.place.x, y: POS.place.y, w: EW, h: EH }, 18)) return "place";
+        if (dans(ETAGERE, 6)) return "etagere";
+        if (M.pierre && dans({ x: COUPELLE.x, y: COUPELLE.y - 30, w: COUPELLE.w, h: 44 }, 8)) return "coupelle";
+        return null;
+      }
+      const deplacable = (id) => id === "epr" || !!fl(id) || (id === "pierre" && !pierreDans());
       svg.addEventListener("pointerdown", (e) => {
+        if (!S || !zVerrou.hidden) return;
         const q = quoiSous(e.target); if (!q) { geste = null; return; }
         const [x, y] = pt(e);
-        if (q.type === "act") geste = { type: "act", act: q.act, x, y, bouge: false };
-        else {
-          const b = boite(q.id);
-          geste = { type: "obj", o: q.id, x, y, dx: x - b.x, dy: y - b.y, bouge: false };
+        geste = Object.assign({ x, y, bouge: false }, q);
+        if (q.id && deplacable(q.id) && !occupe()) {
+          const o = q.id === "epr" ? S.epr : q.id === "pierre" ? S.pierre : fl(q.id);
+          geste.o = o; geste.x0 = q.id[0] === "f" ? o.nx : o.x; geste.y0 = q.id[0] === "f" ? o.ny : o.y;
         }
         e.preventDefault();
         try { svg.setPointerCapture(e.pointerId); } catch (er) {}
       });
       svg.addEventListener("pointermove", (e) => {
-        if (!geste || geste.type !== "obj" || !deplacable(geste.o)) return;
+        if (!geste || !geste.o || occupe()) return;
         const [x, y] = pt(e);
-        if (Math.abs(x - geste.x) + Math.abs(y - geste.y) > 6) geste.bouge = true;
-        if (!geste.bouge) return;
-        const id = geste.o, b = boite(id), nx = Math.max(X0, Math.min(X1 - b.w, x - geste.dx)), ny = Math.max(Y0, Math.min(Y1 - b.h, y - geste.dy));
-        if (id === "epr") { if (S.verse && S.verse.cible === "epr") reposer(); S.epr.place = "libre"; S.epr.x = nx; S.epr.y = ny; }
-        else if (id === "pierre") { S.pierre.place = "libre"; S.pierre.x = nx; S.pierre.y = ny; }
-        else { const f = flacon(id); if (S.verse && S.verse.f === f) { S.verse = null; S.flux = 0; } f.x = nx; f.y = ny; }
-        dessiner(); majSous();
+        if (!geste.bouge) {
+          if (Math.abs(x - geste.x) + Math.abs(y - geste.y) <= 7) return;
+          // on ne peut pas emporter un objet que le TP refuse à cette étape
+          const r = geste.id === "epr" ? refus("prendreEpr") : fl(geste.id) ? refus("prendreFlacon") : null;
+          if (r) { refuser(geste.id, r); geste = null; return; }
+          if (fl(geste.id) && S.verse && S.verse.f === geste.o) { S.verse = null; S.flux = false; geste.o.mode = null; S.cg = null; geste.x0 = geste.o.nx; geste.y0 = geste.o.ny; }
+          geste.bouge = true; S.sel = geste.id;
+        }
+        const dx = x - geste.x, dy = y - geste.y, o = geste.o;
+        if (geste.id[0] === "f") { o.nx = Math.max(X0 + FW / 2, Math.min(X1 - FW / 2, geste.x0 + dx)); o.ny = Math.max(Y0, Math.min(Y1 - FH, geste.y0 + dy)); o.ang = Math.max(0, o.ang - 6); }
+        else { const w = geste.id === "epr" ? EW : PW, hh = geste.id === "epr" ? EH : PH; o.x = Math.max(X0, Math.min(X1 - w, geste.x0 + dx)); o.y = Math.max(Y0, Math.min(Y1 - hh, geste.y0 + dy)); if (geste.id === "pierre") o.place = "main"; }
+        dessiner(); majCmd();
       });
-      svg.addEventListener("pointerup", () => {
+      svg.addEventListener("pointerup", (e) => {
         const g = geste; geste = null; if (!g) return;
-        if (g.type === "act") { if (!g.bouge) action(g.act); return; }
-        if (!g.bouge) {
-          const f = flacon(g.o);
-          if (g.o === "pierre" && S.pierre.place === "epr") bulle("La pierre est au fond de l'éprouvette. Pour la récupérer, vider l'éprouvette.", "epr", 3);
-          else bulle(f ? (f.liq === "mystere" ? "Le liquide mystère, coloré par le professeur. Le glisser sur l'éprouvette pour verser, ou sur le bécher d'eau." : "Un flacon d'eau. Le glisser sur l'éprouvette pour verser.") : ROLE[g.o === "epr" ? "eprouvette" : g.o] || "", g.o, 3.6);
-          dessiner(); return;
+        if (g.act) { if (!g.bouge) action(g.act); return; }
+        if (occupe()) return;
+        if (g.bouge) {
+          const [x, y] = pt(e), cible = cibleEn(x, y, g.id);
+          if (!(cible && agir(g.id, cible))) retourner(g);
+          else if (S.sel === g.id) { S.sel = null; }
+          dessiner(); majCmd(); return;
         }
-        poser(g.o); dessiner(); majSous();
+        // simple toucher
+        if (g.id) {
+          if (S.sel && S.sel !== g.id && agir(S.sel, g.id)) { dessiner(); majCmd(); return; }
+          if (g.id === "epr" || deplacable(g.id)) selectionner(g.id);
+          else dire("info", "La pierre est au fond de l'éprouvette.");
+          return;
+        }
+        if (g.cible) {
+          if (S.sel && agir(S.sel, g.cible)) { dessiner(); majCmd(); return; }
+          if (S.sel) { S.sel = null; dessiner(); majCmd(); return; }
+          if (g.cible === "becher") dire("info", "Un bécher d'eau colorée : verses-y le liquide mystère pour voir s'il reste au-dessus ou s'il coule.", 3.2);
+          if (g.cible === "balance") dire("info", "La balance, précise à 0,1 g. TARE remet l'affichage à zéro ; NOTER relève la masse.", 3.2);
+        }
       });
-      svg.addEventListener("pointercancel", () => { geste = null; dessiner(); });
-      gererDefilement(svg, (x, y, cible) => !!quoiSous(cible), () => !!geste);
-
-      const centre = (b) => [b.x + b.w / 2, b.y + b.h / 2];
-      const dans = (px, py, b, m) => px > b.x - m && px < b.x + b.w + m && py > b.y - m && py < b.y + b.h + m;
-      const surLePlateau = (b) => { const [cx] = centre(b), bas = b.y + b.h; return Math.abs(cx - CXP) < 62 && bas > PL.y - 40 && bas < PL.y + 46; };
-      function poser(id) {
-        const E = S.epr;
-        if (id === "epr") {
-          const b = boite("epr");
-          if (surLePlateau(b)) {
-            if (S.pierre && S.pierre.place === "plateau") { E.x = EPR_LIBRE.x; E.y = EPR_LIBRE.y; bulle("Le plateau est déjà occupé par la pierre : retire-la d'abord.", "balance", 2.8, "ko"); return; }
-            E.place = "plateau"; E.x = EPR_PL.x; E.y = EPR_PL.y; bulle("Éprouvette posée sur le plateau.", null, 1.4, "ok");
-          }
-          return;
-        }
-        if (id === "pierre") {
-          const b = boite("pierre"), [cx, cy] = centre(b);
-          if (dans(cx, cy, boite("epr"), 14)) {
-            if (E.V < 10 || E.liq !== "eau") { S.pierre.x = 200; S.pierre.y = 304; bulle("Verse d'abord environ 50 mL d'eau dans l'éprouvette : c'est la montée du niveau qui donne le volume de la pierre.", "epr", 3.6, "ko"); return; }
-            if (niveau() + opts.pierre.V > VMAX) { S.pierre.x = 200; S.pierre.y = 304; bulle("Il y a trop d'eau : l'éprouvette déborderait. Retire un peu d'eau.", "epr", 3, "ko"); return; }
-            S.pierre.place = "epr"; bulle("La pierre glisse au fond de l'éprouvette : le niveau monte.", "epr", 2.4, "ok"); return;
-          }
-          if (surLePlateau(b)) {
-            if (E.place === "plateau") { S.pierre.x = 200; S.pierre.y = 304; bulle("Le plateau est occupé par l'éprouvette : pose la pierre seule sur le plateau.", "balance", 3, "ko"); return; }
-            S.pierre.place = "plateau"; S.pierre.x = CXP - PW / 2; S.pierre.y = PL.y - PH + 2; bulle("Pierre posée sur le plateau.", null, 1.4, "ok");
-          }
-          return;
-        }
-        const f = flacon(id); if (!f) return;
-        const [cx, cy] = centre(boite(id));
-        if (dans(cx, cy, boite("epr"), 22)) {
-          if (E.V > 0 && E.liq && E.liq !== f.liq) { f.x = f.x0; f.y = f.y0; bulle("L'éprouvette contient déjà un autre liquide : vide-la d'abord (sous la paillasse).", "epr", 3, "ko"); return; }
-          if (S.verse) reposer();
-          S.verse = { f, cible: "epr" }; bulle("Flacon prêt : verse avec les boutons sous la paillasse, en regardant la loupe.", null, 2.6, "ok");
-          return;
-        }
-        if (S.becher && dans(cx, cy, BEC, 18)) {
-          if (S.verse) reposer();
-          const L = liqDe(f.liq, opts);
-          S.verse = { f, cible: "becher", anim: true };
-          if (f.liq !== "eau") S.becher.couches.push({ liq: f.liq, rho: L.rho, coul: L.coul, op: L.op, h: 12, a: 0 });
-          S.tVerseB = S.t;
-          return;
-        }
+      svg.addEventListener("pointercancel", () => { if (geste && geste.bouge) retourner(geste); geste = null; dessiner(); });
+      // Objet lâché ailleurs : il retourne à sa place, en douceur
+      function retourner(g) {
+        const o = g.o; if (!o) return;
+        if (g.id[0] === "f") { const tx = o.hx + FW / 2, ty = o.hy, x0 = o.nx, y0 = o.ny, a0 = o.ang; o.mode = null; anime(0.4, (q) => { o.nx = x0 + (tx - x0) * q; o.ny = y0 + (ty - y0) * q; o.ang = a0 * (1 - q); }); }
+        else if (g.id === "epr") { const p = POS[S.epr.place], x0 = o.x, y0 = o.y; anime(0.4, (q) => { o.x = x0 + (p.x - x0) * q; o.y = y0 + (p.y - y0) * q; }); }
+        else { const P = S.pierre, ou = P.place === "main" ? (Math.abs(g.x0 - (CXP - PW / 2)) < 2 ? "plateau" : "coupelle") : P.place; P.place = ou;
+          const cx = ou === "plateau" ? CXP - PW / 2 : P_HOME.x, cy = ou === "plateau" ? PL.y - PH + 2 : P_HOME.y, x0 = o.x, y0 = o.y; anime(0.4, (q) => { o.x = x0 + (cx - x0) * q; o.y = y0 + (cy - y0) * q; }); }
+        S.sel = null;
       }
-      function action(a) {
-        if (a === "reset") { charger(M, opts); bulle("La paillasse est remise comme au départ.", null, 1.8); surEvt("reset", {}); return; }
-        if (a === "tare") {
-          S.tare = brut(); S.aff = 0;
-          bulle(surPlateau() ? "Tare faite : la balance affiche 0.0 g avec ce qui est posé dessus." : "Tare faite : la balance affiche 0.0 g, plateau vide.", "balance", 2.4, "ok");
-          dessiner(); return;
-        }
-        if (a === "noter") {
-          if (!stable()) { dire(false, "Attends que l'affichage de la balance soit stable (le point ● s'allume)."); return; }
-          const info = { net: net(), brut: Math.round(brut() * 10) / 10, tare: S.tare, plateau: surPlateau(), liquide: S.epr.liq, V: S.epr.V, niveau: niveau(), pierreDans: pierreDans(),
-            tareEpr: Math.abs(S.tare - M_EPR) < 0.05, tareVide: Math.abs(S.tare) < 0.05 };
-          const r = surEvt("noterM", info) || { ok: true, txt: "Masse notée : " + fr(info.net, 1) + " g." };
-          dire(r.ok, r.txt);
-        }
-      }
+      gererDefilement(svg, (x, y, cible) => { const q = quoiSous(cible); return !!(q && (q.id || q.act)); }, () => !!(geste && geste.bouge));
 
       // ---------- Boucle ----------
-      let dernier = performance.now(), acc = 0;
+      let dernier = performance.now(), acc = 0, accG = 0;
       function boucle(now) {
         if (!document.body.contains(svg)) return;
         const dt = Math.min(0.05, (now - dernier) / 1000); dernier = now; S.t += dt;
-        let redessin = !!S.hoche || (S.bulle && S.t > S.bulle.fin);
-        if (S.bulle && S.t > S.bulle.fin) S.bulle = null;
-        if (S.hoche && performance.now() - S.hoche.t0 > DUREE_HOCHE) S.hoche = null;
-        const E = S.epr, cible = niveau();
-        if (Math.abs(E.vis - cible) > 0.001) { const pas = 28 * dt; E.vis = Math.abs(cible - E.vis) <= pas ? cible : E.vis + Math.sign(cible - E.vis) * pas; redessin = true; majSous(); }
-        if (S.flux > 0) { S.flux = Math.max(0, S.flux - dt); redessin = true; }
-        const n = net();
-        if (Math.abs(S.aff - n) > 0.001) { const d = n - S.aff; S.aff = Math.abs(d) < 0.15 ? n : S.aff + d * Math.min(1, dt * 7); redessin = true; }
-        if (S.verse && S.verse.cible === "becher") {
-          const k = (S.t - S.tVerseB) / 1.4;
-          S.becher.couches.forEach((c) => { if (c.a < 1) c.a = Math.min(1, k); });
-          redessin = true;
-          if (k >= 1.15) { const f = S.verse.f; reposer(); bulle(f.liq === "mystere" ? "Observe bien : où le liquide mystère s'est-il placé ?" : "C'est de l'eau : elle se mélange à l'eau du bécher.", "becher", 3, "ok"); surEvt("verseBecher", { liquide: f.liq, rho: liqDe(f.liq, opts).rho }); }
+        // animations en cours
+        if (S.anims.length) {
+          const fini = [];
+          S.anims.slice().forEach((a) => { const p = Math.min(1, (S.t - a.t0) / a.dur); a.step(a.lin ? p : ease(p)); if (p >= 1) fini.push(a); });
+          fini.forEach((a) => { S.anims.splice(S.anims.indexOf(a), 1); if (a.fin) a.fin(); });
+          if (fini.length) majCmd();
         }
-        if (redessin) dessiner();
-        acc += dt;
-        if (acc >= 0.25) { acc = 0; surEvt("etat", { plateau: surPlateau(), net: n, stable: stable(), tareEpr: Math.abs(S.tare - M_EPR) < 0.05, tareVide: Math.abs(S.tare) < 0.05, V: E.V, liquide: E.liq, niveau: cible, pierreDans: pierreDans(), dt: 0.25 }); }
+        const E = S.epr, f = enMain();
+        // versement maintenu : le flacon se penche, le liquide coule quand il est assez penché
+        if (f && !occupe()) {
+          const cibleA = S.flux ? 118 : 75;
+          f.ang += Math.sign(cibleA - f.ang) * Math.min(Math.abs(cibleA - f.ang), 220 * dt);
+          if (S.flux && f.ang > 104) {
+            if (niveau() + DEBIT * dt > VMAX) { S.flux = false; { const bv = zCmd.querySelector(".mv-verser"); if (bv) bv.classList.remove("actif"); } refuser("epr", "Stop ! L'éprouvette est presque pleine : elle déborderait."); }
+            else { E.V = Math.round((E.V + DEBIT * dt) * 1000) / 1000; E.liq = f.liq; S.ride = 1; }
+            f.flux = { x: bouche().x, y: surfaceY() };
+          } else f.flux = null;
+        }
+        // gouttes du compte-gouttes
+        if (S.gouttes.length) {
+          S.gouttes = S.gouttes.filter((g) => {
+            g.v += 600 * dt; g.y += g.v * dt; g.y1 = surfaceY();
+            if (g.y >= g.y1) { E.V = Math.round((E.V + GOUTTE) * 100) / 100; E.liq = E.liq || (S.cg && S.cg.liq) || (enMain() && enMain().liq); S.ride = 1; return false; }
+            return true;
+          });
+        }
+        if (S.cg) { S.cg.presse = Math.max(0, S.cg.presse - dt * 5); if (S.t > S.cg.fin) S.cg = null; }
+        if (S.ride > 0) S.ride = Math.max(0, S.ride - dt * 1.6);
+        // le niveau affiché suit le volume
+        const cible = niveau();
+        if (Math.abs(E.vis - cible) > 0.0005 && !(occupe() && E.tilt)) { const pas = 40 * dt; E.vis = Math.abs(cible - E.vis) <= pas ? cible : E.vis + Math.sign(cible - E.vis) * pas; }
+        // l'affichage de la balance monte ou descend
+        const n = net();
+        if (Math.abs(S.aff - n) > 0.001) { const d = n - S.aff; S.aff = Math.abs(d) < 0.15 ? n : S.aff + d * Math.min(1, dt * 7); }
+        if (S.hoche && performance.now() - S.hoche.t0 > DUREE_HOCHE) S.hoche = null;
+        // on ne redessine que si quelque chose bouge (économie de batterie sur les téléphones)
+        const cleD = [S.anims.length, S.flux, S.gouttes.length, !!S.cg, S.ride > 0, f1(E.vis), f1(S.aff), !!S.hoche, f ? f1(f.ang) : "", S.sel, stable(), geste && geste.bouge ? f1(S.t) : ""].join("|");
+        if (cleD !== S.cleD || S.anims.length || S.flux || S.gouttes.length || S.cg || S.ride > 0 || S.hoche) { S.cleD = cleD; dessiner(); }
+        if (S.msg && S.t >= S.msg.fin) majGuide();
+        acc += dt; accG += dt;
+        if (acc >= 0.25) { acc = 0; surEvt("etat", Object.assign(etatCourant(), { dt: 0.25 })); }
+        if (accG >= 0.5) { accG = 0; majGuide(); majCmd(); }
         requestAnimationFrame(boucle);
       }
       requestAnimationFrame(boucle);
-      return { charger, _etat: () => S, _commande: commande, _action: action, _poser: (id, x, y) => { const b = boite(id); if (id === "epr") { S.epr.x = x; S.epr.y = y; } else if (id === "pierre") { S.pierre.x = x; S.pierre.y = y; } else { const f = flacon(id); f.x = x; f.y = y; } void b; poser(id); dessiner(); majSous(); } };
+      window.addEventListener("resize", () => { if (!zCmd.hidden) placerCmd(); });
+      return { charger, _etat: () => S, _action: action, _agir: agir, _selectionner: selectionner, _goutte: goutte, _flux: (v) => { S.flux = v; } };
     }
 
-    // ======================= Côté TP : vérification des manipulations, tableaux, questions =======================
-    const g1 = (v) => virg((+v).toFixed(1)), ent = (v) => fr(v, 0), d2 = (v) => virg((+v).toFixed(2));
-    function evenement(type, d, id, st, c) {
-      const R = c.rep.mv = c.rep.mv || {}, m = R[id] = R[id] || {};
-      const garder = () => { c.sauver(); c.extra(); };
-      if (type === "etat") {
-        if (id === "m1") {
-          if (d.plateau === "eprouvette" && d.V === 0 && d.tareEpr && d.stable) c.cocher("tare");
-          if (d.liquide === "eau" && d.V === 50 && d.stable) c.cocher("remplir");
-        }
-        return;
-      }
-      if (type === "verseBecher") { if (id === "m4" && d.liquide === "mystere") { m.vu = true; m.dessous = d.rho > 1; garder(); c.cocher("verse"); } return; }
-      if (type === "noterV") {
-        if (id !== "m3") return { ok: true, txt: "Volume noté." };
-        if (!d.pierreDans) {
-          if (d.liquide !== "eau" || d.V < 20 || d.V > 80) return { ok: false, txt: "Pour V₁, il faut entre 20 et 80 mL d'eau seule dans l'éprouvette (environ 50 mL)." };
-          m.V1 = d.niveau; m.Veau = d.V; delete m.V2; garder(); c.cocher("v1");
-          return { ok: true, txt: `Bien lu : V₁ = ${ent(d.niveau)} mL. Glisse maintenant la pierre dans l'éprouvette.` };
-        }
-        if (m.V1 == null) return { ok: false, txt: "Il faut d'abord noter V₁, le volume de l'eau seule (vide l'éprouvette et recommence)." };
-        if (d.V !== m.Veau) return { ok: false, txt: "Le volume d'eau a changé depuis V₁ : vide l'éprouvette, verse l'eau, note V₁, puis plonge la pierre." };
-        m.V2 = d.niveau; garder(); c.cocher("v2");
-        return { ok: true, txt: `Bien lu : V₂ = ${ent(d.niveau)} mL.` };
-      }
-      if (type !== "noterM") return;
-      const pasEpr = { ok: false, txt: "Pose l'éprouvette sur le plateau de la balance." };
-      const pasTare = { ok: false, txt: `La balance compte aussi l'éprouvette (${g1(M_EPR)} g). Vide l'éprouvette, pose-la vide sur le plateau et touche TARE, puis recommence.` };
-      if (id === "m1" || id === "m2" || id === "m4") {
-        const voulu = id === "m4" ? "mystere" : "eau";
-        if (d.plateau !== "eprouvette") return pasEpr;
-        if (!d.liquide || d.V === 0) return { ok: false, txt: id === "m1" ? "L'éprouvette est vide : verse 50 mL d'eau." : "L'éprouvette est vide : verse le liquide." };
-        if (!d.tareEpr) return pasTare;
-        if (d.liquide !== voulu) return { ok: false, txt: "Ce n'est pas le bon liquide pour cet objectif." };
-        if (id === "m1") {
-          if (d.V !== 50) return { ok: false, txt: d.V > 50 ? "Il y a un peu trop d'eau : retire-en au compte-gouttes, le bas du ménisque doit être sur le trait 50." : "Il manque un peu d'eau : ajoute-la au compte-gouttes, le bas du ménisque doit être sur le trait 50." };
-          m.m = d.net; m.V = 50; garder(); c.cocher("noter");
-          return { ok: true, txt: `Noté : 50 mL d'eau ont une masse de ${g1(d.net)} g.` };
-        }
-        if (id === "m2") {
-          if (d.V < 5) return { ok: false, txt: "Verse au moins 5 mL d'eau." };
-          m.pts = (m.pts || []).filter((p) => p.V !== d.V); m.pts.push({ V: d.V, m: d.net }); m.pts.sort((a, b) => a.V - b.V); garder();
-          const n = m.pts.length; if (n >= 3) c.cocher("trois");
-          return { ok: true, txt: `Noté : V = ${ent(d.V)} mL ; m = ${g1(d.net)} g.${n < 3 ? ` Encore ${3 - n} volume${3 - n > 1 ? "s" : ""} différent${3 - n > 1 ? "s" : ""}.` : ""}` };
-        }
-        if (d.V < 20) return { ok: false, txt: "Verse au moins 20 mL de liquide mystère : la mesure sera plus précise." };
-        m.m = d.net; m.V = d.V; garder(); c.cocher("mesure");
-        return { ok: true, txt: `Noté : ${ent(d.V)} mL de liquide mystère ont une masse de ${g1(d.net)} g.` };
-      }
-      if (id === "m3") {
-        if (d.plateau === "eprouvette") return { ok: false, txt: "Pour peser la pierre, pose-la seule sur le plateau (sans l'éprouvette)." };
-        if (d.plateau !== "pierre") return { ok: false, txt: "Le plateau est vide : pose la pierre dessus." };
-        if (!d.tareVide) return { ok: false, txt: "La balance n'est pas à zéro à vide : retire la pierre, touche TARE, puis repose la pierre." };
-        m.m = d.net; garder(); c.cocher("masse");
-        return { ok: true, txt: `Noté : la pierre a une masse de ${g1(d.net)} g.` };
-      }
-    }
-
-    // ---------- Tableaux et graphique (sous la paillasse) ----------
-    const table = (titre, t, lignes, apres) => `<h3>${titre}</h3><div class="table-wrap"><table class="mes-table"><thead><tr>${t.map((x) => `<th>${x}</th>`).join("")}</tr></thead><tbody>${lignes.map((l) => `<tr>${l.map((x) => `<td>${x}</td>`).join("")}</tr>`).join("")}</tbody></table></div>${apres || ""}`;
-    const ou = (v, f) => v == null ? "…" : f(v);
+    // ======================= Côté TP : étapes, vérifications, tableaux, protocole, questions =======================
+    const g1 = (v) => virg((+v).toFixed(1)), ent = (v) => fr(v, 0), d2 = (v) => virg((+v).toFixed(2)), v1 = (v) => fr(v, 1);
     const PROTOCOLE = [
       { t: "Poser l'éprouvette vide sur le plateau de la balance.", aide: "On commence par le récipient vide, avant de verser quoi que ce soit." },
       { t: "Toucher TARE : la balance affiche 0.0 g.", aide: "Il faut retirer la masse de l'éprouvette avant de verser le liquide." },
@@ -9728,12 +10080,160 @@ const QUESTIONS = [
       { t: "Lire la masse m du liquide sur la balance (toucher NOTER).", aide: "On mesure la masse une fois le liquide versé." },
       { t: "Calculer ρ = m ÷ V.", aide: "Le calcul se fait à la fin, avec les deux mesures." }
     ];
+    // Étape en cours : la première manipulation de l'objectif qui n'est pas encore faite
+    function etapeCourante(c) {
+      const T = c.obj.taches, st = c.st || { t: {} };
+      const i = T.findIndex((t) => !st.t[t.id]);
+      return i < 0 ? null : { i, id: T[i].id, texte: T[i].texte, n: T.length };
+    }
+    function evenement(type, d, id, st, c) {
+      const R = c.rep.mv = c.rep.mv || {}, m = R[id] = R[id] || {};
+      const garder = () => { c.sauver(); c.extra(); };
+      const e = etapeCourante(c);
+      // ----- Le bandeau : étape en cours (et, pour l'objectif 3, la lecture à faire) -----
+      if (type === "guide") {
+        if (!e) return { fini: true, texte: "Toutes les manipulations sont faites : réponds aux questions sous la paillasse." };
+        const g = { i: e.i + 1, n: e.n, texte: e.texte };
+        if (id === "m3" && e.id === "v1") g.lecture = "V₁";
+        if (id === "m3" && e.id === "v2" && d.pierreDans) g.lecture = "V₂";
+        if (id === "m4" && !m.proto) g.verrou = "La paillasse s'ouvrira quand ton protocole sera dans le bon ordre (au-dessus).";
+        return g;
+      }
+      // ----- Ce qui est permis à cette étape (l'ordre des manipulations est respecté) -----
+      if (type === "permis") {
+        const a = d.action, fait = (t) => !!(st && st.t[t]);
+        const nonTare = (id === "m1" || id === "m2" || id === "m4") && (a === "verserEpr");
+        if (nonTare) {
+          if (d.placeEpr !== "plateau") return { txt: "Pose d'abord l'éprouvette vide sur le plateau de la balance, puis fais la tare." };
+          if (d.V < 0.05 && !d.tareEpr) return { txt: "Touche d'abord TARE : la balance doit afficher 0.0 g avec l'éprouvette vide." };
+          if (id === "m4" && d.liquideVerse !== "mystere") return { txt: "Ici, on mesure le liquide mystère." };
+        }
+        if (id === "m3") {
+          if (a === "plateauEpr") return { txt: "Dans cet objectif, l'éprouvette reste sur la paillasse : la balance sert à peser la pierre seule." };
+          if ((a === "prendreFlacon" || a === "verserEpr") && !fait("masse")) return { txt: "Commence par l'étape 1 : peser la pierre seule sur la balance." };
+          if (a === "verserEpr" && fait("v1") && !fait("v2")) return { txt: "V₁ est noté : ne change plus la quantité d'eau, sinon la mesure serait fausse. Glisse maintenant la pierre dans l'éprouvette." };
+          if (a === "plonger" && !fait("masse")) return { txt: "Pèse d'abord la pierre (étape 1) : après, elle sera mouillée !" };
+          if (a === "plonger" && !fait("v1")) return { txt: "Note d'abord V₁, le volume de l'eau seule (étape 2) : lis-le sur la loupe." };
+          if (a === "vider" && fait("v1") && !fait("v2")) return { txt: "Garde cette eau : elle sert à mesurer V₂ avec la pierre." };
+        }
+        if (id === "m4" && a === "verserBecher" && !fait("mesure")) return { txt: "Suis d'abord ton protocole : mesure la masse et le volume du liquide mystère (étape 2)." };
+        return null;
+      }
+      if (type === "etat") {
+        if (id === "m1") {
+          if (d.plateau === "eprouvette" && d.V < 0.05 && d.tareEpr && d.stable) c.cocher("tare");
+          if (st.t.tare && d.liquide === "eau" && Math.abs(d.V - 50) <= 0.25 && d.stable) c.cocher("remplir");
+        }
+        if (id === "m4" && m.proto) {
+          // le protocole se coche au fur et à mesure qu'on le suit sur la paillasse
+          const k = m.coches = m.coches || [false, false, false, false, false];
+          const av = k.join();
+          if (d.plateau === "eprouvette") k[0] = true;
+          if (k[0] && d.plateau === "eprouvette" && d.tareEpr) k[1] = true;
+          if (k[1] && d.liquide === "mystere" && d.V >= 20 && d.tareEpr && d.plateau === "eprouvette") k[2] = true;
+          if (m.m != null) k[3] = true;
+          if (st.q.indexOf(0) >= 0) k[4] = true;
+          if (k.join() !== av) { c.sauver(); c.majAvant(); }
+        }
+        return;
+      }
+      if (type === "vide") { if (id === "m3" && !(st.t.v2)) { delete m.V1; delete m.V2; garder(); } return; }
+      if (type === "verseBecher") { if (id === "m4" && d.liquide === "mystere") { m.vu = true; m.dessous = d.rho > 1; garder(); c.cocher("verse"); } return; }
+      if (type === "noterV") {
+        if (id !== "m3") return { ok: true, txt: "Volume noté." };
+        if (!d.pierreDans) {
+          if (d.liquide !== "eau" || d.V < 20 || d.V > 80) return { ok: false, txt: "Pour V₁, il faut entre 20 et 80 mL d'eau seule dans l'éprouvette (environ 50 mL)." };
+          m.V1 = d.lu; m.Veau = d.V; delete m.V2; garder(); c.cocher("v1");
+          return { ok: true, txt: `Bien lu : V₁ = ${v1(d.lu)} mL. Maintenant, glisse la pierre dans l'éprouvette.` };
+        }
+        if (m.V1 == null) return { ok: false, txt: "Il faut d'abord noter V₁, le volume de l'eau seule (vide l'éprouvette et recommence)." };
+        if (Math.abs(d.V - m.Veau) > 0.05) return { ok: false, txt: "Le volume d'eau a changé depuis V₁ : vide l'éprouvette, verse l'eau, note V₁, puis plonge la pierre." };
+        m.V2 = d.lu; garder(); c.cocher("v2");
+        return { ok: true, txt: `Bien lu : V₂ = ${v1(d.lu)} mL. Les questions sont sous la paillasse.` };
+      }
+      if (type !== "noterM") return;
+      const pasEpr = { ok: false, txt: "Pose l'éprouvette sur le plateau de la balance." };
+      const pasTare = { ok: false, txt: `La balance compte aussi l'éprouvette (${g1(M_EPR)} g). Vide l'éprouvette, pose-la vide sur le plateau et touche TARE, puis recommence.` };
+      if (id === "m1" || id === "m2" || id === "m4") {
+        const voulu = id === "m4" ? "mystere" : "eau";
+        if (d.plateau !== "eprouvette") return pasEpr;
+        if (!d.liquide || d.V < 0.05) return { ok: false, txt: id === "m1" ? "L'éprouvette est vide : verse 50 mL d'eau." : "L'éprouvette est vide : verse le liquide." };
+        if (!d.tareEpr) return pasTare;
+        if (d.liquide !== voulu) return { ok: false, txt: "Ce n'est pas le bon liquide pour cet objectif." };
+        if (id === "m1") {
+          if (Math.abs(d.V - 50) > 0.25) return { ok: false, txt: d.V > 50 ? "Il y a un peu trop d'eau : retire-en au compte-gouttes. Le bas du ménisque doit être sur le trait 50." : "Il manque un peu d'eau : ajoute-la au compte-gouttes. Le bas du ménisque doit être sur le trait 50." };
+          m.m = d.net; m.V = 50; garder(); c.cocher("noter");
+          return { ok: true, txt: `Noté : 50 mL d'eau ont une masse de ${g1(d.net)} g.` };
+        }
+        if (id === "m2") {
+          if (d.V < 5) return { ok: false, txt: "Verse au moins 5 mL d'eau." };
+          const P = (m.pts || []).filter((p) => Math.abs(p.V - d.V) >= 5);
+          const remplace = (m.pts || []).length !== P.length;
+          P.push({ V: Math.round(d.V * 10) / 10, m: d.net }); P.sort((a, b) => a.V - b.V); m.pts = P; garder();
+          const n = P.length; if (n >= 3) c.cocher("trois");
+          return { ok: true, txt: `Noté : V = ${v1(d.V)} mL ; m = ${g1(d.net)} g.${remplace ? " (Elle remplace une mesure trop proche.)" : ""}${n < 3 ? ` Verse encore de l'eau (au moins 5 mL de plus) : ${3 - n} mesure${3 - n > 1 ? "s" : ""} à faire.` : ""}` };
+        }
+        if (d.V < 20) return { ok: false, txt: "Verse au moins 20 mL de liquide mystère : la mesure sera plus précise." };
+        m.m = d.net; m.V = Math.round(d.V * 10) / 10; garder(); c.cocher("mesure");
+        return { ok: true, txt: `Noté : ${v1(d.V)} mL de liquide mystère ont une masse de ${g1(d.net)} g.` };
+      }
+      if (id === "m3") {
+        if (st.t.masse) return { ok: true, txt: "La masse de la pierre est déjà notée." };
+        if (d.plateau === "eprouvette") return { ok: false, txt: "Pour peser la pierre, pose-la seule sur le plateau (sans l'éprouvette)." };
+        if (d.plateau !== "pierre") return { ok: false, txt: "Le plateau est vide : pose d'abord la pierre dessus (touche-la, puis touche la balance)." };
+        if (!d.tareVide) return { ok: false, txt: "La balance n'est pas à zéro à vide : retire la pierre, touche TARE, puis repose la pierre." };
+        m.m = d.net; garder(); c.cocher("masse");
+        return { ok: true, txt: `Noté : la pierre a une masse de ${g1(d.net)} g.` };
+      }
+    }
+
+    // ---------- Avant la paillasse : le protocole de l'objectif 4 ----------
+    // Étape 1 : remettre les étapes dans l'ordre (la paillasse reste fermée) ; ensuite, le protocole devient la liste
+    // à suivre, cochée au fur et à mesure des manipulations.
+    function avant(box, o, c) {
+      if (!box) return;
+      if (o.id !== "m4") { box.innerHTML = ""; return; }
+      const R = c.rep.mv = c.rep.mv || {}, m = R.m4 = R.m4 || {};
+      if (m.proto) {
+        const k = m.coches || [], cur = PROTOCOLE.findIndex((p, i) => !k[i]);
+        box.innerHTML = `<div class="panel mv-proto-suivi"><div class="ex-head"><strong>Mon protocole</strong><span class="badge ok">À suivre</span></div>
+          <ol class="mv-proto-c">${PROTOCOLE.map((p, i) => `<li class="${k[i] ? "fait" : i === cur ? "cur" : ""}"><span class="tick">${k[i] ? SVG.check : i + 1}</span><span>${esc(p.t)}</span></li>`).join("")}</ol></div>`;
+        return;
+      }
+      box.innerHTML = `<div class="panel mv-proto-panel"><span class="kicker">Étape 1 · avant de manipuler</span><h3>Mon protocole</h3>
+        <p class="small">Comment mesurer la masse volumique d'un liquide ? Touche les étapes dans l'ordre. La paillasse s'ouvrira ensuite.</p><div class="stack" id="mv-proto"></div></div>`;
+      const z = box.querySelector("#mv-proto");
+      let n = 0;
+      const ordre = melanger(PROTOCOLE.map((p, i) => i));
+      function dessinerP(msg) {
+        z.innerHTML = `<ol class="mv-proto-l">${PROTOCOLE.slice(0, n).map((p) => `<li>${esc(p.t)}</li>`).join("")}</ol>
+          <p class="small"><strong>Étape n° ${n + 1} ?</strong></p><div class="stack">${ordre.filter((i) => i >= n).map((i) => `<button class="opt mv-p" data-p="${i}"><span>${esc(PROTOCOLE[i].t)}</span></button>`).join("")}</div>${msg || ""}`;
+        z.querySelectorAll("[data-p]").forEach((b) => b.onclick = () => {
+          const i = +b.dataset.p;
+          if (i === n) {
+            n++;
+            if (n === PROTOCOLE.length) {
+              m.proto = true; m.coches = [false, false, false, false, false]; c.sauver(); c.cocher("protocole");
+              avant(box, o, c); toast("Protocole complet : la paillasse est ouverte");
+              const b2 = document.querySelector(".bench.mv"); if (b2) setTimeout(() => b2.scrollIntoView({ behavior: "smooth", block: "start" }), 250);
+              return;
+            }
+            dessinerP();
+          } else dessinerP(`<div class="feedback ko"><strong>Pas encore cette étape.</strong><span>${esc(PROTOCOLE[n].aide)}</span></div>`);
+        });
+      }
+      dessinerP();
+    }
+
+    // ---------- Tableaux et graphique (sous la paillasse) ----------
+    const table = (titre, t, lignes, apres) => `<h3>${titre}</h3><div class="table-wrap"><table class="mes-table"><thead><tr>${t.map((x) => `<th>${x}</th>`).join("")}</tr></thead><tbody>${lignes.map((l) => `<tr>${l.map((x) => `<td>${x}</td>`).join("")}</tr>`).join("")}</tbody></table></div>${apres || ""}`;
+    const ou = (v, f) => v == null ? "…" : f(v);
     function extra(box, o, c) {
       const R = c.rep.mv = c.rep.mv || {}, m = R[o.id] = R[o.id] || {};
-      if (o.id === "m1") box.innerHTML = table("Mes mesures", ["Volume d'eau", "Masse"], [["50 mL", ou(m.m, (v) => g1(v) + " g")]], `<p class="small muted">Touche NOTER sur la balance quand le bas du ménisque est sur le trait 50.</p>`);
+      if (o.id === "m1") box.innerHTML = table("Mes mesures", ["Volume d'eau", "Masse"], [["50 mL", ou(m.m, (v) => g1(v) + " g")]]);
       else if (o.id === "m2") {
         const P = m.pts || [], Wg = 320, Hg = 210, x0 = 44, y0 = 178, xs = (v) => x0 + v * 2.6, ys = (g) => y0 - g * 1.55;
-        box.innerHTML = table("Mes mesures", ["Volume V (mL)", "Masse m (g)"], P.length ? P.map((p) => [ent(p.V), g1(p.m)]) : [["…", "…"]], `<p class="small muted">Une nouvelle mesure pour le même volume remplace l'ancienne.</p>`) +
+        box.innerHTML = table("Mes mesures", ["Volume V (mL)", "Masse m (g)"], P.length ? P.map((p) => [v1(p.V), g1(p.m)]) : [["…", "…"]]) +
           `<svg class="chart" viewBox="0 0 ${Wg} ${Hg}" role="img" aria-label="Masse de l'eau en fonction de son volume">
             ${[0, 20, 40, 60, 80, 100].map((g) => `<line x1="${x0}" x2="${xs(100)}" y1="${f1(ys(g))}" y2="${f1(ys(g))}" stroke="var(--line)"/><text x="${x0 - 6}" y="${f1(ys(g) + 4)}" text-anchor="end">${g}</text>`).join("")}
             ${[0, 20, 40, 60, 80, 100].map((v) => `<text x="${f1(xs(v))}" y="${y0 + 15}" text-anchor="middle">${v}</text>`).join("")}
@@ -9742,30 +10242,9 @@ const QUESTIONS = [
             ${P.length >= 3 ? `<line x1="${x0}" y1="${y0}" x2="${f1(xs(100))}" y2="${f1(ys(99.8))}" stroke="var(--accent)" stroke-width="1.5" stroke-dasharray="5 4"/>` : ""}
             ${P.map((p) => `<circle cx="${f1(xs(p.V))}" cy="${f1(ys(p.m))}" r="5" fill="var(--accent)"/>`).join("")}</svg>`;
       }
-      else if (o.id === "m3") box.innerHTML = table("Mes mesures", ["Grandeur", "Valeur"], [["Masse de la pierre m", ou(m.m, (v) => g1(v) + " g")], ["V₁ (eau seule)", ou(m.V1, (v) => ent(v) + " mL")], ["V₂ (eau + pierre)", ou(m.V2, (v) => ent(v) + " mL")]],
-        `<p class="small muted">Pour V₁ et V₂ : lire le volume sur la loupe, toucher NOTER le volume et écrire sa lecture.</p>`);
-      else if (o.id === "m4") {
-        box.innerHTML = `<h3>Mon protocole</h3><div class="stack" id="mv-proto"></div>` + table("Mes mesures", ["Grandeur", "Valeur"], [["Volume V de liquide mystère", ou(m.V, (v) => ent(v) + " mL")], ["Masse m", ou(m.m, (v) => g1(v) + " g")], ["Dans le bécher d'eau", m.vu ? (m.dessous ? "il coule au fond" : "il reste au-dessus") : "…"]]);
-        protocole(box.querySelector("#mv-proto"), m, c);
-      }
+      else if (o.id === "m3") box.innerHTML = table("Mes mesures", ["Grandeur", "Valeur"], [["Masse de la pierre m", ou(m.m, (v) => g1(v) + " g")], ["V₁ (eau seule)", ou(m.V1, (v) => v1(v) + " mL")], ["V₂ (eau + pierre)", ou(m.V2, (v) => v1(v) + " mL")]]);
+      else if (o.id === "m4") box.innerHTML = table("Mes mesures", ["Grandeur", "Valeur"], [["Volume V de liquide mystère", ou(m.V, (v) => v1(v) + " mL")], ["Masse m", ou(m.m, (v) => g1(v) + " g")], ["Dans le bécher d'eau", m.vu ? (m.dessous ? "il coule au fond" : "il reste au-dessus") : "…"]]);
       else box.innerHTML = "";
-    }
-    // Remettre les étapes du protocole dans l'ordre : on touche l'étape suivante ; une erreur donne un indice, sans pénalité.
-    function protocole(z, m, c) {
-      const fini = !!m.proto;
-      let n = fini ? PROTOCOLE.length : 0;
-      const ordre = melanger(PROTOCOLE.map((p, i) => i));
-      function dessinerP(msg) {
-        z.innerHTML = `<ol class="mv-proto-l">${PROTOCOLE.slice(0, n).map((p) => `<li>${esc(p.t)}</li>`).join("")}</ol>
-          ${n < PROTOCOLE.length ? `<p class="small">Toucher l'étape n° ${n + 1} :</p><div class="stack">${ordre.filter((i) => i >= n).map((i) => `<button class="opt mv-p" data-p="${i}"><span>${esc(PROTOCOLE[i].t)}</span></button>`).join("")}</div>` : `<p class="small"><strong>Protocole complet.</strong> Mets-le en œuvre sur la paillasse avec le liquide mystère.</p>`}
-          ${msg || ""}`;
-        z.querySelectorAll("[data-p]").forEach((b) => b.onclick = () => {
-          const i = +b.dataset.p;
-          if (i === n) { n++; if (n === PROTOCOLE.length) { m.proto = true; c.sauver(); c.cocher("protocole"); } dessinerP(); }
-          else dessinerP(`<div class="feedback ko"><strong>Pas encore cette étape.</strong><span>${esc(PROTOCOLE[n].aide)}</span></div>`);
-        });
-      }
-      dessinerP();
     }
 
     // ---------- Questions qui utilisent les mesures de l'élève ----------
@@ -9809,29 +10288,29 @@ const QUESTIONS = [
       if (q.calc === "rapport") {
         const pts = mm("m2").pts && mm("m2").pts.length ? mm("m2").pts : [{ V: 20, m: 20 }, { V: 40, m: 39.9 }, { V: 80, m: 79.8 }];
         const p = pts[pts.length - 1], r = p.m / p.V;
-        return saisie(el, { texte: `Pour ta mesure à ${ent(p.V)} mL, calcule le quotient m ÷ V.`, donnees: `m = ${g1(p.m)} g ; V = ${ent(p.V)} mL.`, unite: "g/mL", attendu: r, tol: 0.02,
-          aide: `m ÷ V = ${g1(p.m)} ÷ ${ent(p.V)}.`, bravo: `Pour toutes tes mesures, m ÷ V ≈ 1 g/mL : ${pts.map((x) => `${g1(x.m)} ÷ ${ent(x.V)} ≈ ${d2(x.m / x.V)}`).join(" ; ")}. Ce quotient constant, c'est la masse volumique de l'eau.` }, onOk);
+        return saisie(el, { texte: `Pour ta mesure à ${v1(p.V)} mL, calcule le quotient m ÷ V.`, donnees: `m = ${g1(p.m)} g ; V = ${v1(p.V)} mL.`, unite: "g/mL", attendu: r, tol: 0.02,
+          aide: `m ÷ V = ${g1(p.m)} ÷ ${v1(p.V)}.`, bravo: `Pour toutes tes mesures, m ÷ V ≈ 1 g/mL : ${pts.map((x) => `${g1(x.m)} ÷ ${v1(x.V)} ≈ ${d2(x.m / x.V)}`).join(" ; ")}. Ce quotient constant, c'est la masse volumique de l'eau.` }, onOk);
       }
       if (q.calc === "vol3") {
         const m3 = mm("m3"), V1 = m3.V1 != null ? m3.V1 : 50, V2 = m3.V2 != null ? m3.V2 : 50 + P.V;
-        return saisie(el, { texte: "Calcule le volume de la pierre.", donnees: `V₁ = ${ent(V1)} mL (eau seule) ; V₂ = ${ent(V2)} mL (eau + pierre).`, unite: "cm³", attendu: V2 - V1, tol: 0.01,
-          aide: `Le volume de la pierre est la montée du niveau : V = V₂ − V₁ = ${ent(V2)} − ${ent(V1)}. Rappel : 1 mL = 1 cm³.`, piste: "Le niveau monte du volume de la pierre : fais une soustraction.", bravo: `V = V₂ − V₁ = ${ent(V2)} − ${ent(V1)} = ${ent(V2 - V1)} mL = ${ent(V2 - V1)} cm³.` }, onOk);
+        return saisie(el, { texte: "Calcule le volume de la pierre.", donnees: `V₁ = ${v1(V1)} mL (eau seule) ; V₂ = ${v1(V2)} mL (eau + pierre).`, unite: "cm³", attendu: V2 - V1, tol: 0.01,
+          aide: `Le volume de la pierre est la montée du niveau : V = V₂ − V₁ = ${v1(V2)} − ${v1(V1)}. Rappel : 1 mL = 1 cm³.`, piste: "Le niveau monte du volume de la pierre : fais une soustraction.", bravo: `V = V₂ − V₁ = ${v1(V2)} − ${v1(V1)} = ${v1(V2 - V1)} mL = ${v1(V2 - V1)} cm³.` }, onOk);
       }
       if (q.calc === "rho3") {
         const m3 = mm("m3"), m = m3.m != null ? m3.m : P.m, V = m3.V1 != null && m3.V2 != null ? m3.V2 - m3.V1 : P.V, rho = m / V;
-        return saisie(el, { texte: "Calcule la masse volumique de la pierre.", donnees: `m = ${g1(m)} g ; V = ${ent(V)} cm³.`, unite: "g/cm³", attendu: rho, tol: Math.max(0.05, 0.02 * rho),
-          aide: `ρ = m ÷ V = ${g1(m)} ÷ ${ent(V)}.`, piste: "ρ = m ÷ V : on divise la masse par le volume.", bravo: `ρ = ${g1(m)} ÷ ${ent(V)} ≈ ${virg(rho.toFixed(1))} g/cm³.` }, onOk);
+        return saisie(el, { texte: "Calcule la masse volumique de la pierre.", donnees: `m = ${g1(m)} g ; V = ${v1(V)} cm³.`, unite: "g/cm³", attendu: rho, tol: Math.max(0.05, 0.02 * rho),
+          aide: `ρ = m ÷ V = ${g1(m)} ÷ ${v1(V)}.`, piste: "ρ = m ÷ V : on divise la masse par le volume.", bravo: `ρ = ${g1(m)} ÷ ${v1(V)} ≈ ${virg(rho.toFixed(1))} g/cm³.` }, onOk);
       }
       if (q.calc === "id3") {
         const m3 = mm("m3"), m = m3.m != null ? m3.m : P.m, V = m3.V1 != null && m3.V2 != null ? m3.V2 - m3.V1 : P.V, rho = m / V;
         return choix(el, { question: `Ta pierre a une masse volumique d'environ ${virg(rho.toFixed(1))} g/cm³. Compare avec le tableau : en quoi est-elle ?`, figure: tableRef(TAB_SOLIDES, "g/cm³"),
           reponses: ["En pyrite : ce n'est pas de l'or", "En or", "En fer", "En aluminium"], bonne: 0,
-          explication: `≈ 5 g/cm³ : c'est la pyrite, surnommée « or des fous » car elle brille comme l'or. Une pépite d'or de même volume aurait une masse de 19,3 × ${ent(V)} ≈ ${fr(19.3 * V, 0)} g !` }, onOk);
+          explication: `≈ 5 g/cm³ : c'est la pyrite, surnommée « or des fous » car elle brille comme l'or. Une pépite d'or de même volume aurait une masse de 19,3 × ${v1(V)} ≈ ${fr(19.3 * V, 0)} g !` }, onOk);
       }
       if (q.calc === "rho4") {
         const m4 = mm("m4"), V = m4.V != null ? m4.V : 50, m = m4.m != null ? m4.m : Math.round(Lm.rho * 50 * 10) / 10, rho = m / V;
-        return saisie(el, { texte: "Calcule la masse volumique du liquide mystère.", donnees: `Tes mesures : m = ${g1(m)} g ; V = ${ent(V)} mL. ${m4.m == null ? typ("valeurs types") : ""}`, unite: "g/mL", attendu: rho, tol: Math.max(0.02, 0.02 * rho),
-          aide: `ρ = m ÷ V = ${g1(m)} ÷ ${ent(V)}.`, piste: "ρ = m ÷ V.", bravo: `ρ = ${g1(m)} ÷ ${ent(V)} ≈ ${d2(rho)} g/mL.` }, onOk);
+        return saisie(el, { texte: "Calcule la masse volumique du liquide mystère.", donnees: `Tes mesures : m = ${g1(m)} g ; V = ${v1(V)} mL. ${m4.m == null ? typ("valeurs types") : ""}`, unite: "g/mL", attendu: rho, tol: Math.max(0.02, 0.02 * rho),
+          aide: `ρ = m ÷ V = ${g1(m)} ÷ ${v1(V)}.`, piste: "ρ = m ÷ V.", bravo: `ρ = ${g1(m)} ÷ ${v1(V)} ≈ ${d2(rho)} g/mL.` }, onOk);
       }
       if (q.calc === "id4") {
         const noms = { huile: "De l'huile de tournesol", sirop: "Du sirop de canne", miel: "Du miel" }, autres = ["De l'alcool", "De l'eau"].concat(Object.keys(noms).filter((k) => k !== myst).map((k) => noms[k]));
@@ -9848,7 +10327,7 @@ const QUESTIONS = [
       }
     }
 
-    return { banc, MONTAGES, options, evenement, extra, question, LIQ, M_EPR };
+    return { banc, MONTAGES, options, evenement, extra, avant, question, LIQ, M_EPR };
   })();
   // ======================= TP de terminale « Diffraction et interférences » : deux TP (moteur « ondes ») =======================
   // TP 1 « Le laboratoire de la diffraction » : cuve à ondes à ouverture réglable, banc laser (fentes calibrées, fil de pêche),
@@ -11134,10 +11613,10 @@ const QUESTIONS = [
     function afficherObjectif() {
       const o = O[actif], st = rep.obj[o.id];
       temps = {}; vus = {};
-      $("tp-zone").innerHTML = `<div class="panel mission" id="o-carte"></div><div id="o-banc"></div><div class="stack" id="o-extra"></div><div class="stack" id="o-quest"></div><div class="stack" id="o-retenir"></div>`;
+      $("tp-zone").innerHTML = `<div class="panel mission" id="o-carte"></div><div class="stack" id="o-avant"></div><div id="o-banc"></div><div class="stack" id="o-extra"></div><div class="stack" id="o-quest"></div><div class="stack" id="o-retenir"></div>`;
       carteObjectif();
       if (o.id[0] === "s") { L = OPTIQUE.banc($("o-banc"), evenement); L.charger(MONTAGES_OPTIQUE[o.id], { mystere: gazMystere() }); }
-      else if (o.id[0] === "m") { L = MASSE.banc($("o-banc"), evenement); L.charger(MASSE.MONTAGES[o.id], MASSE.options(rep, sauver)); }
+      else if (o.id[0] === "m") { MASSE.avant($("o-avant"), o, ctxM()); L = MASSE.banc($("o-banc"), evenement); L.charger(MASSE.MONTAGES[o.id], MASSE.options(rep, sauver)); }
       else { L = paillasse($("o-banc"), evenement); L.charger(MONTAGES[o.id]); }
       extra(); questions(); retenir();
     }
@@ -11209,7 +11688,8 @@ const QUESTIONS = [
       $("btn-osuiv").onclick = () => { actif++; afficher(); $("otabs").scrollIntoView({ behavior: "smooth", block: "start" }); };
     }
     // 4ème, masse volumique (08_masse.js) : ce dont la paillasse de pesée a besoin pour vérifier, noter et questionner
-    function ctxM() { return { rep, cocher, sauver, extra, prof: modeProf() }; }
+    // (o-avant : ce qui se fait avant la paillasse, ex. le protocole de l'objectif 4)
+    function ctxM() { const o = O[actif]; return { rep, cocher, sauver, extra, prof: modeProf(), obj: o, st: o ? rep.obj[o.id] : null, majAvant: () => { if (o && $("o-avant")) MASSE.avant($("o-avant"), o, ctxM()); } }; }
     function cocher(id) {
       const o = O[actif], st = rep.obj[o.id];
       if (st.t[id] || !o.taches.some((t) => t.id === id)) return;
@@ -13838,7 +14318,7 @@ const QUESTIONS = [
 
       function demarrer() {
         let score = 0, vies = 3, fini = false, t0 = performance.now(), limite = 0, Q = null, attente = false;
-        const rates = [], vus = new Set();
+        const rates = [], vus = new Set(), photos = [];
         view.innerHTML = `<div class="o-jeu" id="o-jeu"><div class="o-haut"><span class="chip" id="o-info"></span><span class="chip sun">Score <b id="o-s">0</b></span></div>
           <div class="o-barre"><i id="o-b"></i></div><div class="panel o-carte" id="o-q"></div><button class="btn btn-ghost btn-sm" id="o-stop">Arrêter</button></div>`;
         const root = $("o-jeu");
@@ -13871,8 +14351,9 @@ const QUESTIONS = [
             if (mode !== "chrono") vies--;
             const juste = mode === "eclair" ? Q.vf.replace("{}", Q.a) : Q.a;
             rates.push({ q: mode === "eclair" ? Q.vf.replace("{}", Q.prop) + (Q.vrai ? " (c'était vrai)" : " (c'était faux)") : Q.q, a: juste, e: Q.e });
-            $("o-q").querySelector(".fbz").innerHTML = `<div class="feedback ko"><strong>${bouton ? "Raté" : "Trop tard"}</strong><span>${esc(mode === "eclair" ? (Q.vrai ? "C'était vrai : " : "C'était faux : ") + minus(juste) : "Réponse : " + juste)}</span></div>`;
+            $("o-q").querySelector(".fbz").innerHTML = `<div class="feedback ko"><strong>${bouton ? "Raté" : "Trop tard"}</strong><span>${esc(mode === "eclair" ? (Q.vrai ? "C'était vrai : " : "C'était faux : ") + minus(juste) : "Réponse : " + juste)}</span>${Q.e ? `<span class="small">${esc(Q.e)}</span>` : ""}</div>`;
           }
+          photos.push(photo($("o-q"), ok)); // pour « Revoir mes réponses et la correction »
           root.classList.remove("flash-ok", "flash-ko"); void root.offsetWidth; root.classList.add(ok ? "flash-ok" : "flash-ko");
           majInfo();
           setTimeout(() => { if (fini || !document.body.contains(root)) return; if (vies <= 0) terminer(); else nouvelle(); }, ok ? 450 : 1600);
@@ -13903,12 +14384,17 @@ const QUESTIONS = [
           const gain = enregistrer(cle, score * (mode === "eclair" ? 2 : 3), reussi, false);
           const gains = (gain > 0 ? ["+" + gain + " points"] : []).concat(ancien != null && score > ancien ? ["Nouveau record"] : []).concat(reussi && !deja ? ["Défi réussi"] : []);
           const msg = reussi ? (score >= but * 1.5 ? "Impressionnant !" : "Objectif atteint, bravo !") : score >= but * 0.6 ? "Presque ! Encore un essai ?" : "Continue de t'entraîner\u00a0: ça vient vite\u00a0!";
+          const ecran = () => {
           view.innerHTML = `<div class="score"><span class="muted small">${esc(titre)}</span><div class="big">${score}<small> bonne${score > 1 ? "s" : ""} réponse${score > 1 ? "s" : ""}</small></div>
               <h2>${msg}</h2>${gains.length ? `<div class="gains">${gains.map((g) => `<span class="chip sun">${esc(g)}</span>`).join("")}</div>` : ""}
               <p class="small muted">Objectif : ${but}${ancien != null || score ? ` · record : ${Math.max(ancien || 0, score)}` : ""}</p></div>
-            ${rates.length ? `<h3>À revoir</h3><div class="stack">${rates.slice(-6).map((r) => `<div class="review-item"><span>${esc(r.q)}</span><span class="ans">${esc(r.a)}</span>${r.e ? `<span class="muted small">${esc(r.e)}</span>` : ""}</div>`).join("")}</div>` : ""}
+            ${photos.length ? boutonRevue(photos) : ""}
+            ${!photos.length && rates.length ? `<h3>À revoir</h3><div class="stack">${rates.slice(-6).map((r) => `<div class="review-item"><span>${esc(r.q)}</span><span class="ans">${esc(r.a)}</span>${r.e ? `<span class="muted small">${esc(r.e)}</span>` : ""}</div>`).join("")}</div>` : ""}
             <div class="row"><button class="btn btn-ghost" id="btn-rejouer">Rejouer</button><a class="btn btn-primary" href="#${retour}">Retour aux défis</a></div>`;
           $("btn-rejouer").onclick = () => rendre();
+          if (photos.length) $("btn-revue").onclick = () => vueRevue(photos, titre, score + " bonne" + (score > 1 ? "s" : "") + " réponse" + (score > 1 ? "s" : ""), ecran);
+          };
+          ecran();
         }
       }
     }
