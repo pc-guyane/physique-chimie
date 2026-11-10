@@ -782,6 +782,47 @@ a.t-chap:hover { border-color: var(--c); }
 .o-mys { display: flex; flex-direction: column; gap: .3rem; }
 .o-mys label { display: flex; gap: .5rem; align-items: center; }
 .o-just { width: 100%; min-height: 6.5rem; font: inherit; padding: .5rem; border-radius: 10px; border: 1px solid var(--line); background: var(--surface); color: var(--ink); box-sizing: border-box; }
+/* 4ème « La masse volumique » : figures du cours (éprouvette vue de près, triangle, animations) et paillasse de pesée (08_masse.js) */
+.mv-fig { display: block; width: 100%; max-width: 280px; height: auto; }
+.mv-liq { fill: var(--water); opacity: .5; }
+.mv-men { fill: none; stroke: var(--ink); stroke-width: 2; }
+.mv-grad { stroke: var(--ink); stroke-width: 1.4; } .mv-grad.f { stroke-width: 2.2; }
+.mv-gradt { font: 700 13px var(--f-body); fill: var(--ink); paint-order: stroke; stroke: var(--surface); stroke-width: 3px; stroke-linejoin: round; } .mv-gradt.p { font-size: 11px; fill: var(--muted); }
+.mv-paroi { stroke: var(--ink); stroke-width: 3; }
+.mv-visee { stroke: var(--bad); stroke-width: 1.4; stroke-dasharray: 4 3; }
+.mv-oeil { fill: var(--surface); stroke: var(--ink); stroke-width: 1.4; } .mv-pupille { fill: var(--ink); }
+.mv-tri { max-width: 200px; }
+.mv-tri-f { fill: var(--accent-soft); stroke: var(--accent); stroke-width: 2.5; stroke-linejoin: round; }
+.mv-tri-l { stroke: var(--accent); stroke-width: 2; }
+.mv-tri-t { font: 700 24px var(--f-display); fill: var(--ink); text-anchor: middle; }
+.mv-tri-x { font: 700 16px var(--f-body); fill: var(--muted); text-anchor: middle; }
+.mv-anim { display: block; width: 100%; max-width: 420px; height: auto; user-select: none; -webkit-user-select: none; }
+.mv-cube { cursor: pointer; }
+.mv-cube-b { stroke: var(--ink); stroke-width: 1.4; stroke-linejoin: round; } .mv-cube-l { fill: none; stroke: var(--ink); stroke-width: 1.2; opacity: .55; }
+.mv-lab { font: 700 10px var(--f-body); fill: var(--ink); } .mv-lab.g { font-size: 9.5px; fill: var(--muted); }
+.mv-bal { fill: var(--surface); stroke: var(--ink); stroke-width: 1.6; }
+.mv-plat { fill: var(--metal); stroke: var(--ink); stroke-width: 1.2; }
+.mv-verre { fill: none; stroke: var(--ink); stroke-width: 2.2; stroke-linejoin: round; }
+.mv-objet { stroke: var(--ink); stroke-width: 1.2; }
+.bench.mv .mv-obj { cursor: grab; } .bench.mv .mv-obj.tenu { opacity: .85; }
+.mv-btn { cursor: pointer; } .mv-btn rect { fill: var(--accent); } .mv-btn text { font: 700 11px var(--f-body); fill: var(--accent-ink); letter-spacing: .04em; pointer-events: none; }
+.mv-verre-f { fill: var(--surface); fill-opacity: .7; stroke: var(--ink); stroke-width: 1.2; }
+.mv-petit { font: 700 6.5px var(--f-body); fill: var(--muted); pointer-events: none; }
+.mv-nom { font: 700 9.5px var(--f-body); fill: var(--ink); pointer-events: none; paint-order: stroke; stroke: var(--bench); stroke-width: 3px; stroke-linejoin: round; }
+.mv-pierre { fill: #D9B23A; stroke: #6B5212; stroke-width: 1.2; stroke-linejoin: round; } .mv-pierre-l { fill: none; stroke: #8C6E1E; stroke-width: 1; }
+.mv-sous { display: flex; flex-direction: column; gap: .6rem; }
+.mv-loupe { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: .6rem; display: flex; flex-direction: column; gap: .4rem; }
+.mv-l-t { display: flex; justify-content: space-between; gap: .5rem; flex-wrap: wrap; align-items: baseline; }
+.mv-l-f { display: flex; justify-content: center; min-height: 3rem; align-items: center; }
+.mv-l-n { display: flex; flex-direction: column; gap: .4rem; }
+.mv-lire { display: flex; flex-direction: column; gap: .3rem; } .mv-lire:empty { display: none; }
+.mv-verse { display: flex; flex-direction: column; gap: .4rem; }
+.mv-verse .c-btns .btn { min-height: 2.6rem; }
+.mv-statut:empty { display: none; }
+.mv-statut.ok { color: var(--good); font-weight: 700; } .mv-statut.ko { color: var(--bad); font-weight: 700; }
+.mv-proto-l { margin: 0; padding-left: 1.4rem; display: flex; flex-direction: column; gap: .25rem; } .mv-proto-l:empty { display: none; }
+.mv-proto-l li { background: var(--good-soft); border-radius: 8px; padding: .3rem .5rem; }
+.opt.mv-p { grid-template-columns: 1fr; }
 </style>
 </head><body>
 
@@ -824,6 +865,7 @@ const REGLAGES = {
     "4e-intensite": false,  // 4ème : l'intensité du courant électrique (cours + TP)
     "4e-tension": true,     // 4ème : la tension électrique (cours + TP)
     "4e-ohm": false,        // 4ème : la résistance et la loi d'Ohm (cours + TP)
+    "4e-masse": false,      // 4ème : la masse volumique (rappel, cours, TP « l'or des fous et le liquide mystère », entraînement)
     "2nde-spectre": true,   // 2nde : le spectre de la lumière (rappel, cours, TP « Le laboratoire des lumières », entraînement)
     "tle-titrages": true,   // Terminale : analyser un système par des méthodes chimiques (titrages)
     "tle-diffraction": false // Terminale : diffraction et interférences (rappel, cours, 2 TP, entraînement)
@@ -1260,6 +1302,236 @@ const ONDES = (() => {
 
   return { nb, sci, figDiffraction, figYoung, varianteCuve, genGraphique, genCalcul, genMesureDiff, genMesureYoung, genGraphiqueL, variantesDelta,
     animOuverture, animFente, animSomme, animYoung, SCHEMA_FENTE, SCHEMA_SOURCES };
+})();
+
+// ======================= 4ème « La masse volumique » : figures, calculs générés et animations du cours =======================
+// (utilisé par le chapitre 4e-masse ci-dessous et par la paillasse 08_masse.js)
+// Toutes les valeurs de masse volumique sont arrondies, en g/mL (= g/cm³ = kg/L).
+const MASSEVOL = (() => {
+  const alea = (t) => t[Math.floor(Math.random() * t.length)];
+  const ent = (a, b) => a + Math.floor(Math.random() * (b - a + 1));
+  // 1234.5 → « 1 234,5 » ; d = nombre maximal de décimales (les zéros inutiles sont retirés)
+  function fr(x, d) {
+    const s = String(parseFloat((+x).toFixed(d == null ? 3 : d)));
+    const [e, f] = s.split(".");
+    const e2 = e.replace(/\B(?=(\d{3})+(?!\d))/g, " ");
+    return f ? e2 + "," + f : e2;
+  }
+  // Tableau de référence (cours, TP, entraînement)
+  const RHO = {
+    liege: { nom: "Liège", rho: 0.24 }, balsa: { nom: "Bois-flot (balsa)", rho: 0.15 }, angelique: { nom: "Bois d'angélique", rho: 0.8 },
+    ethanol: { nom: "Alcool (éthanol)", rho: 0.79 }, huile: { nom: "Huile de tournesol", rho: 0.92 }, glace: { nom: "Glace", rho: 0.92 },
+    eau: { nom: "Eau", rho: 1.0 }, eauMer: { nom: "Eau de mer", rho: 1.03 }, sirop: { nom: "Sirop de canne", rho: 1.3 }, miel: { nom: "Miel", rho: 1.4 },
+    amourette: { nom: "Bois d'amourette", rho: 1.3 }, verre: { nom: "Verre", rho: 2.5 }, alu: { nom: "Aluminium", rho: 2.7 },
+    pyrite: { nom: "Pyrite (« or des fous »)", rho: 5.0 }, fer: { nom: "Fer", rho: 7.9 }, cuivre: { nom: "Cuivre", rho: 8.9 },
+    plomb: { nom: "Plomb", rho: 11.3 }, or: { nom: "Or", rho: 19.3 }
+  };
+
+  // ---------- Éprouvette vue de près (loupe sur les graduations) ----------
+  // V : volume lu ; g : valeur d'une graduation ; Ls : écart entre deux nombres écrits ; lo, hi : partie visible
+  function figEprouvette(V, g, Ls, lo, hi, opts) {
+    const o = opts || {}, Wf = 280, Hf = o.H || 214, xg = 92, xd = 172, yh = 16, yb = Hf - 16;
+    const st = o.coul ? ` style="fill:${o.coul};opacity:${o.op || 0.5}"` : "";
+    const y = (v) => yb - (v - lo) * (yb - yh) / (hi - lo);
+    let s = `<svg viewBox="0 0 ${Wf} ${Hf}" class="mv-fig" role="img" aria-label="Éprouvette graduée vue de près : lire le volume au bas du ménisque">`;
+    const yv = y(V);
+    // liquide et ménisque (la surface remonte un peu le long du verre)
+    s += `<path d="M${xg} ${yb + 14}V${(yv - 4).toFixed(1)}Q${(xg + xd) / 2} ${(yv + 4).toFixed(1)} ${xd} ${(yv - 4).toFixed(1)}V${yb + 14}Z" class="mv-liq"${st}/>`;
+    s += `<path d="M${xg} ${(yv - 4).toFixed(1)}Q${(xg + xd) / 2} ${(yv + 4).toFixed(1)} ${xd} ${(yv - 4).toFixed(1)}" class="mv-men"/>`;
+    // graduations
+    for (let v = lo; v <= hi + 1e-9; v += g) {
+      const vv = Math.round(v * 100) / 100, yy = y(vv).toFixed(1);
+      const lab = Math.abs(vv / Ls - Math.round(vv / Ls)) < 1e-6, demi = !lab && Math.abs((2 * vv) / Ls - Math.round((2 * vv) / Ls)) < 1e-6 && Ls / g >= 10;
+      s += `<line x1="${xg}" x2="${xg + (lab ? 40 : demi ? 30 : 20)}" y1="${yy}" y2="${yy}" class="mv-grad${lab ? " f" : ""}"/>`;
+      if (lab) s += `<text x="${xg + 44}" y="${(+yy + 4).toFixed(1)}" class="mv-gradt">${fr(vv)}</text>`;
+    }
+    // parois du verre
+    s += `<line x1="${xg}" x2="${xg}" y1="4" y2="${Hf}" class="mv-paroi"/><line x1="${xd}" x2="${xd}" y1="4" y2="${Hf}" class="mv-paroi"/>`;
+    // l'œil, à la hauteur du bas du ménisque
+    if (!o.sansOeil) {
+      s += `<line x1="${(xg + xd) / 2}" x2="${Wf - 46}" y1="${yv.toFixed(1)}" y2="${yv.toFixed(1)}" class="mv-visee"/>
+        <g transform="translate(${Wf - 40} ${(yv - 9).toFixed(1)})"><path d="M0 9Q14 -3 28 9Q14 21 0 9Z" class="mv-oeil"/><circle cx="12" cy="9" r="4.2" class="mv-pupille"/></g>`;
+    }
+    s += `<text x="8" y="${Hf - 6}" class="mv-gradt p">${o.unite || "mL"}</text></svg>`;
+    return s;
+  }
+  // Question générée : lire le volume (Rappel) ; difficulté croissante avec la valeur d'une graduation
+  function genLecture() {
+    const T = alea([{ g: 1, cap: 100, Ls: 10 }, { g: 1, cap: 100, Ls: 10 }, { g: 2, cap: 250, Ls: 10 }, { g: 5, cap: 500, Ls: 50 }]);
+    let V;
+    do { V = T.g * ent(Math.ceil(T.Ls / T.g), Math.floor((T.cap - T.Ls) / T.g)); } while (V % T.Ls === 0);
+    const span = 20 * T.g, lo = Math.max(0, Math.floor((V - span * 0.55) / T.g) * T.g), hi = lo + span;
+    const a = Math.floor(V / T.Ls) * T.Ls, n = T.Ls / T.g, k = (V - a) / T.g;
+    return {
+      texte: `Quel volume de liquide contient cette éprouvette graduée de ${fr(T.cap)} mL ? Lis au bas du ménisque.`,
+      figure: figEprouvette(V, T.g, T.Ls, lo, hi), rep: V, u: "mL", tol: 0.001, repTxt: fr(V),
+      corr: `Entre ${fr(a)} et ${fr(a + T.Ls)}, il y a ${n} petits intervalles : une graduation vaut ${fr(T.Ls)} ÷ ${n} = ${fr(T.g)} mL. Le bas du ménisque est ${k} graduation${k > 1 ? "s" : ""} au-dessus de ${fr(a)} : V = ${fr(a)} + ${k} × ${fr(T.g)} = ${fr(V)} mL.`
+    };
+  }
+
+  // ---------- Calculs générés (cours et entraînement) ----------
+  const CORPS = [
+    { quoi: "Un morceau d'aluminium", rho: 2.7, V: [10, 20, 30, 40, 50], u: "cm³" },
+    { quoi: "Une barre de fer", rho: 7.9, V: [10, 20, 30, 50], u: "cm³" },
+    { quoi: "Une bille de verre", rho: 2.5, V: [2, 4, 6, 8], u: "cm³" },
+    { quoi: "Un morceau de bois d'angélique", rho: 0.8, V: [50, 100, 200, 250], u: "cm³" },
+    { quoi: "Un bouchon de liège", rho: 0.24, V: [5, 10, 25, 50], u: "cm³" },
+    { quoi: "Un fil de cuivre enroulé", rho: 8.9, V: [2, 5, 10, 20], u: "cm³" },
+    { quoi: "De l'huile de tournesol", rho: 0.92, V: [25, 50, 100, 200], u: "mL" },
+    { quoi: "Du sirop de canne", rho: 1.3, V: [10, 20, 50, 100], u: "mL" },
+    { quoi: "De l'eau du robinet", rho: 1.0, V: [20, 50, 75, 150], u: "mL" },
+    { quoi: "De l'alcool (éthanol)", rho: 0.79, V: [10, 50, 100, 200], u: "mL" }
+  ];
+  function genRho() {
+    const c = alea(CORPS), V = alea(c.V), m = Math.round(c.rho * V * 10) / 10, u = "g/" + c.u;
+    return {
+      texte: `${c.quoi} a un volume V = ${fr(V)} ${c.u} et une masse m = ${fr(m)} g. Calcule sa masse volumique ρ.`, rep: c.rho, u, tol: 0.02, repTxt: fr(c.rho),
+      corr: `ρ = m ÷ V = ${fr(m)} ÷ ${fr(V)} = ${fr(c.rho)} ${u}. (On divise la masse par le volume, et pas l'inverse.)`
+    };
+  }
+  const OBJETS_M = [
+    { txt: (V) => `Un bidon contient ${fr(V)} L d'essence. La masse volumique de l'essence est ρ = 0,75 kg/L.`, rho: 0.75, V: [4, 10, 20, 40], uV: "L", um: "kg", q: "la masse d'essence" },
+    { txt: (V) => `Une bouteille contient ${fr(V)} L d'huile de tournesol (ρ = 0,92 kg/L).`, rho: 0.92, V: [1, 2, 5], uV: "L", um: "kg", q: "la masse d'huile" },
+    { txt: (V) => `Un pot contient ${fr(V)} L de miel de Guyane (ρ = 1,4 kg/L).`, rho: 1.4, V: [0.5, 1, 2], uV: "L", um: "kg", q: "la masse de miel" },
+    { txt: (V) => `Une pépite d'or a un volume de ${fr(V)} cm³ (ρ = 19,3 g/cm³).`, rho: 19.3, V: [1, 2, 3, 5], uV: "cm³", um: "g", q: "sa masse" },
+    { txt: (V) => `Une glacière contient ${fr(V)} L d'eau de mer (ρ = 1,03 kg/L).`, rho: 1.03, V: [10, 20, 30], uV: "L", um: "kg", q: "la masse d'eau de mer" },
+    { txt: (V) => `Une plaque d'aluminium a un volume de ${fr(V)} cm³ (ρ = 2,7 g/cm³).`, rho: 2.7, V: [10, 20, 100], uV: "cm³", um: "g", q: "sa masse" }
+  ];
+  const OBJETS_V = [
+    { txt: (m) => `Un lingot d'aluminium a une masse de ${fr(m)} g (ρ = 2,7 g/cm³).`, rho: 2.7, V: [10, 20, 50, 100], uV: "cm³", um: "g", q: "son volume" },
+    { txt: (m) => `On veut ${fr(m)} g d'huile de tournesol (ρ = 0,92 g/mL).`, rho: 0.92, V: [25, 50, 100, 250], uV: "mL", um: "g", q: "le volume d'huile à verser" },
+    { txt: (m) => `Une pierre de pyrite a une masse de ${fr(m)} g (ρ = 5,0 g/cm³).`, rho: 5, V: [2, 4, 6, 10], uV: "cm³", um: "g", q: "son volume" },
+    { txt: (m) => `On veut ${fr(m)} g de sirop de canne (ρ = 1,3 g/mL) pour un gâteau.`, rho: 1.3, V: [10, 20, 50, 100], uV: "mL", um: "g", q: "le volume de sirop à verser" },
+    { txt: (m) => `Une bille en fer a une masse de ${fr(m)} g (ρ = 7,9 g/cm³).`, rho: 7.9, V: [1, 2, 4, 10], uV: "cm³", um: "g", q: "son volume" }
+  ];
+  function genMasse() {
+    const c = alea(OBJETS_M), V = alea(c.V), m = Math.round(c.rho * V * 1000) / 1000;
+    return { texte: `${c.txt(V)} Calcule ${c.q}.`, rep: m, u: c.um, tol: 0.02, repTxt: fr(m),
+      corr: `m = ρ × V = ${fr(c.rho)} × ${fr(V)} = ${fr(m)} ${c.um}.` };
+  }
+  function genVolume() {
+    const c = alea(OBJETS_V), V = alea(c.V), m = Math.round(c.rho * V * 100) / 100;
+    return { texte: `${c.txt(m)} Calcule ${c.q}.`, rep: V, u: c.uV, tol: 0.02, repTxt: fr(V),
+      corr: `V = m ÷ ρ = ${fr(m)} ÷ ${fr(c.rho)} = ${fr(V)} ${c.uV}.` };
+  }
+  const genMasseOuVolume = () => Math.random() < 0.5 ? genMasse() : genVolume();
+
+  // ---------- Le triangle m, ρ, V (aide pour les calculs) ----------
+  const TRIANGLE = `<svg viewBox="0 0 220 128" class="mv-fig mv-tri" role="img" aria-label="Triangle : m en haut, ρ et V en bas. On cache la grandeur cherchée : m = ρ × V, ρ = m ÷ V, V = m ÷ ρ">
+      <path d="M110 6L212 122H8Z" class="mv-tri-f"/><line x1="46" x2="174" y1="70" y2="70" class="mv-tri-l"/><line x1="110" x2="110" y1="70" y2="122" class="mv-tri-l"/>
+      <text x="110" y="56" class="mv-tri-t">m</text><text x="74" y="108" class="mv-tri-t">ρ</text><text x="146" y="108" class="mv-tri-t">V</text>
+      <text x="110" y="96" class="mv-tri-x">×</text></svg>`;
+
+  // ---------- Animation 1 : même volume, masses différentes ----------
+  function animCubes(el) {
+    const CUBES = [["bois", "Bois", 0.8, "#C08A52"], ["alu", "Aluminium", 2.7, "#C3CBD1"], ["fer", "Fer", 7.9, "#6F7A7F"], ["or", "Or", 19.3, "#E2B33C"]];
+    const vu = {}; let surPlateau = null, aff = 0, t0 = 0;
+    el.innerHTML = `<span class="a-titre">Expérience : même volume, masses différentes</span>
+      <p class="small">Ces quatre cubes ont exactement le même volume : <strong>10 cm³</strong>. Toucher un cube pour le poser sur la balance.</p>
+      <svg viewBox="0 0 320 178" class="mv-anim" role="group" aria-label="Quatre cubes de même volume et une balance"></svg>
+      <div class="a-res" aria-live="polite">Touche un cube.</div>`;
+    const svg = el.querySelector("svg"), res = el.querySelector(".a-res");
+    const posLibre = (i) => [26 + i * 74, 22];
+    const P = { x: 160, y: 118 };
+    function dessiner() {
+      let s = `<rect x="94" y="126" width="132" height="44" rx="8" class="mv-bal"/><rect x="104" y="118" width="112" height="8" rx="3" class="mv-plat"/>
+        <rect x="120" y="136" width="80" height="22" rx="3" class="b-lcd"/><text x="194" y="152" text-anchor="end" class="b-lcd-t">${(Math.round(aff * 10) / 10).toFixed(1)} g</text>`;
+      CUBES.forEach(([id, nom, rho, c], i) => {
+        const [x, y] = surPlateau === id ? [P.x - 20, P.y - 40] : posLibre(i);
+        s += `<g class="mv-cube" data-c="${id}" role="button" aria-label="Poser le cube de ${nom} sur la balance" transform="translate(${x} ${y})">
+          <rect x="-6" y="-6" width="52" height="66" fill="transparent"/><path d="M0 10L10 0H40V30L30 40H0Z" fill="${c}" class="mv-cube-b"/><path d="M0 10H30V40M30 10L40 0" class="mv-cube-l"/>
+          ${surPlateau === id ? "" : `<text x="20" y="56" text-anchor="middle" class="mv-lab">${nom}</text>`}</g>`;
+      });
+      svg.innerHTML = s;
+      svg.querySelectorAll(".mv-cube").forEach((g) => g.onclick = () => poser(g.dataset.c));
+    }
+    function poser(id) {
+      surPlateau = surPlateau === id ? null : id; t0 = performance.now();
+      if (!surPlateau) { res.textContent = "Balance vide. Touche un autre cube."; }
+      dessiner(); anim();
+    }
+    function anim() {
+      const c = CUBES.find((x) => x[0] === surPlateau), cible = c ? c[2] * 10 : 0;
+      const k = Math.min(1, (performance.now() - t0) / 700);
+      aff = aff + (cible - aff) * (k < 1 ? 0.25 : 1);
+      dessiner();
+      if (k < 1 && svg.isConnected) requestAnimationFrame(anim);
+      else if (c) {
+        vu[c[0]] = true;
+        const liste = CUBES.filter((x) => vu[x[0]]).map((x) => `${x[1]} : <strong>${fr(x[2] * 10)} g</strong>`).join(" · ");
+        res.innerHTML = liste + (Object.keys(vu).length === 4 ? `<br>Même volume, mais des masses très différentes : la masse d'un objet dépend de son volume <strong>et</strong> de la matière dont il est fait.` : "");
+      }
+    }
+    dessiner();
+  }
+
+  // ---------- Animation 2 : la colonne de liquides ----------
+  function animColonne(el) {
+    const LIQ = [["sirop", "Sirop de canne", 1.3, "#9C4A1A", "Sirop", "le sirop de canne"], ["eau", "Eau colorée", 1.0, "#3B8FD9", "Eau", "l'eau colorée"], ["huile", "Huile", 0.92, "#E8C547", "Huile", "l'huile"]];
+    const OBJ = [["liege", "Bouchon de liège", 0.24, "#B98B5A", 9, "Liège"], ["raisin", "Grain de raisin", 1.1, "#6B2D6B", 8, "Raisin"], ["bille", "Bille de verre", 2.5, "#9FD3E0", 7, "Bille"]];
+    const GX = 112, GW = 96, GB = 214, HL = 52; // verre : bord gauche, largeur, fond ; hauteur d'une couche
+    let couches = [], objets = [];
+    el.innerHTML = `<span class="a-titre">Expérience : la colonne de liquides</span>
+      <p class="small">Verser les liquides dans l'ordre que tu veux, puis lâcher les objets dans le verre.</p>
+      <svg viewBox="0 0 320 226" class="mv-anim" role="img" aria-label="Un grand verre où se rangent des liquides et des objets"></svg>
+      <div class="a-bts">${LIQ.map(([id, nom]) => `<button class="btn btn-ghost btn-sm" type="button" data-l="${id}">Verser : ${nom.toLowerCase()}</button>`).join("")}</div>
+      <div class="a-bts">${OBJ.map(([id, nom]) => `<button class="btn btn-ghost btn-sm" type="button" data-o="${id}">Lâcher : ${nom.toLowerCase()}</button>`).join("")}<button class="btn-link" type="button" data-vider>Vider le verre</button></div>
+      <div class="a-res" aria-live="polite">Le verre est vide.</div>`;
+    const svg = el.querySelector("svg"), res = el.querySelector(".a-res");
+    // position cible de chaque couche : de bas en haut, de la plus dense à la moins dense
+    const cibles = () => { const tri = couches.slice().sort((a, b) => b.rho - a.rho); const c = {}; tri.forEach((x, i) => { c[x.id] = GB - (i + 1) * HL; }); return c; };
+    const niveauHaut = () => GB - couches.length * HL;
+    function cibleObjet(o) {
+      if (!couches.length) return GB - o.r;
+      const tri = couches.slice().sort((a, b) => a.rho - b.rho); // de haut en bas
+      if (o.rho < tri[0].rho) return niveauHaut() + o.r * 0.25;          // flotte en surface
+      for (let i = 0; i < tri.length; i++) {
+        if (i + 1 < tri.length && o.rho < tri[i + 1].rho) return GB - (tri.length - 1 - i) * HL - o.r * 0.75; // posé sur la couche suivante
+      }
+      return GB - o.r;                                                     // plus dense que tout : au fond
+    }
+    function dessiner() {
+      let s = "";
+      couches.slice().sort((a, b) => a.y - b.y).forEach((c) => {
+        s += `<rect x="${GX}" y="${c.y.toFixed(1)}" width="${GW}" height="${HL}" fill="${c.coul}" opacity="${c.id === "eau" ? 0.55 : 0.85}"/>`;
+      });
+      couches.forEach((c) => { s += `<text x="${GX + GW + 8}" y="${(c.y + HL / 2 + 4).toFixed(1)}" class="mv-lab g">${c.court} : ${fr(c.rho)}</text>`; });
+      objets.forEach((o) => { s += `<circle cx="${o.x}" cy="${o.y.toFixed(1)}" r="${o.r}" fill="${o.coul}" class="mv-objet"/>`; });
+      s += `<path d="M${GX} 30V${GB}Q${GX} ${GB + 6} ${GX + 8} ${GB + 6}H${GX + GW - 8}Q${GX + GW} ${GB + 6} ${GX + GW} ${GB}V30" class="mv-verre"/>`;
+      s += `<text x="${GX - 8}" y="40" text-anchor="end" class="mv-lab g">ρ en g/mL</text>`;
+      objets.forEach((o) => { s += `<text x="${GX - 8}" y="${(o.y + 4).toFixed(1)}" text-anchor="end" class="mv-lab g">${o.court} (${fr(o.rho)})</text>`; });
+      svg.innerHTML = s;
+    }
+    let anime = false;
+    function boucle() {
+      const c = cibles(); let bouge = false;
+      couches.forEach((x) => { const d = c[x.id] - x.y; if (Math.abs(d) > 0.4) { x.y += d * 0.08; bouge = true; } else x.y = c[x.id]; });
+      objets.forEach((o) => { const cy = cibleObjet(o), d = cy - o.y; if (Math.abs(d) > 0.4) { o.y += Math.sign(d) * Math.min(Math.abs(d), 1.2 + Math.abs(d) * 0.05); bouge = true; } else o.y = cy; });
+      dessiner();
+      if (bouge && svg.isConnected) requestAnimationFrame(boucle); else anime = false;
+    }
+    const lancer = () => { if (!anime) { anime = true; requestAnimationFrame(boucle); } };
+    el.querySelectorAll("[data-l]").forEach((b) => b.onclick = () => {
+      const [id, nom, rho, coul, court, art] = LIQ.find((x) => x[0] === b.dataset.l);
+      couches.push({ id, nom, rho, coul, court, art, y: niveauHaut() - HL - 30 }); b.disabled = true;
+      const sous = couches.filter((x) => x.rho > rho).length, sur = couches.filter((x) => x.rho < rho).length;
+      res.innerHTML = sous && sur ? `${nom} (${fr(rho)} g/mL) se place <strong>entre</strong> les autres liquides.` : sur ? `${nom} (${fr(rho)} g/mL) est plus dense : il <strong>descend sous</strong> ${sur > 1 ? "les autres liquides" : "l'autre liquide"}.` : sous ? `${nom} (${fr(rho)} g/mL) est moins dense : il <strong>reste au-dessus</strong>.` : `${nom} (${fr(rho)} g/mL) est au fond du verre.`;
+      lancer();
+    });
+    el.querySelectorAll("[data-o]").forEach((b) => b.onclick = () => {
+      const [id, nom, rho, coul, r, court] = OBJ.find((x) => x[0] === b.dataset.o);
+      const o = { id, nom, rho, coul, r, court, x: GX + 22 + objets.length * 26, y: 18 }; objets.push(o); b.disabled = true;
+      const tri = couches.slice().sort((a, c) => a.rho - c.rho), dessous = tri.find((x) => x.rho > rho), dessus = tri.slice().reverse().find((x) => x.rho < rho);
+      res.innerHTML = !couches.length ? `${nom} tombe au fond du verre vide.` : !dessous ? `${nom} (${fr(rho)}) est plus dense que tous les liquides : il <strong>coule jusqu'au fond</strong>.`
+        : !dessus ? `${nom} (${fr(rho)}) est moins dense que tous les liquides : il <strong>flotte en surface</strong>.`
+        : `${nom} (${fr(rho)}) coule dans ${dessus.art} (${fr(dessus.rho)}) mais flotte sur ${dessous.art} (${fr(dessous.rho)}).`;
+      lancer();
+    });
+    el.querySelector("[data-vider]").onclick = () => { couches = []; objets = []; el.querySelectorAll("[data-l],[data-o]").forEach((b) => { b.disabled = false; }); res.textContent = "Le verre est vide."; dessiner(); };
+    dessiner();
+  }
+
+  return { RHO, fr, figEprouvette, genLecture, genRho, genMasse, genVolume, genMasseOuVolume, TRIANGLE, animCubes, animColonne };
 })();
 
 const CONTENU = {
@@ -3450,6 +3722,358 @@ const CONTENU = {
             chaine: { nom: "La chaîne énergétique d'une résistance", elements: ["S:Générateur", "F:énergie électrique", "C:Résistance", "F:énergie thermique"], trous: [1, 2, 3], distracteurs: ["énergie lumineuse", "Ohmmètre", "énergie chimique"] }
           }
         }
+      },
+      // ==================================================================
+      //  4ÈME · LA MASSE VOLUMIQUE (thème « Organisation et transformations de la matière », programme du cycle 4)
+      //  BO : « Masse volumique : relation m = ρ.V, influence de la température » ; « Proposer et mettre en œuvre un protocole
+      //  expérimental pour déterminer une masse volumique d'un liquide ou d'un solide » ; « Exploiter des mesures de masse
+      //  volumique pour différencier des espèces chimiques ». Rappel de 5ème : masse, volume, conservation de la masse,
+      //  proportionnalité masse / volume.
+      //  Classes en difficulté : unités g/mL, g/cm³ et kg/L seulement ; le kg/m³ est un encadré facultatif, sans exercice noté.
+      //  Figures, calculs générés et animations : module MASSEVOL (en haut de ce fichier). TP : paillasse 08_masse.js (objectifs m1 à m4).
+      // ==================================================================
+      {
+        id: "masse", theme: "matiere",
+        titre: "La masse volumique",
+        resume: "ρ = m ÷ V, identifier un matériau, flotter ou couler",
+        qcm: "La masse volumique",
+        // ======================== RAPPEL (notions de 5ème) ========================
+        rappel: {
+          intro: "Réviser ce que tu as vu en 5ème sur la masse et le volume. Chaque jeu change à chaque partie.",
+          activites: [
+            { id: "qcm", type: "qcm", titre: "QCM éclair", desc: "5 questions sur la masse et le volume", n: 5, questions: [
+              { question: "Avec quel instrument mesure-t-on une masse ?", reponses: ["Une balance", "Une éprouvette graduée", "Un thermomètre", "Une règle"], bonne: 0, explication: "La masse se mesure avec une balance." },
+              { question: "Avec quel instrument mesure-t-on le volume d'un liquide ?", reponses: ["Une balance", "Une éprouvette graduée", "Un bécher sans graduation", "Un chronomètre"], bonne: 1, explication: "L'éprouvette graduée permet de mesurer un volume de liquide." },
+              { question: "Quelle est l'unité de masse du système international ?", reponses: ["Le litre (L)", "Le kilogramme (kg)", "Le mètre (m)", "Le degré (°C)"], bonne: 1, explication: "La masse s'exprime en kilogrammes (kg) ; on utilise aussi le gramme : 1 kg = 1 000 g." },
+              { question: "1 L est égal à…", reponses: ["10 mL", "100 mL", "1 000 mL", "1 mL"], bonne: 2, explication: "1 L = 1 000 mL." },
+              { question: "1 mL est égal à…", reponses: ["1 cm³", "1 m³", "10 cm³", "1 dm³"], bonne: 0, explication: "1 mL = 1 cm³ (et 1 L = 1 dm³)." },
+              { question: "À quoi sert la touche TARE d'une balance ?", reponses: ["À remettre l'affichage à zéro, par exemple avec un récipient vide posé dessus", "À éteindre la balance", "À mesurer un volume", "À changer d'unité"], bonne: 0, explication: "Avec la tare, la balance n'affiche que la masse de ce qu'on ajoute dans le récipient." },
+              { question: "Pour lire le volume dans une éprouvette, on regarde…", reponses: ["le bas du ménisque, les yeux à sa hauteur", "le haut du ménisque, en se penchant au-dessus", "le haut de l'éprouvette", "le fond de l'éprouvette"], bonne: 0, explication: "On lit au bas du ménisque (la surface creusée du liquide), les yeux bien en face." },
+              { question: "Un glaçon de 20 g fond complètement. Quelle est la masse de l'eau obtenue ?", reponses: ["Moins de 20 g", "20 g", "Plus de 20 g", "0 g"], bonne: 1, explication: "Au cours d'un changement d'état, la masse se conserve." },
+              { question: "On dissout 10 g de sucre dans 200 g d'eau. Quelle est la masse de l'eau sucrée ?", reponses: ["200 g", "190 g", "210 g", "On ne peut pas savoir"], bonne: 2, explication: "Lors d'une dissolution, la masse se conserve : 200 + 10 = 210 g." },
+              { question: "Pour mesurer une masse de 250 g, l'unité la plus adaptée est…", reponses: ["le gramme", "la tonne", "le litre", "le millilitre"], bonne: 0, explication: "Le gramme convient pour des petites masses ; le litre et le millilitre sont des unités de volume." }
+            ] },
+            { id: "eprouvette", type: "calcul", titre: "Lis l'éprouvette", desc: "5 lectures de volume au ménisque", n: 5,
+              rappel: "On lit le volume <strong>au bas du ménisque</strong>, les yeux à sa hauteur. Pour trouver la valeur d'une graduation : on compte les petits intervalles entre deux nombres écrits.",
+              contextes: [{ gen: () => MASSEVOL.genLecture() }] },
+            { id: "relier", type: "relier", titre: "Grandeurs, unités, instruments", desc: "Relier ce qui va ensemble", n: 5, paires: [
+              ["La masse", "se mesure avec une balance."], ["Le volume d'un liquide", "se mesure avec une éprouvette graduée."],
+              ["Le gramme (g)", "est une unité de masse."], ["Le millilitre (mL)", "est une unité de volume."],
+              ["1 kg", "1 000 g"], ["1 L", "1 000 mL"], ["1 mL", "1 cm³"]
+            ] },
+            { id: "vf", type: "vraifaux", titre: "Vrai ou faux ?", desc: "6 affirmations sur la masse et le volume", n: 6, items: [
+              { affirmation: "Quand de la glace fond, la masse ne change pas.", vrai: true, explication: "La masse se conserve lors d'un changement d'état." },
+              { affirmation: "Quand de l'eau gèle, son volume ne change pas.", vrai: false, explication: "Le volume augmente un peu quand l'eau gèle : une bouteille pleine oubliée au congélateur peut éclater." },
+              { affirmation: "Quand on dissout du sel dans l'eau, la masse totale se conserve.", vrai: true, explication: "Le sel n'a pas disparu : il est dissous. Masse de l'eau salée = masse d'eau + masse de sel." },
+              { affirmation: "100 mL d'eau ont une masse d'environ 100 g.", vrai: true, explication: "1 mL d'eau a une masse d'environ 1 g." },
+              { affirmation: "Si on double le volume d'eau, sa masse double aussi.", vrai: true, explication: "Pour une même substance, la masse est proportionnelle au volume." },
+              { affirmation: "Une éprouvette graduée sert à mesurer la masse d'un liquide.", vrai: false, explication: "Elle mesure un volume. La masse se mesure avec une balance." },
+              { affirmation: "1 L d'eau a une masse d'environ 1 kg.", vrai: true, explication: "1 L = 1 000 mL d'eau, soit environ 1 000 g = 1 kg." },
+              { affirmation: "La masse s'exprime en litres.", vrai: false, explication: "Le litre est une unité de volume ; la masse s'exprime en kilogrammes ou en grammes." }
+            ] },
+            { id: "croises", type: "croises", titre: "Mots croisés de la mesure", desc: "Une nouvelle grille à chaque partie", n: 7, mots: [
+              { mot: "MASSE", indice: "Grandeur mesurée avec une balance." }, { mot: "VOLUME", indice: "Place occupée par un objet ou un liquide." },
+              { mot: "BALANCE", indice: "Instrument qui mesure une masse." }, { mot: "EPROUVETTE", indice: "Récipient gradué pour mesurer un volume de liquide." },
+              { mot: "MENISQUE", indice: "Surface creusée du liquide, où l'on fait la lecture." }, { mot: "TARE", indice: "Touche qui remet la balance à zéro." },
+              { mot: "GRAMME", indice: "Unité de masse : mille font un kilogramme." }, { mot: "LITRE", indice: "Unité de volume : mille millilitres." },
+              { mot: "KILOGRAMME", indice: "Unité de masse du système international." }, { mot: "GRADUATION", indice: "Petit trait sur l'éprouvette." }
+            ] }
+          ]
+        },
+        // ======================== COURS ========================
+        cours: {
+          competences: [
+            "Je sais que, pour une même matière, la masse est proportionnelle au volume.",
+            "Je calcule une masse volumique avec ρ = m ÷ V, sans oublier l'unité.",
+            "J'utilise la masse volumique pour calculer une masse ou un volume.",
+            "J'identifie une matière et je prévois si un objet flotte ou coule.",
+            "Je sais que la masse volumique change avec la température."
+          ],
+          blocs: [
+            { t: "h", texte: "1. Masse et volume, deux grandeurs différentes" },
+            { t: "p", texte: "La <strong>masse</strong> (en kg ou en g) se mesure avec une <strong>balance</strong>. Le <strong>volume</strong> (en L, en mL ou en cm³) d'un liquide se mesure avec une <strong>éprouvette graduée</strong>. Rappel : 1 mL = 1 cm³." },
+            { t: "anim", monter: (el) => MASSEVOL.animCubes(el) },
+            { t: "p", texte: "Pour une même matière, la masse est <strong>proportionnelle</strong> au volume : si le volume double, la masse double aussi." },
+            { t: "tableau", compact: true, entetes: ["Volume d'eau", "Masse de l'eau"], lignes: [["10 mL", "10 g"], ["20 mL", "20 g"], ["50 mL", "50 g"], ["100 mL", "100 g"]] },
+            { t: "exemple", type: "qcm", competence: 1, variantes: [
+              { question: "50 mL d'huile ont une masse de 46 g. Quelle est la masse de 100 mL de la même huile ?", reponses: ["46 g", "92 g", "50 g", "146 g"], bonne: 1,
+                explication: "Le volume double (50 → 100 mL), donc la masse double : 2 × 46 = 92 g." },
+              { question: "Un cube de bois et un cube de fer ont exactement le même volume. Lequel a la plus grande masse ?", reponses: ["Le cube de bois", "Le cube de fer", "Ils ont la même masse", "On ne peut pas savoir"], bonne: 1,
+                explication: "Même volume, mais pas la même matière : le fer est beaucoup plus lourd que le bois." },
+              { question: "20 mL de sirop de canne ont une masse de 26 g. Quelle est la masse de 10 mL de ce sirop ?", reponses: ["13 g", "26 g", "52 g", "16 g"], bonne: 0,
+                explication: "Le volume est divisé par 2, donc la masse aussi : 26 ÷ 2 = 13 g." },
+              { question: "Qu'est-ce qui a le plus grand volume : 1 kg de plumes ou 1 kg de plomb ?", reponses: ["1 kg de plomb", "1 kg de plumes", "Les deux ont le même volume", "Aucun des deux n'a de volume"], bonne: 1,
+                explication: "Les deux ont la même masse (1 kg), mais il faut énormément de plumes : elles prennent beaucoup plus de place." }
+            ] },
+
+            { t: "h", texte: "2. La masse volumique" },
+            { t: "p", texte: "La <strong>masse volumique</strong> d'une matière, notée <strong>ρ</strong> (la lettre grecque « rhô »), est la masse d'un volume donné de cette matière. On la calcule en divisant la masse par le volume :" },
+            { t: "methode", titre: "La formule", items: [
+              "<strong style=\"font-size:1.25rem\">ρ = m ÷ V</strong> (on écrit aussi ρ = m / V)",
+              "m : la masse, en grammes (g) ; V : le volume, en millilitres (mL) ou en cm³ ; ρ : en <strong>g/mL</strong> ou en <strong>g/cm³</strong>.",
+              "On utilise aussi le kg/L : <strong>1 g/mL = 1 g/cm³ = 1 kg/L</strong>."
+            ] },
+            { t: "p", texte: "Une valeur à connaître par cœur : la masse volumique de l'eau liquide est <strong>ρ(eau) = 1 g/mL</strong> (soit 1 kg/L) : 1 mL d'eau a une masse de 1 g, 1 L d'eau a une masse de 1 kg." },
+            { t: "methode", titre: "Exemple résolu", items: [
+              "On mesure : 50 mL d'huile ont une masse de 46 g. Je note les données : m = 46 g et V = 50 mL.",
+              "J'écris la formule : ρ = m ÷ V.",
+              "Je calcule, sans oublier l'unité : ρ = 46 ÷ 50 = <strong>0,92 g/mL</strong>."
+            ] },
+            { t: "exemple", type: "qcm", competence: 2, variantes: [
+              { question: "Comment calcule-t-on la masse volumique ρ ?", reponses: ["ρ = m ÷ V", "ρ = V ÷ m", "ρ = m × V", "ρ = m + V"], bonne: 0,
+                explication: "On divise la masse par le volume : ρ = m ÷ V." },
+              { question: "Un liquide a une masse volumique de 1,3 g/mL. Cela veut dire que…", reponses: ["1 mL de ce liquide a une masse de 1,3 g", "1 g de ce liquide a un volume de 1,3 mL", "ce liquide pèse 1,3 kg", "ce liquide est de l'eau"], bonne: 0,
+                explication: "La masse volumique est la masse d'1 mL (ou d'1 cm³) : ici 1,3 g par mL." },
+              { question: "Quelle est l'unité correcte d'une masse volumique ?", reponses: ["g/mL", "mL/g", "g", "mL"], bonne: 0,
+                explication: "Une masse divisée par un volume : des g/mL (ou g/cm³, kg/L)." }
+            ] },
+            { t: "exemple", type: "calcul", competence: 2, contextes: [{ gen: () => MASSEVOL.genRho() }] },
+            { t: "methode", titre: "Pour aller plus loin (facultatif)", items: [
+              "Les scientifiques utilisent aussi le <strong>kilogramme par mètre cube (kg/m³)</strong> : c'est la masse d'1 m³ de matière.",
+              "1 m³ = 1 000 L. Comme 1 L d'eau a une masse de 1 kg, 1 m³ d'eau a une masse de 1 000 kg (une tonne) : ρ(eau) = 1 000 kg/m³.",
+              "Pour passer des g/mL aux kg/m³, on multiplie par 1 000 : l'huile (0,92 g/mL) a une masse volumique de 920 kg/m³."
+            ] },
+
+            { t: "h", texte: "3. Calculer une masse ou un volume" },
+            { t: "p", texte: "Quand on connaît la masse volumique, on peut calculer une masse sans balance, ou un volume sans éprouvette :" },
+            { t: "liste", items: ["pour trouver une <strong>masse</strong> : <strong>m = ρ × V</strong> ;", "pour trouver un <strong>volume</strong> : <strong>V = m ÷ ρ</strong>."] },
+            { t: "p", texte: `<span class="fig-cours">${MASSEVOL.TRIANGLE}<span class="leg">Astuce : je cache avec mon doigt la grandeur que je cherche. Il reste « ρ × V » (pour m), « m sur V » (pour ρ) ou « m sur ρ » (pour V).</span></span>` },
+            { t: "methode", titre: "Exemple résolu", items: [
+              "Un bidon contient V = 20 L d'essence. La masse volumique de l'essence est ρ = 0,75 kg/L. Quelle est la masse d'essence ?",
+              "Je cherche une masse : m = ρ × V = 0,75 × 20 = <strong>15 kg</strong>.",
+              "Les unités vont ensemble : des kg/L multipliés par des L donnent des kg."
+            ] },
+            { t: "exemple", type: "calcul", competence: 3, contextes: [{ gen: () => MASSEVOL.genMasse() }] },
+            { t: "exemple", type: "calcul", competence: 3, contextes: [{ gen: () => MASSEVOL.genVolume() }] },
+
+            { t: "h", texte: "4. Identifier une matière, flotter ou couler" },
+            { t: "p", texte: "Chaque matière a sa propre masse volumique : en la mesurant, on peut <strong>reconnaître une matière</strong>, comme une carte d'identité. (Dans ce tableau, les valeurs sont en g/cm³, c'est-à-dire aussi en g/mL.)" },
+            { t: "tableau", compact: true, entetes: ["Matière", "ρ (g/cm³)"], lignes: [
+              ["Liège", "0,24"], ["Bois d'angélique (Guyane)", "0,8"], ["Huile de tournesol", "0,92"], ["Glace", "0,92"], ["Eau", "1,0"], ["Eau de mer", "1,03"],
+              ["Sirop de canne", "1,3"], ["Bois d'amourette (Guyane)", "1,3"], ["Verre", "2,5"], ["Aluminium", "2,7"], ["Pyrite (« or des fous »)", "5,0"], ["Fer", "7,9"], ["Or", "19,3"]
+            ] },
+            { t: "exemple", type: "qcm", competence: 4, variantes: [
+              { question: "Une pierre dorée trouvée près d'une crique a une masse de 30 g et un volume de 6 cm³. Est-ce de l'or ?", reponses: ["Non : ρ = 5 g/cm³, c'est de la pyrite", "Oui : elle est dorée", "Oui : ρ = 19,3 g/cm³", "Non : c'est du fer"], bonne: 0,
+                explication: "ρ = 30 ÷ 6 = 5 g/cm³ : c'est la pyrite (l'or vaudrait 19,3 g/cm³)." },
+              { question: "Un objet métallique a une masse de 54 g et un volume de 20 cm³. En quoi est-il ?", reponses: ["En aluminium", "En fer", "En or", "En verre"], bonne: 0,
+                explication: "ρ = 54 ÷ 20 = 2,7 g/cm³ : c'est l'aluminium." },
+              { question: "Un liquide a une masse de 65 g pour un volume de 50 mL. Lequel est-ce ?", reponses: ["De l'eau", "De l'huile", "Du sirop de canne", "De l'alcool"], bonne: 2,
+                explication: "ρ = 65 ÷ 50 = 1,3 g/mL : c'est le sirop de canne." }
+            ] },
+            { t: "p", texte: "<strong>Flotter ou couler ?</strong> Un objet <strong>flotte</strong> sur un liquide si sa masse volumique est <strong>plus petite</strong> que celle du liquide ; il <strong>coule</strong> si elle est plus grande. De même, des liquides qui ne se mélangent pas se rangent : le moins dense au-dessus, le plus dense au fond." },
+            { t: "anim", monter: (el) => MASSEVOL.animColonne(el) },
+            { t: "exemple", type: "tri", competence: 4, n: 4, question: "Cet objet flotte-t-il sur l'eau (ρ = 1 g/cm³) ?", oui: "Il flotte", non: "Il coule", items: [
+              { source: "Un bouchon de liège (0,24 g/cm³)", oui: true, pourquoi: "0,24 est plus petit que 1 : il flotte." },
+              { source: "Un clou en fer (7,9 g/cm³)", oui: false, pourquoi: "7,9 est plus grand que 1 : il coule." },
+              { source: "Une planche de bois d'angélique (0,8 g/cm³)", oui: true, pourquoi: "0,8 est plus petit que 1 : elle flotte." },
+              { source: "Une bûche de bois d'amourette (1,3 g/cm³)", oui: false, pourquoi: "1,3 est plus grand que 1 : ce bois de Guyane coule !" },
+              { source: "Un glaçon (0,92 g/cm³)", oui: true, pourquoi: "0,92 est plus petit que 1 : il flotte." },
+              { source: "Une bille de verre (2,5 g/cm³)", oui: false, pourquoi: "2,5 est plus grand que 1 : elle coule." }
+            ] },
+
+            { t: "h", texte: "5. La masse volumique dépend de la température" },
+            { t: "p", texte: "Quand on chauffe un liquide, sa masse ne change pas mais son <strong>volume augmente</strong> un peu : sa masse volumique <strong>diminue</strong>. C'est pour cela que l'eau chaude « monte » au-dessus de l'eau froide." },
+            { t: "tableau", compact: true, entetes: ["Température de l'eau", "ρ (g/mL)"], lignes: [["4 °C", "1,000"], ["20 °C", "0,998"], ["60 °C", "0,983"], ["100 °C", "0,958"]] },
+            { t: "p", texte: "L'eau a une exception : en gelant, elle <strong>gonfle</strong>. La glace (0,92 g/cm³) est donc moins dense que l'eau liquide : les glaçons et les icebergs <strong>flottent</strong>, avec environ 9/10 de leur volume sous l'eau." },
+            { t: "exemple", type: "vraifaux", competence: 5, variantes: [
+              { affirmation: "Quand on chauffe de l'eau, sa masse volumique diminue.", vrai: true, explication: "Son volume augmente un peu et sa masse ne change pas : ρ = m ÷ V diminue." },
+              { affirmation: "La glace coule au fond d'un verre d'eau.", vrai: false, explication: "La glace (0,92 g/cm³) est moins dense que l'eau liquide (1 g/cm³) : elle flotte." },
+              { affirmation: "La masse volumique d'un liquide est la même à toutes les températures.", vrai: false, explication: "Elle change avec la température : on précise donc la température quand on donne une valeur." }
+            ] },
+
+            { t: "retenir", items: [
+              "Pour une même matière, la masse est proportionnelle au volume.",
+              "La masse volumique est ρ = m ÷ V, en g/mL, en g/cm³ ou en kg/L (1 g/mL = 1 g/cm³ = 1 kg/L).",
+              "Pour l'eau : ρ = 1 g/mL. 1 L d'eau a une masse de 1 kg.",
+              "On calcule une masse avec m = ρ × V et un volume avec V = m ÷ ρ.",
+              "La masse volumique permet d'identifier une matière. Un objet flotte sur un liquide plus dense que lui.",
+              "La masse volumique change avec la température."
+            ] },
+            { t: "h", texte: "Vocabulaire" },
+            { t: "exemple", type: "relier", n: 4, paires: [
+              ["Masse volumique (ρ)", "Masse d'1 mL ou d'1 cm³ d'une matière."],
+              ["Balance", "Instrument qui mesure une masse."],
+              ["Éprouvette graduée", "Instrument qui mesure un volume de liquide."],
+              ["Ménisque", "Surface creusée du liquide ; on lit au bas."],
+              ["Proportionnel", "Si l'un double, l'autre double aussi."],
+              ["Flotter", "Rester à la surface d'un liquide plus dense."]
+            ] }
+          ]
+        },
+        // ======================== TP (paillasse 08_masse.js : objectifs m1 à m4) ========================
+        tp: {
+          titre: "Laboratoire : l'or des fous et le liquide mystère",
+          intro: "Sur la paillasse : peser avec la balance, mesurer des volumes avec l'éprouvette, démasquer une fausse pépite d'or, puis identifier un liquide mystère. Chaque objectif réussi débloque le suivant.",
+          finTP: "TP terminé : l'entraînement est débloqué !",
+          enClasse: {
+            objectif: "Mesurer une masse et un volume, montrer que la masse est proportionnelle au volume, puis proposer et mettre en œuvre un protocole pour déterminer la masse volumique d'un solide et d'un liquide et les identifier.",
+            materiel: ["Une balance électronique (précision 0,1 g)", "Une éprouvette graduée de 100 mL et une pipette compte-gouttes", "De l'eau, de l'huile de tournesol et du sirop de canne (ou du miel), colorés si besoin", "Un échantillon de pyrite (ou, à défaut, un petit caillou ou un écrou)", "Un bécher d'eau colorée", "Du papier essuie-tout, une feuille de résultats"],
+            securite: ["Ne jamais goûter les liquides du TP, même le sirop.", "Poser l'éprouvette bien droite, loin du bord de la table : elle est fragile.", "Glisser la pierre le long de l'éprouvette penchée, sans la lâcher d'en haut : le verre pourrait casser.", "Essuyer tout de suite le liquide renversé : l'huile rend le sol glissant."]
+          },
+          objectifs: [
+            {
+              id: "m1", competence: "Réaliser", titre: "Peser 50 mL d'eau",
+              notion: "Cours, parties 1 et 2 : masse, volume, masse volumique",
+              but: "Mesurer la masse de 50 mL d'eau avec la balance et l'éprouvette, puis calculer la masse volumique de l'eau.",
+              taches: [
+                { id: "tare", texte: "Glisser l'éprouvette vide sur le plateau de la balance, puis toucher TARE : la balance affiche 0.0 g." },
+                { id: "remplir", texte: "Glisser le flacon d'eau sur l'éprouvette et verser jusqu'à 50 mL. Finir au compte-gouttes, en regardant la loupe." },
+                { id: "noter", texte: "Toucher NOTER sur la balance pour relever la masse de 50 mL d'eau." }
+              ],
+              questions: [
+                { type: "qcm", variantes: [
+                  { question: "Pourquoi a-t-on appuyé sur TARE avec l'éprouvette vide sur le plateau ?", reponses: ["Pour que la balance n'affiche que la masse de l'eau", "Pour allumer la balance", "Pour mesurer le volume", "Pour que l'eau soit plus légère"], bonne: 0,
+                    explication: "La tare retire la masse de l'éprouvette : il ne reste que celle du liquide versé." },
+                  { question: "Où lit-on le volume dans l'éprouvette ?", reponses: ["Au bas du ménisque, les yeux à sa hauteur", "En haut du ménisque", "En regardant d'au-dessus", "Au fond de l'éprouvette"], bonne: 0,
+                    explication: "On lit au bas du ménisque, les yeux bien en face, comme sur la loupe." }
+                ] },
+                { type: "masse", calc: "rho1" }
+              ],
+              retenir: "La masse se mesure avec une balance (avec la tare pour retirer le récipient), le volume avec une éprouvette graduée. Pour l'eau : ρ = m ÷ V ≈ 1 g/mL."
+            },
+            {
+              id: "m2", competence: "Exploiter", titre: "Masse et volume sont-ils proportionnels ?",
+              notion: "Cours, partie 1 : la proportionnalité",
+              but: "Mesurer la masse de plusieurs volumes d'eau et regarder le graphique.",
+              taches: [
+                { id: "trois", texte: "Mesurer la masse d'au moins 3 volumes d'eau différents (par exemple 20 mL, 40 mL et 80 mL) : tarer l'éprouvette vide, verser, puis toucher NOTER à chaque fois." }
+              ],
+              questions: [
+                { type: "qcm", variantes: [
+                  { question: "Sur le graphique, tes points sont alignés sur une droite qui passe par l'origine. Cela veut dire que…", reponses: ["la masse est proportionnelle au volume", "la masse ne dépend pas du volume", "la masse diminue quand le volume augmente", "la balance est mal réglée"], bonne: 0,
+                    explication: "Des points alignés avec l'origine : c'est une situation de proportionnalité." }
+                ] },
+                { type: "masse", calc: "rapport" },
+                { type: "qcm", variantes: [
+                  { question: "D'après tes mesures, quelle est environ la masse de 100 mL d'eau ?", reponses: ["100 g", "50 g", "1 000 g", "10 g"], bonne: 0,
+                    explication: "1 mL d'eau a une masse d'environ 1 g, donc 100 mL ont une masse d'environ 100 g." }
+                ] }
+              ],
+              retenir: "Pour une même matière, la masse est proportionnelle au volume. Le quotient m ÷ V reste le même : c'est la masse volumique (1 g/mL pour l'eau)."
+            },
+            {
+              id: "m3", competence: "Analyser", titre: "Or ou « or des fous » ?",
+              notion: "Cours, partie 4 : identifier une matière",
+              but: "Une pierre dorée a été trouvée près d'une crique. Mesurer sa masse et son volume pour savoir si c'est de l'or.",
+              taches: [
+                { id: "masse", texte: "Poser la pierre seule sur le plateau (la balance doit afficher 0.0 g quand le plateau est vide) et toucher NOTER." },
+                { id: "v1", texte: "Verser environ 50 mL d'eau dans l'éprouvette (posée à côté de la balance), puis toucher NOTER V₁ sous la loupe." },
+                { id: "v2", texte: "Glisser la pierre dans l'éprouvette : le niveau monte. Toucher NOTER V₂ sous la loupe." }
+              ],
+              questions: [
+                { type: "masse", calc: "vol3" },
+                { type: "masse", calc: "rho3" },
+                { type: "masse", calc: "id3" }
+              ],
+              retenir: "Pour mesurer le volume d'un solide, on le plonge dans l'eau d'une éprouvette : V = V₂ − V₁. Sa masse volumique permet de reconnaître la matière : la pierre (5 g/cm³) est de la pyrite, pas de l'or (19,3 g/cm³)."
+            },
+            {
+              id: "m4", competence: "Proposer un protocole", onglet: "Protocole", titre: "Le liquide mystère",
+              notion: "Cours, partie 4 : identifier, flotter ou couler",
+              but: "Le professeur a coloré un liquide mystère. Proposer un protocole pour mesurer sa masse volumique, le mettre en œuvre, puis le verser sur de l'eau.",
+              taches: [
+                { id: "protocole", texte: "Remettre dans l'ordre les étapes du protocole (sous la paillasse)." },
+                { id: "mesure", texte: "Mettre en œuvre le protocole avec le liquide mystère (au moins 20 mL), puis toucher NOTER sur la balance." },
+                { id: "verse", texte: "Glisser le flacon du liquide mystère sur le bécher d'eau et observer où il se place." }
+              ],
+              questions: [
+                { type: "masse", calc: "rho4" },
+                { type: "masse", calc: "id4" },
+                { type: "masse", calc: "obs4" }
+              ],
+              retenir: "Pour mesurer la masse volumique d'un liquide : tarer l'éprouvette vide, verser un volume connu, peser, puis calculer ρ = m ÷ V. Un liquide moins dense que l'eau reste au-dessus ; un liquide plus dense coule au fond."
+            }
+          ],
+          conclusion: {
+            attendus: [
+              "Proposer et mettre en œuvre un protocole expérimental pour déterminer une masse volumique d'un liquide ou d'un solide.",
+              "Exploiter des mesures de masse volumique pour différencier des espèces chimiques.",
+              "Masse volumique : relation m = ρ.V."
+            ],
+            textes: [
+              { obj: "m1", attendu: "Mesurer une masse et un volume", texte: "La masse se mesure avec une [balance] et le volume d'un liquide avec une [éprouvette] graduée. 50 mL d'eau ont une masse d'environ [50 g].", pieges: ["règle", "500 g", "thermomètre"] },
+              { obj: "m2", attendu: "Masse et volume", texte: "Pour une même matière, la masse est [proportionnelle] au volume : le quotient m ÷ V est toujours le [même].", pieges: ["égale", "plus petit"] },
+              { obj: "m3", attendu: "Identifier un solide", texte: "Le volume d'un solide se mesure en le plongeant dans l'eau : V = [V₂ − V₁]. Avec ρ = 5 g/cm³, la pierre est de la [pyrite] et non de l'or.", pieges: ["V₁ + V₂", "or"] },
+              { obj: "m4", attendu: "Identifier un liquide", texte: "On calcule ρ = [m ÷ V]. Un liquide moins dense que l'eau [flotte] dessus ; un liquide plus dense [coule] au fond.", pieges: ["V ÷ m", "disparaît"] }
+            ]
+          }
+        },
+        // ======================== ENTRAÎNEMENT ========================
+        entrainement: [
+          { id: "vf", type: "vraifaux", titre: "Vrai ou faux ?", desc: "8 affirmations à juger", n: 8, items: [
+            { affirmation: "La masse volumique se calcule avec ρ = m ÷ V.", vrai: true, explication: "On divise la masse par le volume." },
+            { affirmation: "La masse volumique de l'eau est 1 g/mL.", vrai: true, explication: "1 mL d'eau a une masse de 1 g." },
+            { affirmation: "1 g/mL, c'est la même chose que 1 kg/L.", vrai: true, explication: "1 g/mL = 1 g/cm³ = 1 kg/L." },
+            { affirmation: "Un objet plus lourd flotte toujours moins bien.", vrai: false, explication: "Ce qui compte, c'est la masse volumique : une grosse bûche de bois d'angélique flotte, un petit clou coule." },
+            { affirmation: "Si deux objets ont le même volume, ils ont forcément la même masse.", vrai: false, explication: "Ça dépend de la matière : un cube de fer est bien plus lourd qu'un cube de bois de même volume." },
+            { affirmation: "L'huile flotte sur l'eau parce qu'elle est moins dense que l'eau.", vrai: true, explication: "ρ(huile) = 0,92 g/mL, plus petit que ρ(eau) = 1 g/mL." },
+            { affirmation: "Pour calculer une masse, on fait m = ρ × V.", vrai: true, explication: "On multiplie la masse volumique par le volume." },
+            { affirmation: "Une pierre dorée est forcément de l'or.", vrai: false, explication: "La pyrite est dorée aussi ! Sa masse volumique (5 g/cm³) est bien plus petite que celle de l'or (19,3 g/cm³)." },
+            { affirmation: "La masse volumique d'un liquide change avec la température.", vrai: true, explication: "Quand on chauffe, le volume augmente un peu : ρ diminue." },
+            { affirmation: "La glace est plus dense que l'eau liquide.", vrai: false, explication: "Elle est moins dense (0,92 g/cm³) : c'est pour ça que les glaçons flottent." },
+            { affirmation: "On peut mesurer le volume d'une pierre en la plongeant dans l'eau d'une éprouvette.", vrai: true, explication: "Le niveau monte du volume de la pierre : V = V₂ − V₁." },
+            { affirmation: "Une masse volumique peut s'exprimer en grammes.", vrai: false, explication: "C'est une masse divisée par un volume : g/mL, g/cm³ ou kg/L." }
+          ] },
+          { id: "rho", type: "calcul", titre: "Calculer une masse volumique", desc: "4 calculs avec ρ = m ÷ V", n: 4,
+            rappel: "<strong>ρ = m ÷ V</strong> : je divise la masse par le volume. Unité : g/mL ou g/cm³.",
+            contextes: [{ gen: () => MASSEVOL.genRho() }] },
+          { id: "mv", type: "calcul", titre: "Trouver une masse ou un volume", desc: "4 calculs avec m = ρ × V et V = m ÷ ρ", n: 4,
+            rappel: "Je cherche une masse : <strong>m = ρ × V</strong>. Je cherche un volume : <strong>V = m ÷ ρ</strong>.",
+            contextes: [{ gen: () => MASSEVOL.genMasseOuVolume() }] },
+          { id: "tri", type: "tri", titre: "Flotte ou coule ?", desc: "Trier 8 situations", n: 8, question: "L'objet (ou le liquide) flotte-t-il, ou coule-t-il ?", oui: "Il flotte", non: "Il coule", items: [
+            { source: "Une pirogue en bois d'angélique (0,8 g/cm³) sur le Maroni", oui: true, pourquoi: "0,8 est plus petit que 1 : le bois flotte sur l'eau." },
+            { source: "Un caillou de granite (2,7 g/cm³) dans une crique", oui: false, pourquoi: "2,7 est plus grand que 1 : il coule." },
+            { source: "De l'huile (0,92 g/mL) versée dans de l'eau", oui: true, pourquoi: "L'huile est moins dense que l'eau : elle reste au-dessus." },
+            { source: "Du sirop de canne (1,3 g/mL) versé dans de l'eau", oui: false, pourquoi: "Le sirop est plus dense que l'eau : il coule au fond." },
+            { source: "Un glaçon (0,92 g/cm³) dans un verre de jus", oui: true, pourquoi: "La glace est moins dense que l'eau liquide." },
+            { source: "Une bûche de bois d'amourette (1,3 g/cm³) dans le fleuve", oui: false, pourquoi: "Ce bois de Guyane est plus dense que l'eau : il coule." },
+            { source: "Un bouchon de liège (0,24 g/cm³) dans une bassine", oui: true, pourquoi: "0,24 est bien plus petit que 1." },
+            { source: "Une bille en fer (7,9 g/cm³) dans du sirop (1,3 g/mL)", oui: false, pourquoi: "7,9 est plus grand que 1,3 : elle coule même dans le sirop." },
+            { source: "Un grain de raisin (1,1 g/cm³) dans du sirop de canne (1,3 g/mL)", oui: true, pourquoi: "1,1 est plus petit que 1,3 : il flotte sur le sirop (mais il coulerait dans l'eau)." },
+            { source: "Un morceau de bois-flot (balsa, 0,15 g/cm³) sur la mer", oui: true, pourquoi: "0,15 est bien plus petit que 1,03 (eau de mer)." }
+          ] },
+          { id: "erreur", type: "qcm", titre: "Trouve l'erreur", desc: "6 copies d'élèves à corriger", n: 6, questions: [
+            { question: "Copie de Léa : « V = 20 mL ; m = 54 g ; ρ = V ÷ m = 20 ÷ 54 = 0,37 g/mL. » Où est l'erreur ?", reponses: ["Elle a divisé le volume par la masse : il faut ρ = m ÷ V = 2,7 g/mL", "Le volume est faux", "L'unité doit être en grammes", "Il n'y a pas d'erreur"], bonne: 0, explication: "ρ = m ÷ V = 54 ÷ 20 = 2,7 g/mL (c'est de l'aluminium)." },
+            { question: "Copie de Kenzo : « m = 46 g ; V = 50 mL ; ρ = 46 ÷ 50 = 0,92. » Que manque-t-il ?", reponses: ["L'unité : 0,92 g/mL", "Le calcul est faux", "Il fallait multiplier", "Il manque la température"], bonne: 0, explication: "Un résultat sans unité n'a pas de sens : ρ = 0,92 g/mL." },
+            { question: "Copie d'Inès : « Le niveau passe de 40 mL à 46 mL. Le volume de la pierre est 46 mL. » Où est l'erreur ?", reponses: ["Le volume de la pierre est 46 − 40 = 6 mL", "Il faut additionner : 86 mL", "Le volume est 40 mL", "Il n'y a pas d'erreur"], bonne: 0, explication: "Le volume de la pierre est la différence : V = V₂ − V₁ = 6 mL (6 cm³)." },
+            { question: "Copie de Yanis : « ρ = 0,8 g/cm³ pour la planche, donc elle coule dans l'eau. » Où est l'erreur ?", reponses: ["0,8 est plus petit que 1 : la planche flotte", "Il fallait l'unité kg", "0,8 est plus grand que 1", "Il n'y a pas d'erreur"], bonne: 0, explication: "Un objet moins dense que l'eau (1 g/cm³) flotte." },
+            { question: "Copie de Maëlle : « Je cherche la masse de 2 L d'huile (ρ = 0,92 kg/L) : m = 2 ÷ 0,92 = 2,17 kg. » Où est l'erreur ?", reponses: ["Pour une masse, il faut multiplier : m = 0,92 × 2 = 1,84 kg", "Il faut diviser 0,92 par 2", "L'unité doit être en L", "Il n'y a pas d'erreur"], bonne: 0, explication: "m = ρ × V = 0,92 × 2 = 1,84 kg." },
+            { question: "Copie de Noa : « J'ai posé l'éprouvette remplie d'eau sur la balance, sans tare : 168,5 g. Donc 50 mL d'eau ont une masse de 168,5 g. » Où est l'erreur ?", reponses: ["La balance compte aussi l'éprouvette : il fallait tarer l'éprouvette vide", "50 mL d'eau ont une masse de 500 g", "Il fallait mesurer en litres", "Il n'y a pas d'erreur"], bonne: 0, explication: "Sans tare, on pèse l'éprouvette ET l'eau. Il faut tarer l'éprouvette vide, ou retirer sa masse." },
+            { question: "Copie de Samuel : « ρ(eau) = 1 g/mL, donc 1 L d'eau a une masse de 1 g. » Où est l'erreur ?", reponses: ["1 L = 1 000 mL, donc 1 L d'eau a une masse de 1 000 g = 1 kg", "1 L d'eau a une masse de 10 g", "ρ(eau) vaut 10 g/mL", "Il n'y a pas d'erreur"], bonne: 0, explication: "1 mL d'eau a une masse de 1 g ; 1 L = 1 000 mL a donc une masse de 1 000 g." }
+          ] },
+          { id: "qcm", type: "qcm-tableur", titre: "Défi QCM", desc: "8 questions tirées au hasard", n: 8 },
+          { id: "brevet1", type: "brevet", titre: "Exercice type brevet n° 1", desc: "Le lingot de la crique",
+            documents: [
+              { titre: "Document 1 : la découverte", texte: "En nettoyant le carbet familial, près d'une crique de l'Ouest guyanais, Maëlys trouve un petit lingot doré. Son grand-père dit que c'est de l'or. Sa cousine pense que c'est du laiton, un alliage doré bien moins cher." },
+              { titre: "Document 2 : les mesures au collège", texte: "Au laboratoire, Maëlys mesure la masse du lingot : m = 170 g. Elle verse 50 mL d'eau dans une éprouvette, puis plonge le lingot : le niveau monte jusqu'à 70 mL." },
+              { titre: "Document 3 : données", texte: "Masses volumiques : or 19,3 g/cm³ ; laiton 8,5 g/cm³ ; fer 7,9 g/cm³ ; aluminium 2,7 g/cm³. Rappel : 1 mL = 1 cm³." }
+            ],
+            questions: [
+              { type: "qcm", points: 1, question: "Avec quel instrument Maëlys a-t-elle mesuré la masse du lingot ?", reponses: ["Une balance", "L'éprouvette graduée", "Un thermomètre", "Une règle"], bonne: 0, explication: "La masse se mesure avec une balance." },
+              { type: "qcm", points: 2, question: "Quel est le volume du lingot ?", reponses: ["20 cm³", "70 cm³", "50 cm³", "120 cm³"], bonne: 0, explication: "V = V₂ − V₁ = 70 − 50 = 20 mL = 20 cm³." },
+              { type: "qcm", points: 2, question: "Calcule la masse volumique du lingot.", reponses: ["8,5 g/cm³", "0,12 g/cm³", "3 400 g/cm³", "19,3 g/cm³"], bonne: 0, explication: "ρ = m ÷ V = 170 ÷ 20 = 8,5 g/cm³." },
+              { type: "multi", points: 2, consigne: "Cocher toutes les affirmations exactes.", options: [["Le lingot est en laiton.", true], ["Le lingot est en or.", false], ["Un lingot d'or de 20 cm³ aurait une masse de 386 g.", true], ["La couleur suffit pour reconnaître l'or.", false]],
+                explication: "8,5 g/cm³ : c'est du laiton. Un lingot d'or de même volume aurait une masse m = 19,3 × 20 = 386 g. La couleur ne suffit pas : il faut mesurer la masse volumique." },
+              { type: "redaction", points: 3, consigne: "Maëlys doit expliquer à son grand-père, en quelques phrases, pourquoi le lingot n'est pas en or. Rédige son explication.",
+                criteres: ["J'ai donné le volume (20 cm³) et la masse (170 g) du lingot.", "J'ai calculé ρ = m ÷ V = 8,5 g/cm³, avec l'unité.", "J'ai comparé avec l'or (19,3 g/cm³) et conclu : c'est du laiton."],
+                elements: "Le lingot a une masse de 170 g et un volume de 70 − 50 = 20 cm³. Sa masse volumique est ρ = m ÷ V = 170 ÷ 20 = 8,5 g/cm³. L'or a une masse volumique de 19,3 g/cm³ : ce n'est donc pas de l'or. 8,5 g/cm³ correspond au laiton." }
+            ] },
+          { id: "brevet", type: "brevet", titre: "Exercice type brevet n° 2", desc: "Les réservoirs d'Ariane 6 à Kourou",
+            documents: [
+              { titre: "Document 1 : le carburant de la fusée", texte: "Au Centre spatial guyanais de Kourou, l'étage principal d'Ariane 6 est rempli juste avant le lancement de deux liquides très froids : de l'hydrogène liquide et de l'oxygène liquide. Ils brûlent ensemble dans le moteur Vulcain." },
+              { titre: "Document 2 : les réservoirs (valeurs arrondies)", texte: "Réservoir d'hydrogène liquide : 400 000 L. Réservoir d'oxygène liquide : 120 000 L. Masses volumiques : hydrogène liquide 0,07 kg/L ; oxygène liquide 1,14 kg/L ; eau 1 kg/L." }
+            ],
+            questions: [
+              { type: "qcm", points: 1, question: "Lequel de ces liquides est le moins dense ?", reponses: ["L'hydrogène liquide", "L'oxygène liquide", "L'eau", "Ils ont tous la même masse volumique"], bonne: 0, explication: "0,07 kg/L est la plus petite valeur : l'hydrogène liquide est 14 fois moins dense que l'eau." },
+              { type: "qcm", points: 2, question: "Calcule la masse d'hydrogène liquide dans son réservoir.", reponses: ["28 000 kg (28 tonnes)", "5 714 286 kg", "400 000 kg", "2 800 kg"], bonne: 0, explication: "m = ρ × V = 0,07 × 400 000 = 28 000 kg, soit 28 tonnes." },
+              { type: "qcm", points: 2, question: "Calcule la masse d'oxygène liquide dans son réservoir.", reponses: ["136 800 kg (environ 137 tonnes)", "105 263 kg", "120 000 kg", "13 680 kg"], bonne: 0, explication: "m = ρ × V = 1,14 × 120 000 = 136 800 kg ≈ 137 tonnes." },
+              { type: "multi", points: 2, consigne: "Cocher toutes les affirmations exactes.", options: [["Le réservoir d'hydrogène est le plus grand, mais c'est lui qui contient la plus petite masse.", true], ["Une goutte d'oxygène liquide coulerait dans de l'eau.", true], ["L'hydrogène liquide flotterait sur l'eau.", true], ["Les deux réservoirs contiennent la même masse.", false]],
+                explication: "28 t d'hydrogène contre 137 t d'oxygène. L'oxygène liquide (1,14) est plus dense que l'eau (1) ; l'hydrogène liquide (0,07) est beaucoup moins dense." },
+              { type: "redaction", points: 3, consigne: "Un camarade affirme : « Le plus grand réservoir contient forcément le plus de carburant en masse. » Expliquer, en quelques phrases et avec des calculs, pourquoi il a tort.",
+                criteres: ["J'ai calculé les deux masses (28 000 kg et 136 800 kg) avec m = ρ × V.", "J'ai comparé : le grand réservoir (hydrogène) contient la plus petite masse.", "J'ai expliqué que la masse dépend aussi de la masse volumique, pas seulement du volume."],
+                elements: "Masse d'hydrogène : m = 0,07 × 400 000 = 28 000 kg. Masse d'oxygène : m = 1,14 × 120 000 = 136 800 kg. Le réservoir d'hydrogène est plus de trois fois plus grand, mais il contient presque cinq fois moins de masse : l'hydrogène liquide est très peu dense. La masse dépend du volume ET de la masse volumique (m = ρ × V)." }
+            ] }
+        ]
       }
     ],
     "2nde": [
@@ -6244,6 +6868,198 @@ const QUESTIONS = [
   "bonne": 1,
   "explication": "Les raies du spectre de l'étoile sont la signature des éléments présents dans son atmosphère.",
   "guyane": false
+ },
+ {
+  "id": "M4M-01",
+  "chapitre": "La masse volumique",
+  "notion": "Formule",
+  "difficulte": 1,
+  "question": "Quelle formule permet de calculer la masse volumique ρ ?",
+  "reponses": [
+   "ρ = m ÷ V",
+   "ρ = V ÷ m",
+   "ρ = m × V",
+   "ρ = m − V"
+  ],
+  "bonne": 0,
+  "explication": "On divise la masse par le volume.",
+  "guyane": false
+ },
+ {
+  "id": "M4M-02",
+  "chapitre": "La masse volumique",
+  "notion": "Unité",
+  "difficulte": 1,
+  "question": "Quelle unité convient pour une masse volumique ?",
+  "reponses": [
+   "g/mL",
+   "g",
+   "mL",
+   "kg × L"
+  ],
+  "bonne": 0,
+  "explication": "Une masse divisée par un volume : g/mL (ou g/cm³, kg/L).",
+  "guyane": false
+ },
+ {
+  "id": "M4M-03",
+  "chapitre": "La masse volumique",
+  "notion": "Eau",
+  "difficulte": 1,
+  "question": "Quelle est la masse volumique de l'eau liquide ?",
+  "reponses": [
+   "1 g/mL",
+   "10 g/mL",
+   "0,1 g/mL",
+   "100 g/mL"
+  ],
+  "bonne": 0,
+  "explication": "1 mL d'eau a une masse de 1 g : ρ(eau) = 1 g/mL = 1 kg/L.",
+  "guyane": false
+ },
+ {
+  "id": "M4M-04",
+  "chapitre": "La masse volumique",
+  "notion": "Calcul de ρ",
+  "difficulte": 2,
+  "question": "Un objet a une masse de 81 g et un volume de 30 cm³. Quelle est sa masse volumique ?",
+  "reponses": [
+   "2,7 g/cm³",
+   "0,37 g/cm³",
+   "2 430 g/cm³",
+   "51 g/cm³"
+  ],
+  "bonne": 0,
+  "explication": "ρ = m ÷ V = 81 ÷ 30 = 2,7 g/cm³ (c'est de l'aluminium).",
+  "guyane": false
+ },
+ {
+  "id": "M4M-05",
+  "chapitre": "La masse volumique",
+  "notion": "Calcul de m",
+  "difficulte": 2,
+  "question": "Quelle est la masse de 3 L d'huile (ρ = 0,92 kg/L) ?",
+  "reponses": [
+   "2,76 kg",
+   "3,26 kg",
+   "0,31 kg",
+   "3,92 kg"
+  ],
+  "bonne": 0,
+  "explication": "m = ρ × V = 0,92 × 3 = 2,76 kg.",
+  "guyane": false
+ },
+ {
+  "id": "M4M-06",
+  "chapitre": "La masse volumique",
+  "notion": "Calcul de V",
+  "difficulte": 2,
+  "question": "Une pépite de pyrite a une masse de 40 g (ρ = 5,0 g/cm³). Quel est son volume ?",
+  "reponses": [
+   "8 cm³",
+   "200 cm³",
+   "45 cm³",
+   "0,125 cm³"
+  ],
+  "bonne": 0,
+  "explication": "V = m ÷ ρ = 40 ÷ 5,0 = 8 cm³.",
+  "guyane": true
+ },
+ {
+  "id": "M4M-07",
+  "chapitre": "La masse volumique",
+  "notion": "Volume d'un solide",
+  "difficulte": 1,
+  "question": "Le niveau d'eau d'une éprouvette passe de 60 mL à 72 mL quand on y plonge un caillou. Quel est le volume du caillou ?",
+  "reponses": [
+   "12 cm³",
+   "72 cm³",
+   "132 cm³",
+   "60 cm³"
+  ],
+  "bonne": 0,
+  "explication": "V = V₂ − V₁ = 72 − 60 = 12 mL = 12 cm³.",
+  "guyane": false
+ },
+ {
+  "id": "M4M-08",
+  "chapitre": "La masse volumique",
+  "notion": "Flotter",
+  "difficulte": 1,
+  "question": "Pourquoi une pirogue en bois flotte-t-elle sur le Maroni ?",
+  "reponses": [
+   "Le bois est moins dense que l'eau",
+   "Le bois est plus dense que l'eau",
+   "Le bois est léger, quelle que soit sa taille",
+   "L'eau du fleuve est salée"
+  ],
+  "bonne": 0,
+  "explication": "Le bois d'angélique (0,8 g/cm³) est moins dense que l'eau (1 g/cm³).",
+  "guyane": true
+ },
+ {
+  "id": "M4M-09",
+  "chapitre": "La masse volumique",
+  "notion": "Liquides",
+  "difficulte": 2,
+  "question": "On verse de l'huile, de l'eau et du sirop de canne dans un verre. Dans quel ordre se rangent-ils, de haut en bas ?",
+  "reponses": [
+   "Huile, eau, sirop",
+   "Sirop, eau, huile",
+   "Eau, huile, sirop",
+   "Ils se mélangent tous"
+  ],
+  "bonne": 0,
+  "explication": "Le moins dense (huile 0,92) en haut, le plus dense (sirop 1,3) au fond.",
+  "guyane": false
+ },
+ {
+  "id": "M4M-10",
+  "chapitre": "La masse volumique",
+  "notion": "Identifier",
+  "difficulte": 2,
+  "question": "50 mL d'un liquide ont une masse de 39,5 g. Ce liquide est…",
+  "reponses": [
+   "de l'alcool (0,79 g/mL)",
+   "de l'eau (1 g/mL)",
+   "de l'huile (0,92 g/mL)",
+   "du sirop de canne (1,3 g/mL)"
+  ],
+  "bonne": 0,
+  "explication": "ρ = 39,5 ÷ 50 = 0,79 g/mL : c'est de l'alcool.",
+  "guyane": false
+ },
+ {
+  "id": "M4M-11",
+  "chapitre": "La masse volumique",
+  "notion": "Température",
+  "difficulte": 2,
+  "question": "Que devient la masse volumique de l'eau quand on la chauffe ?",
+  "reponses": [
+   "Elle diminue un peu",
+   "Elle augmente beaucoup",
+   "Elle ne change jamais",
+   "Elle devient nulle"
+  ],
+  "bonne": 0,
+  "explication": "Le volume augmente un peu et la masse ne change pas : ρ diminue.",
+  "guyane": false
+ },
+ {
+  "id": "M4M-12",
+  "chapitre": "La masse volumique",
+  "notion": "Glace",
+  "difficulte": 1,
+  "question": "Pourquoi un iceberg flotte-t-il sur la mer ?",
+  "reponses": [
+   "La glace est moins dense que l'eau liquide",
+   "La glace est plus dense que l'eau",
+   "L'iceberg est creux",
+   "Le vent le pousse"
+  ],
+  "bonne": 0,
+  "explication": "La glace (0,92 g/cm³) est moins dense que l'eau de mer (1,03 g/cm³).",
+  "guyane": false
  }
 ];
 
@@ -6269,6 +7085,7 @@ const QUESTIONS = [
     spectre: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 4l6 14H4z"/><path d="M1 13l6-1.5"/><path d="M14 10.5l8-3M14.6 12.5H22M15.2 14.5l6.8 3"/></svg>',
     diffraction: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 4v6M3 14v6"/><path d="M8 12a4 4 0 0 0 0-.01M8 8a6 6 0 0 1 0 8M11 5a9 9 0 0 1 0 14M14 2.5a12 12 0 0 1 0 19"/></svg>',
     titrages: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 3h6M10 3v6l-5 10a2 2 0 002 3h10a2 2 0 002-3l-5-10V3M7 15h10"/></svg>',
+    masse: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5.5 21l2-11h9l2 11z"/><circle cx="12" cy="6" r="2.6"/><path d="M10.5 15.5h3"/></svg>',
     check: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12l5 5 9-10"/></svg>',
     outils: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 17L17 3l4 4L7 21H3z"/><path d="M7 13l2 2M10 10l2 2M13 7l2 2"/></svg>'
   };
@@ -6476,7 +7293,7 @@ const QUESTIONS = [
   // la garde aussi un moment en cache. On compare donc la version de cette page avec le petit fichier version.json
   // publié en même temps : à l'ouverture et à chaque retour sur l'onglet (au plus une fois par minute).
   // Si une version plus récente est en ligne, un bandeau propose de mettre à jour. La progression (pseudo, points…) est conservée.
-  const VERSION_APPLI = "2026-11-09 15:30:33"; // remplacée par la date d'assemblage (assembler.py)
+  const VERSION_APPLI = "2026-11-09 21:55:53"; // remplacée par la date d'assemblage (assembler.py)
   let derniereVerif = 0;
   function verifierMaj() {
     if (!/^https?:$/.test(location.protocol) || VERSION_APPLI.indexOf("__") === 0) return; // fichier ouvert sur l'ordinateur : rien à vérifier
@@ -7227,7 +8044,7 @@ const QUESTIONS = [
       if (b.t === "h") return `<h3>${esc(b.texte)}</h3>`;
       if (b.t === "p") return `<p>${b.texte}</p>`;
       if (b.t === "liste") return `<ul>${b.items.map((i) => `<li>${i}</li>`).join("")}</ul>`;
-      if (b.t === "tableau") return `<div class="table-wrap"><table><thead><tr>${b.entetes.map((e) => `<th>${esc(e)}</th>`).join("")}</tr></thead><tbody>${b.lignes.map((l) => `<tr>${l.map((c) => `<td>${esc(c)}</td>`).join("")}</tr>`).join("")}</tbody></table></div>`;
+      if (b.t === "tableau") return `<div class="table-wrap"><table${b.compact ? ' class="mes-table"' : ""}><thead><tr>${b.entetes.map((e) => `<th>${esc(e)}</th>`).join("")}</tr></thead><tbody>${b.lignes.map((l) => `<tr>${l.map((c) => `<td>${esc(c)}</td>`).join("")}</tr>`).join("")}</tbody></table></div>`;
       if (b.t === "methode") return `<div class="methode"><strong class="lbl">${esc(b.titre || "Méthode")}</strong><ul>${b.items.map((i) => `<li>${i}</li>`).join("")}</ul></div>`;
       if (b.t === "chaine") return `<div class="stack">${b.legende ? `<p class="small muted">${esc(b.legende)}</p>` : ""}${legendeChaine}${chaineHTML(b.elements, { perte: b.perte })}</div>`;
       if (b.t === "retenir") return `<div class="retenir"><strong class="lbl">À retenir</strong><ul>${b.items.map((i) => `<li>${i}</li>`).join("")}</ul></div>`;
@@ -7349,6 +8166,7 @@ const QUESTIONS = [
       }
       decor.setAttribute("viewBox", `0 0 ${W} ${H}`);
       decor.innerHTML = s;
+      if (typeof v2Ilet === "function") v2Ilet(niv, ch, { monde, decor, pts, large, W, H }); // V2 de test seulement (dossier appli_v2) : l'îlet du test
     }
     disposer();
     const ro = new ResizeObserver(() => { if (!document.body.contains(monde)) { ro.disconnect(); return; } disposer(); });
@@ -8438,6 +9256,600 @@ const QUESTIONS = [
       compteurs: () => { const jm = objet("joulemetre"); return { Ein: S.Ein, Ej: jm ? jm.E : 0 }; }
     };
   }
+  // ======================= TP de 4ème « La masse volumique » : balance électronique et éprouvette graduée =======================
+  // Une paillasse « de pesée » :
+  //  - une balance (précision 0,1 g) avec ses touches TARE et NOTER ;
+  //  - une éprouvette graduée de 100 mL (masse à vide 118,6 g), à poser sur le plateau ou à côté ;
+  //  - des flacons (eau, liquide mystère) : on glisse un flacon sur l'éprouvette, puis on verse avec les boutons
+  //    « Verser 10 mL », « Verser 1 mL » (compte-gouttes), « Retirer 1 mL » ;
+  //  - une pierre dorée (objectif 3) que l'on pèse puis que l'on plonge dans l'eau ;
+  //  - un bécher d'eau (objectif 4) : on y verse le liquide mystère pour voir s'il reste au-dessus ou coule.
+  // Sous la paillasse : la LOUPE sur les graduations (lecture au bas du ménisque) et les boutons pour verser.
+  // Événements envoyés au TP (08_tp.js → MASSE.evenement) : "etat" (4 fois par seconde), "noterM" (touche NOTER de la balance),
+  // "noterV" (NOTER sous la loupe, avec la lecture de l'élève), "verseBecher". La réponse { ok, txt } s'affiche sous la paillasse.
+  // Les masses volumiques viennent du module MASSEVOL (03_contenu.html).
+  const MASSE = (() => {
+    const W = 330, H = 346, X0 = 10, Y0 = 12, X1 = 320, Y1 = 336;
+    const f1 = (v) => (+v).toFixed(1);
+    const fr = MASSEVOL.fr;
+    const M_EPR = 118.6, VMAX = 100;
+    const EW = 40, EH = 168, YZ = 146, PX = 1.3;       // éprouvette : boîte, niveau du zéro, pixels par mL
+    const yNiv = (v) => YZ - v * PX;
+    const PL = { x: 32, y: 236, w: 116, h: 10 }, CXP = 90; // plateau de la balance
+    const BAL = { x: 18, y: 246, w: 144, h: 84 };
+    const LCD = { x: 32, y: 256, w: 116, h: 26 }, BT = { tare: { x: 32, y: 292, w: 54, h: 30 }, noter: { x: 94, y: 292, w: 54, h: 30 } };
+    const EPR_LIBRE = { x: 196, y: 38 }, EPR_PL = { x: CXP - EW / 2, y: PL.y - EH };
+    const FW = 30, FH = 58, PW = 26, PH = 18;
+    const BEC = { x: 240, y: 92, w: 66, h: 76 };
+    const LIQ = {
+      eau: { nom: "l'eau", etiq: "Eau", rho: 0.998, coul: "#3B8FD9", op: 0.5 },
+      huile: { nom: "l'huile de tournesol", etiq: "Huile", rho: 0.92, coul: "#E8C547", op: 0.85 },
+      sirop: { nom: "le sirop de canne", etiq: "Sirop", rho: 1.3, coul: "#9C4A1A", op: 0.85 },
+      miel: { nom: "le miel", etiq: "Miel", rho: 1.42, coul: "#D99A1E", op: 0.9 }
+    };
+    const COUL_MYST = "#8E5BC8";
+    const MONTAGES = { m1: { flacons: ["eau"] }, m2: { flacons: ["eau"] }, m3: { flacons: ["eau"], pierre: true, noterV: true }, m4: { flacons: ["mystere"], becher: true } };
+    const MYSTERES = ["huile", "sirop", "miel"];
+    const ROLE = {
+      balance: "La balance électronique, précise à 0,1 g. TARE remet l'affichage à zéro avec ce qui est posé dessus ; NOTER relève la mesure.",
+      eprouvette: "Une éprouvette graduée de 100 mL (1 graduation = 1 mL). La glisser sur le plateau de la balance, ou la laisser à côté. Lire le volume sur la loupe, sous la paillasse.",
+      pierre: "Une pierre dorée trouvée près d'une crique. Est-ce de l'or ? La peser seule sur le plateau, puis la glisser dans l'eau de l'éprouvette.",
+      becher: "Un bécher d'eau colorée. Y glisser le flacon du liquide mystère : le liquide reste-t-il au-dessus ou coule-t-il ?",
+      flacon: "Un flacon de liquide. Le glisser sur l'éprouvette pour verser."
+    };
+
+    // Tirages gardés avec le TP de l'élève (liquide mystère, pierre)
+    function options(rep, sauver) {
+      let neuf = false;
+      if (!rep.mvMystere) { rep.mvMystere = MYSTERES[Math.floor(Math.random() * MYSTERES.length)]; neuf = true; }
+      if (!rep.mvPierre) { const V = [4, 5, 6, 8][Math.floor(Math.random() * 4)]; rep.mvPierre = { V, m: Math.round((5 * V + (Math.random() * 0.8 - 0.4)) * 10) / 10 }; neuf = true; }
+      if (neuf) sauver();
+      return { mystere: rep.mvMystere, pierre: rep.mvPierre };
+    }
+    const liqDe = (cle, opts) => cle === "mystere" ? Object.assign({}, LIQ[opts.mystere || "sirop"], { nom: "le liquide mystère", etiq: "?", coul: COUL_MYST, op: 0.8 }) : LIQ[cle];
+
+    // ======================= La paillasse =======================
+    function banc(el, surEvt) {
+      el.innerHTML = `<div class="bench mv">
+          <svg class="bench-svg" viewBox="0 0 ${W} ${H}" role="group" aria-label="Paillasse : une balance, une éprouvette graduée et des flacons. Glisser les objets, toucher les touches de la balance.">
+            <rect x="3" y="4" width="${W - 6}" height="${H - 8}" rx="14" class="b-table"/>
+            <rect x="${X0 - 3}" y="${Y0 - 3}" width="${X1 - X0 + 6}" height="${Y1 - Y0 + 6}" rx="10" class="b-zone"/>
+            <g class="mv-dessin"></g><g class="mv-bulles" pointer-events="none"></g>
+          </svg>
+          <p class="bench-hint">Glisser les objets. Glisser un flacon sur l'éprouvette pour verser. Toucher un objet pour lire son rôle.</p>
+          <div class="mv-sous">
+            <div class="mv-loupe"><div class="mv-l-t"><strong class="small">Loupe sur l'éprouvette</strong><span class="small muted">lire au bas du ménisque</span></div><div class="mv-l-f"></div><div class="mv-l-n"></div></div>
+            <div class="mv-verse"><p class="small mv-main"></p><div class="c-btns">
+                <button class="btn btn-primary btn-sm" data-c="v10">Verser 10 mL</button><button class="btn btn-primary btn-sm" data-c="v1">Verser 1 mL</button>
+                <button class="btn btn-ghost btn-sm" data-c="r1">Retirer 1 mL</button><button class="btn btn-ghost btn-sm" data-c="reposer">Reposer le flacon</button></div>
+              <button class="btn-link" data-c="vider">Vider et rincer l'éprouvette</button></div>
+            <p class="small mv-statut" aria-live="polite"></p>
+          </div>
+        </div>`;
+      const bench = el.querySelector(".bench"), svg = el.querySelector("svg"), gD = el.querySelector(".mv-dessin"), gB = el.querySelector(".mv-bulles");
+      const zLoupe = el.querySelector(".mv-l-f"), zNoter = el.querySelector(".mv-l-n"), zMain = el.querySelector(".mv-main"), zStatut = el.querySelector(".mv-statut");
+      let S = null, M = null, opts = {}, geste = null;
+
+      function charger(montage, o) {
+        M = montage; opts = o || {};
+        S = { t: 0, tare: 0, aff: 0, bulle: null, hoche: null, verse: null, flux: 0, lecture: false,
+          epr: { x: EPR_LIBRE.x, y: EPR_LIBRE.y, place: "libre", V: 0, vis: 0, liq: null },
+          pierre: M.pierre ? { x: 200, y: 304, place: "libre" } : null,
+          flacons: M.flacons.map((c, k) => ({ id: "f" + k, liq: c, x: 276 - k * 40, y: 268, x0: 276 - k * 40, y0: 268 })),
+          becher: M.becher ? { couches: [] } : null };
+        S.aff = 0;
+        zStatut.textContent = ""; zStatut.className = "small mv-statut";
+        dessiner(); majSous(true);
+      }
+      const pierreDans = () => !!(S.pierre && S.pierre.place === "epr");
+      const niveau = () => S.epr.V + (pierreDans() ? opts.pierre.V : 0);
+      const surPlateau = () => S.epr.place === "plateau" ? "eprouvette" : S.pierre && S.pierre.place === "plateau" ? "pierre" : null;
+      function brut() {
+        const p = surPlateau();
+        if (p === "eprouvette") return M_EPR + (S.epr.liq ? liqDe(S.epr.liq, opts).rho * S.epr.V : 0) + (pierreDans() ? opts.pierre.m : 0);
+        if (p === "pierre") return opts.pierre.m;
+        return 0;
+      }
+      const net = () => Math.round((brut() - S.tare) * 10) / 10;
+      const stable = () => Math.abs(S.aff - net()) < 0.05 && Math.abs(S.epr.vis - niveau()) < 0.05 && !(S.verse && S.verse.anim);
+
+      // ---------- Bulles et signaux ----------
+      function bulle(texte, cible, duree, genre) {
+        S.bulle = { texte, cible, fin: S.t + (duree || 3.2) };
+        if (genre) signalPaillasse(bench, genre);
+        if (genre === "ko" && cible) S.hoche = { id: cible, t0: performance.now() };
+        dessinerBulle();
+      }
+      function boite(id) {
+        if (id === "epr") return { x: S.epr.x, y: S.epr.y, w: EW, h: EH };
+        if (id === "pierre") return { x: S.pierre.x, y: S.pierre.y, w: PW, h: PH };
+        if (id === "becher") return BEC;
+        if (id === "balance") return BAL;
+        const f = S.flacons.find((x) => x.id === id); return f ? { x: f.x, y: f.y, w: FW, h: FH } : null;
+      }
+      function dessinerBulle() {
+        const b = S.bulle;
+        if (!b || S.t > b.fin) { gB.innerHTML = ""; return; }
+        const mots = b.texte.split(" "), lignes = [""];
+        mots.forEach((m) => { if ((lignes[lignes.length - 1] + " " + m).length > 36) lignes.push(m); else lignes[lignes.length - 1] = (lignes[lignes.length - 1] + " " + m).trim(); });
+        const w = 212, h = 12 + lignes.length * 13, o = b.cible ? boite(b.cible) : null;
+        let x = o ? o.x + o.w / 2 - w / 2 : W / 2 - w / 2, y = o ? o.y - h - 8 : Y0 + 8;
+        if (y < Y0) y = Math.min(Y1 - h, (o ? o.y + Math.min(o.h, 60) : 0) + 10);
+        x = Math.max(X0, Math.min(X1 - w, x));
+        gB.innerHTML = `<g transform="translate(${f1(x)} ${f1(y)})"><rect width="${w}" height="${h}" rx="8" class="b-bulle"/>${lignes.map((l, i) => `<text x="9" y="${16 + i * 13}" class="b-bulle-t">${esc(l)}</text>`).join("")}</g>`;
+      }
+
+      // ---------- Dessin ----------
+      function dessiner() {
+        let s = "";
+        s += dessinBalance();
+        if (S.becher) s += dessinBecher();
+        if (S.pierre && S.pierre.place !== "epr") s += dessinPierre();
+        s += dessinEprouvette();
+        S.flacons.forEach((f) => { s += dessinFlacon(f); });
+        s += `<g class="b-reset" data-act="reset" transform="translate(${X1 - 22} ${Y0 + 4})" role="button" aria-label="Remettre la paillasse comme au départ"><rect width="18" height="18" rx="5"/><path d="M5 9a4 4 0 104-4H6M6 3v2.5h2.5"/></g>`;
+        gD.innerHTML = s;
+        dessinerBulle();
+      }
+      const dh = (id) => decalHoche(S.hoche, id);
+      function dessinBalance() {
+        const v = S.aff, txt = (Math.abs(v) < 0.05 ? 0 : v).toFixed(1);
+        const bouton = (b, k, t, l) => `<g class="mv-btn" data-act="${k}" role="button" aria-label="${l}"><rect x="${b.x}" y="${b.y}" width="${b.w}" height="${b.h}" rx="7"/><text x="${b.x + b.w / 2}" y="${b.y + 19}" text-anchor="middle">${t}</text></g>`;
+        return `<g data-obj="balance" transform="translate(${f1(dh("balance"))} 0)"><rect x="${BAL.x}" y="${BAL.y}" width="${BAL.w}" height="${BAL.h}" rx="10" class="mv-bal"/>
+            <rect x="${CXP - 30}" y="${PL.y + PL.h - 1}" width="60" height="4" class="b-metal"/>
+            <rect x="${PL.x}" y="${PL.y}" width="${PL.w}" height="${PL.h}" rx="3" class="mv-plat"/>
+            <rect x="${LCD.x}" y="${LCD.y}" width="${LCD.w}" height="${LCD.h}" rx="4" class="b-lcd"/>
+            <text x="${LCD.x + LCD.w - 22}" y="${LCD.y + 19}" text-anchor="end" class="b-lcd-t">${txt}</text><text x="${LCD.x + LCD.w - 8}" y="${LCD.y + 19}" text-anchor="end" class="b-lcd-m">g</text>
+            ${stable() ? `<text x="${LCD.x + 6}" y="${LCD.y + 11}" class="b-lcd-m">●</text>` : ""}</g>
+          ${bouton(BT.tare, "tare", "TARE", "Touche TARE : remettre l'affichage à zéro")}${bouton(BT.noter, "noter", "NOTER", "Touche NOTER : relever la masse")}`;
+      }
+      function corpsLiquide(x, yTop, yBas, liq, lg) {
+        const L = liqDe(liq, opts);
+        return `<path d="M${x} ${f1(yTop - 2)}Q${x + lg / 2} ${f1(yTop + 3)} ${x + lg} ${f1(yTop - 2)}V${f1(yBas)}H${x}Z" fill="${L.coul}" opacity="${L.op}"/>`;
+      }
+      function dessinEprouvette() {
+        const E = S.epr, x = E.x + dh("epr"), y = E.y, tenu = geste && geste.o === "epr";
+        let s = `<g class="mv-obj${tenu ? " tenu" : ""}" data-obj="epr" transform="translate(${f1(x)} ${f1(y)})"><rect x="-8" y="-8" width="${EW + 16}" height="${EH + 12}" fill="transparent"/>`;
+        // liquide (et la pierre au fond)
+        const nv = E.vis;
+        if (nv > 0.05 && E.liq) s += corpsLiquide(10, yNiv(nv), YZ, E.liq, 20);
+        if (pierreDans()) s += `<path d="M12 ${YZ}l2-7 6-3 6 2 2 8z" class="mv-pierre"/>`;
+        // flux qui tombe du flacon
+        if (S.verse && S.verse.cible === "epr" && S.flux > 0) { const L = liqDe(S.verse.f.liq, opts); s += `<rect x="18.5" y="-14" width="3" height="${f1(Math.max(0, yNiv(nv) + 14))}" fill="${L.coul}" opacity=".9" rx="1.5"/>`; }
+        // verre
+        s += `<path d="M10 4V${YZ}H30V4" class="c-verre-o"/><path d="M6 4H34M7 4Q8 0 11 1" class="c-fin"/>
+          <rect x="10" y="${YZ}" width="20" height="6" class="mv-verre-f"/><rect x="15" y="${YZ + 6}" width="10" height="6" class="mv-verre-f"/><rect x="1" y="${YZ + 12}" width="38" height="${EH - YZ - 12}" rx="3" class="mv-verre-f"/>`;
+        for (let v = 5; v <= VMAX; v += 5) {
+          const yy = f1(yNiv(v)), lab = v % 20 === 0;
+          s += `<line x1="${lab ? 20 : v % 10 === 0 ? 23 : 25}" x2="30" y1="${yy}" y2="${yy}" class="c-grad"/>`;
+          if (lab) s += `<text x="17" y="${f1(+yy + 2.5)}" text-anchor="end" class="c-grad-t">${v}</text>`;
+        }
+        s += `<text x="${EW / 2}" y="${EH - 3}" text-anchor="middle" class="mv-petit">100 mL</text>`;
+        if (E.place === "libre" && !tenu) s += `<text x="${EW / 2}" y="${EH + 11}" text-anchor="middle" class="mv-nom">Éprouvette</text>`;
+        return s + `</g>`;
+      }
+      function dessinFlacon(f) {
+        const L = liqDe(f.liq, opts), tenu = geste && geste.o === f.id;
+        let tr = `translate(${f1(f.x + dh(f.id))} ${f1(f.y)})`;
+        if (S.verse && S.verse.f === f) {
+          const c = S.verse.cible === "epr" ? { x: S.epr.x + 20, y: S.epr.y } : { x: BEC.x + BEC.w / 2, y: BEC.y };
+          tr = `translate(${f1(c.x - 2)} ${f1(c.y - 18)}) rotate(${S.verse.cible === "epr" ? -118 : 118}) translate(-${FW / 2} -2)`;
+        }
+        const nom = !tenu && !(S.verse && S.verse.f === f) ? `<text x="${FW / 2}" y="${FH + 11}" text-anchor="middle" class="mv-nom">${f.liq === "mystere" ? "Liquide mystère" : L.etiq}</text>` : "";
+        return `<g class="mv-obj${tenu ? " tenu" : ""}" data-obj="${f.id}" transform="${tr}"><rect x="-8" y="-6" width="${FW + 16}" height="${FH + 12}" fill="transparent"/>
+          <path d="M11 0H19V10L28 20V${FH - 3}Q28 ${FH} 25 ${FH}H5Q2 ${FH} 2 ${FH - 3}V20L11 10Z" class="c-verre"/>
+          <path d="M3 30H27V${FH - 3}Q27 ${FH - 1} 25 ${FH - 1}H5Q3 ${FH - 1} 3 ${FH - 3}Z" fill="${L.coul}" opacity="${L.op}"/>
+          <path d="M11 0H19V10L28 20V${FH - 3}Q28 ${FH} 25 ${FH}H5Q2 ${FH} 2 ${FH - 3}V20L11 10Z" class="c-verre-o"/>
+          <rect x="5" y="34" width="20" height="13" rx="2" class="c-etiq"/><text x="15" y="44" text-anchor="middle" class="c-etiq-t">${f.liq === "mystere" ? "?" : L.etiq}</text>${nom}</g>`;
+      }
+      function dessinPierre() {
+        const P = S.pierre, tenu = geste && geste.o === "pierre";
+        const x = P.x, y = P.y;
+        return `<g class="mv-obj${tenu ? " tenu" : ""}" data-obj="pierre" transform="translate(${f1(x + dh("pierre"))} ${f1(y)})"><rect x="-10" y="-10" width="${PW + 20}" height="${PH + 20}" fill="transparent"/>
+          <path d="M1 ${PH}L3 6L11 1L20 3L25 10L24 ${PH}Z" class="mv-pierre"/><path d="M8 5L12 11L19 8M12 11L10 ${PH}" class="mv-pierre-l"/>
+          ${P.place === "libre" && !tenu ? `<text x="${PW / 2}" y="${PH + 12}" text-anchor="middle" class="mv-nom">Pierre dorée</text>` : ""}</g>`;
+      }
+      function dessinBecher() {
+        const B = BEC, fond = B.y + B.h - 4, eauH = 34;
+        let s = `<g data-obj="becher">`;
+        const C = S.becher.couches, dessous = C.filter((c) => c.rho > 1), dessus = C.filter((c) => c.rho <= 1);
+        let y = fond;
+        dessous.forEach((c) => { const hh = c.h * Math.min(1, c.a); s += `<rect x="${B.x + 3}" y="${f1(y - hh)}" width="${B.w - 6}" height="${f1(hh)}" fill="${c.coul}" opacity="${c.op}"/>`; y -= hh; });
+        s += `<rect x="${B.x + 3}" y="${f1(y - eauH)}" width="${B.w - 6}" height="${eauH}" fill="${LIQ.eau.coul}" opacity=".45"/>`; y -= eauH;
+        dessus.forEach((c) => { const hh = c.h * Math.min(1, c.a); s += `<rect x="${B.x + 3}" y="${f1(y - hh)}" width="${B.w - 6}" height="${f1(hh)}" fill="${c.coul}" opacity="${c.op}"/>`; y -= hh; });
+        // gouttes qui tombent pendant le versement
+        C.forEach((c) => { if (c.a < 1) { const k = c.a; const yg = c.rho > 1 ? B.y + 10 + k * (fond - B.y - 14) : B.y + 10 + k * 14; s += `<circle cx="${B.x + B.w / 2 - 6}" cy="${f1(yg)}" r="3" fill="${c.coul}"/><circle cx="${B.x + B.w / 2 + 5}" cy="${f1(yg - 8)}" r="2.4" fill="${c.coul}"/>`; } });
+        s += `<path d="M${B.x} ${B.y}V${B.y + B.h - 4}Q${B.x} ${B.y + B.h} ${B.x + 4} ${B.y + B.h}H${B.x + B.w - 4}Q${B.x + B.w} ${B.y + B.h} ${B.x + B.w} ${B.y + B.h - 4}V${B.y}" class="c-verre-o"/>
+          <path d="M${B.x - 3} ${B.y}H${B.x + B.w + 3}" class="c-fin"/><text x="${B.x + B.w / 2}" y="${B.y + B.h + 12}" text-anchor="middle" class="mv-nom">Bécher d'eau</text></g>`;
+        return s;
+      }
+
+      // ---------- Sous la paillasse : loupe et versement ----------
+      let cleLoupe = "";
+      function majSous(force) {
+        const E = S.epr, lv = E.vis, liq = E.liq ? liqDe(E.liq, opts) : null;
+        const cle = [Math.round(lv * 20), E.liq, pierreDans()].join("|");
+        if (force || cle !== cleLoupe) {
+          cleLoupe = cle;
+          if (!liq || lv < 0.05) zLoupe.innerHTML = `<p class="small muted mv-vide">L'éprouvette est vide.</p>`;
+          else { const lo = Math.max(0, Math.min(VMAX - 12, Math.round(lv) - 6)); zLoupe.innerHTML = MASSEVOL.figEprouvette(lv, 1, 10, lo, lo + 12, { H: 168, coul: liq.coul, op: liq.op }); }
+        }
+        if (force) {
+          zNoter.innerHTML = M.noterV ? `<button class="btn btn-primary btn-sm" data-c="noterV">NOTER le volume</button><div class="mv-lire"></div>` : "";
+          const b = zNoter.querySelector("[data-c=noterV]"); if (b) b.onclick = demanderLecture;
+        }
+        const v = S.verse && S.verse.cible === "epr" ? S.verse.f : null;
+        zMain.innerHTML = v ? `En main : <strong>flacon ${v.liq === "mystere" ? "du liquide mystère" : "d'" + liqDe(v.liq, opts).etiq.toLowerCase()}</strong>. Verser, puis reposer le flacon.`
+          : `Pour verser : glisser un flacon sur l'éprouvette.`;
+        el.querySelectorAll(".mv-verse [data-c]").forEach((b) => {
+          const c = b.dataset.c;
+          b.disabled = c === "vider" ? !(E.V > 0 || pierreDans()) : c === "r1" ? !(v && E.V >= 1) : !v;
+        });
+      }
+      el.querySelectorAll(".mv-verse [data-c]").forEach((b) => b.onclick = () => commande(b.dataset.c));
+      function dire(ok, txt) { zStatut.textContent = txt; zStatut.className = "small mv-statut " + (ok ? "ok" : "ko"); signalPaillasse(bench, ok ? "ok" : "ko"); }
+      function commande(c) {
+        const E = S.epr, v = S.verse && S.verse.cible === "epr" ? S.verse.f : null;
+        if (c === "reposer") { reposer(); return; }
+        if (c === "vider") {
+          if (S.verse) reposer();
+          E.V = 0; E.liq = null;
+          if (pierreDans()) { S.pierre.place = "libre"; S.pierre.x = 200; S.pierre.y = 304; }
+          bulle("L'éprouvette est vidée et rincée.", "epr", 1.8);
+          dessiner(); majSous(); return;
+        }
+        if (!v) return;
+        const add = c === "v10" ? 10 : c === "v1" ? 1 : -1;
+        if (add > 0 && niveau() + add > VMAX) { bulle("Attention : l'éprouvette déborderait ! Elle contient au plus 100 mL.", "epr", 2.8, "ko"); return; }
+        if (add < 0 && E.V < 1) return;
+        E.V += add; E.liq = E.V > 0 ? v.liq : null;
+        if (add > 0) S.flux = add === 10 ? 0.7 : 0.35;
+        dessiner(); majSous();
+      }
+      function reposer() {
+        if (!S.verse) return;
+        const f = S.verse.f; f.x = f.x0; f.y = f.y0; S.verse = null; S.flux = 0; dessiner(); majSous();
+      }
+      // Lecture de l'élève (objectif 3) : il écrit le volume qu'il lit sur la loupe
+      function demanderLecture() {
+        const z = zNoter.querySelector(".mv-lire");
+        if (!S.epr.liq || S.epr.V < 1) { dire(false, "L'éprouvette est vide : verse d'abord de l'eau."); return; }
+        if (!stable()) { dire(false, "Attends que le niveau soit stable."); return; }
+        z.innerHTML = `<label class="small" for="mv-lu">Je lis sur la loupe :</label><div class="calc-in"><input type="text" id="mv-lu" inputmode="decimal" autocomplete="off"><span class="u">mL</span><button class="btn btn-primary btn-sm" data-ok>OK</button></div>`;
+        const inp = z.querySelector("input"); inp.focus();
+        const valider = () => {
+          const lu = parseFloat(inp.value.replace(/\s| /g, "").replace(",", "."));
+          if (isNaN(lu)) { dire(false, "Écris un nombre, par exemple 52."); return; }
+          if (Math.abs(lu - niveau()) > 0.01) { dire(false, `Ce n'est pas tout à fait ça : regarde le bas du ménisque. Une petite graduation vaut 1 mL ; compte-les à partir du nombre écrit juste en dessous.`); return; }
+          const r = surEvt("noterV", { lu, niveau: niveau(), V: S.epr.V, liquide: S.epr.liq, pierreDans: pierreDans() }) || { ok: true, txt: "Volume noté." };
+          dire(r.ok, r.txt); if (r.ok) z.innerHTML = "";
+        };
+        z.querySelector("[data-ok]").onclick = valider; inp.addEventListener("keydown", (e) => { if (e.key === "Enter") valider(); });
+      }
+
+      // ---------- Gestes ----------
+      const pt = (e) => { const p = versPaillasse(svg, e.clientX, e.clientY); return [p.x, p.y]; };
+      function quoiSous(cible) {
+        const g = cible && cible.closest ? cible.closest("[data-act],[data-obj]") : null;
+        if (!g || !svg.contains(g)) return null;
+        if (g.dataset.act) return { type: "act", act: g.dataset.act };
+        return { type: "obj", id: g.dataset.obj };
+      }
+      const flacon = (id) => S.flacons.find((f) => f.id === id);
+      const deplacable = (id) => id === "epr" || (id === "pierre" && S.pierre.place !== "epr") || !!flacon(id);
+      svg.addEventListener("pointerdown", (e) => {
+        const q = quoiSous(e.target); if (!q) { geste = null; return; }
+        const [x, y] = pt(e);
+        if (q.type === "act") geste = { type: "act", act: q.act, x, y, bouge: false };
+        else {
+          const b = boite(q.id);
+          geste = { type: "obj", o: q.id, x, y, dx: x - b.x, dy: y - b.y, bouge: false };
+        }
+        e.preventDefault();
+        try { svg.setPointerCapture(e.pointerId); } catch (er) {}
+      });
+      svg.addEventListener("pointermove", (e) => {
+        if (!geste || geste.type !== "obj" || !deplacable(geste.o)) return;
+        const [x, y] = pt(e);
+        if (Math.abs(x - geste.x) + Math.abs(y - geste.y) > 6) geste.bouge = true;
+        if (!geste.bouge) return;
+        const id = geste.o, b = boite(id), nx = Math.max(X0, Math.min(X1 - b.w, x - geste.dx)), ny = Math.max(Y0, Math.min(Y1 - b.h, y - geste.dy));
+        if (id === "epr") { if (S.verse && S.verse.cible === "epr") reposer(); S.epr.place = "libre"; S.epr.x = nx; S.epr.y = ny; }
+        else if (id === "pierre") { S.pierre.place = "libre"; S.pierre.x = nx; S.pierre.y = ny; }
+        else { const f = flacon(id); if (S.verse && S.verse.f === f) { S.verse = null; S.flux = 0; } f.x = nx; f.y = ny; }
+        dessiner(); majSous();
+      });
+      svg.addEventListener("pointerup", () => {
+        const g = geste; geste = null; if (!g) return;
+        if (g.type === "act") { if (!g.bouge) action(g.act); return; }
+        if (!g.bouge) {
+          const f = flacon(g.o);
+          if (g.o === "pierre" && S.pierre.place === "epr") bulle("La pierre est au fond de l'éprouvette. Pour la récupérer, vider l'éprouvette.", "epr", 3);
+          else bulle(f ? (f.liq === "mystere" ? "Le liquide mystère, coloré par le professeur. Le glisser sur l'éprouvette pour verser, ou sur le bécher d'eau." : "Un flacon d'eau. Le glisser sur l'éprouvette pour verser.") : ROLE[g.o === "epr" ? "eprouvette" : g.o] || "", g.o, 3.6);
+          dessiner(); return;
+        }
+        poser(g.o); dessiner(); majSous();
+      });
+      svg.addEventListener("pointercancel", () => { geste = null; dessiner(); });
+      gererDefilement(svg, (x, y, cible) => !!quoiSous(cible), () => !!geste);
+
+      const centre = (b) => [b.x + b.w / 2, b.y + b.h / 2];
+      const dans = (px, py, b, m) => px > b.x - m && px < b.x + b.w + m && py > b.y - m && py < b.y + b.h + m;
+      const surLePlateau = (b) => { const [cx] = centre(b), bas = b.y + b.h; return Math.abs(cx - CXP) < 62 && bas > PL.y - 40 && bas < PL.y + 46; };
+      function poser(id) {
+        const E = S.epr;
+        if (id === "epr") {
+          const b = boite("epr");
+          if (surLePlateau(b)) {
+            if (S.pierre && S.pierre.place === "plateau") { E.x = EPR_LIBRE.x; E.y = EPR_LIBRE.y; bulle("Le plateau est déjà occupé par la pierre : retire-la d'abord.", "balance", 2.8, "ko"); return; }
+            E.place = "plateau"; E.x = EPR_PL.x; E.y = EPR_PL.y; bulle("Éprouvette posée sur le plateau.", null, 1.4, "ok");
+          }
+          return;
+        }
+        if (id === "pierre") {
+          const b = boite("pierre"), [cx, cy] = centre(b);
+          if (dans(cx, cy, boite("epr"), 14)) {
+            if (E.V < 10 || E.liq !== "eau") { S.pierre.x = 200; S.pierre.y = 304; bulle("Verse d'abord environ 50 mL d'eau dans l'éprouvette : c'est la montée du niveau qui donne le volume de la pierre.", "epr", 3.6, "ko"); return; }
+            if (niveau() + opts.pierre.V > VMAX) { S.pierre.x = 200; S.pierre.y = 304; bulle("Il y a trop d'eau : l'éprouvette déborderait. Retire un peu d'eau.", "epr", 3, "ko"); return; }
+            S.pierre.place = "epr"; bulle("La pierre glisse au fond de l'éprouvette : le niveau monte.", "epr", 2.4, "ok"); return;
+          }
+          if (surLePlateau(b)) {
+            if (E.place === "plateau") { S.pierre.x = 200; S.pierre.y = 304; bulle("Le plateau est occupé par l'éprouvette : pose la pierre seule sur le plateau.", "balance", 3, "ko"); return; }
+            S.pierre.place = "plateau"; S.pierre.x = CXP - PW / 2; S.pierre.y = PL.y - PH + 2; bulle("Pierre posée sur le plateau.", null, 1.4, "ok");
+          }
+          return;
+        }
+        const f = flacon(id); if (!f) return;
+        const [cx, cy] = centre(boite(id));
+        if (dans(cx, cy, boite("epr"), 22)) {
+          if (E.V > 0 && E.liq && E.liq !== f.liq) { f.x = f.x0; f.y = f.y0; bulle("L'éprouvette contient déjà un autre liquide : vide-la d'abord (sous la paillasse).", "epr", 3, "ko"); return; }
+          if (S.verse) reposer();
+          S.verse = { f, cible: "epr" }; bulle("Flacon prêt : verse avec les boutons sous la paillasse, en regardant la loupe.", null, 2.6, "ok");
+          return;
+        }
+        if (S.becher && dans(cx, cy, BEC, 18)) {
+          if (S.verse) reposer();
+          const L = liqDe(f.liq, opts);
+          S.verse = { f, cible: "becher", anim: true };
+          if (f.liq !== "eau") S.becher.couches.push({ liq: f.liq, rho: L.rho, coul: L.coul, op: L.op, h: 12, a: 0 });
+          S.tVerseB = S.t;
+          return;
+        }
+      }
+      function action(a) {
+        if (a === "reset") { charger(M, opts); bulle("La paillasse est remise comme au départ.", null, 1.8); surEvt("reset", {}); return; }
+        if (a === "tare") {
+          S.tare = brut(); S.aff = 0;
+          bulle(surPlateau() ? "Tare faite : la balance affiche 0.0 g avec ce qui est posé dessus." : "Tare faite : la balance affiche 0.0 g, plateau vide.", "balance", 2.4, "ok");
+          dessiner(); return;
+        }
+        if (a === "noter") {
+          if (!stable()) { dire(false, "Attends que l'affichage de la balance soit stable (le point ● s'allume)."); return; }
+          const info = { net: net(), brut: Math.round(brut() * 10) / 10, tare: S.tare, plateau: surPlateau(), liquide: S.epr.liq, V: S.epr.V, niveau: niveau(), pierreDans: pierreDans(),
+            tareEpr: Math.abs(S.tare - M_EPR) < 0.05, tareVide: Math.abs(S.tare) < 0.05 };
+          const r = surEvt("noterM", info) || { ok: true, txt: "Masse notée : " + fr(info.net, 1) + " g." };
+          dire(r.ok, r.txt);
+        }
+      }
+
+      // ---------- Boucle ----------
+      let dernier = performance.now(), acc = 0;
+      function boucle(now) {
+        if (!document.body.contains(svg)) return;
+        const dt = Math.min(0.05, (now - dernier) / 1000); dernier = now; S.t += dt;
+        let redessin = !!S.hoche || (S.bulle && S.t > S.bulle.fin);
+        if (S.bulle && S.t > S.bulle.fin) S.bulle = null;
+        if (S.hoche && performance.now() - S.hoche.t0 > DUREE_HOCHE) S.hoche = null;
+        const E = S.epr, cible = niveau();
+        if (Math.abs(E.vis - cible) > 0.001) { const pas = 28 * dt; E.vis = Math.abs(cible - E.vis) <= pas ? cible : E.vis + Math.sign(cible - E.vis) * pas; redessin = true; majSous(); }
+        if (S.flux > 0) { S.flux = Math.max(0, S.flux - dt); redessin = true; }
+        const n = net();
+        if (Math.abs(S.aff - n) > 0.001) { const d = n - S.aff; S.aff = Math.abs(d) < 0.15 ? n : S.aff + d * Math.min(1, dt * 7); redessin = true; }
+        if (S.verse && S.verse.cible === "becher") {
+          const k = (S.t - S.tVerseB) / 1.4;
+          S.becher.couches.forEach((c) => { if (c.a < 1) c.a = Math.min(1, k); });
+          redessin = true;
+          if (k >= 1.15) { const f = S.verse.f; reposer(); bulle(f.liq === "mystere" ? "Observe bien : où le liquide mystère s'est-il placé ?" : "C'est de l'eau : elle se mélange à l'eau du bécher.", "becher", 3, "ok"); surEvt("verseBecher", { liquide: f.liq, rho: liqDe(f.liq, opts).rho }); }
+        }
+        if (redessin) dessiner();
+        acc += dt;
+        if (acc >= 0.25) { acc = 0; surEvt("etat", { plateau: surPlateau(), net: n, stable: stable(), tareEpr: Math.abs(S.tare - M_EPR) < 0.05, tareVide: Math.abs(S.tare) < 0.05, V: E.V, liquide: E.liq, niveau: cible, pierreDans: pierreDans(), dt: 0.25 }); }
+        requestAnimationFrame(boucle);
+      }
+      requestAnimationFrame(boucle);
+      return { charger, _etat: () => S, _commande: commande, _action: action, _poser: (id, x, y) => { const b = boite(id); if (id === "epr") { S.epr.x = x; S.epr.y = y; } else if (id === "pierre") { S.pierre.x = x; S.pierre.y = y; } else { const f = flacon(id); f.x = x; f.y = y; } void b; poser(id); dessiner(); majSous(); } };
+    }
+
+    // ======================= Côté TP : vérification des manipulations, tableaux, questions =======================
+    const g1 = (v) => virg((+v).toFixed(1)), ent = (v) => fr(v, 0), d2 = (v) => virg((+v).toFixed(2));
+    function evenement(type, d, id, st, c) {
+      const R = c.rep.mv = c.rep.mv || {}, m = R[id] = R[id] || {};
+      const garder = () => { c.sauver(); c.extra(); };
+      if (type === "etat") {
+        if (id === "m1") {
+          if (d.plateau === "eprouvette" && d.V === 0 && d.tareEpr && d.stable) c.cocher("tare");
+          if (d.liquide === "eau" && d.V === 50 && d.stable) c.cocher("remplir");
+        }
+        return;
+      }
+      if (type === "verseBecher") { if (id === "m4" && d.liquide === "mystere") { m.vu = true; m.dessous = d.rho > 1; garder(); c.cocher("verse"); } return; }
+      if (type === "noterV") {
+        if (id !== "m3") return { ok: true, txt: "Volume noté." };
+        if (!d.pierreDans) {
+          if (d.liquide !== "eau" || d.V < 20 || d.V > 80) return { ok: false, txt: "Pour V₁, il faut entre 20 et 80 mL d'eau seule dans l'éprouvette (environ 50 mL)." };
+          m.V1 = d.niveau; m.Veau = d.V; delete m.V2; garder(); c.cocher("v1");
+          return { ok: true, txt: `Bien lu : V₁ = ${ent(d.niveau)} mL. Glisse maintenant la pierre dans l'éprouvette.` };
+        }
+        if (m.V1 == null) return { ok: false, txt: "Il faut d'abord noter V₁, le volume de l'eau seule (vide l'éprouvette et recommence)." };
+        if (d.V !== m.Veau) return { ok: false, txt: "Le volume d'eau a changé depuis V₁ : vide l'éprouvette, verse l'eau, note V₁, puis plonge la pierre." };
+        m.V2 = d.niveau; garder(); c.cocher("v2");
+        return { ok: true, txt: `Bien lu : V₂ = ${ent(d.niveau)} mL.` };
+      }
+      if (type !== "noterM") return;
+      const pasEpr = { ok: false, txt: "Pose l'éprouvette sur le plateau de la balance." };
+      const pasTare = { ok: false, txt: `La balance compte aussi l'éprouvette (${g1(M_EPR)} g). Vide l'éprouvette, pose-la vide sur le plateau et touche TARE, puis recommence.` };
+      if (id === "m1" || id === "m2" || id === "m4") {
+        const voulu = id === "m4" ? "mystere" : "eau";
+        if (d.plateau !== "eprouvette") return pasEpr;
+        if (!d.liquide || d.V === 0) return { ok: false, txt: id === "m1" ? "L'éprouvette est vide : verse 50 mL d'eau." : "L'éprouvette est vide : verse le liquide." };
+        if (!d.tareEpr) return pasTare;
+        if (d.liquide !== voulu) return { ok: false, txt: "Ce n'est pas le bon liquide pour cet objectif." };
+        if (id === "m1") {
+          if (d.V !== 50) return { ok: false, txt: d.V > 50 ? "Il y a un peu trop d'eau : retire-en au compte-gouttes, le bas du ménisque doit être sur le trait 50." : "Il manque un peu d'eau : ajoute-la au compte-gouttes, le bas du ménisque doit être sur le trait 50." };
+          m.m = d.net; m.V = 50; garder(); c.cocher("noter");
+          return { ok: true, txt: `Noté : 50 mL d'eau ont une masse de ${g1(d.net)} g.` };
+        }
+        if (id === "m2") {
+          if (d.V < 5) return { ok: false, txt: "Verse au moins 5 mL d'eau." };
+          m.pts = (m.pts || []).filter((p) => p.V !== d.V); m.pts.push({ V: d.V, m: d.net }); m.pts.sort((a, b) => a.V - b.V); garder();
+          const n = m.pts.length; if (n >= 3) c.cocher("trois");
+          return { ok: true, txt: `Noté : V = ${ent(d.V)} mL ; m = ${g1(d.net)} g.${n < 3 ? ` Encore ${3 - n} volume${3 - n > 1 ? "s" : ""} différent${3 - n > 1 ? "s" : ""}.` : ""}` };
+        }
+        if (d.V < 20) return { ok: false, txt: "Verse au moins 20 mL de liquide mystère : la mesure sera plus précise." };
+        m.m = d.net; m.V = d.V; garder(); c.cocher("mesure");
+        return { ok: true, txt: `Noté : ${ent(d.V)} mL de liquide mystère ont une masse de ${g1(d.net)} g.` };
+      }
+      if (id === "m3") {
+        if (d.plateau === "eprouvette") return { ok: false, txt: "Pour peser la pierre, pose-la seule sur le plateau (sans l'éprouvette)." };
+        if (d.plateau !== "pierre") return { ok: false, txt: "Le plateau est vide : pose la pierre dessus." };
+        if (!d.tareVide) return { ok: false, txt: "La balance n'est pas à zéro à vide : retire la pierre, touche TARE, puis repose la pierre." };
+        m.m = d.net; garder(); c.cocher("masse");
+        return { ok: true, txt: `Noté : la pierre a une masse de ${g1(d.net)} g.` };
+      }
+    }
+
+    // ---------- Tableaux et graphique (sous la paillasse) ----------
+    const table = (titre, t, lignes, apres) => `<h3>${titre}</h3><div class="table-wrap"><table class="mes-table"><thead><tr>${t.map((x) => `<th>${x}</th>`).join("")}</tr></thead><tbody>${lignes.map((l) => `<tr>${l.map((x) => `<td>${x}</td>`).join("")}</tr>`).join("")}</tbody></table></div>${apres || ""}`;
+    const ou = (v, f) => v == null ? "…" : f(v);
+    const PROTOCOLE = [
+      { t: "Poser l'éprouvette vide sur le plateau de la balance.", aide: "On commence par le récipient vide, avant de verser quoi que ce soit." },
+      { t: "Toucher TARE : la balance affiche 0.0 g.", aide: "Il faut retirer la masse de l'éprouvette avant de verser le liquide." },
+      { t: "Verser le liquide jusqu'à un volume connu (par exemple 50 mL), en finissant au compte-gouttes.", aide: "Il faut un liquide dans l'éprouvette avant de le peser." },
+      { t: "Lire la masse m du liquide sur la balance (toucher NOTER).", aide: "On mesure la masse une fois le liquide versé." },
+      { t: "Calculer ρ = m ÷ V.", aide: "Le calcul se fait à la fin, avec les deux mesures." }
+    ];
+    function extra(box, o, c) {
+      const R = c.rep.mv = c.rep.mv || {}, m = R[o.id] = R[o.id] || {};
+      if (o.id === "m1") box.innerHTML = table("Mes mesures", ["Volume d'eau", "Masse"], [["50 mL", ou(m.m, (v) => g1(v) + " g")]], `<p class="small muted">Touche NOTER sur la balance quand le bas du ménisque est sur le trait 50.</p>`);
+      else if (o.id === "m2") {
+        const P = m.pts || [], Wg = 320, Hg = 210, x0 = 44, y0 = 178, xs = (v) => x0 + v * 2.6, ys = (g) => y0 - g * 1.55;
+        box.innerHTML = table("Mes mesures", ["Volume V (mL)", "Masse m (g)"], P.length ? P.map((p) => [ent(p.V), g1(p.m)]) : [["…", "…"]], `<p class="small muted">Une nouvelle mesure pour le même volume remplace l'ancienne.</p>`) +
+          `<svg class="chart" viewBox="0 0 ${Wg} ${Hg}" role="img" aria-label="Masse de l'eau en fonction de son volume">
+            ${[0, 20, 40, 60, 80, 100].map((g) => `<line x1="${x0}" x2="${xs(100)}" y1="${f1(ys(g))}" y2="${f1(ys(g))}" stroke="var(--line)"/><text x="${x0 - 6}" y="${f1(ys(g) + 4)}" text-anchor="end">${g}</text>`).join("")}
+            ${[0, 20, 40, 60, 80, 100].map((v) => `<text x="${f1(xs(v))}" y="${y0 + 15}" text-anchor="middle">${v}</text>`).join("")}
+            <line x1="${x0}" y1="${y0}" x2="${xs(100)}" y2="${y0}" stroke="var(--muted)"/><line x1="${x0}" y1="${y0}" x2="${x0}" y2="${f1(ys(105))}" stroke="var(--muted)"/>
+            <text x="${f1(xs(50))}" y="${Hg - 2}" text-anchor="middle">V (mL)</text><text x="${x0 - 34}" y="${f1(ys(105) - 5)}">m (g)</text>
+            ${P.length >= 3 ? `<line x1="${x0}" y1="${y0}" x2="${f1(xs(100))}" y2="${f1(ys(99.8))}" stroke="var(--accent)" stroke-width="1.5" stroke-dasharray="5 4"/>` : ""}
+            ${P.map((p) => `<circle cx="${f1(xs(p.V))}" cy="${f1(ys(p.m))}" r="5" fill="var(--accent)"/>`).join("")}</svg>`;
+      }
+      else if (o.id === "m3") box.innerHTML = table("Mes mesures", ["Grandeur", "Valeur"], [["Masse de la pierre m", ou(m.m, (v) => g1(v) + " g")], ["V₁ (eau seule)", ou(m.V1, (v) => ent(v) + " mL")], ["V₂ (eau + pierre)", ou(m.V2, (v) => ent(v) + " mL")]],
+        `<p class="small muted">Pour V₁ et V₂ : lire le volume sur la loupe, toucher NOTER le volume et écrire sa lecture.</p>`);
+      else if (o.id === "m4") {
+        box.innerHTML = `<h3>Mon protocole</h3><div class="stack" id="mv-proto"></div>` + table("Mes mesures", ["Grandeur", "Valeur"], [["Volume V de liquide mystère", ou(m.V, (v) => ent(v) + " mL")], ["Masse m", ou(m.m, (v) => g1(v) + " g")], ["Dans le bécher d'eau", m.vu ? (m.dessous ? "il coule au fond" : "il reste au-dessus") : "…"]]);
+        protocole(box.querySelector("#mv-proto"), m, c);
+      }
+      else box.innerHTML = "";
+    }
+    // Remettre les étapes du protocole dans l'ordre : on touche l'étape suivante ; une erreur donne un indice, sans pénalité.
+    function protocole(z, m, c) {
+      const fini = !!m.proto;
+      let n = fini ? PROTOCOLE.length : 0;
+      const ordre = melanger(PROTOCOLE.map((p, i) => i));
+      function dessinerP(msg) {
+        z.innerHTML = `<ol class="mv-proto-l">${PROTOCOLE.slice(0, n).map((p) => `<li>${esc(p.t)}</li>`).join("")}</ol>
+          ${n < PROTOCOLE.length ? `<p class="small">Toucher l'étape n° ${n + 1} :</p><div class="stack">${ordre.filter((i) => i >= n).map((i) => `<button class="opt mv-p" data-p="${i}"><span>${esc(PROTOCOLE[i].t)}</span></button>`).join("")}</div>` : `<p class="small"><strong>Protocole complet.</strong> Mets-le en œuvre sur la paillasse avec le liquide mystère.</p>`}
+          ${msg || ""}`;
+        z.querySelectorAll("[data-p]").forEach((b) => b.onclick = () => {
+          const i = +b.dataset.p;
+          if (i === n) { n++; if (n === PROTOCOLE.length) { m.proto = true; c.sauver(); c.cocher("protocole"); } dessinerP(); }
+          else dessinerP(`<div class="feedback ko"><strong>Pas encore cette étape.</strong><span>${esc(PROTOCOLE[n].aide)}</span></div>`);
+        });
+      }
+      dessinerP();
+    }
+
+    // ---------- Questions qui utilisent les mesures de l'élève ----------
+    // Saisie d'un résultat : on peut réessayer autant de fois que nécessaire ; « Coup de pouce » donne le calcul à faire.
+    function saisie(el, o, onOk) {
+      el.innerHTML = `<p class="qtext">${o.texte}</p>${o.donnees ? `<p class="small">${o.donnees}</p>` : ""}
+        <div class="calc-in"><input type="text" inputmode="decimal" autocomplete="off" aria-label="Ta réponse"><span class="u">${esc(o.unite)}</span></div>
+        <div class="row"><button class="btn btn-primary btn-sm" data-v>Vérifier</button><button class="btn-link" data-a>Coup de pouce</button></div><div class="fbz"></div>`;
+      const inp = el.querySelector("input"), fb = el.querySelector(".fbz"); let essais = 0;
+      el.querySelector("[data-a]").onclick = () => { fb.innerHTML = `<div class="feedback"><strong>Coup de pouce</strong><span>${o.aide}</span></div>`; };
+      const valider = () => {
+        const v = parseFloat(inp.value.replace(/\s| /g, "").replace(",", "."));
+        if (isNaN(v)) { fb.innerHTML = `<p class="error">Écris un nombre (avec une virgule si besoin).</p>`; return; }
+        if (Math.abs(v - o.attendu) <= o.tol) {
+          inp.disabled = true; el.querySelector("[data-v]").disabled = true; el.querySelector("[data-a]").hidden = true;
+          fb.innerHTML = `<div class="feedback ok"><strong>Bravo !</strong><span>${o.bravo}</span></div>`; onOk(); return;
+        }
+        essais++;
+        fb.innerHTML = `<div class="feedback ko"><strong>Pas encore.</strong><span>${essais >= 2 ? o.aide : (o.piste || "Vérifie ton calcul à la calculatrice, et la place de la virgule.")} Tu peux réessayer.</span></div>`;
+      };
+      el.querySelector("[data-v]").onclick = valider; inp.addEventListener("keydown", (e) => { if (e.key === "Enter") valider(); });
+    }
+    function choix(el, q, onOk) {
+      const monter = () => {
+        el.innerHTML = ""; const w = document.createElement("div"); w.className = "stack"; el.appendChild(w);
+        widgetQCM(w, q, (ok) => { if (ok) onOk(); else { const b = h(`<button class="btn btn-ghost btn-sm">Réessayer</button>`); b.onclick = monter; el.appendChild(b); } });
+      };
+      monter();
+    }
+    const TAB_SOLIDES = ["or", "plomb", "fer", "pyrite", "alu", "verre"], TAB_LIQ = ["ethanol", "huile", "eau", "sirop", "miel"];
+    const tableRef = (cles, u) => `<div class="table-wrap"><table class="mes-table"><thead><tr><th>Matière</th><th>ρ (${u})</th></tr></thead><tbody>${cles.map((k) => `<tr><td>${esc(MASSEVOL.RHO[k].nom)}</td><td>${fr(MASSEVOL.RHO[k].rho, 2)}</td></tr>`).join("")}</tbody></table></div>`;
+    function question(el, q, c, onOk) {
+      const R = c.rep.mv || {}, mm = (k) => R[k] || {};
+      const P = c.rep.mvPierre || { V: 6, m: 30.2 }, myst = c.rep.mvMystere || "sirop", Lm = LIQ[myst];
+      const typ = (t) => c.prof ? `<span class="small muted">(Mode prof : ${t}.)</span>` : "";
+      if (q.calc === "rho1") {
+        const m1 = mm("m1"), m = m1.m != null ? m1.m : 49.9, rho = m / 50;
+        return saisie(el, { texte: "Calcule la masse volumique de l'eau avec ta mesure.", donnees: `Ta mesure : m = ${g1(m)} g pour V = 50 mL. ${m1.m == null ? typ("valeur type") : ""}`, unite: "g/mL", attendu: rho, tol: 0.02,
+          aide: `ρ = m ÷ V = ${g1(m)} ÷ 50. Tape ce calcul à la calculatrice.`, piste: "On divise la masse par le volume : ρ = m ÷ V.", bravo: `ρ = ${g1(m)} ÷ 50 ≈ ${d2(rho)} g/mL, c'est-à-dire environ 1 g/mL : c'est la masse volumique de l'eau, à retenir !` }, onOk);
+      }
+      if (q.calc === "rapport") {
+        const pts = mm("m2").pts && mm("m2").pts.length ? mm("m2").pts : [{ V: 20, m: 20 }, { V: 40, m: 39.9 }, { V: 80, m: 79.8 }];
+        const p = pts[pts.length - 1], r = p.m / p.V;
+        return saisie(el, { texte: `Pour ta mesure à ${ent(p.V)} mL, calcule le quotient m ÷ V.`, donnees: `m = ${g1(p.m)} g ; V = ${ent(p.V)} mL.`, unite: "g/mL", attendu: r, tol: 0.02,
+          aide: `m ÷ V = ${g1(p.m)} ÷ ${ent(p.V)}.`, bravo: `Pour toutes tes mesures, m ÷ V ≈ 1 g/mL : ${pts.map((x) => `${g1(x.m)} ÷ ${ent(x.V)} ≈ ${d2(x.m / x.V)}`).join(" ; ")}. Ce quotient constant, c'est la masse volumique de l'eau.` }, onOk);
+      }
+      if (q.calc === "vol3") {
+        const m3 = mm("m3"), V1 = m3.V1 != null ? m3.V1 : 50, V2 = m3.V2 != null ? m3.V2 : 50 + P.V;
+        return saisie(el, { texte: "Calcule le volume de la pierre.", donnees: `V₁ = ${ent(V1)} mL (eau seule) ; V₂ = ${ent(V2)} mL (eau + pierre).`, unite: "cm³", attendu: V2 - V1, tol: 0.01,
+          aide: `Le volume de la pierre est la montée du niveau : V = V₂ − V₁ = ${ent(V2)} − ${ent(V1)}. Rappel : 1 mL = 1 cm³.`, piste: "Le niveau monte du volume de la pierre : fais une soustraction.", bravo: `V = V₂ − V₁ = ${ent(V2)} − ${ent(V1)} = ${ent(V2 - V1)} mL = ${ent(V2 - V1)} cm³.` }, onOk);
+      }
+      if (q.calc === "rho3") {
+        const m3 = mm("m3"), m = m3.m != null ? m3.m : P.m, V = m3.V1 != null && m3.V2 != null ? m3.V2 - m3.V1 : P.V, rho = m / V;
+        return saisie(el, { texte: "Calcule la masse volumique de la pierre.", donnees: `m = ${g1(m)} g ; V = ${ent(V)} cm³.`, unite: "g/cm³", attendu: rho, tol: Math.max(0.05, 0.02 * rho),
+          aide: `ρ = m ÷ V = ${g1(m)} ÷ ${ent(V)}.`, piste: "ρ = m ÷ V : on divise la masse par le volume.", bravo: `ρ = ${g1(m)} ÷ ${ent(V)} ≈ ${virg(rho.toFixed(1))} g/cm³.` }, onOk);
+      }
+      if (q.calc === "id3") {
+        const m3 = mm("m3"), m = m3.m != null ? m3.m : P.m, V = m3.V1 != null && m3.V2 != null ? m3.V2 - m3.V1 : P.V, rho = m / V;
+        return choix(el, { question: `Ta pierre a une masse volumique d'environ ${virg(rho.toFixed(1))} g/cm³. Compare avec le tableau : en quoi est-elle ?`, figure: tableRef(TAB_SOLIDES, "g/cm³"),
+          reponses: ["En pyrite : ce n'est pas de l'or", "En or", "En fer", "En aluminium"], bonne: 0,
+          explication: `≈ 5 g/cm³ : c'est la pyrite, surnommée « or des fous » car elle brille comme l'or. Une pépite d'or de même volume aurait une masse de 19,3 × ${ent(V)} ≈ ${fr(19.3 * V, 0)} g !` }, onOk);
+      }
+      if (q.calc === "rho4") {
+        const m4 = mm("m4"), V = m4.V != null ? m4.V : 50, m = m4.m != null ? m4.m : Math.round(Lm.rho * 50 * 10) / 10, rho = m / V;
+        return saisie(el, { texte: "Calcule la masse volumique du liquide mystère.", donnees: `Tes mesures : m = ${g1(m)} g ; V = ${ent(V)} mL. ${m4.m == null ? typ("valeurs types") : ""}`, unite: "g/mL", attendu: rho, tol: Math.max(0.02, 0.02 * rho),
+          aide: `ρ = m ÷ V = ${g1(m)} ÷ ${ent(V)}.`, piste: "ρ = m ÷ V.", bravo: `ρ = ${g1(m)} ÷ ${ent(V)} ≈ ${d2(rho)} g/mL.` }, onOk);
+      }
+      if (q.calc === "id4") {
+        const noms = { huile: "De l'huile de tournesol", sirop: "Du sirop de canne", miel: "Du miel" }, autres = ["De l'alcool", "De l'eau"].concat(Object.keys(noms).filter((k) => k !== myst).map((k) => noms[k]));
+        const rep = [noms[myst]].concat(autres.slice(0, 3));
+        return choix(el, { question: `Ton liquide mystère a une masse volumique d'environ ${fr(Lm.rho, 2)} g/mL. Compare avec le tableau : quel est ce liquide ?`, figure: tableRef(TAB_LIQ, "g/mL"),
+          reponses: rep, bonne: 0, explication: `${fr(Lm.rho, 2)} g/mL : c'est ${Lm.nom}. Le professeur l'avait coloré pour qu'on ne le reconnaisse pas à sa couleur.` }, onOk);
+      }
+      if (q.calc === "obs4") {
+        const dessous = Lm.rho > 1;
+        return choix(el, { question: `Dans le bécher, le liquide mystère ${dessous ? "a coulé au fond, sous l'eau" : "est resté au-dessus de l'eau"}. Pourquoi ?`,
+          reponses: dessous ? [`Il est plus dense que l'eau : ${fr(Lm.rho, 2)} g/mL > 1 g/mL`, `Il est moins dense que l'eau : ${fr(Lm.rho, 2)} g/mL < 1 g/mL`, "Parce qu'on l'a versé trop vite", "Parce qu'il est coloré"]
+            : [`Il est moins dense que l'eau : ${fr(Lm.rho, 2)} g/mL < 1 g/mL`, `Il est plus dense que l'eau : ${fr(Lm.rho, 2)} g/mL > 1 g/mL`, "Parce qu'il est plus chaud", "Parce qu'il est coloré"], bonne: 0,
+          explication: dessous ? "Un liquide plus dense que l'eau (qui ne s'y mélange pas tout de suite) coule au fond." : "Un liquide moins dense que l'eau, qui ne s'y mélange pas, reste au-dessus." }, onOk);
+      }
+    }
+
+    return { banc, MONTAGES, options, evenement, extra, question, LIQ, M_EPR };
+  })();
   // ======================= TP de terminale « Diffraction et interférences » : deux TP (moteur « ondes ») =======================
   // TP 1 « Le laboratoire de la diffraction » : cuve à ondes à ouverture réglable, banc laser (fentes calibrées, fil de pêche),
   //   écran vu de face avec deux curseurs (mesure de L), logiciel de traitement d'image (profil d'intensité, θ = f(1/a)).
@@ -9725,6 +11137,7 @@ const QUESTIONS = [
       $("tp-zone").innerHTML = `<div class="panel mission" id="o-carte"></div><div id="o-banc"></div><div class="stack" id="o-extra"></div><div class="stack" id="o-quest"></div><div class="stack" id="o-retenir"></div>`;
       carteObjectif();
       if (o.id[0] === "s") { L = OPTIQUE.banc($("o-banc"), evenement); L.charger(MONTAGES_OPTIQUE[o.id], { mystere: gazMystere() }); }
+      else if (o.id[0] === "m") { L = MASSE.banc($("o-banc"), evenement); L.charger(MASSE.MONTAGES[o.id], MASSE.options(rep, sauver)); }
       else { L = paillasse($("o-banc"), evenement); L.charger(MONTAGES[o.id]); }
       extra(); questions(); retenir();
     }
@@ -9735,6 +11148,7 @@ const QUESTIONS = [
       if (o.id[0] === "p") return extraP(box, o);
       if ("iur".indexOf(o.id[0]) >= 0) return extra4(box, o);
       if (o.id[0] === "s") return extraS(box, o);
+      if (o.id[0] === "m") return MASSE.extra(box, o, ctxM());
       if (o.id !== "o2") { box.innerHTML = ""; return; }
       const m = rep.mesures;
       if (!m.length) { box.innerHTML = `<h3>Mes mesures</h3><p class="small muted">Aucune mesure pour l'instant. Quand l'écran affiche une tension stable, touche NOTER sur le multimètre.</p>`; return; }
@@ -9762,7 +11176,7 @@ const QUESTIONS = [
           const x = $("oq" + k); if (x) { x.classList.add("reussi"); const b = x.querySelector(".badge"); b.textContent = "Réussi"; b.classList.add("ok"); }
           verifierObjectif();
         };
-        if (q.type === "releve") questionReleve($("oqw" + k), ok); else if (q.type === "mystere") questionMystere($("oqw" + k), ok); else if (q.type === "produit") questionProduit($("oqw" + k), ok); else monterExemple($("oqw" + k), q, ok);
+        if (q.type === "releve") questionReleve($("oqw" + k), ok); else if (q.type === "mystere") questionMystere($("oqw" + k), ok); else if (q.type === "produit") questionProduit($("oqw" + k), ok); else if (q.type === "masse") MASSE.question($("oqw" + k), q, ctxM(), ok); else monterExemple($("oqw" + k), q, ok);
       });
     }
     function questionReleve(el, onOk) {
@@ -9794,6 +11208,8 @@ const QUESTIONS = [
         <button class="btn btn-primary" id="btn-osuiv">Passer à : ${suiv}</button>`;
       $("btn-osuiv").onclick = () => { actif++; afficher(); $("otabs").scrollIntoView({ behavior: "smooth", block: "start" }); };
     }
+    // 4ème, masse volumique (08_masse.js) : ce dont la paillasse de pesée a besoin pour vérifier, noter et questionner
+    function ctxM() { return { rep, cocher, sauver, extra, prof: modeProf() }; }
     function cocher(id) {
       const o = O[actif], st = rep.obj[o.id];
       if (st.t[id] || !o.taches.some((t) => t.id === id)) return;
@@ -9815,6 +11231,7 @@ const QUESTIONS = [
       if (id[0] === "p") return evenementP(type, d, id, st, duree);
       if ("iur".indexOf(id[0]) >= 0) return evenement4(type, d, id, st, duree);
       if (id[0] === "s") return evenementS(type, d, id, st, duree);
+      if (id[0] === "m") return MASSE.evenement(type, d, id, st, ctxM());
       if (type === "mesure" && id === "o2") {
         if (d.gen !== "alternateur" || d.mode !== "AC") return;
         rep.mesures.push({ debit: d.debit, u: d.u }); sauver(); extra();
