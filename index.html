@@ -15,6 +15,7 @@
   --f-body: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
   --f-lcd: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
   --r: 14px;
+  --titre: #B4432C; --titre-soft: #FBE7DF; --sous: #2C8A3E; --sous-soft: #E2F3E4; --coeur: #E0384B;
 }
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
@@ -25,6 +26,7 @@
     --water: #63A9EA; --metal: #7D8F8A;
     --sea: #10283A; --land: #1C3A2A; --land-out: #18241F; --forest: #2B5A3C; --coast: #4F8A6D;
     --bench: #1A2F2B; --bench-edge: #2D4A44; --wire-a: #FF6B5E; --wire-b: #C9D6D2; --lcd: #B9CBB0; --lcd-ink: #1D2B22;
+    --titre: #FF9A80; --titre-soft: #3A1E17; --sous: #74D68C; --sous-soft: #13301C; --coeur: #FF6F80;
     color-scheme: dark;
   }
 }
@@ -36,6 +38,7 @@
   --water: #63A9EA; --metal: #7D8F8A;
   --sea: #10283A; --land: #1C3A2A; --land-out: #18241F; --forest: #2B5A3C; --coast: #4F8A6D;
   --bench: #1A2F2B; --bench-edge: #2D4A44; --wire-a: #FF6B5E; --wire-b: #C9D6D2; --lcd: #B9CBB0; --lcd-ink: #1D2B22;
+  --titre: #FF9A80; --titre-soft: #3A1E17; --sous: #74D68C; --sous-soft: #13301C; --coeur: #FF6F80;
   color-scheme: dark;
 }
 * { box-sizing: border-box; }
@@ -86,7 +89,7 @@ button { font: inherit; cursor: pointer; color: inherit; }
 .cards { display: flex; flex-direction: column; gap: .7rem; }
 .card { display: grid; grid-template-columns: 3rem 1fr auto; align-items: center; gap: .9rem; width: 100%; text-align: left;
   background: var(--surface); color: var(--ink); border: 1px solid var(--line); border-radius: var(--r); padding: .85rem 1rem; text-decoration: none; }
-a.card:hover { border-color: var(--accent); }
+@media (hover: hover) and (pointer: fine) { a.card:hover { border-color: var(--accent); } }
 .card.off { opacity: .55; }
 .card .ico { width: 3rem; height: 3rem; border-radius: 12px; background: var(--accent-soft); color: var(--accent); display: grid; place-items: center;
   font-family: var(--f-display); font-weight: 700; font-size: 1.35rem; }
@@ -133,7 +136,7 @@ textarea { min-height: 5rem; resize: vertical; }
   min-height: 3.1rem; padding: .6rem .8rem; border-radius: 12px; border: 2px solid var(--line); background: var(--bg); color: var(--ink); }
 .opt .l { width: 2rem; height: 2rem; border-radius: 50%; display: grid; place-items: center; font-weight: 700; background: var(--surface); border: 1px solid var(--line); }
 .opt > span:last-child { min-width: 0; }
-.opt:not(:disabled):hover { border-color: var(--accent); }
+@media (hover: hover) and (pointer: fine) { .opt:not(:disabled):hover { border-color: var(--accent); } }
 .opt:disabled { cursor: default; }
 .opt.good { border-color: var(--good); background: var(--good-soft); }
 .opt.good .l { background: var(--good); color: var(--surface); border-color: var(--good); }
@@ -333,6 +336,43 @@ svg.spectre { display: block; width: 100%; max-width: 420px; height: auto; color
 .ex.reussi { border-style: solid; border-color: var(--good); }
 .ex-head { display: flex; justify-content: space-between; align-items: center; gap: .5rem; }
 .ex-head strong { font-family: var(--f-display); color: var(--accent); font-size: 1.05rem; }
+/* Mise en forme du cours (retours des élèves, 14/11) : grands titres rouge brique, sous-titres verts, mots importants en gras rouge,
+   cœur « à apprendre par cœur », définitions encadrées, exemples avec une barre à gauche (début et fin visibles). */
+.head .ttl-cours { color: var(--titre); }
+.cours h3 { color: var(--titre); padding-bottom: .25rem; border-bottom: 2px solid var(--titre-soft); scroll-margin-top: 1rem; }
+.cours h3.flash { animation: h-flash 1.6s ease-out; }
+@keyframes h-flash { 0% { background: var(--titre-soft); } 100% { background: transparent; } }
+.cours h4.st, .cours .st { color: var(--sous); font-family: var(--f-display); font-weight: 700; }
+.cours h4.st { font-size: 1.05rem; margin: .2rem 0 0; }
+.cours > p strong, .cours > ul strong, .cours .def strong, .cours .methode li strong, .cours .retenir li strong, .cours td strong { color: var(--titre); }
+.cours p strong.st { color: var(--sous); }
+.cours .methode strong.lbl, .cours .retenir strong.lbl, .cours .ex-head strong { color: var(--sous); }
+.coeur { display: inline-flex; width: 1.05em; height: 1.05em; color: var(--coeur); vertical-align: -.15em; flex: none; }
+.coeur svg { width: 100%; height: 100%; }
+.lbl-l { display: inline-flex; align-items: center; gap: .35rem; }
+.def { border: 2px solid var(--titre); border-radius: 12px; padding: .7rem .9rem .8rem; display: flex; flex-direction: column; gap: .3rem; background: var(--surface); }
+.def .def-t { font-family: var(--f-display); font-weight: 700; font-size: .95rem; color: var(--titre); display: flex; align-items: center; gap: .35rem; }
+.def.rel { border-color: var(--sous); background: var(--sous-soft); }
+.def.rel .def-t { color: var(--sous); }
+.methode.rel { border-color: var(--sous); background: var(--sous-soft); }
+.cours .methode.exr, .cours .ex { border: none; border-left: 5px solid var(--sous); border-radius: 0 12px 12px 0; background: var(--surface); position: relative; padding-bottom: 1.6rem; }
+.cours .ex { box-shadow: inset 0 0 0 1px var(--line); }
+.cours .ex.reussi { border-left-color: var(--good); box-shadow: inset 0 0 0 1px var(--good); }
+.cours .methode.exr::after, .cours .ex::after { content: "Fin de l'exemple"; position: absolute; left: .9rem; bottom: .4rem; font-size: .72rem; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); font-weight: 700; }
+.cours .methode.exr { box-shadow: inset 0 0 0 1px var(--line); }
+.cours .methode.exr::before, .cours .ex::before { content: ""; position: absolute; left: -5px; bottom: 0; width: 18px; height: 5px; background: inherit; }
+.cours .methode.exr::before { background: var(--sous); } .cours .ex::before { background: var(--sous); } .cours .ex.reussi::before { background: var(--good); }
+.phr { color: var(--sous); font-weight: 700; }
+.legende-coeur { font-size: .85rem; color: var(--muted); display: flex; align-items: center; gap: .35rem; margin: 0; }
+.skills button.ct { background: none; border: none; padding: 0; text-align: left; color: inherit; text-decoration: underline; text-decoration-color: var(--line); text-underline-offset: 3px; cursor: pointer; }
+.skills li.fait button.ct { color: var(--good); font-weight: 700; }
+.skills .aller { font-size: .8rem; color: var(--muted); }
+.skills .cnum { flex: none; font-size: .78rem; font-weight: 800; color: var(--muted); min-width: .9rem; margin-top: .15rem; }
+.skills .cav { flex: none; margin-left: auto; font-size: .78rem; font-weight: 700; color: var(--muted); background: var(--bg); border-radius: 999px; padding: .05rem .5rem; align-self: flex-start; }
+.skills li.fait .cav { color: var(--good); }
+.ex-comp { display: inline-block; margin-left: .5rem; font-family: var(--f-body); font-size: .74rem; font-weight: 700; color: var(--muted); background: var(--bg); border-radius: 999px; padding: .1rem .5rem; vertical-align: middle; }
+.cours .ex.flash { animation: ex-flash 1.8s ease-out; }
+@keyframes ex-flash { 0%, 40% { box-shadow: inset 0 0 0 3px var(--sous); } 100% { box-shadow: inset 0 0 0 1px var(--line); } }
 
 /* TP et simulation */
 .safety { background: var(--bad-soft); border-radius: 12px; padding: .8rem 1rem; display: flex; flex-direction: column; gap: .3rem; }
@@ -373,7 +413,8 @@ details.panel summary { cursor: pointer; }
 .m-pastille { position: relative; width: 5.2rem; height: 5.2rem; border-radius: 50%; display: grid; place-items: center; background: var(--surface);
   border: 4px solid var(--accent); box-shadow: 0 4px 0 var(--coast); transition: transform .15s ease; }
 .m-pastille > svg { width: 3.3rem; height: 3.3rem; overflow: visible; }
-.m-etape:hover .m-pastille, .m-etape:focus-visible .m-pastille { transform: translateY(-2px); }
+@media (hover: hover) and (pointer: fine) { .m-etape:hover .m-pastille { transform: translateY(-2px); } }
+.m-etape:focus-visible .m-pastille { transform: translateY(-2px); }
 .m-etape:focus-visible { outline: none; } .m-etape:focus-visible .m-pastille { outline: 3px solid var(--ink); outline-offset: 3px; }
 .m-nom { font-family: var(--f-display); font-size: 1.15rem; font-weight: 700; line-height: 1.1; background: var(--surface); padding: .15rem .6rem; border-radius: 999px; margin-top: .3rem; max-width: 100%; }
 .m-sous { font-size: .78rem; font-weight: 700; color: var(--muted); background: var(--surface); padding: 0 .5rem; border-radius: 999px; }
@@ -562,6 +603,102 @@ details.panel summary { cursor: pointer; }
   display: flex; align-items: center; gap: .7rem; padding: .6rem .8rem; border-radius: 12px; background: var(--accent); color: #fff; box-shadow: 0 4px 14px rgba(0,0,0,.25); font-size: .92rem; }
 .maj-bandeau span { flex: 1; }
 .maj-bandeau .btn { background: #fff; color: var(--accent); border-color: #fff; min-height: 2.4rem; }
+/* Schémas d'électricité et d'énergie (passage B, 14/11) : symboles normalisés, couleurs du thème */
+.sch { display: block; width: 100%; max-width: 460px; height: auto; margin: 0 auto; fill: none; stroke: var(--ink); stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.sch .sch-fin { stroke-width: 1.3; } .sch .sch-gras { stroke-width: 3.2; } .sch .sch-croix { stroke-width: 2; stroke: var(--titre); }
+.sch .sch-fond { fill: var(--surface); } .sch .sch-plein { fill: var(--ink); stroke: none; }
+.sch .sch-pointille { stroke: var(--line); stroke-dasharray: 3 4; }
+.sch text { stroke: none; fill: var(--ink); font-family: var(--f-body); }
+.sch .sch-t { font-size: 11px; } .sch .sch-pt { font-size: 9.5px; fill: var(--muted); } .sch .sch-gr { font-size: 11px; font-weight: 700; }
+.sch .sch-pm { font-size: 12px; font-weight: 700; } .sch .sch-lettre { font-size: 13px; font-weight: 800; } .sch text.sch-blanc { fill: #fff; font-weight: 800; font-size: 10px; }
+.sch .sch-fl { stroke: var(--accent); stroke-width: 2.2; } .sch path.sch-plein + text { fill: var(--muted); }
+.sch .sch-eau { stroke: var(--water); stroke-width: 2.4; } .sch .sch-axe { stroke: var(--muted); stroke-width: 5; }
+.sch .sch-aim-n { fill: #D23B30; stroke: none; } .sch .sch-aim-s { fill: #2F6FD1; stroke: none; }
+.sch .sch-plaque { fill: var(--bg); stroke: var(--muted); } .sch .sch-diff { fill: var(--sous-soft); stroke: var(--sous); }
+.sch .sch-lcdt { font-family: var(--f-lcd); font-size: 15px; font-weight: 700; }
+.sch .sch-lcdbg { fill: var(--lcd); stroke: none; } .sch .sch-lcdt2 { font-family: var(--f-lcd); font-size: 12px; font-weight: 700; fill: var(--lcd-ink); }
+.sch .sch-citron { fill: #F2D43D; stroke: #B59A12; } .sch .sch-zinc { fill: #A9B4B8; stroke: #6D7A7E; } .sch .sch-cuivre { fill: #D98C4E; stroke: #9C5A26; }
+.sch .sch-liq { fill: var(--blue-soft); stroke: none; } .sch .sch-liq2 { fill: #F3C9D9; stroke: none; }
+.sch .alt-n { stroke: #D23B30; stroke-width: 14; stroke-linecap: butt; } .sch .alt-s { stroke: #2F6FD1; stroke-width: 14; stroke-linecap: butt; }
+.sch .alt-spire { stroke: #C37A3A; stroke-width: 2.2; fill: none; } .sch .alt-noyau { fill: var(--line); stroke: none; }
+.sch .alt-lampe { fill: #FFD24A; stroke: none; } .sch .alt-halo { fill: #FFE68A; stroke: none; }
+.sch .sch-lcd { font-family: var(--f-lcd); font-size: 13px; font-weight: 700; }
+.sch .alt-courbe { stroke: var(--titre); stroke-width: 2.4; }
+.alt-osc { max-width: 460px; background: var(--bg); border-radius: 8px; }
+.sch-fig figcaption { text-align: center; }
+.mp-apps { display: grid; grid-template-columns: repeat(auto-fill, minmax(8.2rem, 1fr)); gap: .4rem; }
+.mp-app { display: flex; flex-direction: column; align-items: flex-start; gap: .1rem; text-align: left; padding: .45rem .6rem; border-radius: 10px; border: 1.5px solid var(--line); background: var(--surface); color: var(--ink); min-height: 3rem; touch-action: manipulation; }
+.mp-app b { font-size: .9rem; } .mp-app span { font-size: .8rem; color: var(--muted); }
+.mp-app.on { border-color: var(--accent); background: var(--accent-soft); }
+.mp-app.on.noir { border-color: var(--line); background: var(--bg); opacity: .65; }
+.mp-jauge { position: relative; height: 1.1rem; background: var(--bg); border: 1px solid var(--line); border-radius: 999px; overflow: visible; margin-top: 1.2rem; }
+.mp-barre { height: 100%; width: 0; background: var(--good); border-radius: 999px; transition: width .35s, background .35s; }
+.mp-barre.trop { background: var(--bad); }
+.mp-max { position: absolute; top: -1.15rem; bottom: -.15rem; border-left: 2px dashed var(--bad); }
+.mp-max span { position: absolute; left: .25rem; top: -.1rem; font-size: .75rem; font-weight: 700; color: var(--bad); white-space: nowrap; }
+.mp-ligne { display: flex; flex-wrap: wrap; justify-content: space-between; gap: .3rem .8rem; font-size: .92rem; font-variant-numeric: tabular-nums; }
+.mp-dj { display: inline-flex; align-items: center; gap: .35rem; }
+.mp-led { width: .7rem; height: .7rem; border-radius: 50%; background: var(--good); display: inline-block; } .mp-led.off { background: var(--bad); }
+/* TP 4ème masse volumique : liste des matériaux (14/11) */
+.mat-ref { border: 1px solid var(--line); border-radius: 12px; padding: .5rem .8rem; background: var(--surface); }
+.mat-ref summary { cursor: pointer; font-weight: 700; color: var(--sous); }
+.mat-ref .table-wrap { margin-top: .5rem; }
+.mat-liste { display: flex; flex-direction: column; gap: .3rem; }
+.mat-tete { display: flex; justify-content: space-between; font-size: .8rem; font-weight: 700; color: var(--muted); padding: 0 .8rem; }
+.mat-l { display: flex; justify-content: space-between; align-items: center; gap: .6rem; width: 100%; text-align: left; padding: .55rem .8rem; border-radius: 10px; border: 2px solid var(--line); background: var(--surface); color: var(--ink); min-height: 2.8rem; }
+.mat-l b { font-variant-numeric: tabular-nums; }
+.mat-l.good { border-color: var(--good); background: var(--good-soft); } .mat-l.bad { border-color: var(--bad); background: var(--bad-soft); }
+.mat-l:disabled { cursor: default; } .mat-l:disabled:not(.good):not(.bad) { opacity: .6; }
+/* ===== Confort (14/11) : bouton des sons, calculatrice, version ordinateur ===== */
+.btn-son { display: inline-flex; align-items: center; justify-content: center; width: 2.4rem; height: 2.4rem; border-radius: 50%; border: 1px solid var(--line); background: var(--surface); color: var(--muted); flex: none; padding: 0; }
+.btn-son svg { width: 1.2rem; height: 1.2rem; }
+.btn-son .barre { display: none; } .btn-son.coupe .onde { display: none; } .btn-son.coupe .barre { display: inline; }
+.btn-son.coupe { color: var(--bad); }
+.calc-fab { position: fixed; right: max(16px, env(safe-area-inset-right, 0px)); bottom: calc(1rem + env(safe-area-inset-bottom, 0px)); z-index: 40;
+  width: 3.4rem; height: 3.4rem; border-radius: 50%; border: none; background: var(--accent); color: var(--accent-ink);
+  box-shadow: 0 6px 18px rgba(0,0,0,.22); display: inline-flex; align-items: center; justify-content: center; padding: 0; }
+.calc-fab svg { width: 1.6rem; height: 1.6rem; }
+.calc-fab.petit { width: 2.8rem; height: 2.8rem; opacity: .88; } .calc-fab.petit svg { width: 1.3rem; height: 1.3rem; }
+.calc-fab[aria-expanded="true"] { background: var(--ink); color: var(--bg); }
+.calc { position: fixed; right: max(16px, env(safe-area-inset-right, 0px)); bottom: calc(5rem + env(safe-area-inset-bottom, 0px)); z-index: 41;
+  width: min(20rem, calc(100vw - 32px)); background: var(--surface); border: 1px solid var(--line); border-radius: 18px; padding: .75rem;
+  box-shadow: 0 12px 32px rgba(0,0,0,.28); display: flex; flex-direction: column; gap: .5rem; }
+.ck-tete { display: flex; align-items: center; justify-content: space-between; font-family: var(--f-display); }
+.ck-x { border: none; background: none; font-size: 1.6rem; line-height: 1; width: 2.2rem; height: 2.2rem; color: var(--muted); padding: 0; }
+.ck-ecran { background: var(--lcd); color: var(--lcd-ink); border-radius: 10px; padding: .45rem .7rem; font-family: var(--f-lcd); text-align: right; min-height: 4.6rem; display: flex; flex-direction: column; justify-content: flex-end; overflow: hidden; }
+.ck-hist { font-size: .8rem; opacity: .7; min-height: 1.1em; word-break: break-all; }
+.ck-expr { font-size: 1.15rem; word-break: break-all; }
+.ck-res { font-size: 1.45rem; font-weight: 700; min-height: 1.3em; }
+.ck-touches { display: grid; grid-template-columns: repeat(4, 1fr); gap: .4rem; }
+.ck-extra { display: flex; gap: .4rem; }
+.ck-extra .ck-k { flex: 1; }
+.ck-k { min-height: 2.9rem; border-radius: 10px; border: 1px solid var(--line); background: var(--bg); color: var(--ink); font-size: 1.15rem; font-weight: 600; padding: 0; touch-action: manipulation; }
+.ck-k:active { transform: scale(.96); }
+.ck-k.op { background: var(--accent-soft); color: var(--accent); font-weight: 800; }
+.ck-k.fn { font-size: .98rem; color: var(--muted); }
+.ck-k.eg { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); }
+.ck-aide { font-size: .78rem; color: var(--muted); margin: 0; }
+main { padding-bottom: 3.5rem; } /* la page ne passe pas sous le bouton de la calculatrice */
+.nav-pc { display: none; }
+@media (min-width: 1000px) {
+  .app.avec-nav { max-width: 76rem; display: grid; grid-template-columns: 17rem minmax(0, 50rem); column-gap: 2.5rem; justify-content: center; align-items: start; }
+  .app.avec-nav > * { grid-column: 2; }
+  .app.avec-nav > .nav-pc { grid-column: 1; grid-row: 1 / span 6; position: sticky; top: 1rem; max-height: calc(100vh - 2rem); overflow-y: auto;
+    display: flex; flex-direction: column; gap: 1rem; background: var(--surface); border: 1px solid var(--line); border-radius: 16px; padding: 1rem .8rem; }
+  .np-bloc { display: flex; flex-direction: column; gap: .15rem; }
+  .np-t { font-size: .72rem; text-transform: uppercase; letter-spacing: .07em; font-weight: 700; color: var(--muted); padding: 0 .5rem .2rem; }
+  .np-niv { display: flex; flex-wrap: wrap; gap: .3rem; padding: 0 .3rem; }
+  .np-niv .np-l { padding: .25rem .6rem; border: 1px solid var(--line); border-radius: 999px; font-size: .88rem; }
+  .np-l { display: flex; align-items: center; gap: .4rem; padding: .4rem .55rem; border-radius: 8px; color: var(--ink); text-decoration: none; font-size: .93rem; line-height: 1.25; }
+  .np-l svg { width: .95rem; height: .95rem; flex: none; }
+  a.np-l:hover { background: var(--accent-soft); }
+  .np-l.actif { background: var(--accent); color: var(--accent-ink); font-weight: 700; }
+  .np-l.fini svg { color: var(--good); } .np-l.actif svg { color: inherit; }
+  .np-ferme { color: var(--muted); opacity: .7; }
+  .np-etapes { display: flex; flex-direction: column; gap: .1rem; margin: .1rem 0 .3rem .9rem; padding-left: .6rem; border-left: 2px solid var(--line); }
+  .np-etapes .np-l { font-size: .88rem; padding: .3rem .5rem; }
+  .calc { bottom: 5.5rem; }
+}
 .toast { position: fixed; left: 50%; transform: translateX(-50%); bottom: calc(1rem + env(safe-area-inset-bottom, 0px)); background: var(--ink); color: var(--bg);
   padding: .6rem 1.1rem; border-radius: 999px; font-weight: 700; z-index: 20; box-shadow: 0 4px 18px rgba(0,0,0,.18); max-width: calc(100% - 32px); text-align: center; }
 footer { text-align: center; font-size: .85rem; color: var(--muted); display: flex; flex-direction: column; gap: .5rem; align-items: center; }
@@ -768,7 +905,7 @@ footer { text-align: center; font-size: .85rem; color: var(--muted); display: fl
 @keyframes t-ouvre { from { opacity: 0; transform: translateY(-6px); } }
 .t-chap { display: grid; grid-template-columns: 2.3rem 1fr auto; align-items: center; gap: .65rem; padding: .4rem .75rem .4rem .4rem; border-radius: 14px;
   background: var(--bg); border: 2px solid var(--line); color: var(--ink); text-decoration: none; min-height: 3rem; }
-a.t-chap:hover { border-color: var(--c); }
+@media (hover: hover) and (pointer: fine) { a.t-chap:hover { border-color: var(--c); } }
 .t-chap .n { width: 2.3rem; height: 2.3rem; border-radius: 50%; display: grid; place-items: center; background: var(--c); color: #fff; }
 .t-chap .n svg { width: 1.15rem; height: 1.15rem; }
 .t-chap .t { min-width: 0; font-size: .95rem; line-height: 1.2; }
@@ -1005,6 +1142,10 @@ a.t-chap:hover { border-color: var(--c); }
 .mv-guide { display: grid; grid-template-columns: 2.4rem 1fr; gap: .6rem; align-items: center; min-height: 3.6rem; padding: .5rem .7rem; border-radius: 12px;
   background: var(--surface); border: 1px solid var(--line); border-left: 5px solid var(--accent); font-size: .92rem; line-height: 1.3; transition: background .25s, border-color .25s; }
 .mv-guide.neuf { animation: mv-g-in .35s ease-out; }
+/* 14/11 : hauteur fixe du bandeau (un message plus long ne fait plus bouger la paillasse pendant qu'on déplace un objet) */
+.mv-guide { height: 5.4rem; min-height: 0; overflow-y: auto; font-size: .88rem; line-height: 1.25; }
+@media (min-width: 600px) { .mv-guide { height: 4.4rem; } }
+.bench.mv svg [data-obj] { touch-action: none; }
 @keyframes mv-g-in { from { opacity: .3; transform: translateY(-4px); } }
 .mv-g-ico { width: 2.4rem; height: 2.4rem; border-radius: 50%; display: grid; place-items: center; font-weight: 800; font-size: .82rem; background: var(--accent-soft); color: var(--accent); font-family: var(--f-display); }
 .mv-guide.g-ok { border-left-color: var(--good); background: var(--good-soft); } .mv-guide.g-ok .mv-g-ico { background: var(--good); color: var(--surface); font-size: 1.1rem; }
@@ -2350,6 +2491,239 @@ const MELSOL = (() => {
     genCm, genMasseAPeser, genVolumeSol, genDilution, genCmax, genConversion, genEchelle, genEtal, genFacteur, animPalier, animCCM, animSaturation, animEchelle, animProtocole, V, COLO, bleu };
 })();
 
+// ==================================================================
+// SCHÉMAS ET ANIMATIONS DES COURS D'ÉLECTRICITÉ ET D'ÉNERGIE (passage B des retours, 14/11/2026)
+// Schémas normalisés (pile, lampe, interrupteur, résistance, DEL, ampèremètre, voltmètre) dessinés en SVG,
+// couleurs prises dans le thème (clair et sombre). Animations : l'alternateur (3ème, centrales),
+// la multiprise et le disjoncteur (3ème, puissance).
+// ==================================================================
+const SCHEMAS = (() => {
+  const fr = (x, d = 1) => (Math.round(x * 10 ** d) / 10 ** d).toString().replace(".", ",").replace(/\B(?=(\d{3})+(?!\d))/g, " ");
+  const fig = (vb, svg, leg, h) => `<figure class="fig-cours sch-fig"><svg viewBox="${vb}" class="sch"${h ? ` style="max-width:${h}px"` : ""} role="img" aria-label="${leg.replace(/"/g, "'")}">${svg}</svg><figcaption>${leg}</figcaption></figure>`;
+  const T = (x, y, t, cls, anc) => `<text x="${x}" y="${y}" class="${cls || "sch-t"}" text-anchor="${anc || "middle"}">${t}</text>`;
+  // --- symboles horizontaux, centrés en (x, y), largeur 40 ---
+  const S = {
+    lampe: (x, y, l) => `<circle cx="${x}" cy="${y}" r="10" class="sch-fond"/><path d="M${x - 7} ${y - 7}l14 14M${x + 7} ${y - 7}l-14 14"/>${l ? T(x, y + 24, l) : ""}<path d="M${x - 20} ${y}h10M${x + 10} ${y}h10"/>`,
+    pile: (x, y, l) => `<path d="M${x - 20} ${y}h16M${x + 4} ${y}h16"/><path d="M${x - 4} ${y - 12}v24" class="sch-fin"/><path d="M${x + 4} ${y - 6}v12" class="sch-gras"/>${T(x - 11, y - 14, "+", "sch-t sch-pm")}${T(x + 12, y - 9, "−", "sch-t sch-pm")}${l ? T(x, y + 26, l) : ""}`,
+    inter: (x, y, ferme, l) => `<path d="M${x - 20} ${y}h8M${x + 12} ${y}h8"/><circle cx="${x - 12}" cy="${y}" r="2.5" class="sch-plein"/><circle cx="${x + 12}" cy="${y}" r="2.5" class="sch-plein"/><path d="M${x - 12} ${y}L${x + 10} ${ferme ? y : y - 12}"/>${l ? T(x, y + 22, l) : ""}`,
+    R: (x, y, l) => `<path d="M${x - 20} ${y}h7M${x + 13} ${y}h7"/><rect x="${x - 13}" y="${y - 6}" width="26" height="12" class="sch-fond"/>${l ? T(x, y + 22, l) : ""}`,
+    del: (x, y, l) => `<path d="M${x - 20} ${y}h12M${x + 8} ${y}h12"/><path d="M${x - 8} ${y - 8}v16l14-8z" class="sch-fond"/><path d="M${x + 6} ${y - 8}v16"/><path d="M${x} ${y - 11}l6-7M${x + 5} ${y - 9}l6-7" class="sch-fin"/><path d="M${x + 6} ${y - 18}l0 3l-3-1zM${x + 11} ${y - 16}l0 3l-3-1z" class="sch-plein"/>${l ? T(x, y + 22, l) : ""}`,
+    app: (x, y, lettre, l) => `<path d="M${x - 20} ${y}h8M${x + 12} ${y}h8"/><circle cx="${x}" cy="${y}" r="12" class="sch-fond"/>${T(x, y + 5, lettre, "sch-t sch-lettre")}${l ? T(x, y + 26, l) : ""}`,
+    noeud: (x, y) => `<circle cx="${x}" cy="${y}" r="3.2" class="sch-plein"/>`
+  };
+  // Boucle rectangulaire (x1,y1)-(x2,y2) ; les composants (largeur 40) coupent le fil aux abscisses données en haut et en bas
+  function boucle(x1, y1, x2, y2, haut, bas) {
+    const ligne = (y, xs) => { let d = "", x = x1; xs.slice().sort((a, b) => a - b).forEach((c) => { d += `M${x} ${y}H${c - 20}`; x = c + 20; }); return d + `M${x} ${y}H${x2}`; };
+    return `<path d="${ligne(y1, haut)}${ligne(y2, bas)}M${x1} ${y1}V${y2}M${x2} ${y1}V${y2}"/>`;
+  }
+
+  // ---------- 3ème · Centrales : le principe commun ----------
+  function figPrincipe() {
+    const fl = (x1, x2, y, t) => `<path d="M${x1} ${y}H${x2 - 6}" class="sch-fl"/><path d="M${x2 - 7} ${y - 4}l7 4l-7 4z" class="sch-plein"/>${t ? T((x1 + x2) / 2, y - 7, t, "sch-t sch-pt") : ""}`;
+    const s = `
+      <g><path d="M8 40q10-8 20 0t20 0M8 52q10-8 20 0t20 0M8 64q10-8 20 0t20 0" class="sch-eau"/>${T(30, 90, "Eau, vapeur", "sch-t sch-pt")}${T(30, 101, "ou vent", "sch-t sch-pt")}</g>
+      ${fl(52, 84, 52, "pousse")}
+      <g transform="translate(108 52)"><circle r="20" class="sch-fond"/>${[0, 60, 120, 180, 240, 300].map((a) => `<path d="M0 0L${(18 * Math.cos(a * Math.PI / 180)).toFixed(1)} ${(18 * Math.sin(a * Math.PI / 180)).toFixed(1)}" class="sch-gras"/>`).join("")}<circle r="4" class="sch-plein"/></g>
+      ${T(108, 90, "Turbine")}${T(108, 101, "(elle tourne)", "sch-t sch-pt")}
+      <path d="M128 52H160" class="sch-axe"/>${T(144, 45, "axe", "sch-t sch-pt")}
+      <g><rect x="160" y="32" width="52" height="40" rx="6" class="sch-fond"/><rect x="170" y="44" width="16" height="16" rx="2" class="sch-aim-n"/><rect x="186" y="44" width="16" height="16" rx="2" class="sch-aim-s"/>
+        ${T(178, 56, "N", "sch-t sch-blanc")}${T(194, 56, "S", "sch-t sch-blanc")}</g>
+      ${T(186, 90, "Alternateur")}${T(186, 101, "(aimant + bobine)", "sch-t sch-pt")}
+      ${fl(212, 250, 52, "")}${T(231, 30, "électricité", "sch-t sch-pt")}
+      <g><path d="M262 82L270 22L278 82M264 66H276M266 48H274M262 30H278M270 22V18" /><path d="M278 30Q292 34 306 30" class="sch-fin"/></g>
+      <g><path d="M290 82V62L302 50L314 62V82Z" class="sch-fond"/></g>${T(288, 94, "Réseau,", "sch-t sch-pt")}${T(288, 105, "maisons", "sch-t sch-pt")}`;
+    return fig("0 0 320 108", s, "Dans une centrale, un fluide fait tourner la turbine ; la turbine entraîne l'alternateur, qui produit l'électricité envoyée sur le réseau.");
+  }
+
+  // ---------- 3ème · Centrales : animation de l'alternateur ----------
+  function animAlternateur(el) {
+    el.innerHTML = `<span class="a-titre">Expérience : un aimant qui tourne près d'une bobine</span>
+      <p class="small">Fais tourner l'aimant avec le curseur et observe la lampe et la tension aux bornes de la bobine.</p>
+      <svg viewBox="0 0 320 170" class="sch alt-svg" role="img" aria-label="Un aimant tourne devant une bobine reliée à une lampe"></svg>
+      <svg viewBox="0 0 320 92" class="sch alt-osc" role="img" aria-label="Tension aux bornes de la bobine en fonction du temps"></svg>
+      <label>Vitesse de l'aimant <output>0 tour par seconde</output><input type="range" min="0" max="4" step="0.5" value="0"></label>
+      <div class="a-bts"><button type="button" class="btn btn-ghost btn-sm" data-v="0">Arrêter</button><button type="button" class="btn btn-ghost btn-sm" data-v="1">Lentement</button><button type="button" class="btn btn-ghost btn-sm" data-v="4">Très vite</button></div>
+      <div class="a-res" aria-live="polite"></div>`;
+    const svg = el.querySelector(".alt-svg"), osc = el.querySelector(".alt-osc"), rg = el.querySelector("input"), out = el.querySelector("output"), res = el.querySelector(".a-res");
+    let f = 0, ang = 0, t = 0, last = performance.now(), msg = "";
+    const hist = []; // [temps, tension]
+    const UPAR = 1.5; // tension maximale (V) pour 1 tour par seconde
+    function regler(v) {
+      f = +v; rg.value = v; out.textContent = f === 0 ? "0 tour par seconde" : fr(f) + (f > 1 ? " tours par seconde" : " tour par seconde");
+      const m = f === 0 ? "L'aimant est immobile : <strong>aucune tension</strong>, la lampe reste éteinte."
+        : f <= 1 ? `L'aimant tourne : une <strong>tension</strong> apparaît aux bornes de la bobine (jusqu'à ${fr(UPAR * f)} V). Elle change de sens à chaque demi-tour : c'est une <strong>tension alternative</strong>.`
+          : `Plus l'aimant tourne vite, plus la tension est grande (jusqu'à ${fr(UPAR * f)} V) et plus elle change souvent de sens : la lampe brille davantage.`;
+      if (m !== msg) { res.innerHTML = m; msg = m; }
+    }
+    rg.oninput = () => regler(rg.value);
+    el.querySelectorAll("[data-v]").forEach((b) => b.onclick = () => regler(b.dataset.v));
+    function dessiner(u) {
+      const Umax = UPAR * 4, lum = Math.min(1, Math.abs(u) / (UPAR * 2.2));
+      const c = Math.cos(ang), s = Math.sin(ang), L = 38;
+      const xN = 80 + L * c, yN = 85 + L * s, xS = 80 - L * c, yS = 85 - L * s;
+      const bob = Array.from({ length: 7 }, (_, i) => `<ellipse cx="${150 + i * 7}" cy="85" rx="3.5" ry="20" class="alt-spire"/>`).join("");
+      svg.innerHTML = `
+        <circle cx="80" cy="85" r="46" class="sch-pointille"/>
+        <g><path d="M80 85L${xN.toFixed(1)} ${yN.toFixed(1)}" class="alt-n"/><path d="M80 85L${xS.toFixed(1)} ${yS.toFixed(1)}" class="alt-s"/>
+          ${T(80 + 26 * c, 89 + 26 * s, "N", "sch-t sch-blanc")}${T(80 - 26 * c, 89 - 26 * s, "S", "sch-t sch-blanc")}<circle cx="80" cy="85" r="4" class="sch-plein"/></g>
+        ${T(80, 158, "Aimant (il tourne)")}
+        <rect x="140" y="78" width="56" height="14" rx="2" class="alt-noyau"/>${bob}
+        ${T(176, 132, "Bobine")}${T(176, 144, "(fil de cuivre enroulé)", "sch-t sch-pt")}
+        <path d="M192 66V40H262V73M150 105V114H262V97"/>
+        <circle cx="262" cy="85" r="23" class="alt-halo" style="opacity:${(lum * 0.9).toFixed(2)}"/>
+        <circle cx="262" cy="85" r="12" class="sch-fond"/><path d="M254 77l16 16M270 77l-16 16"/>
+        <circle cx="262" cy="85" r="12" class="alt-lampe" style="opacity:${lum.toFixed(2)}"/>
+        ${T(276, 132, "Lampe")}
+        ${T(312, 22, "tension aux bornes de la bobine", "sch-t sch-pt", "end")}<text x="312" y="36" text-anchor="end" class="sch-t sch-lcd">U = ${Math.abs(u) < 0.05 ? "0" : (u > 0 ? "+" : "−") + fr(Math.abs(u))} V</text>`;
+      // oscillogramme : 2 dernières secondes
+      const W = 290, H = 34, y0 = 46, x0 = 22;
+      let d = "";
+      hist.forEach(([tt, uu], i) => { const x = x0 + W - (t - tt) / 2 * W, y = y0 - uu / Umax * H; d += (i ? "L" : "M") + x.toFixed(1) + " " + y.toFixed(1); });
+      osc.innerHTML = `<path d="M${x0} ${y0 - H - 4}V${y0 + H + 4}M${x0} ${y0}H${x0 + W}" class="sch-fin"/>${T(x0 + 4, 10, "tension", "sch-t sch-pt", "start")}${T(x0 + W, y0 + 14, "temps", "sch-t sch-pt", "end")}
+        ${T(x0 - 4, y0 - H + 4, "+", "sch-t sch-pt", "end")}${T(x0 - 4, y0 + H + 2, "−", "sch-t sch-pt", "end")}<path d="${d}" class="alt-courbe"/>`;
+    }
+    function boucleAnim(now) {
+      if (!svg.isConnected) return;
+      const dt = Math.min(0.05, (now - last) / 1000); last = now; t += dt;
+      ang += 2 * Math.PI * f * dt;
+      const u = UPAR * f * Math.cos(ang);
+      hist.push([t, u]); while (hist.length && t - hist[0][0] > 2) hist.shift();
+      dessiner(u);
+      requestAnimationFrame(boucleAnim);
+    }
+    regler(0); requestAnimationFrame(boucleAnim);
+  }
+
+  // ---------- 3ème · Puissance : la plaque signalétique ----------
+  function figPlaque() {
+    const s = `<rect x="20" y="12" width="168" height="78" rx="8" class="sch-plaque"/>
+      ${T(104, 32, "Bouilloire BX-12", "sch-t sch-gr")}
+      ${T(104, 56, "230 V ~ 50 Hz", "sch-t sch-lcdt")}${T(104, 78, "2 000 W", "sch-t sch-lcdt")}
+      <path d="M160 51H206" class="sch-fl"/>${T(212, 48, "tension", "sch-t sch-pt", "start")}${T(212, 59, "nominale (V)", "sch-t sch-pt", "start")}
+      <path d="M146 73H206" class="sch-fl"/>${T(212, 73, "puissance", "sch-t sch-pt", "start")}${T(212, 84, "nominale (W)", "sch-t sch-pt", "start")}`;
+    return fig("0 0 300 100", s, "La plaque signalétique d'une bouilloire : sa tension nominale (230 V) et sa puissance nominale (2 000 W).");
+  }
+
+  // ---------- 3ème · Puissance : le tableau électrique de la maison ----------
+  function figTableau() {
+    const dj = (x, A, nom) => `<g transform="translate(${x} 70)"><rect x="-17" y="0" width="34" height="46" rx="4" class="sch-fond"/><rect x="-6" y="8" width="12" height="16" rx="2" class="sch-plein"/>${T(0, 39, A + " A", "sch-t sch-gr")}${T(0, 60, nom, "sch-t sch-pt")}</g>`;
+    const s = `<rect x="6" y="6" width="308" height="132" rx="10" class="sch-plaque"/>
+      <g transform="translate(46 16)"><rect x="-30" y="0" width="60" height="46" rx="4" class="sch-diff"/><rect x="-6" y="8" width="12" height="16" rx="2" class="sch-plein"/>${T(0, 39, "30 mA", "sch-t sch-gr")}</g>
+      ${T(86, 30, "Disjoncteur différentiel :", "sch-t sch-pt", "start")}${T(86, 42, "il protège les personnes", "sch-t sch-pt", "start")}
+      <path d="M46 62V66H272V70M84 66V70M146 66V70M208 66V70" class="sch-fin"/>
+      ${dj(84, 10, "Éclairage")}${dj(146, 16, "Prises")}${dj(208, 20, "Lave-linge")}${dj(272, 32, "Plaques")}
+      ${T(310, 30, "Disjoncteurs", "sch-t sch-pt", "end")}${T(310, 42, "divisionnaires :", "sch-t sch-pt", "end")}${T(310, 54, "ils protègent les fils", "sch-t sch-pt", "end")}`;
+    return fig("0 0 320 144", s, "Le tableau électrique d'une maison : un disjoncteur différentiel 30 mA, puis un disjoncteur par circuit, avec son intensité maximale (calibre).");
+  }
+
+  // ---------- 3ème · Puissance : la multiprise et le disjoncteur ----------
+  function animMultiprise(el) {
+    const APP = [["bouilloire", "Bouilloire", 2000], ["fer", "Fer à repasser", 1800], ["radiateur", "Radiateur", 1500], ["clim", "Climatiseur", 1000], ["tele", "Télévision", 100], ["ventilo", "Ventilateur", 50], ["chargeur", "Chargeur", 10]];
+    const MAX = 16, U = 230, on = {}; let coupe = false;
+    el.innerHTML = `<span class="a-titre">Expérience : la multiprise et le disjoncteur de 16 A</span>
+      <p class="small">Toucher un appareil pour le brancher ou le débrancher. Le circuit des prises est protégé par un disjoncteur de <strong>16 A</strong>.</p>
+      <div class="mp-apps"></div>
+      <div class="mp-jauge" aria-hidden="true"><div class="mp-barre"></div><div class="mp-max"><span>16 A</span></div></div>
+      <div class="mp-ligne"><span class="mp-calc" aria-live="polite"></span><span class="mp-dj"></span></div>
+      <div class="a-bts"><button type="button" class="btn btn-ghost btn-sm mp-rearm" hidden>Réarmer le disjoncteur</button></div>
+      <div class="a-res" aria-live="polite">Touche un appareil.</div>`;
+    const apps = el.querySelector(".mp-apps"), barre = el.querySelector(".mp-barre"), calc = el.querySelector(".mp-calc"), dj = el.querySelector(".mp-dj"), res = el.querySelector(".a-res"), rearm = el.querySelector(".mp-rearm");
+    const P = () => APP.reduce((s, a) => s + (on[a[0]] ? a[2] : 0), 0);
+    function maj() {
+      const p = P(), I = p / U, alim = !coupe;
+      apps.innerHTML = APP.map(([id, nom, w]) => `<button type="button" class="mp-app${on[id] ? " on" : ""}${on[id] && !alim ? " noir" : ""}" data-a="${id}" aria-pressed="${!!on[id]}"><b>${nom}</b><span>${w.toLocaleString("fr-FR")} W</span></button>`).join("");
+      apps.querySelectorAll(".mp-app").forEach((b) => b.onclick = () => basculer(b.dataset.a));
+      barre.style.width = Math.min(100, I / 20 * 100) + "%"; barre.classList.toggle("trop", I > MAX);
+      el.querySelector(".mp-max").style.left = (MAX / 20 * 100) + "%";
+      calc.innerHTML = `P = ${p.toLocaleString("fr-FR")} W · I = P ÷ U = ${p.toLocaleString("fr-FR")} ÷ 230 ≈ <strong>${fr(I)} A</strong>`;
+      dj.innerHTML = coupe ? `<i class="mp-led off"></i>Disjoncteur : <strong>coupé</strong>` : `<i class="mp-led"></i>Disjoncteur : enclenché`;
+      rearm.hidden = !coupe;
+    }
+    function basculer(id) {
+      on[id] = !on[id];
+      if (!coupe && P() / U > MAX) {
+        coupe = true;
+        res.innerHTML = `<strong>Clac !</strong> I ≈ ${fr(P() / U)} A dépasse 16 A : le disjoncteur a <strong>coupé le courant</strong> avant que les fils ne chauffent. Débranche un appareil, puis réarme le disjoncteur.`;
+      } else if (!coupe) {
+        const I = P() / U;
+        res.innerHTML = I === 0 ? "Rien n'est branché : I = 0 A." : I > 12 ? `I ≈ ${fr(I)} A : c'est encore permis, mais on s'approche de 16 A.` : `I ≈ ${fr(I)} A : moins de 16 A, pas de surintensité.`;
+      } else res.innerHTML = `Le courant est coupé. Avec ces appareils, I ≈ ${fr(P() / U)} A${P() / U > MAX ? " : c'est encore trop. Débranche un autre appareil." : " : tu peux réarmer."}`;
+      maj();
+    }
+    rearm.onclick = () => {
+      if (P() / U > MAX) { res.innerHTML = `Le disjoncteur recoupe aussitôt : I ≈ ${fr(P() / U)} A, toujours plus que 16 A. Débranche d'abord un appareil.`; return; }
+      coupe = false; res.innerHTML = `Disjoncteur réarmé : I ≈ ${fr(P() / U)} A, moins de 16 A. Tout fonctionne.`; maj();
+    };
+    maj();
+  }
+
+  // ---------- 3ème · Énergie chimique : la pile au citron ----------
+  function figPile() {
+    const s = `<ellipse cx="112" cy="104" rx="70" ry="38" class="sch-citron"/>
+      <rect x="78" y="44" width="10" height="66" rx="2" class="sch-cuivre"/><rect x="136" y="44" width="10" height="66" rx="2" class="sch-zinc"/>
+      ${T(83, 156, "cuivre (borne +)", "sch-t sch-pt")}${T(141, 168, "zinc (borne −)", "sch-t sch-pt")}<path d="M83 110V146M141 110V158" class="sch-fin"/>
+      <path d="M83 44V20H266V54M141 44V34H234V54"/>
+      <rect x="214" y="54" width="70" height="66" rx="8" class="sch-fond"/><circle cx="234" cy="54" r="3.5" class="sch-plein"/><circle cx="266" cy="54" r="3.5" class="sch-plein"/>
+      ${T(234, 68, "COM", "sch-t sch-pt")}${T(266, 68, "V", "sch-t sch-pt")}<rect x="225" y="76" width="48" height="20" rx="3" class="sch-lcdbg"/>${T(249, 91, "0,9 V", "sch-t sch-lcdt2")}
+      ${T(249, 136, "Voltmètre")}`;
+    return fig("0 0 300 174", s, "Une pile au citron : deux métaux différents (zinc et cuivre) plantés dans le citron. Le voltmètre mesure environ 0,9 V.");
+  }
+
+  // ---------- 4ème · Intensité : série et dérivation ----------
+  function figSerieDerivation() {
+    const serie = `<g>${boucle(20, 26, 140, 96, [80], [50, 110])}${S.pile(80, 26)}${S.lampe(50, 96)}${S.lampe(110, 96)}${T(50, 122, "L1", "sch-t sch-pt")}${T(110, 122, "L2", "sch-t sch-pt")}${T(80, 146, "En série : une seule boucle", "sch-t sch-gr")}</g>`;
+    const der = `<g transform="translate(170 0)"><path d="M0 26H40M80 26H140M0 26V76M140 26V76M0 76H50M90 76H140M30 76V116H50M90 116H110V76"/>${S.pile(60, 26)}${S.lampe(70, 76)}${S.lampe(70, 116)}
+      ${S.noeud(30, 76)}${S.noeud(110, 76)}${T(98, 66, "L1", "sch-t sch-pt")}${T(98, 136, "L2", "sch-t sch-pt")}${T(70, 146, "En dérivation : deux boucles", "sch-t sch-gr")}</g>`;
+    return fig("0 0 320 154", serie + der, "À gauche, deux lampes en série (une seule boucle). À droite, deux lampes en dérivation (deux boucles, reliées par des nœuds ●).");
+  }
+  // ---------- 4ème · Intensité : brancher un ampèremètre en série ----------
+  function figAmperemetre() {
+    const s = `${boucle(60, 26, 260, 100, [120, 200], [110, 210])}${S.pile(120, 26, "")}${S.inter(200, 26, true)}${S.lampe(110, 100)}${S.app(210, 100, "A")}
+      ${T(196, 124, "COM", "sch-t sch-pt")}${T(226, 124, "A", "sch-t sch-pt")}${T(110, 126, "Lampe", "sch-t sch-pt")}${T(160, 148, "L'ampèremètre est branché en série, dans la boucle", "sch-t sch-gr")}`;
+    return fig("0 0 320 156", s, "Pour mesurer l'intensité, l'ampèremètre (A) se branche en série : on ouvre le circuit et on le met à la place d'un fil.");
+  }
+  // ---------- 4ème · Tension : brancher un voltmètre en dérivation ----------
+  function figVoltmetre() {
+    const s = `${boucle(60, 26, 260, 90, [120, 200], [160])}${S.pile(120, 26)}${S.inter(200, 26, true)}${S.lampe(160, 90)}
+      <path d="M120 90V136H140M180 136H200V90"/>${S.app(160, 136, "V")}${S.noeud(120, 90)}${S.noeud(200, 90)}
+      ${T(160, 72, "Lampe", "sch-t sch-pt")}${T(184, 158, "Voltmètre", "sch-t sch-pt", "start")}${T(160, 172, "Voltmètre en dérivation, aux bornes de la lampe", "sch-t sch-gr")}`;
+    return fig("0 0 320 180", s, "Pour mesurer la tension aux bornes d'une lampe, le voltmètre (V) se branche en dérivation : ses deux fils vont aux deux bornes de la lampe.");
+  }
+  // ---------- 4ème · Loi d'Ohm : la caractéristique ----------
+  function figCaracteristique() {
+    const pts = [[0, 0], [10, 1], [20, 2], [30, 3], [40, 4], [50, 5], [60, 6]];
+    const X = (i) => 40 + i * 4, Y = (u) => 130 - u * 17;
+    const s = `<path d="M40 136V10M34 130H300" class="sch-fin"/><path d="M40 8l-3 7h6zM302 130l-7-3v6z" class="sch-plein"/>
+      ${[1, 2, 3, 4, 5, 6].map((u) => `<path d="M37 ${Y(u)}h6" class="sch-fin"/>${T(32, Y(u) + 4, u, "sch-t sch-pt", "end")}`).join("")}
+      ${[10, 20, 30, 40, 50, 60].map((i) => `<path d="M${X(i)} 127v6" class="sch-fin"/>${T(X(i), 146, i, "sch-t sch-pt")}`).join("")}
+      <path d="M${X(0)} ${Y(0)}L${X(66)} ${Y(6.6)}" class="alt-courbe"/>
+      ${pts.map(([i, u]) => `<path d="M${X(i) - 4} ${Y(u) - 4}l8 8M${X(i) + 4} ${Y(u) - 4}l-8 8" class="sch-croix"/>`).join("")}
+      ${T(46, 16, "U (V)", "sch-t sch-gr", "start")}${T(300, 120, "I (mA)", "sch-t sch-gr", "end")}
+      ${T(228, 84, "Droite qui passe par l'origine :", "sch-t sch-pt")}${T(228, 96, "U est proportionnelle à I", "sch-t sch-pt")}`;
+    return fig("0 0 320 154", s, "Caractéristique d'une résistance de 100 Ω : les points de mesure sont alignés sur une droite qui passe par l'origine (U = R × I).");
+  }
+  // ---------- 4ème · Loi d'Ohm : protéger une DEL ----------
+  function figDEL() {
+    const s = `${boucle(60, 26, 260, 100, [160], [120, 200])}${S.pile(160, 26, "")}${T(160, 52, "générateur 6 V", "sch-t sch-pt")}${S.R(120, 100, "")}${S.del(200, 100)}
+      ${T(120, 124, "Résistance", "sch-t sch-pt")}${T(120, 136, "de protection", "sch-t sch-pt")}${T(200, 124, "DEL", "sch-t sch-pt")}${T(160, 156, "La résistance, en série, limite l'intensité dans la DEL", "sch-t sch-gr")}`;
+    return fig("0 0 320 164", s, "Une DEL protégée par une résistance branchée en série avec elle.");
+  }
+  // ---------- Terminale · Titrages : le montage ----------
+  function figTitrage() {
+    const s = `<path d="M40 150H200" class="sch-gras"/><path d="M50 150V14M50 40H96" class="sch-gras"/>
+      <rect x="96" y="12" width="14" height="96" rx="3" class="sch-fond"/><rect x="98" y="30" width="10" height="76" class="sch-liq2"/>
+      ${[0, 1, 2, 3, 4, 5, 6].map((k) => `<path d="M96 ${30 + k * 11}h5" class="sch-fin"/>`).join("")}<path d="M103 108V116M99 112h8" />${T(116, 22, "burette graduée", "sch-t sch-pt", "start")}${T(116, 34, "(solution titrante)", "sch-t sch-pt", "start")}
+      <path d="M78 104V146H138V104" /><path d="M80 120H136V145H80Z" class="sch-liq"/><rect x="94" y="138" width="18" height="4" rx="2" class="sch-plein"/>
+      <rect x="62" y="146" width="92" height="14" rx="3" class="sch-fond"/>${T(108, 174, "agitateur magnétique", "sch-t sch-pt")}
+      ${T(150, 126, "bécher : solution titrée", "sch-t sch-pt", "start")}
+      <path d="M128 62V136" class="sch-gras"/><path d="M128 62H210" class="sch-fin"/>
+      <rect x="210" y="44" width="76" height="50" rx="8" class="sch-fond"/><rect x="218" y="52" width="60" height="20" rx="3" class="sch-lcdbg"/>${T(248, 67, "pH 4,76", "sch-t sch-lcdt2")}${T(248, 88, "pH-mètre", "sch-t sch-pt")}
+      ${T(134, 57, "sonde", "sch-t sch-pt", "start")}`;
+    return fig("0 0 300 180", s, "Montage d'un titrage avec suivi pH-métrique : burette graduée, bécher sur agitateur magnétique, sonde du pH-mètre.");
+  }
+  return { figPrincipe, animAlternateur, figPlaque, figTableau, animMultiprise, figPile, figSerieDerivation, figAmperemetre, figVoltmetre, figCaracteristique, figDEL, figTitrage };
+})();
+
 const CONTENU = {
   niveaux: [
     { id: "5e",   nom: "5ème",      groupe: "Collège", actif: false },
@@ -2469,6 +2843,7 @@ const CONTENU = {
         cours: {
           competences: [
             "J'explique le rôle de la turbine et de l'alternateur.",
+            "J'explique comment un alternateur produit une tension : un aimant qui tourne près d'une bobine.",
             "Je classe une source d'énergie : renouvelable ou non.",
             "J'écris la chaîne énergétique d'une centrale.",
             "J'utilise la conservation de l'énergie dans un calcul."
@@ -2478,8 +2853,9 @@ const CONTENU = {
           // Sans « competence », l'exemple sert seulement à s'entraîner (vrai/faux, relier).
           blocs: [
             { t: "h", texte: "1. Le principe commun" },
-            { t: "p", texte: "Dans la plupart des centrales, une <strong>turbine</strong> est mise en rotation par de l'eau, de la vapeur ou du vent. Elle entraîne un <strong>alternateur</strong>, qui convertit l'énergie mécanique en <strong>énergie électrique</strong>." },
+            { t: "p", def: true, texte: "Dans la plupart des centrales, une <strong>turbine</strong> est mise en rotation par de l'eau, de la vapeur ou du vent. Elle entraîne un <strong>alternateur</strong>, qui convertit l'énergie mécanique en <strong>énergie électrique</strong>." },
             { t: "p", texte: "Exception : les panneaux <strong>photovoltaïques</strong> convertissent directement la lumière en électricité, sans turbine ni alternateur." },
+            { t: "fig", ajout: "fig-principe", html: SCHEMAS.figPrincipe() },
             { t: "exemple", type: "qcm", competence: 1, variantes: [
               { question: "Dans une éolienne, quel élément joue le rôle de la turbine ?", reponses: ["Les pales et le rotor", "L'alternateur", "Le mât", "Le câble électrique"], bonne: 0,
                 explication: "Le vent fait tourner les pales : elles jouent le rôle de la turbine et entraînent l'alternateur." },
@@ -2489,19 +2865,40 @@ const CONTENU = {
                 explication: "C'est l'alternateur ; la turbine, elle, tourne et l'entraîne." }
             ] },
 
-            { t: "h", texte: "2. Les sources d'énergie" },
+            // ----- Partie ajoutée le 14/11 (retours des élèves) : l'alternateur -----
+            { t: "h", ajout: "alt-h", texte: "2. L'alternateur : un aimant qui tourne près d'une bobine" },
+            { t: "p", ajout: "alt-def", def: true, texte: "Un <strong>alternateur</strong> est formé d'un <strong>aimant</strong> et d'une <strong>bobine</strong> (un long fil de cuivre enroulé). Quand l'aimant <strong>tourne</strong> près de la bobine, une <strong>tension électrique</strong> apparaît aux bornes de la bobine : si un circuit fermé est branché, un courant circule." },
+            { t: "anim", ajout: "alt-anim", monter: (el) => SCHEMAS.animAlternateur(el) },
+            { t: "p", ajout: "alt-rel", rel: true, texte: "Un aimant immobile ne produit <strong>aucune tension</strong>. Plus l'aimant tourne <strong>vite</strong>, plus la tension produite est <strong>grande</strong>. Cette tension change de sens à chaque demi-tour : c'est une <strong>tension alternative</strong>." },
+            { t: "p", ajout: "alt-ex", texte: "Dans une centrale, c'est la turbine qui fait tourner l'aimant (ou la bobine) de l'alternateur. La <strong>dynamo</strong> d'un vélo, une éolienne ou un groupe électrogène contiennent aussi un alternateur. La tension du secteur change de sens régulièrement : elle fait <strong>50 allers-retours par seconde</strong> (50 Hz, écrit sur les plaques des appareils)." },
+            { t: "exemple", ajout: "alt-ex1", type: "qcm", competence: 2, variantes: [
+              { question: "Que faut-il pour qu'un alternateur produise une tension ?", reponses: ["Un aimant qui tourne près d'une bobine", "Un aimant immobile posé sur une bobine", "Une pile branchée sur la bobine", "De l'eau qui touche la bobine"], bonne: 0,
+                explication: "C'est le mouvement de l'aimant près de la bobine qui crée la tension." },
+              { question: "On fait tourner l'aimant d'un alternateur deux fois plus vite. Que devient la tension produite ?", reponses: ["Elle est plus petite", "Elle ne change pas", "Elle est plus grande", "Elle devient nulle"], bonne: 2,
+                explication: "Plus l'aimant tourne vite, plus la tension produite est grande." },
+              { question: "Une bobine, c'est…", reponses: ["un aimant en forme de roue", "un long fil de cuivre enroulé", "une petite pile", "une lampe"], bonne: 1,
+                explication: "Une bobine est un long fil conducteur (souvent du cuivre) enroulé sur lui-même." }
+            ] },
+            { t: "exemple", ajout: "alt-ex2", type: "vraifaux", competence: 2, variantes: [
+              { affirmation: "Un aimant immobile près d'une bobine produit une tension.", vrai: false, explication: "Il faut que l'aimant bouge : immobile, il ne produit aucune tension." },
+              { affirmation: "La tension produite par un alternateur change de sens régulièrement.", vrai: true, explication: "Elle change de sens à chaque demi-tour de l'aimant : c'est une tension alternative." },
+              { affirmation: "La dynamo d'un vélo est un petit alternateur.", vrai: true, explication: "La roue fait tourner un aimant près d'une bobine : la lampe du vélo s'allume." },
+              { affirmation: "Dans une centrale, c'est la bobine seule, sans aimant, qui produit l'électricité.", vrai: false, explication: "Il faut un aimant ET une bobine, et que l'un tourne par rapport à l'autre." }
+            ] },
+
+            { t: "h", texte: "3. Les sources d'énergie" },
             { t: "liste", items: [
               "<strong>Renouvelables</strong> : elles se reconstituent rapidement à notre échelle (Soleil, vent, eau des fleuves, biomasse).",
               "<strong>Non renouvelables</strong> : leur stock s'épuise (pétrole et fioul, gaz, charbon, uranium)."
             ] },
-            { t: "exemple", type: "tri", competence: 2, n: 4, items: [
+            { t: "exemple", type: "tri", competence: 3, n: 4, items: [
               { source: "Le vent", renouvelable: true }, { source: "Le charbon", renouvelable: false },
               { source: "L'eau d'un fleuve", renouvelable: true }, { source: "Le gaz naturel", renouvelable: false },
               { source: "Le Soleil", renouvelable: true }, { source: "L'uranium", renouvelable: false },
               { source: "Le bois (biomasse)", renouvelable: true }, { source: "Le fioul", renouvelable: false }
             ] },
 
-            { t: "h", texte: "3. Les différentes centrales" },
+            { t: "h", texte: "4. Les différentes centrales" },
             { t: "tableau", entetes: ["Centrale", "Source", "Renouvelable ?", "En Guyane"], lignes: [
               ["Hydraulique", "Eau d'un fleuve retenue par un barrage", "Oui", "Barrage de Petit-Saut (fleuve Sinnamary)"],
               ["Thermique à flamme", "Fioul, gaz ou charbon", "Non", "Centrale de Dégrad-des-Cannes (fioul)"],
@@ -2519,32 +2916,32 @@ const CONTENU = {
                 explication: "Le barrage retient l'eau du Sinnamary, une source renouvelable." }
             ] },
 
-            { t: "h", texte: "4. Écrire une chaîne énergétique" },
+            { t: "h", texte: "5. Écrire une chaîne énergétique" },
             { t: "methode", titre: "Méthode", items: [
               "J'<strong>encadre</strong> la source d'énergie.",
               "J'<strong>entoure</strong> chaque convertisseur.",
               "J'écris la <strong>forme d'énergie sur la flèche</strong> qui va d'un élément au suivant."
             ] },
             { t: "chaine", legende: "Exemple : centrale hydraulique", elements: ["S:Eau du barrage", "F:énergie cinétique", "C:Turbine", "F:énergie mécanique", "C:Alternateur", "F:énergie électrique"], perte: "énergie thermique (dissipée)" },
-            { t: "exemple", type: "chaine", competence: 3, variantes: [
+            { t: "exemple", type: "chaine", competence: 4, variantes: [
               { nom: "Éolienne", elements: ["S:Vent", "F:énergie cinétique", "C:Pales et rotor", "F:énergie mécanique", "C:Alternateur", "F:énergie électrique"], trous: [1, 5] },
               { nom: "Centrale solaire photovoltaïque", elements: ["S:Soleil", "F:énergie lumineuse", "C:Panneau photovoltaïque", "F:énergie électrique"], trous: [1, 2] },
               { nom: "Centrale thermique au fioul", elements: ["S:Fioul", "F:énergie chimique", "C:Moteur", "F:énergie mécanique", "C:Alternateur", "F:énergie électrique"], trous: [1, 4] }
             ], distracteurs: ["énergie nucléaire", "Lampe", "énergie thermique"] },
 
-            { t: "h", texte: "5. Rien ne se perd" },
-            { t: "p", texte: "L'énergie se conserve : <strong>énergie reçue = énergie utile + énergie dissipée</strong>." },
+            { t: "h", texte: "6. Rien ne se perd" },
+            { t: "p", rel: true, texte: "L'énergie se conserve : <strong>énergie reçue = énergie utile + énergie dissipée</strong>." },
             { t: "methode", titre: "Exemple résolu", items: [
               "Une centrale reçoit 100 MJ et fournit 35 MJ d'électricité.",
               "Énergie dissipée = énergie reçue − énergie utile = 100 − 35 = <strong>65 MJ</strong>.",
-              "Ces 65 MJ partent en chaleur dans l'environnement."
+              "<span class=\"phr\">Phrase réponse :</span> l'énergie dissipée par la centrale est de 65 MJ ; elle part en chaleur dans l'environnement."
             ] },
-            { t: "exemple", type: "calcul", competence: 4, contextes: [
+            { t: "exemple", type: "calcul", competence: 5, contextes: [
               { objet: "une centrale thermique", entree: "d'énergie chimique", unite: "MJ", min: 100, max: 600, pas: 10, part: [30, 45] },
               { objet: "une éolienne", entree: "d'énergie cinétique du vent", unite: "kJ", min: 200, max: 900, pas: 10, part: [30, 50] }
             ] },
 
-            { t: "h", texte: "6. Avantages et inconvénients" },
+            { t: "h", texte: "7. Avantages et inconvénients" },
             { t: "liste", items: [
               "Les centrales à combustibles fossiles rejettent du <strong>dioxyde de carbone</strong>, un gaz à effet de serre, et leurs ressources s'épuisent.",
               "Le solaire ne produit rien la nuit et le vent n'est pas toujours là : on dit que ces énergies sont <strong>intermittentes</strong>.",
@@ -2559,6 +2956,7 @@ const CONTENU = {
 
             { t: "retenir", items: [
               "Turbine + alternateur : l'énergie mécanique devient électrique.",
+              "Un alternateur = un aimant qui tourne près d'une bobine : il produit une tension alternative, d'autant plus grande qu'il tourne vite.",
               "Les sources renouvelables se reconstituent, les non renouvelables s'épuisent.",
               "Chaîne énergétique : source encadrée, convertisseur entouré, forme d'énergie sur la flèche.",
               "L'énergie se conserve : énergie reçue = énergie utile + énergie dissipée."
@@ -2568,6 +2966,8 @@ const CONTENU = {
             { t: "exemple", type: "relier", n: 4, paires: [
               ["Turbine", "Roue mise en rotation par un fluide (eau, vapeur, vent)."],
               ["Alternateur", "Convertit l'énergie mécanique en énergie électrique."],
+              ["Bobine", "Long fil de cuivre enroulé, placé près de l'aimant d'un alternateur."],
+              ["Tension alternative", "Tension qui change de sens régulièrement."],
               ["Énergie dissipée", "Énergie perdue pour l'usage voulu, souvent en chaleur."],
               ["Intermittente", "Se dit d'une source qui n'est pas disponible en permanence."],
               ["Renouvelable", "Se reconstitue rapidement à l'échelle humaine."],
@@ -2745,7 +3145,10 @@ const CONTENU = {
               { affirmation: "La biomasse est renouvelable si la forêt est bien gérée.", vrai: true, explication: "Le bois repousse à l'échelle humaine." },
               { affirmation: "L'uranium est une source d'énergie renouvelable.", vrai: false, explication: "C'est un minerai en quantité limitée." },
               { affirmation: "Dans une chaîne énergétique, la forme d'énergie est écrite sur la flèche.", vrai: true, explication: "La flèche représente le transfert d'énergie." },
-              { affirmation: "Une centrale nucléaire utilise une turbine et un alternateur.", vrai: true, explication: "La chaleur du réacteur produit de la vapeur qui fait tourner la turbine." }
+              { affirmation: "Une centrale nucléaire utilise une turbine et un alternateur.", vrai: true, explication: "La chaleur du réacteur produit de la vapeur qui fait tourner la turbine." },
+              { affirmation: "Un alternateur contient un aimant et une bobine.", vrai: true, explication: "L'aimant tourne près de la bobine : une tension apparaît aux bornes de la bobine." },
+              { affirmation: "Si l'aimant d'un alternateur s'arrête, la lampe branchée reste allumée.", vrai: false, explication: "Aimant immobile : plus de tension, la lampe s'éteint." },
+              { affirmation: "Plus la turbine tourne vite, plus la tension produite par l'alternateur est grande.", vrai: true, explication: "La turbine entraîne l'aimant : plus il tourne vite, plus la tension est grande." }
             ]
           },
           {
@@ -2814,7 +3217,7 @@ const CONTENU = {
       {
         id: "puissance", theme: "energie",
         titre: "La puissance électrique",
-        resume: "Watts, kilowattheures et facture d'électricité",
+        resume: "Watts, kilowattheures et sécurité électrique",
         qcm: "La puissance électrique",
 
         // ======================== 1. RAPPEL ========================
@@ -2882,12 +3285,13 @@ const CONTENU = {
             "Je lis une plaque signalétique et j'utilise P = U × I.",
             "Je repère une multiprise surchargée grâce à l'intensité.",
             "Je calcule une énergie avec E = P × t, en J ou en kWh, sans mélanger les unités.",
-            "Je calcule le coût d'une consommation électrique."
+            "J'explique le rôle du fusible, du disjoncteur et du disjoncteur différentiel."
           ],
           blocs: [
             { t: "h", texte: "1. La puissance d'un appareil" },
             { t: "p", texte: "Sur chaque appareil électrique, une <strong>plaque signalétique</strong> indique sa <strong>tension nominale</strong> (en volts) et sa <strong>puissance nominale</strong> (en watts) : ce sont les valeurs d'un fonctionnement normal." },
-            { t: "p", texte: "La <strong>puissance</strong> P indique l'énergie qu'un appareil convertit <strong>chaque seconde</strong>. Plus elle est grande, plus l'appareil convertit d'énergie en peu de temps. Son unité est le <strong>watt (W)</strong> : 1 kW = 1 000 W ; 1 MW = 1 000 000 W." },
+            { t: "p", def: true, texte: "La <strong>puissance</strong> P indique l'énergie qu'un appareil convertit <strong>chaque seconde</strong>. Plus elle est grande, plus l'appareil convertit d'énergie en peu de temps. Son unité est le <strong>watt (W)</strong> : 1 kW = 1 000 W ; 1 MW = 1 000 000 W." },
+            { t: "fig", ajout: "fig-plaque", html: SCHEMAS.figPlaque() },
             { t: "tableau", entetes: ["Appareil", "Puissance (ordre de grandeur)"], lignes: [
               ["Lampe à DEL", "8 W"], ["Chargeur de téléphone", "10 W"], ["Ventilateur", "50 W"],
               ["Télévision", "100 W"], ["Climatiseur", "1 000 W"], ["Bouilloire", "2 000 W"]
@@ -2902,12 +3306,13 @@ const CONTENU = {
             ] },
 
             { t: "h", texte: "2. Calculer une puissance : P = U × I" },
-            { t: "p", texte: "La puissance se calcule avec la tension U aux bornes de l'appareil et l'intensité I du courant qui le traverse : <strong>P = U × I</strong>, avec P en watts (W), U en volts (V) et I en ampères (A)." },
-            { t: "methode", titre: "Méthode en 4 étapes", items: [
+            { t: "p", rel: true, texte: "La puissance se calcule avec la tension U aux bornes de l'appareil et l'intensité I du courant qui le traverse : <strong>P = U × I</strong>, avec P en watts (W), U en volts (V) et I en ampères (A)." },
+            { t: "methode", titre: "Méthode en 5 étapes", items: [
               "Je repère les données et je convertis : U = 6 V ; I = 300 mA = 0,3 A.",
               "J'écris la formule : P = U × I.",
               "Je remplace et je calcule : P = 6 × 0,3 = 1,8.",
-              "Je conclus avec l'unité : la lampe a une puissance de <strong>1,8 W</strong>."
+              "J'ajoute l'unité : P = <strong>1,8 W</strong>.",
+              "Je rédige une phrase réponse, qui reprend les mots de la question : « La puissance de la lampe est de <strong>1,8 W</strong>. »"
             ] },
             { t: "exemple", type: "qcm", competence: 1, variantes: [
               { question: "Un chargeur fournit une tension de 5 V et un courant de 2 A. Quelle est sa puissance ?", reponses: ["10 W", "7 W", "2,5 W", "0,4 W"], bonne: 0,
@@ -2918,14 +3323,14 @@ const CONTENU = {
                 explication: "P = U × I = 230 × 6 = 1 380 W, soit 1,38 kW." }
             ] },
 
-            { t: "h", texte: "3. Sécurité : attention aux multiprises" },
+            { t: "h", texte: "3. Sécurité : multiprises, fusibles et disjoncteurs" },
             { t: "p", texte: "Plus on branche d'appareils sur une multiprise, plus l'intensité du courant dans son fil est grande. On la calcule avec <strong>I = P ÷ U</strong> : c'est la relation P = U × I, retournée." },
             { t: "p", texte: "Une multiprise supporte une intensité maximale, souvent <strong>16 A</strong>. Au-delà, son fil <strong>chauffe</strong> : il y a un risque d'incendie. Il faut alors répartir les appareils sur plusieurs prises murales." },
             { t: "methode", titre: "Exemple résolu", items: [
               "Sur une multiprise (230 V, 16 A au maximum), on branche une bouilloire de 2 000 W et un radiateur de 2 000 W.",
               "Puissance totale : P = 2 000 + 2 000 = 4 000 W.",
               "Intensité : I = P ÷ U = 4 000 ÷ 230 ≈ 17,4 A.",
-              "17,4 A est plus grand que 16 A : la multiprise est <strong>surchargée</strong>, c'est dangereux."
+              "<span class=\"phr\">Phrase réponse :</span> l'intensité (17,4 A) dépasse 16 A : la multiprise est <strong>surchargée</strong>, c'est dangereux."
             ] },
             { t: "exemple", type: "vraifaux", competence: 2, variantes: [
               { affirmation: "Plus on branche d'appareils sur une multiprise, plus l'intensité dans son fil est grande.", vrai: true, explication: "Les intensités des appareils s'ajoutent dans le fil de la multiprise." },
@@ -2933,14 +3338,42 @@ const CONTENU = {
               { affirmation: "Un chargeur de 10 W et une télévision de 100 W sur une multiprise de 16 A : il n'y a pas de surcharge.", vrai: true, explication: "I = 110 ÷ 230 ≈ 0,5 A, bien en dessous de 16 A." },
               { affirmation: "Une multiprise surchargée est sans danger tant que les appareils fonctionnent.", vrai: false, explication: "Le fil chauffe même si tout semble marcher : il y a un risque d'incendie." }
             ] },
+            // ----- Ajouté le 14/11 (retours) : fusible, disjoncteur, disjoncteur différentiel -----
+            { t: "p", ajout: "sec-surint", def: true, texte: "Il y a <strong>surintensité</strong> quand l'intensité du courant dépasse la valeur prévue pour les fils : trop d'appareils sur une même prise ou un <strong>court-circuit</strong> (deux fils qui se touchent). Les fils <strong>chauffent</strong> : risque d'incendie." },
+            { t: "p", ajout: "sec-protec", def: true, texte: "Un <strong>fusible</strong> contient un fil très fin qui <strong>fond</strong> quand l'intensité est trop grande : le circuit s'ouvre, il faut ensuite changer le fusible. Un <strong>disjoncteur</strong> <strong>coupe le courant</strong> tout seul ; une fois le problème réglé, on le <strong>réarme</strong>. Chacun a un <strong>calibre</strong> : l'intensité maximale qu'il laisse passer (10 A, 16 A, 20 A, 32 A…)." },
+            { t: "anim", ajout: "sec-anim", monter: (el) => SCHEMAS.animMultiprise(el) },
+            { t: "fig", ajout: "sec-tableau", html: SCHEMAS.figTableau() },
+            { t: "p", ajout: "sec-diff", def: true, texte: "Le <strong>disjoncteur différentiel 30 mA</strong> protège les <strong>personnes</strong> : il coupe le courant dès qu'une petite partie du courant « s'échappe » du circuit, par exemple à travers le corps d'une personne qui touche un fil dénudé. La <strong>prise de terre</strong> évacue sans danger le courant de fuite d'un appareil à carcasse métallique (lave-linge, four)." },
+            { t: "methode", ajout: "sec-exr", titre: "Exemple résolu : le disjoncteur va-t-il couper ?", items: [
+              "Les prises de la cuisine sont protégées par un disjoncteur de 16 A (230 V). On branche un lave-linge de 2 200 W et un micro-ondes de 1 200 W.",
+              "Puissance totale : P = 2 200 + 1 200 = 3 400 W.",
+              "Intensité : I = P ÷ U = 3 400 ÷ 230 ≈ 14,8 A.",
+              "14,8 A est plus petit que 16 A : pas de surintensité.",
+              "<span class=\"phr\">Phrase réponse :</span> l'intensité (14,8 A) reste sous le calibre de 16 A : le disjoncteur ne coupe pas."
+            ] },
+            { t: "exemple", ajout: "sec-ex1", type: "qcm", competence: 4, variantes: [
+              { question: "Quelle est la différence entre un fusible et un disjoncteur ?", reponses: ["Le fusible fond et doit être changé ; le disjoncteur coupe puis se réarme", "Le fusible protège les personnes ; le disjoncteur protège les appareils", "Le disjoncteur fond ; le fusible se réarme", "Il n'y a aucune différence"], bonne: 0,
+                explication: "Les deux ouvrent le circuit en cas de surintensité ; seul le disjoncteur se réarme." },
+              { question: "Un disjoncteur de 16 A protège les prises (230 V). On branche une bouilloire de 2 000 W et un radiateur de 1 800 W. Que se passe-t-il ?", reponses: ["Rien : 3 800 W est un petit nombre", "Le disjoncteur coupe : I ≈ 16,5 A, plus que 16 A", "Le disjoncteur coupe : la tension dépasse 230 V", "La bouilloire chauffe plus vite"], bonne: 1,
+                explication: "I = P ÷ U = 3 800 ÷ 230 ≈ 16,5 A : c'est plus que le calibre de 16 A, le disjoncteur coupe." },
+              { question: "Quel dispositif protège une personne qui touche par erreur un fil dénudé ?", reponses: ["Le compteur électrique", "La multiprise", "Le disjoncteur différentiel 30 mA", "Le fusible d'une lampe de poche"], bonne: 2,
+                explication: "Le différentiel détecte le courant qui s'échappe par le corps et coupe aussitôt." }
+            ] },
+            { t: "exemple", ajout: "sec-ex2", type: "vraifaux", competence: 4, variantes: [
+              { affirmation: "Un fusible qui a fondu doit être remplacé.", vrai: true, explication: "Son fil fin a fondu : le circuit reste ouvert tant qu'on ne le change pas." },
+              { affirmation: "Quand le disjoncteur coupe, il suffit de le réarmer tout de suite sans rien débrancher.", vrai: false, explication: "Il faut d'abord supprimer la cause (débrancher un appareil), sinon il recoupe." },
+              { affirmation: "Le disjoncteur différentiel protège surtout les personnes.", vrai: true, explication: "Il coupe dès qu'un peu de courant s'échappe, par exemple à travers une personne." },
+              { affirmation: "Un court-circuit diminue l'intensité du courant dans les fils.", vrai: false, explication: "Au contraire : l'intensité devient très grande, les fils chauffent." }
+            ] },
 
             { t: "h", texte: "4. L'énergie électrique : E = P × t" },
-            { t: "p", texte: "L'énergie E consommée par un appareil dépend de sa puissance P et de sa durée de fonctionnement t : <strong>E = P × t</strong>." },
+            { t: "p", rel: true, texte: "L'énergie E consommée par un appareil dépend de sa puissance P et de sa durée de fonctionnement t : <strong>E = P × t</strong>." },
             { t: "p", texte: "Avec P en <strong>watts (W)</strong> et t en <strong>secondes (s)</strong>, on obtient E en <strong>joules (J)</strong>. Rappel : 1 min = 60 s ; 1 h = 3 600 s." },
             { t: "methode", titre: "Exemple résolu", items: [
               "Un ventilateur de 50 W fonctionne pendant 2 h.",
               "Je convertis la durée : t = 2 h = 2 × 3 600 s = 7 200 s.",
-              "E = P × t = 50 × 7 200 = <strong>360 000 J</strong>."
+              "E = P × t = 50 × 7 200 = <strong>360 000 J</strong>.",
+              "<span class=\"phr\">Phrase réponse :</span> en 2 h, le ventilateur consomme une énergie de 360 000 J."
             ] },
             { t: "exemple", type: "qcm", competence: 3, variantes: [
               { question: "Un ventilateur de 50 W fonctionne pendant 2 min. Quelle énergie consomme-t-il ?", reponses: ["6 000 J", "100 J", "25 J", "52 J"], bonne: 0,
@@ -2953,7 +3386,7 @@ const CONTENU = {
 
             { t: "h", texte: "5. Le kilowattheure (kWh)" },
             { t: "p", texte: "Le joule est une toute petite unité. À la maison, on utilise le <strong>kilowattheure (kWh)</strong> : avec P en <strong>kilowatts (kW)</strong> et t en <strong>heures (h)</strong>, on obtient E en <strong>kWh</strong>." },
-            { t: "p", texte: "1 kWh est l'énergie consommée par un appareil de 1 kW pendant 1 h : <strong>1 kWh = 1 000 W × 3 600 s = 3 600 000 J</strong>." },
+            { t: "p", rel: true, texte: "1 kWh est l'énergie consommée par un appareil de 1 kW pendant 1 h : <strong>1 kWh = 1 000 W × 3 600 s = 3 600 000 J</strong>." },
             { t: "p", texte: "On ne mélange jamais les unités : W avec s donnent des J ; kW avec h donnent des kWh. Et on écrit « kWh », jamais « kW/h »." },
             { t: "exemple", type: "relier", competence: 3, n: 4, paires: [
               ["50 W", "0,05 kW"], ["1 500 W", "1,5 kW"], ["15 min", "0,25 h"], ["30 min", "0,5 h"],
@@ -2962,7 +3395,8 @@ const CONTENU = {
             { t: "methode", titre: "Exemple résolu", items: [
               "Une lampe de 60 W reste allumée 5 h.",
               "Je convertis : P = 60 W = 0,06 kW ; t = 5 h.",
-              "E = P × t = 0,06 × 5 = <strong>0,3 kWh</strong>."
+              "E = P × t = 0,06 × 5 = <strong>0,3 kWh</strong>.",
+              "<span class=\"phr\">Phrase réponse :</span> en 5 h, la lampe consomme une énergie de 0,3 kWh."
             ] },
             { t: "exemple", type: "qcm", competence: 3, variantes: [
               { question: "Un four à micro-ondes de 800 W fonctionne pendant 15 min. Quelle énergie consomme-t-il ?", reponses: ["0,2 kWh", "12 000 kWh", "12 kWh", "0,2 kW/h"], bonne: 0,
@@ -2975,11 +3409,12 @@ const CONTENU = {
 
             { t: "h", texte: "6. Consommer de façon responsable" },
             { t: "p", texte: "Le <strong>compteur électrique</strong> mesure l'énergie consommée en kWh. Sur la facture : <strong>coût = énergie consommée (kWh) × prix d'un kWh</strong>." },
-            { t: "p", texte: `Le prix du kWh change selon les années et les contrats. En Guyane, en 2026, un kWh coûte environ <strong>${euros(PRIX_KWH)}</strong>, taxes comprises. L'abonnement se paie en plus.` },
+            { t: "retire" }, // 14/11 : le prix du kWh est maintenant dans l'exemple résolu (moins de coût, plus de sécurité)
             { t: "methode", titre: "Exemple résolu", items: [
-              "Le climatiseur de Kenzo consomme 8 kWh par jour.",
+              `Le climatiseur de Kenzo consomme 8 kWh par jour. En Guyane, en 2026, un kWh coûte environ ${euros(PRIX_KWH)}.`,
               `Coût d'une journée = 8 × ${euros(PRIX_KWH)} = <strong>${euros(8 * PRIX_KWH)}</strong>.`,
-              `Coût de 30 jours = ${euros(8 * PRIX_KWH)} × 30 = <strong>${euros(240 * PRIX_KWH)}</strong>.`
+              `Coût de 30 jours = ${euros(8 * PRIX_KWH)} × 30 = <strong>${euros(240 * PRIX_KWH)}</strong>.`,
+              `<span class="phr">Phrase réponse :</span> en 30 jours, le climatiseur de Kenzo coûte ${euros(240 * PRIX_KWH)}.`
             ] },
             { t: "liste", items: [
               "Éteindre les appareils au lieu de les laisser en <strong>veille</strong> (box, télévision).",
@@ -2987,23 +3422,14 @@ const CONTENU = {
               "Régler le climatiseur vers <strong>26 °C</strong> et fermer portes et fenêtres.",
               "Remplacer les vieilles lampes par des lampes à <strong>DEL</strong>."
             ] },
-            { t: "exemple", type: "qcm", competence: 4, variantes: [
-              { question: `Un ventilateur consomme 0,4 kWh par jour. Le kWh coûte environ ${euros(PRIX_KWH)}. Combien coûte une journée de ventilateur ?`,
-                reponses: [euros(0.4 * PRIX_KWH), euros(0.4 / PRIX_KWH), euros(0.4 + PRIX_KWH), euros(0.4 * PRIX_KWH * 30)], bonne: 0,
-                explication: `Coût = 0,4 × ${euros(PRIX_KWH)} ≈ ${euros(0.4 * PRIX_KWH)}. On multiplie l'énergie par le prix d'un kWh.` },
-              { question: `Une box Internet consomme environ 88 kWh par an. Le kWh coûte environ ${euros(PRIX_KWH)}. Combien coûte-t-elle par an ?`,
-                reponses: [euros(88 / PRIX_KWH), euros(88 * PRIX_KWH), euros(0.24 * PRIX_KWH), euros(88 + PRIX_KWH)], bonne: 1,
-                explication: `Coût = 88 × ${euros(PRIX_KWH)} = ${euros(88 * PRIX_KWH)} par an, pour un appareil souvent oublié.` },
-              { question: `Une famille consomme 9 kWh par jour. Le kWh coûte environ ${euros(PRIX_KWH)}. Combien paie-t-elle pour 30 jours ?`,
-                reponses: [euros(9 * PRIX_KWH), euros(270 / PRIX_KWH), euros(270 * PRIX_KWH), euros(270)], bonne: 2,
-                explication: `En 30 jours : 9 × 30 = 270 kWh. Coût = 270 × ${euros(PRIX_KWH)} = ${euros(270 * PRIX_KWH)}.` }
-            ] },
+            { t: "retire" }, // 14/11 : questions de coût retirées du cours (retours des élèves)
 
             { t: "retenir", items: [
               "La puissance P, en watts, est l'énergie convertie chaque seconde : P = U × I.",
               "Une multiprise surchargée chauffe : on calcule I = P ÷ U et on compare à l'intensité maximale.",
               "E = P × t : W et s donnent des J ; kW et h donnent des kWh. 1 kWh = 3 600 000 J.",
-              "Coût = énergie (kWh) × prix d'un kWh. Les éco-gestes réduisent la facture."
+              "Fusible (il fond) et disjoncteur (il coupe, puis se réarme) protègent les fils contre les surintensités ; le disjoncteur différentiel 30 mA protège les personnes.",
+              "Coût = énergie (kWh) × prix d'un kWh. Les éco-gestes réduisent la consommation."
             ] }
           ]
         },
@@ -3187,7 +3613,7 @@ const CONTENU = {
           },
           { id: "qcm", type: "qcm-tableur", titre: "Défi QCM", desc: "8 questions tirées au hasard", n: 8 },
           {
-            id: "calculs", type: "qcm", titre: "Calculer sans se tromper d'unité", desc: "6 calculs : puissance, énergie, coût", n: 6,
+            id: "calculs", type: "qcm", titre: "Calculer sans se tromper d'unité", desc: "6 calculs : puissance, intensité, énergie", n: 6,
             questions: [
               { question: "Une console portable fonctionne sous 5 V avec une intensité de 1,5 A. Quelle est sa puissance ?", reponses: ["6,5 W", "7,5 W", "3,3 W", "75 W"], bonne: 1,
                 explication: "P = U × I = 5 × 1,5 = 7,5 W." },
@@ -3208,9 +3634,9 @@ const CONTENU = {
                 explication: "P = 100 W = 0,1 kW. E = 0,1 × 3 = 0,3 kWh." },
               { question: "Combien de joules y a-t-il dans 0,1 kWh ?", reponses: ["3 600 J", "100 J", "360 000 J", "36 000 000 J"], bonne: 2,
                 explication: "1 kWh = 3 600 000 J, donc 0,1 kWh = 0,1 × 3 600 000 = 360 000 J." },
-              { question: `Un ventilateur de 40 W fonctionne 5 h : il consomme 0,2 kWh. Le kWh coûte environ ${euros(PRIX_KWH)}. Combien cela coûte-t-il ?`,
-                reponses: [euros(0.2 / PRIX_KWH), euros(200 * PRIX_KWH), euros(0.2 + PRIX_KWH), euros(0.2 * PRIX_KWH)], bonne: 3,
-                explication: `Coût = 0,2 × ${euros(PRIX_KWH)} ≈ ${euros(0.2 * PRIX_KWH)}.` },
+              { question: "Les prises d'une chambre sont protégées par un disjoncteur de 16 A (230 V). On y branche un radiateur de 1 500 W, un fer à repasser de 1 800 W et une télévision de 100 W. Que se passe-t-il ?",
+                reponses: ["I ≈ 14,8 A : rien, c'est sous 16 A", "I ≈ 3,4 A : rien", "I ≈ 14,8 A : le disjoncteur coupe", "Le disjoncteur coupe car la tension dépasse 230 V"], bonne: 0,
+                explication: "P = 1 500 + 1 800 + 100 = 3 400 W ; I = 3 400 ÷ 230 ≈ 14,8 A, moins que 16 A : le disjoncteur ne coupe pas." },
               { question: "À Kourou, une famille remplace une lampe à incandescence de 60 W par une lampe à DEL de 8 W. La lampe est allumée 5 h par jour, 365 jours par an. Quelle énergie économise-t-elle en un an ?",
                 reponses: ["109,5 kWh", "14,6 kWh", "94,9 kWh", "94 900 kWh"], bonne: 2,
                 explication: "Incandescence : 0,06 × 5 × 365 = 109,5 kWh. DEL : 0,008 × 5 × 365 = 14,6 kWh. Économie : 109,5 − 14,6 = 94,9 kWh." },
@@ -3219,11 +3645,26 @@ const CONTENU = {
             ]
           },
           {
-            id: "brevet", type: "brevet", titre: "Exercice type brevet", desc: "Au frais à Cayenne, mais à quel prix ?",
+            id: "securite", type: "vraifaux", titre: "Sécurité électrique", desc: "Fusible, disjoncteur, différentiel : 8 affirmations", n: 8,
+            items: [
+              { affirmation: "Un disjoncteur coupe le courant quand l'intensité dépasse son calibre.", vrai: true, explication: "C'est son rôle : il protège les fils contre les surintensités." },
+              { affirmation: "Un fusible se réarme comme un disjoncteur.", vrai: false, explication: "Son fil fin fond : il faut changer le fusible." },
+              { affirmation: "Le calibre d'un disjoncteur s'exprime en ampères.", vrai: true, explication: "C'est l'intensité maximale qu'il laisse passer : 10 A, 16 A, 20 A, 32 A…" },
+              { affirmation: "Le disjoncteur différentiel 30 mA protège les personnes contre l'électrisation.", vrai: true, explication: "Il coupe dès qu'une petite fuite de courant apparaît, par exemple à travers un corps." },
+              { affirmation: "Une surintensité fait chauffer les fils et peut provoquer un incendie.", vrai: true, explication: "Plus l'intensité est grande, plus les fils chauffent." },
+              { affirmation: "Pour savoir si un disjoncteur de 16 A va couper, on calcule l'énergie E = P × t.", vrai: false, explication: "On calcule l'intensité totale I = P ÷ U et on la compare à 16 A." },
+              { affirmation: "Un court-circuit, c'est quand deux fils se touchent directement : l'intensité devient très grande.", vrai: true, explication: "Le courant ne passe plus par les appareils : l'intensité explose, le disjoncteur doit couper." },
+              { affirmation: "Quand le disjoncteur a coupé, on peut le réarmer sans rien débrancher : il ne recoupera pas.", vrai: false, explication: "Si la cause est toujours là, il recoupe aussitôt : on débranche d'abord un appareil." },
+              { affirmation: "La prise de terre évacue le courant de fuite d'un appareil à carcasse métallique.", vrai: true, explication: "Le courant part dans la terre au lieu de traverser la personne qui touche l'appareil." },
+              { affirmation: "Avec un disjoncteur de 16 A, on peut brancher une bouilloire de 2 000 W et un radiateur de 2 000 W ensemble.", vrai: false, explication: "I = 4 000 ÷ 230 ≈ 17,4 A, plus que 16 A : le disjoncteur coupe." }
+            ]
+          },
+          {
+            id: "brevet", type: "brevet", titre: "Exercice type brevet", desc: "Au frais à Cayenne, en toute sécurité",
             documents: [
               { titre: "Document 1 : les appareils de la famille de Maëlys, à Cayenne", texte: "Il fait chaud toute l'année : le climatiseur de la chambre fonctionne environ 8 h par nuit. Sa plaque signalétique indique : 230 V ~ 50 Hz – 4,35 A. Dans la chambre, il y a aussi un ventilateur de 50 W et une box Internet de 10 W, allumée 24 h sur 24." },
               { titre: "Document 2 : la multiprise de la chambre", texte: "Elle fonctionne sous 230 V et supporte au maximum une intensité de 16 A. Maëlys voudrait y brancher le climatiseur, le ventilateur, la box Internet et un fer à repasser de 2 800 W." },
-              { titre: "Document 3 : le prix de l'électricité", texte: `Sur la facture, on paie l'énergie consommée en kWh. En Guyane, en 2026, un kWh coûte environ ${euros(PRIX_KWH)}, taxes comprises (l'abonnement se paie en plus).` }
+              { titre: "Document 3 : le tableau électrique", texte: "Les prises de la chambre de Maëlys sont protégées par un disjoncteur de 16 A. En tête du tableau électrique, un disjoncteur différentiel 30 mA protège toute la maison." }
             ],
             questions: [
               { type: "qcm", points: 1, question: "À l'aide du document 1, calcule la puissance du climatiseur.",
@@ -3235,15 +3676,15 @@ const CONTENU = {
               { type: "qcm", points: 2, question: "Quelle énergie le climatiseur consomme-t-il en une nuit de 8 h ?",
                 reponses: ["8 000 kWh", "8 kWh", "125 kWh", "0,8 kWh"], bonne: 1,
                 explication: "P = 1 kW ; t = 8 h. E = P × t = 1 × 8 = 8 kWh." },
-              { type: "qcm", points: 2, question: "À l'aide du document 3, calcule le coût du climatiseur pour 30 nuits.",
-                reponses: [euros(8 * PRIX_KWH), euros(240 / PRIX_KWH), euros(240 * PRIX_KWH), euros(240)], bonne: 2,
-                explication: `En 30 nuits : 8 × 30 = 240 kWh. Coût = 240 × ${euros(PRIX_KWH)} = ${euros(240 * PRIX_KWH)}.` },
+              { type: "qcm", points: 2, question: "À l'aide des documents 2 et 3, que fait le disjoncteur si Maëlys branche aussi le fer à repasser ?",
+                reponses: ["Rien : la multiprise supporte 16 A", "Il coupe le courant : I ≈ 16,8 A dépasse son calibre de 16 A", "Il coupe car la tension dépasse 230 V", "Le différentiel 30 mA coupe car le fer est trop puissant"], bonne: 1,
+                explication: "Avec le fer, I = 3 860 ÷ 230 ≈ 16,8 A : c'est plus que 16 A, le disjoncteur des prises coupe le courant pour protéger les fils." },
               { type: "chaine", points: 1, consigne: "Compléter la chaîne énergétique du ventilateur.",
                 elements: ["S:Réseau électrique", "F:énergie électrique", "C:Ventilateur", "F:énergie mécanique"], trous: [1, 3],
                 distracteurs: ["énergie chimique", "énergie nucléaire"] },
-              { type: "redaction", points: 2, consigne: "Maëlys veut faire baisser la facture. Expliquer pourquoi le climatiseur coûte cher, puis proposer deux éco-gestes.",
-                criteres: ["J'ai expliqué que le climatiseur est très puissant (1 000 W, 20 fois plus qu'un ventilateur) et fonctionne longtemps : il consomme beaucoup d'énergie (E = P × t).", "J'ai proposé deux éco-gestes (ventilateur quand c'est possible, climatiseur vers 26 °C avec la porte fermée, éteindre la box et la télévision au lieu de la veille…)."],
-                elements: "Le climatiseur a une grande puissance (1 000 W) et fonctionne 8 h par nuit : il consomme 8 kWh par nuit, 20 fois plus qu'un ventilateur. Pour payer moins : utiliser le ventilateur quand il ne fait pas trop chaud, régler le climatiseur vers 26 °C en fermant la porte, éteindre la box et la télévision au lieu de les laisser en veille." }
+              { type: "redaction", points: 2, consigne: "Un soir, Maëlys branche aussi le fer à repasser : tout s'éteint dans sa chambre. Expliquer ce qui s'est passé, puis proposer une solution sans danger.",
+                criteres: ["J'ai expliqué que l'intensité totale (I = P ÷ U ≈ 16,8 A) dépasse le calibre de 16 A et que le disjoncteur a coupé pour éviter que les fils chauffent.", "J'ai proposé une solution : débrancher un appareil (ou brancher le fer sur une autre prise murale), puis réarmer le disjoncteur."],
+                elements: "Avec le fer à repasser, l'intensité dans le fil de la multiprise vaut I = 3 860 ÷ 230 ≈ 16,8 A, plus que 16 A : c'est une surintensité. Le disjoncteur a coupé le courant pour protéger les fils, qui auraient chauffé (risque d'incendie). Solution : débrancher le climatiseur ou brancher le fer sur une autre prise murale, puis réarmer le disjoncteur." }
             ]
           }
         ]
@@ -3327,7 +3768,7 @@ const CONTENU = {
           ],
           blocs: [
             { t: "h", texte: "1. L'énergie chimique" },
-            { t: "p", texte: "L'<strong>énergie chimique</strong> est l'énergie <strong>stockée dans la matière</strong>. Elle est libérée lors des <strong>transformations chimiques</strong>." },
+            { t: "p", def: true, texte: "L'<strong>énergie chimique</strong> est l'énergie <strong>stockée dans la matière</strong>. Elle est libérée lors des <strong>transformations chimiques</strong>." },
             { t: "p", texte: "Réservoirs d'énergie chimique : le bois, l'essence, le gazole, le gaz, les aliments, les piles et les batteries." },
             { t: "exemple", type: "tri", competence: 1, n: 4,
               question: "Contient-il de l'énergie chimique ?", oui: "Oui", non: "Non", court: ["Oui", "Non"], consigne: "Pour chaque objet, indiquer s'il stocke de l'énergie chimique.",
@@ -3347,14 +3788,15 @@ const CONTENU = {
             ] },
 
             { t: "h", texte: "2. La pile : de l'énergie chimique à l'énergie électrique" },
-            { t: "p", texte: "Une <strong>pile</strong> est formée de <strong>deux métaux différents</strong> (par exemple du zinc et du cuivre) plongés dans une solution (jus de citron, eau salée…). Une transformation chimique a lieu : le zinc est peu à peu <strong>consommé</strong>." },
+            { t: "p", def: true, texte: "Une <strong>pile</strong> est formée de <strong>deux métaux différents</strong> (par exemple du zinc et du cuivre) plongés dans une solution (jus de citron, eau salée…). Une transformation chimique a lieu : le zinc est peu à peu <strong>consommé</strong>." },
+            { t: "fig", ajout: "fig-pile", html: SCHEMAS.figPile() },
             { t: "chaine", legende: "La pile au citron", elements: ["S:Zinc, cuivre, jus de citron", "F:énergie chimique", "C:Pile", "F:énergie électrique"], perte: "énergie thermique (perdue)" },
             { t: "p", texte: "Attention : une pile ne « contient » pas d'électricité. Elle contient de l'énergie chimique, convertie en énergie électrique quand le circuit est fermé." },
-            { t: "p", texte: "Quand on associe des piles <strong>en série</strong> (le + de l'une relié au − de la suivante), leurs tensions <strong>s'additionnent</strong> : c'est la <strong>loi d'additivité des tensions</strong>. U = U₁ + U₂ + U₃ + …" },
+            { t: "p", rel: true, texte: "Quand on associe des piles <strong>en série</strong> (le + de l'une relié au − de la suivante), leurs tensions <strong>s'additionnent</strong> : c'est la <strong>loi d'additivité des tensions</strong>. U = U₁ + U₂ + U₃ + …" },
             { t: "methode", titre: "Exemple résolu", items: [
               "Une pile au citron donne environ 0,9 V. Une DEL rouge a besoin d'environ 1,8 V.",
               "Avec 3 citrons en série : U = 0,9 + 0,9 + 0,9 = 3 × 0,9 = <strong>2,7 V</strong>.",
-              "2,7 V est plus grand que 1,8 V : la DEL peut s'allumer."
+              "<span class=\"phr\">Phrase réponse :</span> avec 3 citrons en série, on obtient 2,7 V ; c'est plus que 1,8 V, donc la DEL peut s'allumer."
             ] },
             { t: "p", texte: "Une <strong>batterie</strong> rechargeable fonctionne dans les deux sens : pendant la charge, elle convertit l'énergie électrique en énergie chimique (stockage) ; pendant l'utilisation, elle convertit l'énergie chimique en énergie électrique." },
             { t: "exemple", type: "chaine", competence: 2, variantes: [
@@ -3372,7 +3814,7 @@ const CONTENU = {
             ] },
 
             { t: "h", texte: "3. Les combustions et les moteurs" },
-            { t: "p", texte: "Une <strong>combustion</strong> est une transformation chimique entre un <strong>combustible</strong> (bois, essence, gaz, cire…) et le <strong>dioxygène</strong> de l'air. Elle libère de l'énergie <strong>thermique</strong> et <strong>lumineuse</strong>. Elle produit souvent du <strong>dioxyde de carbone</strong> (CO₂) et de l'eau." },
+            { t: "p", def: true, texte: "Une <strong>combustion</strong> est une transformation chimique entre un <strong>combustible</strong> (bois, essence, gaz, cire…) et le <strong>dioxygène</strong> de l'air. Elle libère de l'énergie <strong>thermique</strong> et <strong>lumineuse</strong>. Elle produit souvent du <strong>dioxyde de carbone</strong> (CO₂) et de l'eau." },
             { t: "methode", titre: "L'expérience de la bougie", items: [
               "Sous un bocal retourné, la flamme de la bougie s'éteint : le <strong>dioxygène</strong> du bocal a été consommé.",
               "On verse de l'eau de chaux dans le bocal et on agite : elle <strong>se trouble</strong>. La combustion a produit du <strong>dioxyde de carbone</strong>.",
@@ -3796,8 +4238,9 @@ const CONTENU = {
           ],
           blocs: [
             { t: "h", texte: "1. Série ou dérivation ?" },
-            { t: "p", texte: "Des dipôles sont <strong>en série</strong> quand ils sont branchés les uns à la suite des autres, dans une <strong>seule boucle</strong>. Si l'un d'eux est retiré, le circuit est ouvert : plus rien ne fonctionne." },
-            { t: "p", texte: "Des dipôles sont <strong>en dérivation</strong> quand le circuit comporte <strong>plusieurs boucles</strong> : leurs bornes sont reliées deux à deux. Si l'un d'eux est retiré, les autres continuent de fonctionner. C'est le cas des lampes et des prises d'une maison." },
+            { t: "p", def: true, texte: "Des dipôles sont <strong>en série</strong> quand ils sont branchés les uns à la suite des autres, dans une <strong>seule boucle</strong>. Si l'un d'eux est retiré, le circuit est ouvert : plus rien ne fonctionne." },
+            { t: "p", def: true, texte: "Des dipôles sont <strong>en dérivation</strong> quand le circuit comporte <strong>plusieurs boucles</strong> : leurs bornes sont reliées deux à deux. Si l'un d'eux est retiré, les autres continuent de fonctionner. C'est le cas des lampes et des prises d'une maison." },
+            { t: "fig", ajout: "fig-serie", html: SCHEMAS.figSerieDerivation() },
             { t: "exemple", type: "qcm", competence: 1, variantes: [
               { question: "Dans une maison, les lampes et les prises sont branchées…", reponses: ["en dérivation : si une lampe grille, les autres restent allumées", "en série : si une lampe grille, tout s'éteint", "en série, pour économiser les fils", "ni en série ni en dérivation"], bonne: 0,
                 explication: "En dérivation, chaque appareil a sa propre boucle : il fonctionne même si un autre est éteint ou grillé." },
@@ -3808,7 +4251,7 @@ const CONTENU = {
             ] },
 
             { t: "h", texte: "2. L'intensité du courant électrique" },
-            { t: "p", texte: "L'<strong>intensité</strong> du courant, notée <strong>I</strong>, indique « combien » de courant traverse un dipôle. Son unité est l'<strong>ampère (A)</strong>. On utilise souvent le <strong>milliampère</strong> : 1 A = 1 000 mA." },
+            { t: "p", def: true, texte: "L'<strong>intensité</strong> du courant, notée <strong>I</strong>, indique « combien » de courant traverse un dipôle. Son unité est l'<strong>ampère (A)</strong>. On utilise souvent le <strong>milliampère</strong> : 1 A = 1 000 mA." },
             { t: "tableau", entetes: ["Appareil", "Intensité (ordre de grandeur)"], lignes: [
               ["DEL rouge", "environ 20 mA"], ["Lampe de TP", "0,1 à 0,3 A"], ["Chargeur de téléphone", "1 à 2 A"], ["Bouilloire", "environ 9 A"]
             ] },
@@ -3817,6 +4260,7 @@ const CONTENU = {
             ] },
 
             { t: "h", texte: "3. Mesurer une intensité : l'ampèremètre" },
+            { t: "fig", ajout: "fig-amp", html: SCHEMAS.figAmperemetre() },
             { t: "methode", titre: "Méthode", items: [
               "J'ouvre le circuit et je règle le multimètre sur A⎓, en commençant par le <strong>plus grand calibre (10 A)</strong>.",
               "Je branche l'ampèremètre <strong>en série</strong> : je retire un fil et je mets l'ampèremètre à sa place, bornes <strong>A</strong> et <strong>COM</strong>.",
@@ -3834,11 +4278,12 @@ const CONTENU = {
             ] },
 
             { t: "h", texte: "4. Les lois des intensités" },
-            { t: "p", texte: "<strong>Dans un circuit en série</strong> (une seule boucle), l'intensité est <strong>la même en tout point</strong> du circuit : I = I₁ = I₂." },
-            { t: "p", texte: "<strong>Dans un circuit avec une dérivation</strong> (deux boucles), l'intensité dans la branche principale est égale à la <strong>somme</strong> des intensités dans les branches dérivées : <strong>I = I₁ + I₂</strong>. C'est la <strong>loi d'additivité des intensités</strong>." },
+            { t: "p", rel: true, texte: "<strong>Dans un circuit en série</strong> (une seule boucle), l'intensité est <strong>la même en tout point</strong> du circuit : I = I₁ = I₂." },
+            { t: "p", rel: true, texte: "<strong>Dans un circuit avec une dérivation</strong> (deux boucles), l'intensité dans la branche principale est égale à la <strong>somme</strong> des intensités dans les branches dérivées : <strong>I = I₁ + I₂</strong>. C'est la <strong>loi d'additivité des intensités</strong>." },
             { t: "methode", titre: "Exemple résolu", items: [
               "Deux lampes sont en dérivation. Dans la branche de L1 : I₁ = 0,1 A. Dans la branche de L2 : I₂ = 0,3 A.",
-              "Loi d'additivité : I = I₁ + I₂ = 0,1 + 0,3 = <strong>0,4 A</strong> dans la branche principale (celle du générateur)."
+              "Loi d'additivité : I = I₁ + I₂ = 0,1 + 0,3 = <strong>0,4 A</strong> dans la branche principale (celle du générateur).",
+              "<span class=\"phr\">Phrase réponse :</span> l'intensité du courant dans la branche principale est I = 0,4 A."
             ] },
             { t: "exemple", type: "qcm", competence: 3, variantes: [
               { question: "Deux lampes sont en série. L'intensité qui traverse la première vaut 0,2 A. Que vaut l'intensité dans la seconde ?", reponses: ["0,1 A", "0,2 A", "0,4 A", "0 A"], bonne: 1,
@@ -3856,7 +4301,7 @@ const CONTENU = {
 
             { t: "h", texte: "5. Sécurité : fusible et disjoncteur" },
             { t: "p", texte: "Plus on branche d'appareils en dérivation, plus l'intensité dans les fils de la branche principale est grande : les fils <strong>chauffent</strong>, il y a un risque d'incendie. Un <strong>court-circuit</strong> provoque une intensité très grande." },
-            { t: "p", texte: "Un <strong>fusible</strong> fond et un <strong>disjoncteur</strong> coupe le courant quand l'intensité dépasse une valeur maximale : ils <strong>protègent l'installation</strong>. Le disjoncteur différentiel, lui, protège les personnes." },
+            { t: "p", def: true, texte: "Un <strong>fusible</strong> fond et un <strong>disjoncteur</strong> coupe le courant quand l'intensité dépasse une valeur maximale : ils <strong>protègent l'installation</strong>. Le disjoncteur différentiel, lui, protège les personnes." },
             { t: "exemple", type: "qcm", competence: 4, variantes: [
               { question: "Un fusible de 0,5 A protège un circuit. On branche en dérivation trois lampes de 0,3 A chacune. Que se passe-t-il ?", reponses: ["Rien : 0,3 A est inférieur à 0,5 A", "Le fusible fond : 0,9 A est supérieur à 0,5 A", "Les lampes brillent plus fort", "Le fusible ne fond qu'avec des lampes en série"], bonne: 1,
                 explication: "I = 0,3 + 0,3 + 0,3 = 0,9 A dans la branche principale : plus que 0,5 A, le fusible fond." },
@@ -4078,7 +4523,7 @@ const CONTENU = {
           ],
           blocs: [
             { t: "h", texte: "1. La tension électrique" },
-            { t: "p", texte: "La <strong>tension</strong> électrique, notée <strong>U</strong>, existe entre les deux bornes d'un dipôle. Son unité est le <strong>volt (V)</strong>. 1 V = 1 000 mV." },
+            { t: "p", def: true, texte: "La <strong>tension</strong> électrique, notée <strong>U</strong>, existe entre les deux bornes d'un dipôle. Son unité est le <strong>volt (V)</strong>. 1 V = 1 000 mV." },
             { t: "tableau", entetes: ["Source", "Tension"], lignes: [
               ["Pile ronde (AA)", "1,5 V"], ["Pile plate", "4,5 V"], ["Générateur du laboratoire", "6 V ou 12 V"], ["Batterie de voiture", "12 V"], ["Prise du secteur", "230 V (dangereux)"]
             ] },
@@ -4090,6 +4535,7 @@ const CONTENU = {
             ] },
 
             { t: "h", texte: "2. Mesurer une tension : le voltmètre" },
+            { t: "fig", ajout: "fig-volt", html: SCHEMAS.figVoltmetre() },
             { t: "methode", titre: "Méthode", items: [
               "Je règle le multimètre sur <strong>V⎓</strong> (tension continue).",
               "Je branche le voltmètre <strong>en dérivation</strong>, aux bornes du dipôle : un fil de <strong>V</strong> vers une borne, un fil de <strong>COM</strong> vers l'autre. Inutile d'ouvrir le circuit.",
@@ -4115,10 +4561,11 @@ const CONTENU = {
             ] },
 
             { t: "h", texte: "4. La loi d'additivité des tensions" },
-            { t: "p", texte: "Dans un circuit <strong>en série</strong> (une seule boucle), la tension aux bornes du générateur est égale à la <strong>somme</strong> des tensions aux bornes des autres dipôles : <strong>U = U₁ + U₂</strong>. C'est la <strong>loi d'additivité des tensions</strong>." },
+            { t: "p", rel: true, texte: "Dans un circuit <strong>en série</strong> (une seule boucle), la tension aux bornes du générateur est égale à la <strong>somme</strong> des tensions aux bornes des autres dipôles : <strong>U = U₁ + U₂</strong>. C'est la <strong>loi d'additivité des tensions</strong>." },
             { t: "methode", titre: "Exemple résolu", items: [
               "Un générateur 6 V alimente deux lampes en série. On mesure U₁ = 4,5 V aux bornes de L1.",
-              "Additivité : U = U₁ + U₂, donc U₂ = U − U₁ = 6 − 4,5 = <strong>1,5 V</strong>."
+              "Additivité : U = U₁ + U₂, donc U₂ = U − U₁ = 6 − 4,5 = <strong>1,5 V</strong>.",
+              "<span class=\"phr\">Phrase réponse :</span> la tension aux bornes de la lampe L2 est U₂ = 1,5 V."
             ] },
             { t: "exemple", type: "qcm", competence: 3, variantes: [
               { question: "Un générateur 12 V alimente deux lampes identiques en série. Quelle tension y a-t-il aux bornes de chaque lampe ?", reponses: ["12 V", "6 V", "24 V", "3 V"], bonne: 1,
@@ -4130,14 +4577,14 @@ const CONTENU = {
             ] },
 
             { t: "h", texte: "5. Des dipôles en dérivation" },
-            { t: "p", texte: "On observe que des dipôles branchés <strong>en dérivation</strong> ont la <strong>même tension</strong> à leurs bornes. Par exemple, chaque lampe et chaque prise d'une maison reçoit la tension du secteur, 230 V." },
+            { t: "p", rel: true, texte: "On observe que des dipôles branchés <strong>en dérivation</strong> ont la <strong>même tension</strong> à leurs bornes. Par exemple, chaque lampe et chaque prise d'une maison reçoit la tension du secteur, 230 V." },
             { t: "exemple", type: "vraifaux", competence: 3, variantes: [
               { affirmation: "Deux lampes branchées en dérivation sur un générateur 6 V ont chacune 6 V à leurs bornes.", vrai: true, explication: "En dérivation, les dipôles ont la même tension à leurs bornes : ici celle du générateur." },
               { affirmation: "Deux lampes en dérivation sur un générateur 6 V ont chacune 3 V à leurs bornes.", vrai: false, explication: "La tension ne se partage qu'en série. En dérivation, chaque lampe a 6 V à ses bornes." }
             ] },
 
             { t: "h", texte: "6. Sécurité : le danger du secteur" },
-            { t: "p", texte: "Le corps humain conduit le courant. La tension du secteur, <strong>230 V</strong>, peut provoquer une <strong>électrisation</strong> (choc électrique) ou une <strong>électrocution</strong> (mortelle). Au laboratoire, on travaille en <strong>basse tension</strong> (6 V ou 12 V) et on ne touche jamais une prise ni un fil dénudé." },
+            { t: "p", def: true, texte: "Le corps humain conduit le courant. La tension du secteur, <strong>230 V</strong>, peut provoquer une <strong>électrisation</strong> (choc électrique) ou une <strong>électrocution</strong> (mortelle). Au laboratoire, on travaille en <strong>basse tension</strong> (6 V ou 12 V) et on ne touche jamais une prise ni un fil dénudé." },
             { t: "exemple", type: "qcm", competence: 4, variantes: [
               { question: "Pourquoi ne fait-on jamais de mesure sur une prise du secteur au collège ?", reponses: ["Sa tension, 230 V, est dangereuse pour le corps humain", "Elle ne délivre pas de courant", "Le voltmètre ne mesure que l'intensité", "Elle est en série"], bonne: 0,
                 explication: "230 V peut provoquer une électrisation ou une électrocution. Au laboratoire, on reste en basse tension." },
@@ -4355,7 +4802,7 @@ const CONTENU = {
           ],
           blocs: [
             { t: "h", texte: "1. La résistance électrique" },
-            { t: "p", texte: "Un <strong>conducteur ohmique</strong>, qu'on appelle souvent une « résistance », <strong>freine</strong> le passage du courant. Sa <strong>résistance</strong>, notée <strong>R</strong>, se mesure en <strong>ohms (Ω)</strong>. 1 kΩ = 1 000 Ω." },
+            { t: "p", def: true, texte: "Un <strong>conducteur ohmique</strong>, qu'on appelle souvent une « résistance », <strong>freine</strong> le passage du courant. Sa <strong>résistance</strong>, notée <strong>R</strong>, se mesure en <strong>ohms (Ω)</strong>. 1 kΩ = 1 000 Ω." },
             { t: "p", texte: "On la mesure avec un <strong>ohmmètre</strong> (le multimètre réglé sur Ω), branché aux bornes du dipôle <strong>débranché du circuit</strong> : l'ohmmètre fournit lui-même un petit courant." },
             { t: "exemple", type: "qcm", competence: 1, variantes: [
               { question: "Quelle est l'unité de la résistance ?", reponses: ["Le volt (V)", "L'ampère (A)", "L'ohm (Ω)", "Le watt (W)"], bonne: 2,
@@ -4376,6 +4823,7 @@ const CONTENU = {
 
             { t: "h", texte: "3. La caractéristique d'une résistance" },
             { t: "p", texte: "On mesure la tension U aux bornes d'une résistance et l'intensité I qui la traverse, pour plusieurs réglages du générateur. On trace U en fonction de I : on obtient une <strong>droite qui passe par l'origine</strong>. U et I sont <strong>proportionnelles</strong>." },
+            { t: "fig", ajout: "fig-carac", html: SCHEMAS.figCaracteristique() },
             { t: "tableau", entetes: ["I (mA)", "0", "20", "40", "60"], lignes: [["U (V)", "0", "2", "4", "6"]] },
             { t: "exemple", type: "qcm", competence: 3, variantes: [
               { question: "D'après le tableau, que vaut U pour I = 80 mA ?", reponses: ["8 V", "6 V", "80 V", "0,8 V"], bonne: 0,
@@ -4387,11 +4835,12 @@ const CONTENU = {
             ] },
 
             { t: "h", texte: "4. La loi d'Ohm" },
-            { t: "p", texte: "La tension U aux bornes d'un conducteur ohmique est égale au produit de sa résistance R par l'intensité I qui le traverse : <strong>U = R × I</strong>, avec U en volts (V), R en ohms (Ω) et I en <strong>ampères (A)</strong>. On peut aussi écrire I = U ÷ R et R = U ÷ I." },
+            { t: "p", rel: true, texte: "La tension U aux bornes d'un conducteur ohmique est égale au produit de sa résistance R par l'intensité I qui le traverse : <strong>U = R × I</strong>, avec U en volts (V), R en ohms (Ω) et I en <strong>ampères (A)</strong>. On peut aussi écrire I = U ÷ R et R = U ÷ I." },
             { t: "methode", titre: "Exemple résolu", items: [
               "Une résistance de 220 Ω est traversée par un courant de 20 mA. Quelle est la tension à ses bornes ?",
               "Je convertis : I = 20 mA = 0,020 A.",
-              "Loi d'Ohm : U = R × I = 220 × 0,020 = <strong>4,4 V</strong>."
+              "Loi d'Ohm : U = R × I = 220 × 0,020 = <strong>4,4 V</strong>.",
+              "<span class=\"phr\">Phrase réponse :</span> la tension aux bornes de la résistance est U = 4,4 V."
             ] },
             { t: "exemple", type: "qcm", competence: 4, variantes: [
               { question: "Une résistance de 100 Ω est traversée par 0,05 A. Quelle est la tension à ses bornes ?", reponses: ["5 V", "2 000 V", "0,0005 V", "100,05 V"], bonne: 0,
@@ -4410,6 +4859,7 @@ const CONTENU = {
 
             { t: "h", texte: "5. Application : protéger une DEL" },
             { t: "p", texte: "Une DEL supporte une intensité d'environ <strong>20 mA</strong>. Branchée seule sur un générateur 6 V, elle grillerait. On place une <strong>résistance de protection</strong> en série : elle limite l'intensité. Exemple : avec 220 Ω, l'intensité est d'environ 13 mA." },
+            { t: "fig", ajout: "fig-del", html: SCHEMAS.figDEL() },
 
             { t: "retenir", items: [
               "La résistance R d'un conducteur ohmique se mesure en ohms (Ω) avec un ohmmètre, le dipôle débranché.",
@@ -4615,7 +5065,7 @@ const CONTENU = {
               { question: "50 mL d'huile ont une masse de 46 g. Quelle est la masse de 100 mL de la même huile ?", reponses: ["46 g", "92 g", "50 g", "146 g"], bonne: 1,
                 explication: "Le volume double (50 → 100 mL), donc la masse double : 2 × 46 = 92 g." },
               { question: "Un cube de bois et un cube de fer ont exactement le même volume. Lequel a la plus grande masse ?", reponses: ["Le cube de bois", "Le cube de fer", "Ils ont la même masse", "On ne peut pas savoir"], bonne: 1,
-                explication: "Même volume, mais pas la même matière : le fer est beaucoup plus lourd que le bois." },
+                explication: "Les deux cubes ont le même volume mais pas la même matière : à volume égal, le fer est beaucoup plus lourd que le bois." },
               { question: "20 mL de sirop de canne ont une masse de 26 g. Quelle est la masse de 10 mL de ce sirop ?", reponses: ["13 g", "26 g", "52 g", "16 g"], bonne: 0,
                 explication: "Le volume est divisé par 2, donc la masse aussi : 26 ÷ 2 = 13 g." },
               { question: "Qu'est-ce qui a le plus grand volume : 1 kg de plumes ou 1 kg de plomb ?", reponses: ["1 kg de plomb", "1 kg de plumes", "Les deux ont le même volume", "Aucun des deux n'a de volume"], bonne: 1,
@@ -4623,17 +5073,18 @@ const CONTENU = {
             ] },
 
             { t: "h", texte: "2. La masse volumique" },
-            { t: "p", texte: "La <strong>masse volumique</strong> d'une matière, notée <strong>ρ</strong> (la lettre grecque « rhô »), est la masse d'un volume donné de cette matière. On la calcule en divisant la masse par le volume :" },
+            { t: "p", def: true, texte: "La <strong>masse volumique</strong> d'une matière, notée <strong>ρ</strong> (la lettre grecque « rhô »), est la masse d'un volume donné de cette matière. On la calcule en divisant la masse par le volume :" },
             { t: "methode", titre: "La formule", items: [
               "<strong style=\"font-size:1.25rem\">ρ = m ÷ V</strong> (on écrit aussi ρ = m / V)",
               "m : la masse, en grammes (g) ; V : le volume, en millilitres (mL) ou en cm³ ; ρ : en <strong>g/mL</strong> ou en <strong>g/cm³</strong>.",
               "On utilise aussi le kg/L : <strong>1 g/mL = 1 g/cm³ = 1 kg/L</strong>."
             ] },
-            { t: "p", texte: "Une valeur à connaître par cœur : la masse volumique de l'eau liquide est <strong>ρ(eau) = 1 g/mL</strong> (soit 1 kg/L) : 1 mL d'eau a une masse de 1 g, 1 L d'eau a une masse de 1 kg." },
+            { t: "p", rel: true, texte: "La masse volumique de l'eau liquide est <strong>ρ(eau) = 1 g/mL</strong> (soit 1 kg/L) : 1 mL d'eau a une masse de 1 g, 1 L d'eau a une masse de 1 kg." },
             { t: "methode", titre: "Exemple résolu", items: [
               "On mesure : 50 mL d'huile ont une masse de 46 g. Je note les données : m = 46 g et V = 50 mL.",
               "J'écris la formule : ρ = m ÷ V.",
-              "Je calcule, sans oublier l'unité : ρ = 46 ÷ 50 = <strong>0,92 g/mL</strong>."
+              "Je calcule, sans oublier l'unité : ρ = 46 ÷ 50 = <strong>0,92 g/mL</strong>.",
+              "<span class=\"phr\">Phrase réponse :</span> la masse volumique de l'huile est ρ = 0,92 g/mL."
             ] },
             { t: "exemple", type: "qcm", competence: 2, variantes: [
               { question: "Comment calcule-t-on la masse volumique ρ ?", reponses: ["ρ = m ÷ V", "ρ = V ÷ m", "ρ = m × V", "ρ = m + V"], bonne: 0,
@@ -4657,7 +5108,8 @@ const CONTENU = {
             { t: "methode", titre: "Exemple résolu", items: [
               "Un bidon contient V = 20 L d'essence. La masse volumique de l'essence est ρ = 0,75 kg/L. Quelle est la masse d'essence ?",
               "Je cherche une masse : m = ρ × V = 0,75 × 20 = <strong>15 kg</strong>.",
-              "Les unités vont ensemble : des kg/L multipliés par des L donnent des kg."
+              "Les unités vont ensemble : des kg/L multipliés par des L donnent des kg.",
+              "<span class=\"phr\">Phrase réponse :</span> le bidon contient 15 kg d'essence."
             ] },
             { t: "exemple", type: "calcul", competence: 3, contextes: [{ gen: () => MASSEVOL.genMasse() }] },
             { t: "exemple", type: "calcul", competence: 3, contextes: [{ gen: () => MASSEVOL.genVolume() }] },
@@ -4676,7 +5128,7 @@ const CONTENU = {
               { question: "Un liquide a une masse de 65 g pour un volume de 50 mL. Lequel est-ce ?", reponses: ["De l'eau", "De l'huile", "Du sirop de canne", "De l'alcool"], bonne: 2,
                 explication: "ρ = 65 ÷ 50 = 1,3 g/mL : c'est le sirop de canne." }
             ] },
-            { t: "p", texte: "<strong>Flotter ou couler ?</strong> Un objet <strong>flotte</strong> sur un liquide si sa masse volumique est <strong>plus petite</strong> que celle du liquide ; il <strong>coule</strong> si elle est plus grande. De même, des liquides qui ne se mélangent pas se rangent : le moins dense au-dessus, le plus dense au fond." },
+            { t: "p", rel: true, texte: "<strong>Flotter ou couler ?</strong> Un objet <strong>flotte</strong> sur un liquide si sa masse volumique est <strong>plus petite</strong> que celle du liquide ; il <strong>coule</strong> si elle est plus grande. De même, des liquides qui ne se mélangent pas se rangent : le moins dense au-dessus, le plus dense au fond." },
             { t: "anim", monter: (el) => MASSEVOL.animColonne(el) },
             { t: "exemple", type: "tri", competence: 4, n: 4, question: "Cet objet flotte-t-il sur l'eau (ρ = 1 g/cm³) ?", oui: "Il flotte", non: "Il coule", items: [
               { source: "Un bouchon de liège (0,24 g/cm³)", oui: true, pourquoi: "0,24 est plus petit que 1 : il flotte." },
@@ -4956,7 +5408,7 @@ const CONTENU = {
           ],
           blocs: [
             { t: "h", texte: "1. La lumière, ce qu'il y a de plus rapide" },
-            { t: "p", texte: "Dans le vide, et pratiquement dans l'air, la lumière se propage en ligne droite à la vitesse <strong>c = 3,00 × 10⁸ m·s⁻¹</strong>, soit 300 000 km par seconde. Rien ne va plus vite." },
+            { t: "p", rel: true, texte: "Dans le vide, et pratiquement dans l'air, la lumière se propage en ligne droite à la vitesse <strong>c = 3,00 × 10⁸ m·s⁻¹</strong>, soit 300 000 km par seconde. Rien ne va plus vite." },
             { t: "tableau", entetes: ["Objet", "Vitesse (m·s⁻¹)"], lignes: [
               ["Un piéton", "≈ 1,4"],
               ["Le son dans l'air", "≈ 340 (3,4 × 10²)"],
@@ -4966,7 +5418,8 @@ const CONTENU = {
             { t: "methode", titre: "Calculer une durée de propagation", items: [
               "On utilise <strong>t = d ÷ c</strong>, avec d en mètres et c = 3,00 × 10⁸ m·s⁻¹ : t est alors en secondes.",
               "Exemple : la lumière du Soleil parcourt d = 1,50 × 10¹¹ m pour arriver sur Terre.",
-              "t = 1,50 × 10¹¹ ÷ 3,00 × 10⁸ = <strong>500 s</strong>, soit environ 8 min 20 s : on voit le Soleil tel qu'il était il y a 8 minutes !"
+              "t = 1,50 × 10¹¹ ÷ 3,00 × 10⁸ = <strong>500 s</strong>, soit environ 8 min 20 s : on voit le Soleil tel qu'il était il y a 8 minutes !",
+              "<span class=\"phr\">Phrase réponse :</span> la lumière du Soleil met environ 500 s (8 min 20 s) pour arriver sur Terre."
             ] },
             { t: "exemple", type: "qcm", competence: 1, variantes: [
               { question: "La Lune est à environ 3,84 × 10⁸ m de la Terre. Combien de temps met sa lumière pour nous parvenir ?", reponses: ["1,28 s", "0,78 s", "1,15 × 10¹⁷ s", "128 s"], bonne: 0, explication: "t = d ÷ c = 3,84 × 10⁸ ÷ 3,00 × 10⁸ = 1,28 s. (1,15 × 10¹⁷ : on a multiplié au lieu de diviser.)" },
@@ -4975,7 +5428,7 @@ const CONTENU = {
             ] },
 
             { t: "h", texte: "2. La lumière blanche est un mélange de couleurs" },
-            { t: "p", texte: "Quand un faisceau de lumière blanche traverse un <strong>prisme</strong>, il ressort étalé en une bande de couleurs, du rouge au violet : c'est la <strong>dispersion</strong> de la lumière." },
+            { t: "p", def: true, texte: "Quand un faisceau de lumière blanche traverse un <strong>prisme</strong>, il ressort étalé en une bande de couleurs, du rouge au violet : c'est la <strong>dispersion</strong> de la lumière." },
             { t: "p", texte: `<figure class="fig-cours"><svg viewBox="0 0 320 150" role="img" aria-label="Un faisceau de lumière blanche entre dans un prisme et ressort décomposé en couleurs, du rouge (le moins dévié) au violet (le plus dévié)." style="width:100%;max-width:420px;height:auto"><rect width="320" height="150" rx="10" fill="#0E1726"/><path d="M130 20 L80 130 L180 130 Z" fill="#9CC8E8" fill-opacity=".25" stroke="#BFE0F5" stroke-width="1.5"/><line x1="8" y1="96" x2="105" y2="75" stroke="#FFF" stroke-width="3"/><line x1="105" y1="75" x2="157" y2="80" stroke="#FFF" stroke-width="2.5" opacity=".9"/>${[[700, 92], [610, 100], [580, 107], [530, 115], [470, 124], [410, 133]].map(([l, y]) => `<line x1="157" y1="80" x2="300" y2="${y}" stroke="${couleurLambda(l)}" stroke-width="2.5"/>`).join("")}<line x1="302" y1="84" x2="302" y2="142" stroke="#DDD" stroke-width="3"/><text x="10" y="116" font-size="10" fill="#FFF">lumière blanche</text><text x="112" y="145" font-size="10" fill="#BFE0F5">prisme</text><text x="296" y="78" font-size="10" fill="#DDD" text-anchor="end">écran</text></svg><figcaption>Le violet est le plus dévié, le rouge le moins dévié.</figcaption></figure>` },
             { t: "p", texte: "La lumière blanche est donc <strong>polychromatique</strong> : elle contient une infinité de radiations. Dans le verre, chaque radiation est déviée un peu différemment, ce qui les sépare. Les gouttes de pluie font la même chose : c'est l'<strong>arc-en-ciel</strong>, fréquent en saison des pluies en Guyane." },
             { t: "exemple", type: "vraifaux", competence: 2, variantes: [
@@ -4985,7 +5438,7 @@ const CONTENU = {
             ] },
 
             { t: "h", texte: "3. Une radiation est caractérisée par sa longueur d'onde" },
-            { t: "p", texte: "Chaque radiation est caractérisée par sa <strong>longueur d'onde λ</strong> (lettre grecque « lambda ») dans le vide ou dans l'air. Elle s'exprime souvent en <strong>nanomètres</strong> : 1 nm = 10⁻⁹ m. Une lumière formée d'une seule radiation est <strong>monochromatique</strong> (exemple : la lumière d'un laser)." },
+            { t: "p", def: true, texte: "Chaque radiation est caractérisée par sa <strong>longueur d'onde λ</strong> (lettre grecque « lambda ») dans le vide ou dans l'air. Elle s'exprime souvent en <strong>nanomètres</strong> : 1 nm = 10⁻⁹ m. Une lumière formée d'une seule radiation est <strong>monochromatique</strong> (exemple : la lumière d'un laser)." },
             { t: "p", texte: `<figure class="fig-cours">${spectreSVG({ continu: true, alt: "Spectre continu de la lumière blanche, du violet (400 nm) au rouge (800 nm)" })}<figcaption>Spectre de la lumière blanche : toutes les radiations visibles sont présentes, sans interruption.</figcaption></figure>` },
             { t: "tableau", entetes: ["Domaine", "λ dans le vide"], lignes: [
               ["Ultraviolet (invisible)", "< 400 nm"],
@@ -5002,7 +5455,7 @@ const CONTENU = {
             ] },
 
             { t: "h", texte: "4. Le spectre d'un corps chaud" },
-            { t: "p", texte: "Un corps chaud (braise, lave, filament d'une lampe à incandescence, Soleil) émet de la lumière : son spectre est un <strong>spectre continu d'origine thermique</strong>. <strong>Plus sa température est élevée, plus son spectre s'enrichit vers le violet</strong> (petites longueurs d'onde) et plus sa lumière paraît blanche." },
+            { t: "p", rel: true, texte: "Un corps chaud (braise, lave, filament d'une lampe à incandescence, Soleil) émet de la lumière : son spectre est un <strong>spectre continu d'origine thermique</strong>. <strong>Plus sa température est élevée, plus son spectre s'enrichit vers le violet</strong> (petites longueurs d'onde) et plus sa lumière paraît blanche." },
             { t: "p", texte: `<figure class="fig-cours"><span class="leg">Fer chauffé à environ 800 °C : rouge sombre</span>${spectreSVG({ continu: [640], axe: false, h: 22, alt: "Spectre continu limité au rouge" })}<span class="leg">Filament de lampe à environ 2 500 °C : jaune-blanc</span>${spectreSVG({ continu: [500], axe: false, h: 22, alt: "Spectre continu du jaune-vert au rouge" })}<span class="leg">Surface du Soleil, environ 5 500 °C : blanche</span>${spectreSVG({ continu: [380], h: 22, alt: "Spectre continu complet du violet au rouge" })}<figcaption>Quand la température augmente, le spectre s'étend vers le violet.</figcaption></figure>` },
             { t: "exemple", type: "qcm", competence: 4, variantes: [
               { question: "On chauffe de plus en plus un clou dans une flamme. Que devient son spectre ?", reponses: ["Il s'enrichit vers le violet et la lumière devient plus blanche", "Il devient un spectre de raies", "Il perd ses couleurs rouges", "Il ne change pas"], bonne: 0, explication: "Plus un corps est chaud, plus son spectre continu s'étend vers les petites longueurs d'onde." },
@@ -5011,7 +5464,7 @@ const CONTENU = {
             ] },
 
             { t: "h", texte: "5. Les spectres de raies : la signature des éléments" },
-            { t: "p", texte: "Un gaz à basse pression excité par une décharge électrique (lampe spectrale, tube « néon ») n'émet que quelques radiations : son spectre est un <strong>spectre de raies</strong>, des raies colorées sur fond noir. <strong>Chaque élément chimique a ses propres raies</strong>, toujours aux mêmes longueurs d'onde : c'est sa signature, comme une empreinte digitale." },
+            { t: "p", def: true, texte: "Un gaz à basse pression excité par une décharge électrique (lampe spectrale, tube « néon ») n'émet que quelques radiations : son spectre est un <strong>spectre de raies</strong>, des raies colorées sur fond noir. <strong>Chaque élément chimique a ses propres raies</strong>, toujours aux mêmes longueurs d'onde : c'est sa signature, comme une empreinte digitale." },
             { t: "p", texte: `<figure class="fig-cours"><span class="leg">Hydrogène</span>${spectreDe("Hydrogène", { axe: false, h: 22 })}<span class="leg">Sodium (lampadaires orangés)</span>${spectreDe("Sodium", { axe: false, h: 22 })}<span class="leg">Mercure</span>${spectreDe("Mercure", { h: 22 })}</figure>` },
             { t: "methode", titre: "Identifier un élément grâce à son spectre", items: [
               "Repère la longueur d'onde de chaque raie grâce à l'échelle graduée en nanomètres.",
@@ -5289,7 +5742,7 @@ const CONTENU = {
           ],
           blocs: [
             { t: "h", texte: "1. Espèce chimique, corps pur et mélange" },
-            { t: "p", texte: "Une <strong>espèce chimique</strong> est un ensemble d'un très grand nombre d'entités identiques (molécules, atomes ou ions). L'eau, le sel (chlorure de sodium), le dioxygène sont des espèces chimiques." },
+            { t: "p", def: true, texte: "Une <strong>espèce chimique</strong> est un ensemble d'un très grand nombre d'entités identiques (molécules, atomes ou ions). L'eau, le sel (chlorure de sodium), le dioxygène sont des espèces chimiques." },
             { t: "liste", items: [
               "Un <strong>corps pur</strong> ne contient qu'<strong>une seule</strong> espèce chimique : eau distillée, sucre, or pur, dioxygène d'une bouteille.",
               "Un <strong>mélange</strong> contient <strong>plusieurs</strong> espèces chimiques : eau du robinet, eau de mer, air, jus de fruit.",
@@ -5315,14 +5768,14 @@ const CONTENU = {
             { t: "tableau", compact: true, entetes: ["Espèce", "θ fusion", "θ ébullition", "ρ (g/mL)"], lignes: [
               ["Eau", "0 °C", "100 °C", "1,00"], ["Éthanol", "−114 °C", "78 °C", "0,79"], ["Cyclohexane", "6,5 °C", "81 °C", "0,78"], ["Acétone", "−95 °C", "56 °C", "0,79"], ["Glycérol", "18 °C", "290 °C", "1,26"], ["Acide stéarique", "69 °C", "—", "0,94"]
             ] },
-            { t: "p", texte: "<strong>Le palier.</strong> Pendant le changement d'état d'un <strong>corps pur</strong>, la température <strong>reste constante</strong> : la courbe montre un <strong>palier</strong>. Pour un <strong>mélange</strong>, la température continue de varier : <strong>pas de palier</strong> net. C'est un moyen de savoir si un échantillon est pur." },
+            { t: "p", rel: true, texte: "<strong>Le palier.</strong> Pendant le changement d'état d'un <strong>corps pur</strong>, la température <strong>reste constante</strong> : la courbe montre un <strong>palier</strong>. Pour un <strong>mélange</strong>, la température continue de varier : <strong>pas de palier</strong> net. C'est un moyen de savoir si un échantillon est pur." },
             { t: "anim", monter: (el) => MELSOL.animPalier(el) },
             { t: "exemple", type: "qcm", competence: 3, variantes: [
               { question: "Sur la courbe de refroidissement d'un échantillon, la température reste à 69 °C pendant 4 minutes. On peut dire que…", reponses: ["c'est un corps pur, probablement de l'acide stéarique", "c'est un mélange", "l'expérience est ratée", "c'est de l'eau"], bonne: 0, explication: "Un palier = un corps pur. 69 °C correspond à l'acide stéarique dans le tableau." },
               { question: "Pendant la solidification d'eau salée, la température passe de −2 °C à −8 °C. L'eau salée est…", reponses: ["un mélange : pas de palier", "un corps pur : il y a un palier", "de l'eau distillée", "un gaz"], bonne: 0, explication: "La température continue de baisser pendant la solidification : pas de palier, c'est un mélange." },
               { question: "Pourquoi un palier de température indique-t-il un corps pur ?", reponses: ["Un corps pur change d'état à température constante", "Un mélange change d'état à température constante", "La température d'un corps pur ne varie jamais", "Le thermomètre est bloqué"], bonne: 0, explication: "Pendant tout le changement d'état d'un corps pur, la température reste fixe." }
             ] },
-            { t: "p", texte: "<strong>Masse volumique.</strong> Valeur à connaître : <strong>ρ(eau) = 1,00 g/mL = 1,00 kg/L</strong>. Un corps de masse volumique plus petite flotte sur l'eau (huile 0,92 g/mL, éthanol 0,79 g/mL) ; un corps plus dense coule (glycérol 1,26 g/mL). L'eau de mer (1,03 g/mL), un mélange, est un peu plus dense que l'eau pure. L'air est environ 1 000 fois moins dense que l'eau : ρ(air) ≈ 1,2 g/L." },
+            { t: "p", rel: true, texte: "<strong>Masse volumique.</strong> Valeur à connaître : <strong>ρ(eau) = 1,00 g/mL = 1,00 kg/L</strong>. Un corps de masse volumique plus petite flotte sur l'eau (huile 0,92 g/mL, éthanol 0,79 g/mL) ; un corps plus dense coule (glycérol 1,26 g/mL). L'eau de mer (1,03 g/mL), un mélange, est un peu plus dense que l'eau pure. L'air est environ 1 000 fois moins dense que l'eau : ρ(air) ≈ 1,2 g/L." },
             { t: "exemple", type: "calcul", competence: 4, contextes: [{ gen: () => MELSOL.genRho() }] },
             { t: "exemple", type: "qcm", competence: 4, variantes: [
               { question: "Quelle est la masse volumique de l'eau liquide ?", reponses: ["1,00 g/mL", "1,00 g/L", "0,79 g/mL", "10 g/mL"], bonne: 0, explication: "ρ(eau) = 1,00 g/mL = 1,00 kg/L = 1 000 g/L." },
@@ -5358,17 +5811,18 @@ const CONTENU = {
             ] },
 
             { t: "h", texte: "4. La composition d'un mélange" },
-            { t: "p", texte: "La <strong>composition en masse</strong> d'un mélange indique la part de chaque espèce. Le <strong>pourcentage en masse</strong> d'une espèce est :" },
+            { t: "p", def: true, texte: "La <strong>composition en masse</strong> d'un mélange indique la part de chaque espèce. Le <strong>pourcentage en masse</strong> d'une espèce est :" },
             { t: "methode", titre: "La formule", items: [
               "<strong style=\"font-size:1.15rem\">pourcentage en masse = m(espèce) ÷ m(totale) × 100</strong>",
               "Les deux masses dans la même unité (en g, par exemple). La somme des pourcentages de toutes les espèces du mélange fait 100 %."
             ] },
             { t: "methode", titre: "Exemple résolu", items: [
               "On fait évaporer 200 g d'eau de mer : il reste 7,0 g de sel.",
-              "Pourcentage en masse de sel = 7,0 ÷ 200 × 100 = <strong>3,5 %</strong> (soit 35 g de sel par kilogramme d'eau de mer)."
+              "Pourcentage en masse de sel = 7,0 ÷ 200 × 100 = <strong>3,5 %</strong> (soit 35 g de sel par kilogramme d'eau de mer).",
+              "<span class=\"phr\">Phrase réponse :</span> l'eau de mer contient 3,5 % de sel en masse."
             ] },
             { t: "exemple", type: "calcul", competence: 6, contextes: [{ gen: () => MELSOL.genPourcent() }] },
-            { t: "p", texte: "<strong>L'air</strong> est un mélange de gaz. En volume, il contient environ <strong>78 % de diazote</strong> N₂ (à peu près 4/5), <strong>21 % de dioxygène</strong> O₂ (à peu près 1/5) et 1 % d'autres gaz (argon, dioxyde de carbone…). Sa masse volumique est d'environ <strong>1,2 g/L</strong> (soit 1,2 kg/m³)." },
+            { t: "p", rel: true, texte: "<strong>L'air</strong> est un mélange de gaz. En volume, il contient environ <strong>78 % de diazote</strong> N₂ (à peu près 4/5), <strong>21 % de dioxygène</strong> O₂ (à peu près 1/5) et 1 % d'autres gaz (argon, dioxyde de carbone…). Sa masse volumique est d'environ <strong>1,2 g/L</strong> (soit 1,2 kg/m³)." },
             { t: "exemple", type: "calcul", competence: 6, contextes: [{ gen: () => MELSOL.genAir() }] },
 
             { t: "retenir", items: [
@@ -5645,7 +6099,7 @@ const CONTENU = {
           ],
           blocs: [
             { t: "h", texte: "1. Solution, solvant et soluté" },
-            { t: "p", texte: "Une <strong>solution</strong> est un mélange homogène obtenu en dissolvant une ou plusieurs espèces, les <strong>solutés</strong>, dans un <strong>solvant</strong> (l'espèce majoritaire). Quand le solvant est l'eau, c'est une <strong>solution aqueuse</strong>." },
+            { t: "p", def: true, texte: "Une <strong>solution</strong> est un mélange homogène obtenu en dissolvant une ou plusieurs espèces, les <strong>solutés</strong>, dans un <strong>solvant</strong> (l'espèce majoritaire). Quand le solvant est l'eau, c'est une <strong>solution aqueuse</strong>." },
             { t: "liste", items: [
               "Sérum physiologique : soluté = chlorure de sodium (sel) ; solvant = eau.",
               "Boisson du sportif : solutés = sucres, sels minéraux, arômes ; solvant = eau.",
@@ -5665,7 +6119,7 @@ const CONTENU = {
             ] },
 
             { t: "h", texte: "2. La concentration en masse" },
-            { t: "p", texte: "La <strong>concentration en masse</strong> d'un soluté, notée <strong>Cm</strong>, est la masse de soluté dissoute dans un litre de solution :" },
+            { t: "p", def: true, texte: "La <strong>concentration en masse</strong> d'un soluté, notée <strong>Cm</strong>, est la masse de soluté dissoute dans un litre de solution :" },
             { t: "methode", titre: "La formule", items: [
               "<strong style=\"font-size:1.25rem\">Cm = m ÷ V</strong>",
               "m : masse de soluté, en grammes (g) ; V : volume de <strong>solution</strong>, en litres (L) ; Cm en <strong>g/L</strong>.",
@@ -5674,7 +6128,8 @@ const CONTENU = {
             { t: "methode", titre: "Exemple résolu", items: [
               "Le sérum physiologique : on dissout m = 4,5 g de sel pour obtenir V = 500 mL de solution.",
               "Je convertis : V = 500 mL = 0,500 L.",
-              "Cm = m ÷ V = 4,5 ÷ 0,500 = <strong>9,0 g/L</strong>."
+              "Cm = m ÷ V = 4,5 ÷ 0,500 = <strong>9,0 g/L</strong>.",
+              "<span class=\"phr\">Phrase réponse :</span> la concentration en masse du sel dans le sérum physiologique est Cm = 9,0 g/L."
             ] },
             { t: "exemple", type: "calcul", competence: 2, contextes: [{ gen: () => MELSOL.genCm() }] },
             { t: "p", texte: "<strong>Ne pas confondre</strong> la concentration en masse avec la masse volumique :" },
@@ -5692,13 +6147,14 @@ const CONTENU = {
             { t: "liste", items: ["masse de soluté à peser : <strong>m = Cm × V</strong> ;", "volume de solution : <strong>V = m ÷ Cm</strong>."] },
             { t: "methode", titre: "Exemple résolu", items: [
               "On veut préparer V = 250 mL de solution de glucose à Cm = 20 g/L.",
-              "V = 250 mL = 0,250 L, donc m = Cm × V = 20 × 0,250 = <strong>5,0 g</strong> de glucose à peser."
+              "V = 250 mL = 0,250 L, donc m = Cm × V = 20 × 0,250 = <strong>5,0 g</strong> de glucose à peser.",
+              "<span class=\"phr\">Phrase réponse :</span> il faut peser 5,0 g de glucose."
             ] },
             { t: "exemple", type: "calcul", competence: 3, contextes: [{ gen: () => MELSOL.genMasseAPeser() }] },
             { t: "exemple", type: "calcul", competence: 3, contextes: [{ gen: () => MELSOL.genVolumeSol() }] },
 
             { t: "h", texte: "4. La concentration maximale" },
-            { t: "p", texte: "On ne peut pas dissoudre autant de soluté qu'on veut : au-delà d'une certaine masse, le soluté reste au fond. La solution est alors <strong>saturée</strong>. Sa concentration est la <strong>concentration maximale</strong> du soluté (on dit aussi sa <strong>solubilité</strong>). Elle dépend du soluté, du solvant et de la température." },
+            { t: "p", def: true, texte: "On ne peut pas dissoudre autant de soluté qu'on veut : au-delà d'une certaine masse, le soluté reste au fond. La solution est alors <strong>saturée</strong>. Sa concentration est la <strong>concentration maximale</strong> du soluté (on dit aussi sa <strong>solubilité</strong>). Elle dépend du soluté, du solvant et de la température." },
             { t: "anim", monter: (el) => MELSOL.animSaturation(el) },
             { t: "p", texte: "Ordres de grandeur dans l'eau à 20 °C : sel ≈ 360 g/L ; bicarbonate de soude ≈ 96 g/L ; le sucre est beaucoup plus soluble (environ 2 000 g dans un litre d'eau)." },
             { t: "exemple", type: "calcul", competence: 4, contextes: [{ gen: () => MELSOL.genCmax() }] },
@@ -5718,7 +6174,7 @@ const CONTENU = {
             ] },
 
             { t: "h", texte: "6. Préparer une solution par dilution" },
-            { t: "p", texte: "<strong>Diluer</strong>, c'est ajouter du solvant (de l'eau) pour diminuer la concentration. On prélève un volume V₀ de <strong>solution mère</strong> (concentration Cm₀) avec une <strong>pipette jaugée</strong>, on le verse dans une <strong>fiole jaugée</strong> de volume V₁ et on complète avec de l'eau : on obtient la <strong>solution fille</strong> (concentration Cm₁), moins concentrée. On n'ajoute que de l'eau : la <strong>masse de soluté se conserve</strong>." },
+            { t: "p", def: true, texte: "<strong>Diluer</strong>, c'est ajouter du solvant (de l'eau) pour diminuer la concentration. On prélève un volume V₀ de <strong>solution mère</strong> (concentration Cm₀) avec une <strong>pipette jaugée</strong>, on le verse dans une <strong>fiole jaugée</strong> de volume V₁ et on complète avec de l'eau : on obtient la <strong>solution fille</strong> (concentration Cm₁), moins concentrée. On n'ajoute que de l'eau : la <strong>masse de soluté se conserve</strong>." },
             { t: "methode", titre: "La relation de la dilution", items: [
               "<strong style=\"font-size:1.15rem\">Cm₀ × V₀ = Cm₁ × V₁</strong> (masse de soluté prélevée = masse de soluté dans la solution fille)",
               "Volume de mère à prélever : V₀ = Cm₁ × V₁ ÷ Cm₀ ; concentration de la fille : Cm₁ = Cm₀ × V₀ ÷ V₁."
@@ -5732,7 +6188,8 @@ const CONTENU = {
               "Solution mère : Cm₀ = 50 g/L. On veut V₁ = 100 mL de fille à Cm₁ = 10 g/L.",
               "Facteur de dilution : F = Cm₀ ÷ Cm₁ = 50 ÷ 10 = <strong>5</strong> : la solution est diluée 5 fois.",
               "Volume à prélever : V₀ = V₁ ÷ F = 100 ÷ 5 = <strong>20 mL</strong> (on vérifie : Cm₁ × V₁ ÷ Cm₀ = 10 × 100 ÷ 50 = 20 mL).",
-              "Verrerie : pipette jaugée de 20 mL + propipette, fiole jaugée de 100 mL."
+              "Verrerie : pipette jaugée de 20 mL + propipette, fiole jaugée de 100 mL.",
+              "<span class=\"phr\">Phrase réponse :</span> on prélève V₀ = 20 mL de solution mère, puis on complète à 100 mL avec de l'eau dans la fiole jaugée."
             ] },
             { t: "anim", monter: (el) => MELSOL.animProtocole(el, "dilution") },
             { t: "exemple", type: "calcul", competence: 6, contextes: [{ gen: () => MELSOL.genFacteur() }] },
@@ -6093,12 +6550,13 @@ const CONTENU = {
           blocs: [
             { t: "h", texte: "1. Préparer une solution à partir d'un produit commercial" },
             { t: "p", texte: "Sur l'étiquette d'une solution commerciale (acide, déboucheur…), on lit souvent deux informations : le <strong>titre massique</strong> w, masse de soluté contenue dans 100 g de solution (en %), et la <strong>densité</strong> d, sans unité, qui compare la masse volumique de la solution à celle de l'eau." },
-            { t: "p", texte: "La masse volumique de la solution vaut <strong>ρ = d × ρ(eau)</strong>, avec ρ(eau) = 1 000 g·L⁻¹. La concentration en masse du soluté vaut <strong>Cₘ = w × ρ</strong>, et sa concentration en quantité de matière : <strong>c = w × d × ρ(eau) ÷ M</strong>." },
+            { t: "p", rel: true, texte: "La masse volumique de la solution vaut <strong>ρ = d × ρ(eau)</strong>, avec ρ(eau) = 1 000 g·L⁻¹. La concentration en masse du soluté vaut <strong>Cₘ = w × ρ</strong>, et sa concentration en quantité de matière : <strong>c = w × d × ρ(eau) ÷ M</strong>." },
             { t: "methode", titre: "Exemple résolu", items: [
               "Acide chlorhydrique commercial : w = 23 % ; d = 1,11 ; M(HCl) = 36,5 g·mol⁻¹.",
               "ρ = 1,11 × 1 000 = 1 110 g·L⁻¹ ; Cₘ = 0,23 × 1 110 ≈ 255 g·L⁻¹.",
               "c = 255 ÷ 36,5 ≈ <strong>7,0 mol·L⁻¹</strong>.",
-              "Pour préparer 500,0 mL à 0,35 mol·L⁻¹ : V = 0,35 × 500,0 ÷ 7,0 = <strong>25,0 mL</strong>, prélevés à la pipette jaugée et versés dans une fiole jaugée contenant déjà de l'eau."
+              "Pour préparer 500,0 mL à 0,35 mol·L⁻¹ : V = 0,35 × 500,0 ÷ 7,0 = <strong>25,0 mL</strong>, prélevés à la pipette jaugée et versés dans une fiole jaugée contenant déjà de l'eau.",
+              "<span class=\"phr\">Phrase réponse :</span> il faut prélever 25,0 mL d'acide commercial pour préparer 500,0 mL de solution à 0,35 mol·L⁻¹."
             ] },
             { t: "p", texte: "<strong>Sécurité</strong> : gants et lunettes ; on verse toujours l'acide (ou la base) concentré dans l'eau, jamais l'inverse." },
             { t: "exemple", type: "qcm", competence: 1, variantes: [
@@ -6111,9 +6569,10 @@ const CONTENU = {
             ] },
 
             { t: "h", texte: "2. Le principe d'un titrage" },
-            { t: "p", texte: "<strong>Titrer</strong> une espèce, c'est déterminer sa quantité de matière (ou sa concentration) grâce à une réaction avec une solution de concentration connue : la <strong>solution titrante</strong>, placée dans la burette." },
+            { t: "p", def: true, texte: "<strong>Titrer</strong> une espèce, c'est déterminer sa quantité de matière (ou sa concentration) grâce à une réaction avec une solution de concentration connue : la <strong>solution titrante</strong>, placée dans la burette." },
+            { t: "fig", ajout: "fig-titrage", html: SCHEMAS.figTitrage() },
             { t: "p", texte: "La réaction support doit être <strong>totale</strong>, <strong>rapide</strong> et <strong>unique</strong>. En terminale, on utilise des réactions acide-base, par exemple : CH₃COOH + HO⁻ → CH₃COO⁻ + H₂O." },
-            { t: "p", texte: "L'<strong>équivalence</strong> est atteinte quand les réactifs titré et titrant ont été introduits dans les <strong>proportions stœchiométriques</strong>. Avant l'équivalence, le réactif titrant est limitant ; après, c'est le réactif titré. On note <strong>Vₑ</strong> le volume versé à l'équivalence." },
+            { t: "p", def: true, texte: "L'<strong>équivalence</strong> est atteinte quand les réactifs titré et titrant ont été introduits dans les <strong>proportions stœchiométriques</strong>. Avant l'équivalence, le réactif titrant est limitant ; après, c'est le réactif titré. On note <strong>Vₑ</strong> le volume versé à l'équivalence." },
             { t: "methode", titre: "La relation à l'équivalence", items: [
               "Réaction a A + b B → …, avec A titré (concentration c₁, volume V₁) et B titrant (concentration c₂).",
               "À l'équivalence : n(A) initiale ÷ a = n(B) versée ÷ b, soit <strong>c₁ × V₁ ÷ a = c₂ × Vₑ ÷ b</strong>.",
@@ -6182,17 +6641,19 @@ const CONTENU = {
             ] },
 
             { t: "h", texte: "6. Exploiter un titrage et valider le résultat" },
-            { t: "methode", titre: "Méthode en 4 étapes", items: [
+            { t: "methode", titre: "Méthode en 5 étapes", items: [
               "J'écris l'équation de la réaction support.",
               "J'écris la relation à l'équivalence et je calcule la grandeur demandée (n, c ou m = n × M).",
               "Si la solution a été diluée F fois avant le titrage : c(produit) = F × c(solution diluée).",
-              "Je compare à la valeur de référence (l'étiquette) avec le quotient <strong>|m(mesurée) − m(référence)| ÷ u(m)</strong>, où u(m) est l'incertitude-type. On considère souvent le résultat compatible si ce quotient est inférieur à 2."
+              "Je compare à la valeur de référence (l'étiquette) avec le quotient <strong>|m(mesurée) − m(référence)| ÷ u(m)</strong>, où u(m) est l'incertitude-type. On considère souvent le résultat compatible si ce quotient est inférieur à 2.",
+              "Je rédige une phrase réponse, qui reprend les mots de la question et donne le résultat avec son unité."
             ] },
             { t: "methode", titre: "Exemple résolu : le vinaigre respecte-t-il son étiquette ?", items: [
               "On dilue le vinaigre 10 fois. On titre V₁ = 10,0 mL de solution diluée par la soude à c₂ = 0,100 mol·L⁻¹ : Vₑ = 13,4 mL.",
               "c(diluée) = 0,100 × 13,4 ÷ 10,0 = 0,134 mol·L⁻¹ ; c(vinaigre) = 10 × 0,134 = <strong>1,34 mol·L⁻¹</strong>.",
               "Cₘ = c × M = 1,34 × 60,0 ≈ 80,4 g·L⁻¹. Avec d = 1,01, 1 L de vinaigre pèse 1 010 g : w = 80,4 ÷ 1 010 ≈ 7,96 %.",
-              "L'étiquette indique 8,0 % (8°). Avec u = 0,2 % : |7,96 − 8,0| ÷ 0,2 = 0,2, inférieur à 2 : le résultat est <strong>compatible</strong> avec l'étiquette."
+              "L'étiquette indique 8,0 % (8°). Avec u = 0,2 % : |7,96 − 8,0| ÷ 0,2 = 0,2, inférieur à 2 : le résultat est <strong>compatible</strong> avec l'étiquette.",
+              "<span class=\"phr\">Phrase réponse :</span> la concentration du vinaigre est 1,34 mol·L⁻¹ ; son titre massique (7,96 %) est compatible avec l'étiquette."
             ] },
             { t: "exemple", type: "qcm", competence: 5, variantes: [
               { question: "On titre V₁ = 20,0 mL d'acide chlorhydrique par la soude à c₂ = 0,050 mol·L⁻¹ : Vₑ = 16,0 mL. Quelle est la concentration c₁ de l'acide ?", reponses: ["0,0625 mol·L⁻¹", "8,0 × 10⁻⁴ mol·L⁻¹", "0,040 mol·L⁻¹", "0,80 mol·L⁻¹"], bonne: 2,
@@ -6723,7 +7184,7 @@ const CONTENU = {
           ],
           blocs: [
             { t: "h", texte: "1. Qu'est-ce que la diffraction ?" },
-            { t: "p", texte: "Quand une onde rencontre une <strong>ouverture</strong> ou un <strong>obstacle</strong> de petite taille, elle ne continue pas tout droit : elle <strong>s'étale</strong> dans des directions qu'elle n'aurait pas atteintes en ligne droite. C'est la <strong>diffraction</strong>. Elle concerne toutes les ondes : houle, son, lumière, ondes radio." },
+            { t: "p", def: true, texte: "Quand une onde rencontre une <strong>ouverture</strong> ou un <strong>obstacle</strong> de petite taille, elle ne continue pas tout droit : elle <strong>s'étale</strong> dans des directions qu'elle n'aurait pas atteintes en ligne droite. C'est la <strong>diffraction</strong>. Elle concerne toutes les ondes : houle, son, lumière, ondes radio." },
             { t: "p", texte: "La diffraction <strong>ne change ni la fréquence, ni la longueur d'onde, ni la célérité</strong> de l'onde : seule sa direction de propagation s'élargit. Un laser rouge diffracté reste rouge." },
             { t: "anim", monter: (el) => ONDES.animOuverture(el) },
             { t: "exemple", type: "tri", competence: 1, n: 4, question: "Est-ce de la diffraction ?", oui: "Diffraction", non: "Autre phénomène", court: ["Diffraction", "Autre"], consigne: "Pour chaque situation, choisir « Diffraction » ou « Autre » (réflexion, réfraction, dispersion…).", items: [
@@ -6738,7 +7199,7 @@ const CONTENU = {
             ] },
 
             { t: "h", texte: "2. Quand la diffraction est-elle marquée ?" },
-            { t: "p", texte: "La diffraction est d'autant plus marquée que l'ouverture (ou l'obstacle) est <strong>petite</strong>. Elle est très visible quand la taille <strong>a</strong> de l'ouverture est <strong>du même ordre de grandeur que la longueur d'onde λ, ou plus petite</strong>. Si a est très grande devant λ, l'onde passe presque tout droit." },
+            { t: "p", rel: true, texte: "La diffraction est d'autant plus marquée que l'ouverture (ou l'obstacle) est <strong>petite</strong>. Elle est très visible quand la taille <strong>a</strong> de l'ouverture est <strong>du même ordre de grandeur que la longueur d'onde λ, ou plus petite</strong>. Si a est très grande devant λ, l'onde passe presque tout droit." },
             { t: "tableau", entetes: ["Onde et ouverture", "Diffraction"], lignes: [
               ["Houle (λ ≈ 100 m), entrée de port (a ≈ 100 m)", "très marquée"],
               ["Son de 440 Hz (λ ≈ 0,8 m), porte (a ≈ 0,9 m)", "très marquée"],
@@ -6775,7 +7236,7 @@ const CONTENU = {
             ] },
 
             { t: "h", texte: "5. Superposer deux ondes : les interférences" },
-            { t: "p", texte: "Deux ondes de <strong>même fréquence</strong>, émises par deux sources <strong>synchrones</strong>, se superposent : en chaque point, les deux perturbations <strong>s'ajoutent</strong>. Selon leur décalage, elles se renforcent ou se détruisent : ce sont des <strong>interférences</strong>." },
+            { t: "p", def: true, texte: "Deux ondes de <strong>même fréquence</strong>, émises par deux sources <strong>synchrones</strong>, se superposent : en chaque point, les deux perturbations <strong>s'ajoutent</strong>. Selon leur décalage, elles se renforcent ou se détruisent : ce sont des <strong>interférences</strong>." },
             { t: "anim", monter: (el) => ONDES.animSomme(el) },
             { t: "liste", items: [
               "Ondes <strong>en phase</strong> : l'amplitude est maximale, ce sont des <strong>interférences constructives</strong>.",
@@ -6786,7 +7247,7 @@ const CONTENU = {
 
             { t: "h", texte: "6. Conditions d'interférences constructives ou destructives" },
             { t: "p", texte: `<figure class="fig-cours">${ONDES.SCHEMA_SOURCES}</figure>` },
-            { t: "p", texte: "Deux sources S1 et S2 <strong>en phase</strong> émettent dans un milieu homogène. Au point M, l'onde de S2 a parcouru d₂ = S2M et celle de S1, d₁ = S1M. La <strong>différence de marche</strong> est δ = d₂ − d₁ (pour la lumière, on parle de différence de chemin optique)." },
+            { t: "p", def: true, texte: "Deux sources S1 et S2 <strong>en phase</strong> émettent dans un milieu homogène. Au point M, l'onde de S2 a parcouru d₂ = S2M et celle de S1, d₁ = S1M. La <strong>différence de marche</strong> est δ = d₂ − d₁ (pour la lumière, on parle de différence de chemin optique)." },
             { t: "methode", titre: "Conditions d'interférences (k entier : 0, ±1, ±2…)", items: [
               "<strong>Constructives</strong> si δ = k λ : un nombre <strong>entier</strong> de longueurs d'onde, les ondes arrivent en phase.",
               "<strong>Destructives</strong> si δ = (k + ½) λ : un nombre <strong>demi-entier</strong> de longueurs d'onde, les ondes arrivent en opposition de phase.",
@@ -7311,6 +7772,38 @@ const QUESTIONS = [
   "guyane": false
  },
  {
+  "id": "C1-13",
+  "chapitre": "Les centrales électriques",
+  "notion": "Alternateur",
+  "difficulte": 1,
+  "question": "De quoi est formé un alternateur ?",
+  "reponses": [
+   "D'une pile et d'une lampe",
+   "D'un aimant et d'une bobine",
+   "D'une turbine et d'un barrage",
+   "D'un moteur et d'une batterie"
+  ],
+  "bonne": 1,
+  "explication": "Un aimant tourne près d'une bobine (un fil de cuivre enroulé) : une tension apparaît aux bornes de la bobine.",
+  "guyane": false
+ },
+ {
+  "id": "C1-14",
+  "chapitre": "Les centrales électriques",
+  "notion": "Alternateur",
+  "difficulte": 2,
+  "question": "La turbine d'une éolienne tourne moins vite quand le vent faiblit. Que devient la tension produite par l'alternateur ?",
+  "reponses": [
+   "Elle augmente",
+   "Elle ne change pas",
+   "Elle diminue",
+   "Elle devient continue"
+  ],
+  "bonne": 2,
+  "explication": "L'aimant de l'alternateur tourne moins vite : la tension produite est plus petite.",
+  "guyane": false
+ },
+ {
   "id": "C2-01",
   "chapitre": "La puissance électrique",
   "notion": "Unité de puissance",
@@ -7500,6 +7993,54 @@ const QUESTIONS = [
   ],
   "bonne": 1,
   "explication": "La facture dépend de l'énergie consommée, comptée en kilowattheures.",
+  "guyane": false
+ },
+ {
+  "id": "C2-13",
+  "chapitre": "La puissance électrique",
+  "notion": "Sécurité électrique",
+  "difficulte": 1,
+  "question": "Quel appareil coupe automatiquement le courant en cas de surintensité, et peut ensuite être réarmé ?",
+  "reponses": [
+   "Le fusible",
+   "Le disjoncteur",
+   "Le compteur électrique",
+   "La multiprise"
+  ],
+  "bonne": 1,
+  "explication": "Le disjoncteur coupe le courant puis se réarme ; le fusible, lui, fond et doit être remplacé.",
+  "guyane": false
+ },
+ {
+  "id": "C2-14",
+  "chapitre": "La puissance électrique",
+  "notion": "Sécurité électrique",
+  "difficulte": 2,
+  "question": "Quel dispositif protège les personnes contre l'électrisation, en coupant le courant dès qu'une petite fuite de courant apparaît ?",
+  "reponses": [
+   "Le disjoncteur différentiel 30 mA",
+   "Le disjoncteur de 16 A des prises",
+   "La multiprise",
+   "Le fusible d'une lampe de poche"
+  ],
+  "bonne": 0,
+  "explication": "Le disjoncteur différentiel détecte une fuite de courant (par exemple à travers une personne) et coupe aussitôt.",
+  "guyane": false
+ },
+ {
+  "id": "C2-15",
+  "chapitre": "La puissance électrique",
+  "notion": "Sécurité électrique",
+  "difficulte": 3,
+  "question": "Sur un circuit protégé par un disjoncteur de 16 A (230 V), on branche un radiateur de 2 000 W et un fer à repasser de 1 800 W. Que se passe-t-il ?",
+  "reponses": [
+   "Rien : 3 800 W, c'est moins que 16 A",
+   "Le disjoncteur coupe : I ≈ 16,5 A, plus que 16 A",
+   "Le disjoncteur coupe : la tension devient trop grande",
+   "Les appareils fonctionnent moins bien, sans danger"
+  ],
+  "bonne": 1,
+  "explication": "I = P ÷ U = 3 800 ÷ 230 ≈ 16,5 A : c'est plus que 16 A, le disjoncteur coupe le courant.",
   "guyane": false
  },
  {
@@ -9082,6 +9623,7 @@ const QUESTIONS = [
     { id: "tp", nom: "TP", desc: "Le laboratoire : construis, branche, mesure" },
     { id: "entrainement", nom: "Entraînement", desc: "Du plus simple à l'exercice type brevet" }
   ];
+  const COEUR = '<span class="coeur" title="À apprendre par cœur" aria-label="À apprendre par cœur" role="img"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 21s-7.5-4.6-9.6-9.2C.9 8.4 2.9 4.5 6.6 4.5c2.1 0 3.6 1.1 4.4 2.6.8-1.5 2.3-2.6 4.4-2.6 3.7 0 5.7 3.9 4.2 7.3C19.5 16.4 12 21 12 21z"/></svg></span>';
   const SVG = {
     intensite: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="8"/><path d="M9 15l3-7 3 7M10.2 12.5h3.6"/></svg>',
     tension: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="8"/><path d="M9 8.5l3 7 3-7"/></svg>',
@@ -9124,6 +9666,9 @@ const QUESTIONS = [
 
   // ======================= Outils =======================
   const $ = (id) => document.getElementById(id);
+  // Sur téléphone, le bouton touché garde son « focus » : on le relâche avant d'afficher la question suivante
+  // (sinon une proposition de la nouvelle question peut sembler déjà choisie).
+  const lacher = () => { const a = document.activeElement; if (a && a !== document.body && a.blur) a.blur(); };
   const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
   const melanger = (t) => { t = t.slice(); for (let i = t.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [t[i], t[j]] = [t[j], t[i]]; } return t; };
   const tirer = (t, n) => melanger(t).slice(0, n);
@@ -9308,7 +9853,7 @@ const QUESTIONS = [
   // la garde aussi un moment en cache. On compare donc la version de cette page avec le petit fichier version.json
   // publié en même temps : à l'ouverture et à chaque retour sur l'onglet (au plus une fois par minute).
   // Si une version plus récente est en ligne, un bandeau propose de mettre à jour. La progression (pseudo, points…) est conservée.
-  const VERSION_APPLI = "2026-11-13 19:59:50"; // remplacée par la date d'assemblage (assembler.py)
+  const VERSION_APPLI = "2026-11-14 00:52:06"; // remplacée par la date d'assemblage (assembler.py)
   let derniereVerif = 0;
   function verifierMaj() {
     if (!/^https?:$/.test(location.protocol) || VERSION_APPLI.indexOf("__") === 0) return; // fichier ouvert sur l'ordinateur : rien à vérifier
@@ -9335,6 +9880,7 @@ const QUESTIONS = [
     const hh = location.hash.slice(1);
     const parts = hh ? hh.split("-") : [];
     routeActuelle = parts;
+    setTimeout(() => majConfort(parts), 0); // calculatrice, menu ordinateur (12_confort.js)
     if (hh.indexOf("prof-") === 0) { activerProf(hh.slice(5)); return; }
     $("btn-back").hidden = parts.length === 0;
     majStats(); majProf();
@@ -9838,7 +10384,7 @@ const QUESTIONS = [
     function etape() {
       view.innerHTML = enTete(titre, i, liste.length) + `<div class="panel" id="w"></div><button class="btn btn-primary" id="btn-next" hidden>${i === liste.length - 1 ? "Voir mon résultat" : "Suivant"}</button>`;
       monter($("w"), liste[i], (ok) => { if (ok) justes++; else rates.push(liste[i]); photos.push(photo($("w"), ok)); const n = $("btn-next"); n.hidden = false; n.focus(); });
-      $("btn-next").onclick = () => { if (i < liste.length - 1) { i++; etape(); window.scrollTo(0, 0); } else resultat({ titre, score: justes, total: liste.length, revoir: rates.map(revoirDe), photos, ctx }); };
+      $("btn-next").onclick = () => { if (i < liste.length - 1) { i++; lacher(); etape(); window.scrollTo(0, 0); } else resultat({ titre, score: justes, total: liste.length, revoir: rates.map(revoirDe), photos, ctx }); };
     }
     etape();
   }
@@ -9902,7 +10448,7 @@ const QUESTIONS = [
     function etape() {
       view.innerHTML = enTete(act.titre, i, liste.length) + `<div class="panel" id="w"></div><button class="btn btn-primary" id="btn-next" hidden>${i === liste.length - 1 ? "Voir mon résultat" : "Chaîne suivante"}</button>`;
       widgetChaine($("w"), liste[i], { mode: "note", distracteurs: act.distracteurs, nbDistracteurs: 2 }, (j, t) => { justes += j; total += t; photos.push(photo($("w"), j === t, "Chaîne " + (i + 1), j + " / " + t)); $("btn-next").hidden = false; });
-      $("btn-next").onclick = () => { if (i < liste.length - 1) { i++; etape(); window.scrollTo(0, 0); } else resultat({ titre: act.titre + " · cases justes", score: justes, total, points: justes * 2, photos, ctx }); };
+      $("btn-next").onclick = () => { if (i < liste.length - 1) { i++; lacher(); etape(); window.scrollTo(0, 0); } else resultat({ titre: act.titre + " · cases justes", score: justes, total, points: justes * 2, photos, ctx }); };
     }
     etape();
   }
@@ -9913,7 +10459,7 @@ const QUESTIONS = [
       view.innerHTML = enTete(act.titre, i, liste.length) + `${act.rappel === null ? "" : `<div class="methode"><strong class="lbl">Rappel</strong><span>${act.rappel || "Énergie reçue = énergie utile + énergie dissipée"}</span></div>`}
         <div class="panel" id="w"></div><button class="btn btn-primary" id="btn-next" hidden>${i === liste.length - 1 ? "Voir mon résultat" : "Calcul suivant"}</button>`;
       widgetCalcul($("w"), liste[i], null, (ok, q) => { if (ok) justes++; else rates.push({ q: q.texte, a: (q.repTxt || nombre(q.rep)) + " " + q.u, e: q.corr }); photos.push(photo($("w"), ok, "Calcul " + (i + 1))); const n = $("btn-next"); n.hidden = false; n.focus(); });
-      $("btn-next").onclick = () => { if (i < liste.length - 1) { i++; etape(); window.scrollTo(0, 0); } else resultat({ titre: act.titre, score: justes, total: liste.length, points: justes * 15, revoir: rates, photos, ctx }); };
+      $("btn-next").onclick = () => { if (i < liste.length - 1) { i++; lacher(); etape(); window.scrollTo(0, 0); } else resultat({ titre: act.titre, score: justes, total: liste.length, points: justes * 15, revoir: rates, photos, ctx }); };
     }
     etape();
   }
@@ -10139,31 +10685,46 @@ const QUESTIONS = [
   function vueCours(niv, ch) {
     const cle = `${niv}-${ch.id}-cours`, p = profil();
     const reussis = new Set(p.cours[cle] || []);
+    // Clé d'un bloc pour la progression (14/11) : les exemples réussis sont rangés par numéro de bloc. Pour qu'un ajout
+    // ne décale pas la progression des élèves, un bloc ajouté après coup porte « ajout: "nom" » (sa clé est ce nom et il
+    // n'entre pas dans la numérotation) ; un bloc retiré est remplacé par { t: "retire" } (il garde sa place, rien n'est affiché).
+    const cleB = []; ch.cours.blocs.reduce((n, b, k) => { if (b.ajout) { cleB[k] = String(b.ajout); return n; } cleB[k] = n; return n + 1; }, 0);
+    const ok = (k) => reussis.has(cleB[k]);
     const exemples = ch.cours.blocs.map((b, k) => b.t === "exemple" ? k : -1).filter((k) => k >= 0);
     // Compétence n° i (0, 1, 2…) : validée quand tous les exemples qui déclarent « competence: i+1 » sont réussis.
     // Calculée à partir des exemples réussis déjà enregistrés : rien de nouveau n'est stocké.
     const exComp = (i) => exemples.filter((k) => ch.cours.blocs[k].competence === i + 1);
-    const compFaite = (i) => exComp(i).length > 0 && exComp(i).every((k) => reussis.has(k));
+    const compFaite = (i) => exComp(i).length > 0 && exComp(i).every((k) => ok(k));
+    // Mise en forme (14/11) : « def: true » = définition encadrée, « rel: true » = relation ou loi à connaître (cœur) ;
+    // un paragraphe qui commence par « <strong>Titre.</strong> » ou « <strong>Question ?</strong> » affiche ce titre en vert (sous-titre).
+    const sousTitre = (t) => t.replace(/^<strong>([^<]{2,70}[.?:])<\/strong>\s*/, '<strong class="st">$1</strong> ');
+    const typeMethode = (t) => /^exemple/i.test(t || "") ? "exr" : /^(la formule|la relation|le facteur|conditions d'interf|l'angle caract)/i.test(t || "") ? "rel" : "";
     const html = ch.cours.blocs.map((b, k) => {
-      if (b.t === "h") return `<h3>${esc(b.texte)}</h3>`;
-      if (b.t === "p") return `<p>${b.texte}</p>`;
+      if (b.t === "h") return `<h3 id="cb${k}">${esc(b.texte)}</h3>`;
+      if (b.t === "sh") return `<h4 class="st">${esc(b.texte)}</h4>`;
+      if (b.t === "fig") return b.html; // schéma dessiné par l'appli (SCHEMAS, 03_contenu.html)
+      if (b.t === "p" && (b.def || b.rel)) return `<div class="def${b.rel ? " rel" : ""}"><span class="def-t">${COEUR}${b.def ? "Définition" : "À connaître par cœur"}</span><p>${sousTitre(b.texte)}</p></div>`;
+      if (b.t === "p") return `<p>${sousTitre(b.texte)}</p>`;
       if (b.t === "liste") return `<ul>${b.items.map((i) => `<li>${i}</li>`).join("")}</ul>`;
       if (b.t === "tableau") return `<div class="table-wrap"><table${b.compact ? ' class="mes-table"' : ""}><thead><tr>${b.entetes.map((e) => `<th>${esc(e)}</th>`).join("")}</tr></thead><tbody>${b.lignes.map((l) => `<tr>${l.map((c) => `<td>${esc(c)}</td>`).join("")}</tr>`).join("")}</tbody></table></div>`;
-      if (b.t === "methode") return `<div class="methode"><strong class="lbl">${esc(b.titre || "Méthode")}</strong><ul>${b.items.map((i) => `<li>${i}</li>`).join("")}</ul></div>`;
+      if (b.t === "methode") { const ty = typeMethode(b.titre); return `<div class="methode${ty ? " " + ty : ""}"><strong class="lbl lbl-l">${ty === "rel" ? COEUR : ""}${esc(b.titre || "Méthode")}</strong><ul>${b.items.map((i) => `<li>${i}</li>`).join("")}</ul></div>`; }
       if (b.t === "chaine") return `<div class="stack">${b.legende ? `<p class="small muted">${esc(b.legende)}</p>` : ""}${legendeChaine}${chaineHTML(b.elements, { perte: b.perte })}</div>`;
-      if (b.t === "retenir") return `<div class="retenir"><strong class="lbl">À retenir</strong><ul>${b.items.map((i) => `<li>${i}</li>`).join("")}</ul></div>`;
+      if (b.t === "retenir") return `<div class="retenir"><strong class="lbl lbl-l">${COEUR}À retenir</strong><ul>${b.items.map((i) => `<li>${i}</li>`).join("")}</ul></div>`;
       if (b.t === "anim") return `<div class="anim" id="anim${k}"></div>`;
-      if (b.t === "exemple") return `<div class="ex${reussis.has(k) ? " reussi" : ""}" id="ex${k}"><div class="ex-head"><strong>À toi !</strong><span class="badge${reussis.has(k) ? " ok" : ""}">${reussis.has(k) ? "Réussi" : "Exemple " + (exemples.indexOf(k) + 1) + "/" + exemples.length}</span></div><div class="stack" id="exw${k}"></div></div>`;
+      if (b.t === "exemple") return `<div class="ex${ok(k) ? " reussi" : ""}" id="ex${k}"><div class="ex-head"><strong>À toi !${b.competence ? `<span class="ex-comp">Compétence ${b.competence}${exComp(b.competence - 1).length > 1 ? ` · exemple ${exComp(b.competence - 1).indexOf(k) + 1} sur ${exComp(b.competence - 1).length}` : ""}</span>` : ""}</strong><span class="badge${ok(k) ? " ok" : ""}">${ok(k) ? "Réussi" : "Exemple " + (exemples.indexOf(k) + 1) + "/" + exemples.length}</span></div><div class="stack" id="exw${k}"></div></div>`;
       return "";
     }).join("");
-    view.innerHTML = `<div class="head"><span class="kicker">Cours</span><h2>${esc(ch.titre)}</h2></div>
-      <div class="skills"><strong>Compétences travaillées</strong><ul>${ch.cours.competences.map((c, i) => { const ok = compFaite(i); return `<li id="comp${i}"${ok ? ' class="fait"' : ""}><span class="ck">${ok ? SVG.check : ""}</span><span class="ct">${esc(c)}</span></li>`; }).join("")}</ul></div>
+    // Toucher une compétence : la page descend jusqu'à la partie du cours où se trouve son premier exemple.
+    const partieDe = (i) => { const L = exComp(i), e = L.find((k) => !ok(k)) != null ? L.find((k) => !ok(k)) : L[0]; if (e == null) return -1; for (let k = e; k >= 0; k--) if (ch.cours.blocs[k].t === "h") return k; return e; };
+    view.innerHTML = `<div class="head"><span class="kicker">Cours</span><h2 class="ttl-cours">${esc(ch.titre)}</h2></div>
+      <div class="skills"><strong>Compétences travaillées</strong><span class="aller">Touche une compétence pour aller à sa partie du cours et à ses exemples.</span><ul>${ch.cours.competences.map((c, i) => { const fini = compFaite(i); return `<li id="comp${i}"${fini ? ' class="fait"' : ""}><span class="ck">${fini ? SVG.check : ""}</span><span class="cnum">${i + 1}</span>${partieDe(i) >= 0 ? `<button class="ct" data-comp="${i}">${esc(c)}</button>` : `<span class="ct">${esc(c)}</span>`}${exComp(i).length > 1 ? `<span class="cav" id="cav${i}">${exComp(i).filter((k) => ok(k)).length}/${exComp(i).length}</span>` : ""}</li>`; }).join("")}</ul></div>
+      <p class="legende-coeur">${COEUR}= à apprendre par cœur</p>
       <div class="level-line" id="cours-prog"></div>
       <article class="cours">${html}</article>
       <button class="btn btn-primary" id="btn-fin-cours"></button>
       <div id="cours-nav"></div>`;
     const maj = () => {
-      const n = exemples.filter((k) => reussis.has(k)).length;
+      const n = exemples.filter((k) => ok(k)).length;
       $("cours-prog").innerHTML = `Exemples réussis <i><b style="width:${Math.round(100 * n / exemples.length)}%"></b></i>${n}/${exemples.length}`;
       const b = $("btn-fin-cours"), tout = n === exemples.length;
       b.disabled = !tout || fait(cle); b.textContent = fait(cle) ? "Cours terminé" : tout ? "Terminer le cours" : "Réussis tous les exemples pour terminer";
@@ -10171,9 +10732,12 @@ const QUESTIONS = [
       $("cours-nav").innerHTML = navFin(niv, ch, "cours", !!fait(cle));
     };
     const reussir = (k) => {
-      if (!reussis.has(k)) {
+      if (!ok(k)) {
         const avant = ch.cours.competences.map((c, i) => compFaite(i));
-        reussis.add(k); profil().cours[cle] = [...reussis]; sauver(); enregistrer(cle + "-ex" + k, 5, false, true);
+        reussis.add(cleB[k]); profil().cours[cle] = [...reussis]; sauver(); enregistrer(cle + "-ex" + cleB[k], 5, false, true);
+        const ci = (ch.cours.blocs[k].competence || 0) - 1;
+        if (ci >= 0) { const av = $("cav" + ci); if (av) av.textContent = `${exComp(ci).filter((x) => ok(x)).length}/${exComp(ci).length}`;
+          const reste = exComp(ci).filter((x) => !ok(x)).length; if (reste) setTimeout(() => toast(`Bien ! Encore ${reste} exemple${reste > 1 ? "s" : ""} pour valider la compétence ${ci + 1}`), 700); }
         ch.cours.competences.forEach((c, i) => {
           if (avant[i] || !compFaite(i)) return;
           const li = $("comp" + i); li.classList.add("fait", "nouveau"); li.querySelector(".ck").innerHTML = SVG.check;
@@ -10183,6 +10747,12 @@ const QUESTIONS = [
       const ex = $("ex" + k); ex.classList.add("reussi"); const bd = ex.querySelector(".badge"); bd.textContent = "Réussi"; bd.classList.add("ok"); maj();
     };
     exemples.forEach((k) => monterExemple($("exw" + k), ch.cours.blocs[k], () => reussir(k)));
+    view.querySelectorAll("[data-comp]").forEach((bt) => bt.onclick = () => {
+      const i = +bt.dataset.comp, k = partieDe(i), cible = $("cb" + k) || $("ex" + k);
+      if (!cible) return;
+      cible.scrollIntoView({ behavior: "smooth", block: "start" });
+      [cible].concat(exComp(i).map((e) => $("ex" + e))).forEach((x) => { if (!x) return; x.classList.remove("flash"); void x.offsetWidth; x.classList.add("flash"); });
+    });
     ch.cours.blocs.forEach((b, k) => { if (b.t === "anim") { try { b.monter($("anim" + k)); } catch (e) { console.error(e); } } });
     $("btn-fin-cours").onclick = () => { enregistrer(cle, 20, true, true); maj(); toast(ch.tp ? "Cours terminé : le TP est débloqué" : "Cours terminé : l'entraînement est débloqué"); };
     maj(); marquerDefilement();
@@ -12467,6 +13037,8 @@ const QUESTIONS = [
       else if (o.id === "m3") box.innerHTML = table("Mes mesures", ["Grandeur", "Valeur"], [["Masse de la pierre m", ou(m.m, (v) => g1(v) + " g")], ["V₁ (eau seule)", ou(m.V1, (v) => v1(v) + " mL")], ["V₂ (eau + pierre)", ou(m.V2, (v) => v1(v) + " mL")]]);
       else if (o.id === "m4") box.innerHTML = table("Mes mesures", ["Grandeur", "Valeur"], [["Volume V de liquide mystère", ou(m.V, (v) => v1(v) + " mL")], ["Masse m", ou(m.m, (v) => g1(v) + " g")], ["Dans le bécher d'eau", m.vu ? (m.dessous ? "il coule au fond" : "il reste au-dessus") : "…"]]);
       else box.innerHTML = "";
+      // 14/11 (retour d'un collègue) : la liste des matériaux, toujours consultable pendant les objectifs 3 et 4
+      if (o.id === "m3" || o.id === "m4") box.insertAdjacentHTML("beforeend", `<details class="mat-ref"><summary>Liste des matériaux et de leur masse volumique</summary>${tableRef(o.id === "m3" ? MAT_SOLIDES : MAT_LIQUIDES, o.id === "m3" ? "g/cm³" : "g/mL", true)}</details>`);
     }
 
     // ---------- Questions qui utilisent les mesures de l'élève ----------
@@ -12496,8 +13068,24 @@ const QUESTIONS = [
       };
       monter();
     }
-    const TAB_SOLIDES = ["or", "plomb", "fer", "pyrite", "alu", "verre"], TAB_LIQ = ["ethanol", "huile", "eau", "sirop", "miel"];
-    const tableRef = (cles, u) => `<div class="table-wrap"><table class="mes-table"><thead><tr><th>Matière</th><th>ρ (${u})</th></tr></thead><tbody>${cles.map((k) => `<tr><td>${esc(MASSEVOL.RHO[k].nom)}</td><td>${fr(MASSEVOL.RHO[k].rho, 2)}</td></tr>`).join("")}</tbody></table></div>`;
+    function tableRef(cles, u, tri) { const L = tri ? cles.slice().sort((a, b) => MASSEVOL.RHO[a].rho - MASSEVOL.RHO[b].rho) : cles; return `<div class="table-wrap"><table class="mes-table"><thead><tr><th>Matière</th><th>ρ (${u})</th></tr></thead><tbody>${L.map((k) => `<tr><td>${esc(MASSEVOL.RHO[k].nom)}</td><td>${fr(MASSEVOL.RHO[k].rho, 2)}</td></tr>`).join("")}</tbody></table></div>`; }
+    // 14/11 : listes complètes pour identifier un matériau, et choix dans la liste (on touche la matière trouvée)
+    const MAT_SOLIDES = ["balsa", "liege", "angelique", "amourette", "verre", "alu", "pyrite", "fer", "cuivre", "plomb", "or"], MAT_LIQUIDES = ["ethanol", "huile", "eau", "eauMer", "sirop", "miel"];
+    function choixMatiere(el, o, onOk) {
+      const L = o.cles.slice().sort((a, b) => MASSEVOL.RHO[a].rho - MASSEVOL.RHO[b].rho);
+      el.innerHTML = `<p class="qtext">${o.texte}</p><p class="small">Cherche dans la liste la masse volumique la plus proche de ta mesure, puis touche la matière.</p>
+        <div class="mat-liste" role="list"><div class="mat-tete"><span>Matière</span><span>ρ (${o.unite})</span></div>${L.map((k) => `<button type="button" class="mat-l" data-k="${k}"><span>${esc(MASSEVOL.RHO[k].nom)}</span><b>${fr(MASSEVOL.RHO[k].rho, 2)}</b></button>`).join("")}</div><div class="fbz"></div>`;
+      const fb = el.querySelector(".fbz");
+      el.querySelectorAll(".mat-l").forEach((b) => b.onclick = () => {
+        const k = b.dataset.k, R = MASSEVOL.RHO[k];
+        if (k === o.bonne) {
+          b.classList.add("good"); el.querySelectorAll(".mat-l").forEach((x) => { x.disabled = true; });
+          fb.innerHTML = `<div class="feedback ok"><strong>Bonne réponse !</strong><span>${o.explication}</span></div>`; onOk(); return;
+        }
+        b.classList.add("bad"); b.disabled = true;
+        fb.innerHTML = `<div class="feedback ko"><strong>Pas tout à fait…</strong><span>${esc(R.nom)} : ρ = ${fr(R.rho, 2)} ${o.unite}, c'est ${R.rho > o.rho ? "plus grand" : "plus petit"} que ta mesure (environ ${fr(o.rho, o.rho < 2 ? 2 : 1)} ${o.unite}). Essaie une autre matière.</span></div>`;
+      });
+    }
     function question(el, q, c, onOk) {
       const R = c.rep.mv || {}, mm = (k) => R[k] || {};
       const P = c.rep.mvPierre || { V: 6, m: 30.2 }, myst = c.rep.mvMystere || "sirop", Lm = LIQ[myst];
@@ -12525,8 +13113,7 @@ const QUESTIONS = [
       }
       if (q.calc === "id3") {
         const m3 = mm("m3"), m = m3.m != null ? m3.m : P.m, V = m3.V1 != null && m3.V2 != null ? m3.V2 - m3.V1 : P.V, rho = m / V;
-        return choix(el, { question: `Ta pierre a une masse volumique d'environ ${virg(rho.toFixed(1))} g/cm³. Compare avec le tableau : en quoi est-elle ?`, figure: tableRef(TAB_SOLIDES, "g/cm³"),
-          reponses: ["En pyrite : ce n'est pas de l'or", "En or", "En fer", "En aluminium"], bonne: 0,
+        return choixMatiere(el, { texte: `Ta pierre a une masse volumique d'environ ${virg(rho.toFixed(1))} g/cm³. En quoi est-elle ?`, cles: MAT_SOLIDES, unite: "g/cm³", rho, bonne: "pyrite",
           explication: `≈ 5 g/cm³ : c'est la pyrite, surnommée « or des fous » car elle brille comme l'or. Une pépite d'or de même volume aurait une masse de 19,3 × ${v1(V)} ≈ ${fr(19.3 * V, 0)} g !` }, onOk);
       }
       if (q.calc === "rho4") {
@@ -12535,10 +13122,7 @@ const QUESTIONS = [
           aide: `ρ = m ÷ V = ${g1(m)} ÷ ${v1(V)}.`, piste: "ρ = m ÷ V.", bravo: `ρ = ${g1(m)} ÷ ${v1(V)} ≈ ${d2(rho)} g/mL.` }, onOk);
       }
       if (q.calc === "id4") {
-        const noms = { huile: "De l'huile de tournesol", sirop: "Du sirop de canne", miel: "Du miel" }, autres = ["De l'alcool", "De l'eau"].concat(Object.keys(noms).filter((k) => k !== myst).map((k) => noms[k]));
-        const rep = [noms[myst]].concat(autres.slice(0, 3));
-        return choix(el, { question: `Ton liquide mystère a une masse volumique d'environ ${fr(Lm.rho, 2)} g/mL. Compare avec le tableau : quel est ce liquide ?`, figure: tableRef(TAB_LIQ, "g/mL"),
-          reponses: rep, bonne: 0, explication: `${fr(Lm.rho, 2)} g/mL : c'est ${Lm.nom}. Le professeur l'avait coloré pour qu'on ne le reconnaisse pas à sa couleur.` }, onOk);
+        return choixMatiere(el, { texte: `Ton liquide mystère a une masse volumique d'environ ${fr(Lm.rho, 2)} g/mL. Quel est ce liquide ?`, cles: MAT_LIQUIDES, unite: "g/mL", rho: Lm.rho, bonne: myst, explication: `${fr(Lm.rho, 2)} g/mL : c'est ${Lm.nom}. Le professeur l'avait coloré pour qu'on ne le reconnaisse pas à sa couleur.` }, onOk);
       }
       if (q.calc === "obs4") {
         const dessous = Lm.rho > 1;
@@ -14513,7 +15097,7 @@ const QUESTIONS = [
         { id: "spa", type: "spatule", x: 72, y: 34 },
         { id: "ent", type: "entonnoir", x: 156, y: 20 },
         { id: "pis", type: "pissette", x: 272, y: 16 },
-        { id: "fio", type: "fiole", Vf: 100, x: 232, y: 196 },
+        { id: "fio", type: "fiole", Vf: 100, x: 176, y: 196 },
         { id: "bal", type: "balance", x: 22, y: 330 },
         { id: "cap", type: "capsule", m0: 1.85, sel: 0, sur: "bal" }] },
       gamme: { h: 488, seconde: true, objets: [
@@ -14868,7 +15452,7 @@ const QUESTIONS = [
             <rect x="5" y="23" width="34" height="26" rx="2" class="c-etiq"/>${texteAjuste([{ t: o.l1, fs: 7.5, cls: "c-etiq-t" }, { t: o.l2, fs: 5.8, cls: "c-etiq-p" }], 6.5, 24, 31, 24)}
             ${o.danger ? `<g transform="translate(30 50)"><path d="M6 0l6 6-6 6-6-6z" class="c-danger"/><text x="6" y="9" text-anchor="middle" class="c-danger-t">!</text></g>` : ""}`;
         } else if (t === "pissette") {
-          g = `<path d="M18 14L30 4" class="c-tube"/><path d="M14 12h8v6h-8z" class="c-bouchon"/><path d="M6 24q0-6 6-6h12q6 0 6 6v34a4 4 0 01-4 4H10a4 4 0 01-4-4z" class="c-verre"/>${liquidePenche(o, 7, 19, 29, 61, 26, COUL.eau, 0.75, `<path d="M7 24q0-5 5-5h12q5 0 5 5v34a3 3 0 01-3 3H10a3 3 0 01-3-3z"/>`)}
+          g = `<path d="${o.miroir ? "M18 14L6 4" : "M18 14L30 4"}" class="c-tube"/><path d="M14 12h8v6h-8z" class="c-bouchon"/><path d="M6 24q0-6 6-6h12q6 0 6 6v34a4 4 0 01-4 4H10a4 4 0 01-4-4z" class="c-verre"/>${liquidePenche(o, 7, 19, 29, 61, 26, COUL.eau, 0.75, `<path d="M7 24q0-5 5-5h12q5 0 5 5v34a3 3 0 01-3 3H10a3 3 0 01-3-3z"/>`)}
             <text x="18" y="46" class="c-etiq-p" text-anchor="middle">EAU</text>`;
         } else if (t === "pipette") {
           const G = pipGeo(o), yl = o.niv > 0 ? pipY(o, o.niv) : null, cid = "clp-" + o.id, enAjust = S.ajust && S.ajust.pip === o.id;
@@ -15287,6 +15871,22 @@ const QUESTIONS = [
         });
       }
 
+      // ----- 2nde, dissolution (14/11) : la capsule garée à droite de l'entonnoir, la pissette qui la rince par la droite -----
+      // Position (x, y) de la capsule penchée de rot degrés pour que son bord gauche (le bec, en miroir) arrive en (X, Y)
+      function posCapsule(c, rot, X, Y) { const [bx, by] = rotPt(c, 1, 3, rot); return [X - bx, Y - by]; }
+      function garerCapsule(c, fin) {
+        const ent = O("ent"), X = ent.x + ent.w / 2, [gx, gy] = posCapsule(c, -30, X + 2, ent.y - 4);
+        c.miroir = true; c.sur = null;
+        suite([vers(c, gx, gy, 0.35), tourner(c, -30, 0.3)], () => { c.x = gx; c.y = gy; c.ax = c.ay = 0; c.gare = true; dessinerTout(); if (fin) fin(); });
+      }
+      // la pissette arrive en haut à droite de la cible, en miroir (penchée vers la gauche), et envoie le jet dans la cible
+      function pissetteMiroir(p, tx, ty, d, pendant, fin) {
+        p.miroir = true;
+        const [bx, by] = rotPt(p, p.w - BEC.pissette[0], BEC.pissette[1], -28);
+        let px = tx + 16 - bx, py = ty - 34 - by;
+        px = Math.max(2, Math.min(BW - p.w - 2, px)); py = Math.max(2, py);
+        suite([vers(p, px, py, 0.4), tourner(p, -28, 0.2), [d, (q) => { const [sx, sy] = bec(p); jet(sx, sy, tx, ty, COUL.eau, 2, -6); if (pendant) pendant(q); }], tourner(p, 0, 0.2), retour(p, 0.4)], () => { p.miroir = false; dessinerTout(); if (fin) fin(); });
+      }
       // ----- La pissette : jets d'eau distillée -----
       // (tx, ty) : où arrive l'eau ; haut : ordonnée de l'ouverture du récipient (la pissette reste au-dessus, jamais dedans)
       function pissetteVers(p, tx, ty, d, pendant, fin, haut) {
@@ -15704,10 +16304,11 @@ const QUESTIONS = [
           const ent = O("ent"), F = O("fio");
           if (ent.sur !== "fio") { message("Le col de la fiole est trop étroit : pose d'abord l'entonnoir sur la fiole.", "err"); return true; }
           if (F.contenu) { message("Le sel est déjà dans la fiole.", "info"); return true; }
-          const s0 = m.sel, X = ent.x + ent.w / 2;
-          suite([vers(m, X - 6, ent.y - 22, 0.4), tourner(m, 62, 0.35), [0.8, (q) => { m.sel = s0 * (1 - 0.97 * q); if (Math.random() < 0.6) goutte(X + (Math.random() - 0.5) * 6, ent.y + 2, ent.y + 22, "#FFFFFF"); }], tourner(m, 0, 0.25), retour(m, 0.35)], () => {
+          const s0 = m.sel, X = ent.x + ent.w / 2, [px, py] = posCapsule(m, -62, X + 1, ent.y - 6);
+          m.miroir = true; m.sur = null;
+          suite([vers(m, px, py, 0.4), tourner(m, -62, 0.35), [0.8, (q) => { m.sel = s0 * (1 - 0.97 * q); if (Math.random() < 0.6) goutte(X + (Math.random() - 0.5) * 6, ent.y + 2, ent.y + 22, "#FFFFFF"); }], pause(0.15)], () => {
             m.sel = R2(s0 * 0.03); m.residu = true; F.contenu = "sel"; F.masse = s0; F.grains = 9; ent.grains = true; S.main = null;
-            message("Sel versé dans l'entonnoir. Quelques grains restent sur la capsule et dans l'entonnoir : rince-les à la pissette, au-dessus de la fiole.", "ok"); tache("introduire"); dessinerTout(); majMain();
+            garerCapsule(m, () => { message("Sel versé. La capsule reste au-dessus de l'entonnoir, ouverture tournée vers la pissette : quelques grains y restent. Prends la pissette et touche la capsule pour la rincer.", "ok"); tache("introduire"); dessinerTout(); majMain(); });
           });
           return true;
         }
@@ -15722,9 +16323,16 @@ const QUESTIONS = [
             if (cap.rince) { message("La capsule est déjà rincée.", "info"); return true; }
             if (ent.sur !== "fio") { message("Le rinçage doit couler dans la fiole : remets l'entonnoir sur la fiole.", "err"); return true; }
             const X = ent.x + ent.w / 2;
-            suite([vers(cap, X - 6, ent.y - 22, 0.35), tourner(cap, 40, 0.25)], () => pissetteVers(m, cap.x + cap.ax + 12, cap.y + cap.ay + 2, 0.8, (q) => { cap.eau = q > 0.2; if (q > 0.3) filet(cap, X, ent.y + 10, COUL.eau, 2); }, () => {
-              cap.sel = 0; cap.eau = 0; cap.rince = true; F.V = R2(F.V + 4); suite([tourner(cap, 0, 0.2), retour(cap, 0.35)], () => { message("Capsule rincée au-dessus de l'entonnoir : les derniers grains sont dans la fiole.", "ok"); dessinerTout(); });
-            }, cap.y - 4));
+            const rincer = () => {
+              const [cx, cy] = rotPt(cap, 22, 8); // le creux de la capsule (penchée)
+              pissetteMiroir(m, cap.x + cap.ax + cx, cap.y + cap.ay + cy, 1.0, (q) => { cap.eau = q > 0.15; if (q > 0.25) { filet(cap, X, ent.y + 10, COUL.eau, 2); if (Math.random() < 0.25) goutte(X + (Math.random() - 0.5) * 4, ent.y + 4, ent.y + 26, "#FFFFFF"); } }, () => {
+                cap.sel = 0; cap.eau = 0; cap.rince = true; cap.residu = false; F.V = R2(F.V + 4);
+                // la capsule propre retourne sur la paillasse, à côté de la balance
+                const bal = O("bal");
+                suite([tourner(cap, 0, 0.25), vers(cap, bal.x + 30, bal.y - 10, 0.45)], () => { cap.miroir = false; cap.sur = "bal"; cap.gare = false; cap.ax = cap.ay = 0; recaler(); message("Capsule rincée : l'eau a entraîné les derniers grains dans l'entonnoir. Rince maintenant l'entonnoir avec la pissette.", "ok"); dessinerTout(); });
+              });
+            };
+            garerCapsule(cap, rincer); // (si l'élève l'a déplacée, la capsule revient d'abord au-dessus de l'entonnoir)
             return true;
           }
           if (c === "entonnoir") {
@@ -17542,6 +18150,225 @@ const QUESTIONS = [
       messages() { return []; }                            // V1 : pas de messages du prof
     };
   }
+  // ======================= Confort (retours des élèves et des profs, 14/11/2026) =======================
+  // 1. Calculatrice : bouton rond en bas à droite, dans les chapitres (cours, TP, rappel, entraînement).
+  //    Cachée dans le chapitre 0 (calcul de tête) et pendant le test de la V2.
+  // 2. Sons courts (bonne / mauvaise réponse, compétence validée) et vibration (Android ; l'iPhone ne la permet pas),
+  //    avec un bouton pour les couper (haut-parleur dans la barre du haut). Réglage gardé sur l'appareil.
+  // 3. Version ordinateur : sur un grand écran, un menu de navigation à gauche (niveau, thèmes, chapitres, étapes).
+  //    Sur téléphone, rien ne change.
+  // Ce fichier est dans la même fonction que 05_app.js.html : il utilise $, esc, toast, niveau, chapitres…
+
+  const CONFORT_CLE = "ti-labo-confort";
+  const confort = (() => { try { return JSON.parse(localStorage.getItem(CONFORT_CLE)) || {}; } catch (e) { return {}; } })();
+  const sauverConfort = () => { try { localStorage.setItem(CONFORT_CLE, JSON.stringify(confort)); } catch (e) {} };
+  const sonActif = () => confort.son !== false;
+
+  // ---------- 2. Sons et vibration ----------
+  let audio = null, dernierGeste = 0, dernierSon = 0;
+  ["pointerdown", "keydown"].forEach((ev) => document.addEventListener(ev, () => { dernierGeste = Date.now(); }, true));
+  function ctxAudio() {
+    if (!audio) { try { const A = window.AudioContext || window.webkitAudioContext; if (A) audio = new A(); } catch (e) { audio = null; } }
+    if (audio && audio.state === "suspended") audio.resume().catch(() => {});
+    return audio;
+  }
+  // Une note courte : fréquence (Hz), début (s), durée (s), forme d'onde, volume
+  function note(a, f, t0, d, forme, vol) {
+    const o = a.createOscillator(), g = a.createGain(), t = a.currentTime + t0;
+    o.type = forme; o.frequency.setValueAtTime(f, t);
+    g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(vol, t + 0.015); g.gain.exponentialRampToValueAtTime(0.0001, t + d);
+    o.connect(g); g.connect(a.destination); o.start(t); o.stop(t + d + 0.05);
+  }
+  function jouer(type) {
+    if (!sonActif() || Date.now() - dernierSon < 120) return;
+    dernierSon = Date.now();
+    try { if (navigator.vibrate) navigator.vibrate(type === "ko" ? [50, 40, 50] : type === "badge" ? [20, 30, 20, 30, 40] : 25); } catch (e) {}
+    const a = ctxAudio(); if (!a) return;
+    try {
+      if (type === "ok") { note(a, 659, 0, 0.12, "sine", 0.12); note(a, 988, 0.09, 0.2, "sine", 0.12); }
+      else if (type === "ko") { note(a, 220, 0, 0.16, "triangle", 0.14); note(a, 175, 0.12, 0.22, "triangle", 0.12); }
+      else if (type === "badge") { [523, 659, 784, 1047].forEach((f, i) => note(a, f, i * 0.08, 0.22, "sine", 0.1)); }
+    } catch (e) {}
+  }
+  // On écoute l'écran : une correction qui apparaît juste après un geste de l'élève déclenche le son.
+  // (La page « Revoir mes réponses » affiche plusieurs corrections d'un coup : pas de son dans ce cas.)
+  function ecouterCorrections() {
+    new MutationObserver((muts) => {
+      if (Date.now() - dernierGeste > 1500) return;
+      let ok = 0, ko = 0;
+      muts.forEach((m) => {
+        m.addedNodes.forEach((n) => {
+          if (n.nodeType !== 1) return;
+          const liste = (n.matches(".feedback.ok, .feedback.ko") ? [n] : []).concat([...n.querySelectorAll(".feedback.ok, .feedback.ko")]);
+          liste.forEach((f) => { if (f.classList.contains("ok")) ok++; else ko++; });
+        });
+      });
+      if (ok + ko !== 1) return;
+      jouer(ok ? "ok" : "ko");
+    }).observe($("view"), { childList: true, subtree: true });
+    // « Compétence validée ! », « Réussi »… : petite fanfare
+    new MutationObserver(() => {
+      const t = $("toast"); if (t.hidden) return;
+      if (/valid|réussi|bravo|termin|débloqu/i.test(t.textContent)) jouer("badge");
+    }).observe($("toast"), { childList: true, characterData: true, subtree: true, attributes: true, attributeFilter: ["hidden"] });
+  }
+  const ICO_SON = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 9h4l5-4v14l-5-4H4z"/><path class="onde" d="M16.5 8.5a5 5 0 0 1 0 7M19 6a8.5 8.5 0 0 1 0 12"/><path class="barre" d="M16 9l6 6M22 9l-6 6"/></svg>';
+  function boutonSon() {
+    const b = document.createElement("button");
+    b.className = "btn-son"; b.id = "btn-son"; b.type = "button"; b.innerHTML = ICO_SON;
+    const maj = () => { b.classList.toggle("coupe", !sonActif()); b.setAttribute("aria-label", sonActif() ? "Couper les sons et les vibrations" : "Remettre les sons et les vibrations"); b.title = b.getAttribute("aria-label"); };
+    b.onclick = () => { confort.son = !sonActif(); sauverConfort(); maj(); toast(sonActif() ? "Sons et vibrations activés" : "Sons et vibrations coupés"); if (sonActif()) jouer("ok"); };
+    maj();
+    const stats = $("stats"); stats.parentNode.insertBefore(b, stats.nextSibling);
+  }
+
+  // ---------- 1. Calculatrice ----------
+  const LYCEE = ["2nde", "1re", "tle"];
+  let calcNiv = "", calcExpr = "", calcRes = "", calcHist = "";
+  const ICO_CALC = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="2.5" width="14" height="19" rx="2.5"/><rect x="8" y="5.5" width="8" height="4" rx="1"/><path d="M8.5 13h.01M12 13h.01M15.5 13h.01M8.5 16.5h.01M12 16.5h.01M15.5 16.5h.01"/></svg>';
+  // Écrit un nombre à la française : virgule, espaces des milliers, puissance de 10 si très grand ou très petit
+  const EXPOS = { "-": "⁻", "0": "⁰", "1": "¹", "2": "²", "3": "³", "4": "⁴", "5": "⁵", "6": "⁶", "7": "⁷", "8": "⁸", "9": "⁹" };
+  function enFrancais(x) {
+    if (!isFinite(x)) return "Erreur";
+    if (x === 0) return "0";
+    const a = Math.abs(x);
+    if (a >= 1e10 || a < 1e-6) {
+      const [m, e] = x.toExponential(4).split("e");
+      return m.replace(/\.?0+$/, "").replace(".", ",") + " × 10" + String(+e).split("").map((c) => EXPOS[c]).join("");
+    }
+    let s = String(+x.toPrecision(10));
+    if (s.includes("e")) s = x.toFixed(10).replace(/\.?0+$/, "");
+    const [ent, dec] = s.split(".");
+    return ent.replace(/\B(?=(\d{3})+(?!\d))/g, " ") + (dec ? "," + dec : "");
+  }
+  // Calcule l'expression tapée. Seuls des chiffres et des opérations sont acceptés (aucun autre code n'est exécuté).
+  function calculer(expr) {
+    let js = expr.replace(/,/g, ".").replace(/×10\^/g, "e").replace(/×/g, "*").replace(/÷/g, "/").replace(/−/g, "-").replace(/²/g, "**2").replace(/√/g, "R(");
+    // e suivi d'un nombre (éventuellement négatif) : notation scientifique ; sinon erreur
+    js = js.replace(/(\d)\s*e\s*\(?\s*(-?\d+)\s*\)?/g, "$1e$2");
+    if (!/^[0-9.+\-*/()eR ]*$/.test(js)) throw new Error("x");
+    // parenthèses ouvertes par √ ou ( : on les ferme
+    const ouv = (js.match(/\(/g) || []).length - (js.match(/\)/g) || []).length;
+    if (ouv > 0) js += ")".repeat(ouv);
+    // multiplication implicite : 2(3) ou )( ou 2√
+    js = js.replace(/(\d|\))\s*(\(|R)/g, "$1*$2");
+    const v = Function("R", '"use strict"; return (' + js + ");")(Math.sqrt);
+    if (typeof v !== "number" || !isFinite(v)) throw new Error("x");
+    return v;
+  }
+  function calcHTML() {
+    const lycee = LYCEE.includes(calcNiv);
+    const t = (k, lbl, cls, aria) => `<button type="button" class="ck-k${cls ? " " + cls : ""}" data-k="${k}"${aria ? ` aria-label="${aria}"` : ""}>${lbl}</button>`;
+    const touches = [
+      t("C", "C", "fn", "Tout effacer"), t("(", "("), t(")", ")"), t("⌫", "⌫", "fn", "Effacer le dernier caractère"),
+      t("7", "7"), t("8", "8"), t("9", "9"), t("÷", "÷", "op", "Diviser"),
+      t("4", "4"), t("5", "5"), t("6", "6"), t("×", "×", "op", "Multiplier"),
+      t("1", "1"), t("2", "2"), t("3", "3"), t("−", "−", "op", "Soustraire"),
+      t("0", "0"), t(",", ","), t("=", "=", "eg", "Égal"), t("+", "+", "op", "Additionner")
+    ];
+    const extra = lycee ? `<div class="ck-extra">${t("×10^", "×10<sup>n</sup>", "fn", "Fois 10 puissance")}${t("²", "x²", "fn", "Au carré")}${t("√", "√", "fn", "Racine carrée")}${t("ans", "Rép", "fn", "Réponse précédente")}</div>`
+      : `<div class="ck-extra">${t("ans", "Rép", "fn", "Réponse précédente")}</div>`;
+    return `<div class="ck-tete"><strong>Calculatrice</strong><button type="button" class="ck-x" id="ck-fermer" aria-label="Fermer la calculatrice">×</button></div>
+      <div class="ck-ecran" aria-live="polite"><div class="ck-hist" id="ck-hist">${esc(calcHist)}</div><div class="ck-expr" id="ck-expr">${esc(calcExpr) || "&nbsp;"}</div><div class="ck-res" id="ck-res">${esc(calcRes)}</div></div>
+      ${extra}<div class="ck-touches">${touches.join("")}</div>
+      <p class="ck-aide">${lycee ? "×10ⁿ : tape la puissance après (par exemple 3 ×10ⁿ −5 pour 3 × 10⁻⁵)." : "Pense à la priorité : × et ÷ avant + et −."}</p>`;
+  }
+  function calcMaj() {
+    const e = $("ck-expr"); if (!e) return;
+    e.textContent = calcExpr.replace(/×10\^/g, "×10^") || " "; $("ck-res").textContent = calcRes; $("ck-hist").textContent = calcHist;
+  }
+  let derniereReponse = null;
+  function calcTouche(k) {
+    if (k === "C") { calcExpr = ""; calcRes = ""; }
+    else if (k === "⌫") { calcExpr = calcExpr.endsWith("×10^") ? calcExpr.slice(0, -4) : calcExpr.slice(0, -1); calcRes = ""; }
+    else if (k === "=") {
+      if (!calcExpr) return;
+      try { const v = calculer(calcExpr); derniereReponse = v; calcHist = calcExpr + " ="; calcRes = enFrancais(v); calcExpr = ""; }
+      catch (e) { calcRes = "Écriture incorrecte"; }
+    }
+    else if (k === "ans") { if (derniereReponse != null) calcExpr += String(+derniereReponse.toPrecision(12)).replace(".", ",").replace("e", "×10^"); }
+    else {
+      // après un résultat, une opération repart du résultat
+      if (!calcExpr && calcRes && derniereReponse != null && ["+", "−", "×", "÷", "²"].includes(k)) calcExpr = String(+derniereReponse.toPrecision(12)).replace(".", ",").replace("e", "×10^");
+      calcExpr += k; calcRes = "";
+    }
+    calcMaj();
+  }
+  function ouvrirCalc(oui) {
+    const p = $("calc"), f = $("calc-fab");
+    if (oui) { p.innerHTML = calcHTML(); p.hidden = false; f.setAttribute("aria-expanded", "true"); calcMaj();
+      p.querySelectorAll("[data-k]").forEach((b) => b.onclick = () => calcTouche(b.dataset.k));
+      $("ck-fermer").onclick = () => ouvrirCalc(false);
+    } else { p.hidden = true; f.setAttribute("aria-expanded", "false"); }
+  }
+  document.addEventListener("keydown", (ev) => {
+    const p = $("calc"); if (!p || p.hidden) return;
+    if (ev.target && /INPUT|TEXTAREA|SELECT/.test(ev.target.tagName)) return;
+    const k = ev.key, M = { "*": "×", "/": "÷", "-": "−", ".": ",", "Enter": "=", "Backspace": "⌫", "Delete": "C" };
+    if (k === "Escape") { ouvrirCalc(false); return; }
+    if (/^[0-9+(),]$/.test(k)) { calcTouche(k); ev.preventDefault(); }
+    else if (M[k]) { calcTouche(M[k]); ev.preventDefault(); }
+  });
+  function poserCalc() {
+    const f = document.createElement("button");
+    f.id = "calc-fab"; f.type = "button"; f.className = "calc-fab"; f.innerHTML = ICO_CALC; f.hidden = true;
+    f.setAttribute("aria-label", "Calculatrice"); f.setAttribute("aria-expanded", "false"); f.title = "Calculatrice";
+    f.onclick = () => ouvrirCalc($("calc").hidden);
+    const p = document.createElement("div"); p.id = "calc"; p.className = "calc"; p.hidden = true; p.setAttribute("role", "dialog"); p.setAttribute("aria-label", "Calculatrice");
+    document.body.appendChild(f); document.body.appendChild(p);
+  }
+
+  // ---------- 3. Version ordinateur : menu de navigation à gauche ----------
+  function poserNavPC() {
+    const nav = document.createElement("nav"); nav.id = "nav-pc"; nav.className = "nav-pc"; nav.setAttribute("aria-label", "Navigation"); nav.hidden = true;
+    const app = document.querySelector(".app"); app.insertBefore(nav, app.firstChild);
+  }
+  function majNavPC(parts) {
+    const nav = $("nav-pc"), app = document.querySelector(".app");
+    const montrer = (parts[0] === "n" || parts[0] === "c") && !!etat.pseudo && $("view").querySelector(".v2-connexion") == null;
+    const niv = parts[1], n = montrer && niveau(niv);
+    if (!n || !niveauVisible(n)) { nav.hidden = true; app.classList.remove("avec-nav"); return; }
+    const chId = parts[0] === "c" ? parts[2] : null, rub = parts[0] === "c" ? parts[3] : null;
+    const lien = (href, txt, actif, cls) => `<a href="${href}" class="np-l${actif ? " actif" : ""}${cls ? " " + cls : ""}"${actif ? ' aria-current="page"' : ""}>${txt}</a>`;
+    const autres = CONTENU.niveaux.filter((x) => niveauVisible(x));
+    let html = `<div class="np-bloc"><span class="np-t">Classe</span>${autres.length > 1 ? `<div class="np-niv">${autres.map((x) => lien("#n-" + x.id, esc(x.nom), x.id === niv)).join("")}</div>` : `<strong>${esc(n.nom)}</strong>`}</div>`;
+    const ch0 = chapitres(niv).find((c) => c.type === "outils");
+    html += `<div class="np-bloc">${lien("#n-" + niv, "Tous les thèmes", parts[0] === "n")}`;
+    if (ch0 && ouvert(niv, ch0.id)) html += lien(`#c-${niv}-${ch0.id}`, "0 · " + esc(ch0.titre), chId === ch0.id, "np-ch");
+    html += `</div>`;
+    themes(niv).forEach((t) => {
+      const chs = chapitresDu(niv, t.id); if (!chs.length) return;
+      html += `<div class="np-bloc"><span class="np-t">${esc(t.titre)}</span>`;
+      chs.forEach((c) => {
+        if (!ouvert(niv, c.id)) { html += `<span class="np-l np-ferme">${SVG.lock}${esc(c.titre)}</span>`; return; }
+        const fini = pctChapitre(niv, c) >= 100;
+        html += lien(`#c-${niv}-${c.id}`, (fini ? SVG.check : "") + esc(c.titre), c.id === chId && !rub, "np-ch" + (fini ? " fini" : ""));
+        if (c.id === chId && c.type !== "outils") {
+          html += `<div class="np-etapes">${RUBRIQUES.map((r, i) => {
+            if (!rubriqueDispo(c, r.id)) return `<span class="np-l np-ferme">${esc(r.nom)} · bientôt</span>`;
+            if (!rubriqueOuverte(niv, c, i)) return `<span class="np-l np-ferme">${SVG.lock}${esc(r.nom)}</span>`;
+            return lien(`#c-${niv}-${c.id}-${r.id}`, (rubriqueComplete(niv, c, r.id) ? SVG.check : "") + esc(r.nom), r.id === rub);
+          }).join("")}</div>`;
+        }
+      });
+      html += `</div>`;
+    });
+    nav.innerHTML = html; nav.hidden = false; app.classList.add("avec-nav");
+  }
+
+  // ---------- Branchement : appelé à chaque changement de page ----------
+  function majConfort(parts) {
+    try {
+      const f = $("calc-fab"); if (!f) return;
+      const ch = parts[0] === "c" && chapitre(parts[1], parts[2]);
+      const voir = !!ch && ch.type !== "outils" && parts[3] !== "test" && !!etat.pseudo && ouvert(parts[1], parts[2]);
+      calcNiv = parts[1] || "";
+      f.classList.toggle("petit", parts[3] === "tp"); // sur la page du TP, bouton plus discret (la paillasse reste libre)
+      f.hidden = !voir; if (!voir) ouvrirCalc(false); else if (!$("calc").hidden) ouvrirCalc(true);
+      majNavPC(parts);
+    } catch (e) { console.error(e); }
+  }
+  poserCalc(); poserNavPC(); boutonSon(); ecouterCorrections();
 
   rendre();
 })();
