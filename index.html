@@ -705,6 +705,16 @@ main { padding-bottom: 3.5rem; } /* la page ne passe pas sous le bouton de la ca
 .toast { position: fixed; left: 50%; transform: translateX(-50%); bottom: calc(1rem + env(safe-area-inset-bottom, 0px)); background: var(--ink); color: var(--bg);
   padding: .6rem 1.1rem; border-radius: 999px; font-weight: 700; z-index: 20; box-shadow: 0 4px 18px rgba(0,0,0,.18); max-width: calc(100% - 32px); text-align: center; }
 footer { text-align: center; font-size: .85rem; color: var(--muted); display: flex; flex-direction: column; gap: .5rem; align-items: center; }
+footer .pied { display: flex; flex-wrap: wrap; justify-content: center; gap: .2rem .5rem; font-size: .78rem; opacity: .8; }
+footer .pied a { color: inherit; text-decoration: none; }
+footer .pied a:hover, footer .pied a:focus-visible { color: var(--accent); text-decoration: underline; opacity: 1; }
+/* Pages « À propos » et « Mentions légales » */
+.legal { gap: .55rem; }
+.legal h3 { font-size: 1.02rem; margin-top: .45rem; color: var(--accent); }
+.legal h3:first-child { margin-top: 0; }
+.legal p { margin: 0; line-height: 1.5; }
+.legal a { color: var(--accent); overflow-wrap: anywhere; }
+.legal-bas { display: flex; flex-wrap: wrap; justify-content: space-between; gap: .5rem; align-items: center; }
 
 /* TP de chimie (terminale) : paillasse de chimie, loupe, courbes de titrage */
 .c-obj { cursor: pointer; }
@@ -1211,7 +1221,10 @@ footer { text-align: center; font-size: .85rem; color: var(--muted); display: fl
     <button class="btn btn-sm" id="btn-quitter-prof" type="button">Quitter</button>
   </div>
   <main id="view"></main>
-  <footer><span>Aucune donnée n'est envoyée : ta progression reste sur cet appareil.</span></footer>
+  <footer>
+    <span>Aucune donnée n'est envoyée : ta progression reste sur cet appareil.</span>
+    <nav class="pied" aria-label="Informations sur l'appli"><a href="#apropos">À propos</a><span aria-hidden="true">·</span><a href="#mentions">Mentions légales</a><span aria-hidden="true">·</span><a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.fr" rel="license noopener" target="_blank">Licence CC BY-NC-SA</a></nav>
+  </footer>
 </div>
 <div class="toast" id="toast" role="status" hidden></div>
 
@@ -1253,7 +1266,15 @@ const REGLAGES = {
   // Pour changer de code : raccourci « 3 - Changer le code prof » (il remplace cette ligne).
   empreinteProf: "02e2edef2ea80253e9e95a9bd5b964c930e68ba417e026d9deaba867c13fa372",
   // Ne pas mettre true dans la version en ligne : tout serait débloqué pour tout le monde.
-  modeProf: false
+  modeProf: false,
+  // Pages « À propos » et « Mentions légales » (liens discrets en bas de chaque page).
+  // Remplace ce qui est entre crochets AVANT de publier.
+  editeur: {
+    nom: "Noah GUILLAUMEAU",              // ton prénom et ton nom
+    contact: "noah.guillaumeau@ac-guyane.fr",  // adresse mail dédiée à l'appli
+    avec: "",                         // facultatif : collègues qui participent, ex. "Philippe NOM"
+    miseAJour: "15/11/2026"           // date de dernière mise à jour des mentions légales
+  }
 };
 
 </script>
@@ -16794,7 +16815,7 @@ const QUESTIONS = [
   // la garde aussi un moment en cache. On compare donc la version de cette page avec le petit fichier version.json
   // publié en même temps : à l'ouverture et à chaque retour sur l'onglet (au plus une fois par minute).
   // Si une version plus récente est en ligne, un bandeau propose de mettre à jour. La progression (pseudo, points…) est conservée.
-  const VERSION_APPLI = "2026-11-15 11:38:26"; // remplacée par la date d'assemblage (assembler.py)
+  const VERSION_APPLI = "2026-11-15 12:16:03"; // remplacée par la date d'assemblage (assembler.py)
   let derniereVerif = 0;
   function verifierMaj() {
     if (!/^https?:$/.test(location.protocol) || VERSION_APPLI.indexOf("__") === 0) return; // fichier ouvert sur l'ordinateur : rien à vérifier
@@ -16826,6 +16847,8 @@ const QUESTIONS = [
     $("btn-back").hidden = parts.length === 0;
     majStats(); majProf();
     window.scrollTo(0, 0);
+    if (hh === "apropos") return vueApropos();
+    if (hh === "mentions") return vueMentions();
     if (typeof v2Routeur === "function" && v2Routeur(parts)) return; // V2 de test seulement (dossier appli_v2) : connexion, espace prof
     if (parts.length === 0) return vueNiveaux();
     if (!etat.pseudo) return vuePseudo();
@@ -16852,6 +16875,61 @@ const QUESTIONS = [
   }
   function verrou(msg, retour) {
     view.innerHTML = `<div class="panel"><h2>Pas encore…</h2><p>${esc(msg)}</p><a class="btn btn-primary" href="#${retour}">Retour</a></div>`;
+  }
+
+  // ======================= Pages « À propos » et « Mentions légales » (liens en bas de chaque page) =======================
+  // L'identité de l'auteur se règle dans REGLAGES.editeur (02_markup_reglages.html).
+  const LICENCE = `<a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.fr" rel="license noopener" target="_blank">CC BY-NC-SA 4.0</a>`;
+  function infosEditeur() {
+    const e = (typeof REGLAGES !== "undefined" && REGLAGES.editeur) || {};
+    const ok = (v) => typeof v === "string" && v.trim() !== "" && v.trim()[0] !== "[";
+    return { nom: ok(e.nom) ? esc(e.nom) : "l'auteur de l'appli", contact: ok(e.contact) ? esc(e.contact) : "", avec: ok(e.avec) ? esc(e.avec) : "", maj: ok(e.miseAJour) ? esc(e.miseAJour) : "" };
+  }
+  const lienMail = (c) => `<a href="mailto:${c}">${c}</a>`;
+  function vueApropos() {
+    const e = infosEditeur();
+    $("brand").textContent = "À propos";
+    view.innerHTML = `<div class="head"><span class="kicker">À propos</span><h2>Une appli de physique-chimie faite en Guyane</h2>
+      <p class="muted">Pour revoir, manipuler et s'entraîner à son rythme, du collège au lycée.</p></div>
+      <div class="panel legal">
+        <h3>Qui l'a créée ?</h3>
+        <p><strong>${e.nom}</strong>, professeur de physique-chimie en Guyane${e.avec ? `, avec ${e.avec}` : ""}. L'appli est développée dans le cadre des TraAM (travaux académiques mutualisés) de l'académie de Guyane.</p>
+        <h3>À quoi sert-elle ?</h3>
+        <p>Chaque chapitre suit le programme officiel : un rappel, le cours, un TP simulé et un entraînement. Les chapitres s'ouvrent au fil de l'année, quand ton professeur les commence en classe.</p>
+        <h3>Réutiliser les contenus</h3>
+        <p>Les cours, exercices, schémas et TP sont sous licence ${LICENCE} : vous pouvez les réutiliser et les adapter, en citant « ${e.nom} – appli Physique-Chimie », sans usage commercial et en partageant vos versions dans les mêmes conditions.</p>
+        ${e.contact ? `<h3>Une erreur, une idée ?</h3><p>Écris à ${lienMail(e.contact)}.</p>` : ""}
+      </div>
+      <div class="legal-bas"><span class="muted small">Ce n'est pas un site officiel de l'Éducation nationale.</span><a class="btn-link" href="#mentions">Mentions légales</a></div>`;
+  }
+  function vueMentions() {
+    const e = infosEditeur();
+    $("brand").textContent = "Mentions légales";
+    view.innerHTML = `<div class="head"><span class="kicker">Informations</span><h2>Mentions légales</h2></div>
+      <div class="panel legal">
+        <h3>Éditeur et directeur de la publication</h3>
+        <p>Appli éditée à titre non commercial par <strong>${e.nom}</strong>, professeur de physique-chimie.${e.contact ? ` Contact : ${lienMail(e.contact)}.` : ""}</p>
+        <h3>Hébergeur</h3>
+        <p>GitHub Inc. (service GitHub Pages), 88 Colin P. Kelly Jr. Street, San Francisco, CA 94107, États-Unis. Téléphone : +1 (877) 448-4820. <a href="https://github.com" rel="noopener" target="_blank">github.com</a></p>
+        <h3>Propriété intellectuelle</h3>
+        <p>Sauf mention contraire, les contenus (textes, exercices, schémas, simulations) sont créés par ${e.nom}${e.avec ? ` et ${e.avec}` : ""} et diffusés sous licence ${LICENCE}. Les éléments venant d'autres sources sont signalés avec leur origine.</p>
+        <h3>Données personnelles</h3>
+        <p>L'appli ne demande ni nom, ni adresse mail, ni inscription. Ton pseudo, tes points et ta progression sont enregistrés seulement dans la mémoire de ton appareil : ils ne sont jamais envoyés, ni à l'auteur, ni à personne d'autre.</p>
+        <p>L'hébergeur GitHub peut enregistrer l'adresse IP des visiteurs pour la sécurité du service (<a href="https://docs.github.com/fr/site-policy/privacy-policies/github-general-privacy-statement" rel="noopener" target="_blank">déclaration de confidentialité de GitHub</a>).</p>
+        <p>${e.contact ? `Pour toute question : ${lienMail(e.contact)}. ` : ""}Tu peux aussi adresser une réclamation à la <a href="https://www.cnil.fr" rel="noopener" target="_blank">CNIL</a>.</p>
+        <button class="btn btn-sm btn-ghost" id="btn-effacer" type="button">Effacer mes données sur cet appareil</button>
+        <h3>Cookies</h3>
+        <p>Aucun cookie, aucune mesure d'audience, aucun service extérieur (polices, vidéos, publicités) : pas de bandeau de consentement à accepter.</p>
+        <h3>Responsabilité</h3>
+        <p>Malgré le soin apporté, des erreurs peuvent subsister : n'hésitez pas à les signaler. Les liens vers d'autres sites sont donnés à titre indicatif.</p>
+      </div>
+      <div class="legal-bas"><span class="muted small">${e.maj ? `Dernière mise à jour : ${e.maj}` : ""}</span><a class="btn-link" href="#apropos">À propos</a></div>`;
+    const b = $("btn-effacer");
+    b.onclick = () => {
+      if (!b.dataset.confirmer) { b.dataset.confirmer = "1"; b.textContent = "Confirmer : tout effacer (pseudo, points, progression)"; b.classList.remove("btn-ghost"); b.classList.add("btn-primary"); return; }
+      try { Object.keys(localStorage).filter((k) => /^(pc-guyane|ti-labo)/.test(k)).forEach((k) => localStorage.removeItem(k)); } catch (err) {}
+      location.replace(location.pathname);
+    };
   }
 
   // ======================= Vues de navigation =======================
