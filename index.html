@@ -356,6 +356,7 @@ svg.spectre { display: block; width: 100%; max-width: 420px; height: auto; color
 .def .def-t { font-family: var(--f-display); font-weight: 700; font-size: .95rem; color: var(--titre); display: flex; align-items: center; gap: .35rem; }
 .def.rel { border-color: var(--sous); background: var(--sous-soft); }
 .def.rel .def-t { color: var(--sous); }
+.def .def-liste { margin: 0; padding-left: 1.2rem; display: flex; flex-direction: column; gap: .2rem; }
 .methode.rel { border-color: var(--sous); background: var(--sous-soft); }
 .cours .methode.exr, .cours .ex { border: none; border-left: 5px solid var(--sous); border-radius: 0 12px 12px 0; background: var(--surface); position: relative; padding-bottom: 1.6rem; }
 .cours .ex { box-shadow: inset 0 0 0 1px var(--line); }
@@ -1229,7 +1230,8 @@ const REGLAGES = {
     "3e-puissance": true,   // La puissance électrique
     "3e-chimie": false,     // L'énergie chimique et ses conversions
     "3e-elements": false,   // Les éléments chimiques de l'Univers (thème matière ; rappel, cours, entraînement ; à relire)
-    "3e-ions": true,        // Les ions, des particules chargées (thème matière ; rappel, cours, entraînement ; relu et validé le 15/11)
+    "3e-ions": false,       // Les ions, des particules chargées (thème matière ; rappel, cours, entraînement ; relu et validé le 15/11, fermé à la demande de l enseignant)
+    "3e-acides": false,     // Acides, bases et transformations chimiques (thème matière ; rappel, cours, entraînement ; à relire)
     "4e-intensite": false,  // 4ème : l'intensité du courant électrique (cours + TP)
     "4e-tension": true,     // 4ème : la tension électrique (cours + TP)
     "4e-ohm": false,        // 4ème : la résistance et la loi d'Ohm (cours + TP)
@@ -2818,6 +2820,12 @@ button.tp-case { cursor: pointer; }
 .ion-bilan .p b { color: #D23B30; } .ion-bilan .e b { color: #2F6FD1; }
 .pr-dot { display: inline-block; width: .8rem; height: .8rem; border-radius: 50%; border: 1px solid var(--muted); vertical-align: -.08rem; margin-right: .3rem; }
 .sch .tt-pr { stroke: rgba(0, 0, 0, .35); stroke-width: .6; } .sch .tt-goutte { fill: #7FB6DD; stroke: none; }
+/* Acides et bases : animation du pH, bilan de l'expérience acide-métal */
+.ph-zone { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: .7rem; align-items: start; }
+.ph-lab { display: block; font-size: .78rem; font-weight: 700; color: var(--muted); margin-bottom: .3rem; }
+.ph-liq { gap: .35rem; } .ph-liq .btn { padding-left: .5rem; padding-right: .5rem; }
+.ph-manip { border-left: 1.5px solid var(--line); padding-left: .7rem; } .ph-manip .a-bts { flex-direction: column; gap: .35rem; } .ph-manip .btn { width: 100%; }
+.am-bilan b { font-size: 1.15rem; }
 </style>
 <script>
 // ============================================================
@@ -3260,7 +3268,347 @@ const ATOMES = (() => {
       explication: `Sa formule, ${neg[1]}, porte le signe − : c'est un ion négatif. Les ions ${posi.map((x) => x[1]).join(", ")} sont positifs.` };
   }
 
-  return { IONS, TESTS, figAtomeIon, animIon, figBanque, figTest, qIonElectrons, qIonFormule, qIonProtons, qIonSigne, qTests, qNeutre, genIon, genTest, genNeutre, genEtiquette, figEtiquette, figModeleNumerote, qNeutrons, qNucleons, genNeutrons, EL, AB, du, grille, figTableau, svgCase, figCase, figAbondance, figStade, animAtome, animTableau, qProtons, qElectrons, qQuiEstZ, qSymboles, genCase, genTableau, genAbondance };
+  // ============================================================
+  //  ACIDES ET BASES (chapitre « Acides, bases et transformations chimiques », 15/11/2026)
+  //  pH de 0 à 14 : pH < 7 acide (plus d'ions H⁺ que d'ions HO⁻) ; pH = 7 neutre ; pH > 7 basique (plus d'ions HO⁻ que d'ions H⁺).
+  //  Papier pH : on DÉPOSE une goutte avec l'agitateur (on ne trempe pas le papier) ; il donne une valeur entière (estimation).
+  //  pH-mètre : valeur plus précise (une décimale). Dilution : le pH se rapproche de 7 sans le dépasser.
+  //  Équations toujours DONNÉES, jamais à équilibrer : H⁺ + HO⁻ → H₂O ; Fe + 2 H⁺ → Fe²⁺ + H₂.
+  // ============================================================
+  // couleur du papier pH (indicateur universel), de pH 0 à pH 14
+  const NUANCES = ["#C8102E", "#DA2C24", "#E5522A", "#EE7E2D", "#F3A531", "#EFC834", "#D8D93A", "#9CCB3B", "#55B04B", "#2E9C78", "#2C86B4", "#3263AC", "#433F99", "#55308A", "#4A2370"];
+  const hx = (c) => [1, 3, 5].map((k) => parseInt(c.slice(k, k + 2), 16));
+  const melCoul = (a, b, f) => { const A = hx(a), B = hx(b); return "#" + A.map((v, k) => Math.round(v + (B[k] - v) * f).toString(16).padStart(2, "0")).join(""); };
+  const couleurPH = (p) => { p = Math.max(0, Math.min(14, p)); const i = Math.floor(p); return i >= 14 ? NUANCES[14] : melCoul(NUANCES[i], NUANCES[i + 1], p - i); };
+  const nature = (p) => (p < 7 ? "acide" : p > 7 ? "basique" : "neutre");
+  const NB = (x) => String(x).replace(".", ",");
+  const reduit = () => window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const lerp = (a, b, e) => a + (b - a) * e;
+  // petite animation : f(e) avec e de 0 à 1 (départ et arrivée en douceur)
+  const tween = (ms, f) => new Promise((ok) => {
+    if (reduit()) { f(1); ok(); return; }
+    const t0 = performance.now();
+    const pas = (t) => { const k = Math.min(1, (t - t0) / ms), e = k < 0.5 ? 2 * k * k : 1 - Math.pow(-2 * k + 2, 2) / 2; f(e); if (k < 1) requestAnimationFrame(pas); else ok(); };
+    requestAnimationFrame(pas);
+  });
+  const pause = (ms) => new Promise((ok) => setTimeout(ok, reduit() ? 0 : ms));
+
+  // pH : papier (valeur entière) et pH-mètre (une décimale) ; les deux mesures sont cohérentes (l'arrondi du pH-mètre = papier)
+  const LIQUIDES = [
+    { id: "citron", nom: "Jus de citron", le: "le jus de citron", pH: 2, mesure: 2.4, teinte: "#F7F0B0" },
+    { id: "vinaigre", nom: "Vinaigre blanc", le: "le vinaigre blanc", pH: 3, mesure: 2.9, teinte: "#EEF3F6" },
+    { id: "pluie", nom: "Eau de pluie", le: "l'eau de pluie", pH: 6, mesure: 5.6, teinte: "#E4EEF4" },
+    { id: "pure", nom: "Eau pure", le: "l'eau pure", pH: 7, mesure: 7.0, teinte: "#E4EEF4" },
+    { id: "mer", nom: "Eau de mer", le: "l'eau de mer", pH: 8, mesure: 8.2, teinte: "#D3E8EE" },
+    { id: "savon", nom: "Eau savonneuse", le: "l'eau savonneuse", pH: 10, mesure: 9.8, teinte: "#EEF0F2" },
+    { id: "javel", nom: "Eau de Javel", le: "l'eau de Javel", pH: 12, mesure: 11.6, teinte: "#F1F2D2", corrosif: true },
+    { id: "deboucheur", nom: "Déboucheur", le: "le déboucheur", pH: 14, mesure: 13.6, teinte: "#EEF3F6", corrosif: true }
+  ];
+  // échelle de pH (nuancier) : 15 cases de 0 à 14 ; la valeur p est au centre de la case p
+  function svgEchelle(x0, y0, w, h, sansMots) {
+    const pas = w / 15; let s = "";
+    for (let i = 0; i <= 14; i++) s += `<rect x="${(x0 + i * pas).toFixed(1)}" y="${y0}" width="${(pas + 0.5).toFixed(1)}" height="${h}" fill="${NUANCES[i]}" stroke="none"/>`;
+    s += `<rect x="${x0}" y="${y0}" width="${w}" height="${h}" rx="2" class="sch-fin"/>`;
+    for (let i = 0; i <= 14; i++) s += T((x0 + (i + 0.5) * pas).toFixed(1), y0 + h + 11, i, "sch-t sch-pt");
+    if (!sansMots) s += T(x0 + 3.5 * pas, y0 - 6, "acide", "sch-t sch-gr") + T(x0 + 7.5 * pas, y0 - 6, "neutre", "sch-t sch-gr") + T(x0 + 11.5 * pas, y0 - 6, "basique", "sch-t sch-gr");
+    return s;
+  }
+  const xEch = (x0, w, p) => x0 + (p + 0.5) * w / 15;
+  // Figure du cours : l'échelle de pH avec des liquides de la vie courante
+  function figEchelle() {
+    const x0 = 20, w = 300; let s = svgEchelle(x0, 22, w, 16);
+    // étiquettes inclinées sous chaque graduation (elles ne se chevauchent pas)
+    LIQUIDES.forEach((l) => { const x = xEch(x0, w, l.pH);
+      s += `<path d="M${x.toFixed(1)} 53V58" class="sch-fin"/><text x="${(x + 2).toFixed(1)}" y="66" class="sch-t sch-pt" text-anchor="end" transform="rotate(-35 ${(x + 2).toFixed(1)} 66)">${l.nom.toLowerCase().replace("javel", "Javel")}</text>`; });
+    return fig("0 0 340 112", s, "Échelle de pH de 0 à 14 : les solutions acides ont un pH inférieur à 7, les solutions basiques un pH supérieur à 7. Exemples : jus de citron 2, vinaigre 3, eau de pluie 6, eau pure 7, eau de mer 8, eau savonneuse 10, eau de Javel 12, déboucheur 14.", 440);
+  }
+  // Figure : papier pH après le dépôt d'une goutte + nuancier (lecture)
+  function figPapier(p) {
+    const x0 = 20, w = 280;
+    const s = `<rect x="110" y="8" width="100" height="22" rx="2" fill="#EBC66A" stroke="none"/><rect x="110" y="8" width="100" height="22" rx="2" class="sch-fin"/>`
+      + `<circle cx="160" cy="19" r="9" fill="${couleurPH(p)}" stroke="none"/>` + T(160, 44, "papier pH après le dépôt d'une goutte", "sch-t sch-pt")
+      + svgEchelle(x0, 64, w, 14, true) + T(160, 108, "nuancier (valeurs du pH)", "sch-t sch-pt");
+    return fig("0 0 320 114", s, "Une bande de papier pH avec une tache colorée, et le nuancier de pH de 0 à 14 pour comparer les couleurs.", 360);
+  }
+  // Figure : ions H⁺ et HO⁻ dans une solution acide, neutre, basique (modèle)
+  function figIonsPH() {
+    const jet = (x, y, f) => `<rect x="${x - 11}" y="${y - 7}" width="22" height="14" rx="7" fill="${f === "H" ? "#D7263D" : "#2C6FB8"}" stroke="none"/><text x="${x}" y="${y + 3.6}" class="sch-blanc" text-anchor="middle">${f === "H" ? "H⁺" : "HO⁻"}</text>`;
+    const pos = [[-20, -14], [18, -8], [-16, 12], [22, 16], [-22, 36], [16, 38]];
+    const bech = (cx, nH, nO, t1, t2) => {
+      let s = `<path d="M${cx - 44} 30V128a6 6 0 0 0 6 6h76a6 6 0 0 0 6-6V30" class="sch-fin"/><path d="M${cx - 42.6} 52V127.5a5 5 0 0 0 5 5h75.2a5 5 0 0 0 5-5V52Z" class="sch-liq"/>`;
+      const L = Array(nH).fill("H").concat(Array(nO).fill("O"));
+      L.forEach((f, k) => { const [dx, dy] = pos[k]; s += jet(cx + dx, 84 + dy, f); });
+      return s + T(cx, 152, t1, "sch-t sch-gr") + T(cx, 166, t2, "sch-t sch-pt");
+    };
+    const s = bech(58, 5, 1, "Acide : pH < 7", "plus de H⁺ que de HO⁻") + bech(170, 3, 3, "Neutre : pH = 7", "autant de H⁺ que de HO⁻") + bech(282, 1, 5, "Basique : pH > 7", "plus de HO⁻ que de H⁺");
+    return fig("0 0 340 172", s, "Modèle : une solution acide contient plus d'ions hydrogène H⁺ que d'ions hydroxyde HO⁻ ; une solution neutre en contient autant ; une solution basique contient plus d'ions HO⁻ que d'ions H⁺. Les molécules d'eau ne sont pas représentées.", 440);
+  }
+  // Figure : dilution d'une solution acide
+  function figDilution() {
+    const b = (cx, haut, p) => `<path d="M${cx - 30} 40V128a5 5 0 0 0 5 5h50a5 5 0 0 0 5-5V40" class="sch-fin"/><path d="M${cx - 28.6} ${132 - haut}V127.5a4 4 0 0 0 4 4h49.2a4 4 0 0 0 4-4V${132 - haut}Z" class="sch-liq"/>`
+      + T(cx, 152, `pH = ${p}`, "sch-t sch-gr");
+    const fl = (x) => `<path d="M${x - 16} 90H${x + 14}M${x + 8} 85L${x + 15} 90L${x + 8} 95" class="sch-fl"/>` + T(x, 78, "+ eau", "sch-t sch-pt");
+    const s = b(45, 22, 2) + fl(108) + b(170, 50, 3) + fl(232) + b(295, 84, 4) + T(170, 20, "La solution est de moins en moins acide", "sch-t sch-pt");
+    return fig("0 0 340 160", s, "Dilution d'une solution acide : en ajoutant de l'eau, le pH passe de 2 à 3, puis à 4. Il se rapproche de 7, sans le dépasser.", 440);
+  }
+  // Pictogramme de danger SGH05 « corrosif » : image officielle fournie par l'enseignant (15/11/2026, fichier GHS-pictogram-acid,
+  //  réduite à 240 px et intégrée en PNG base64), placée dans un repère de 120 × 120 (figure du cours et petit pictogramme de l'animation du pH).
+  const SGH05_PNG = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAPAAAADwCAMAAAAJixmgAAAAYFBMVEUAAAD+/v7/AAABAQH/AAD/AAD/ZGTn5+cnJycXFxe4uLg2NjZHR0fY2NhXV1fHx8d2dnaZmZlnZ2eHh4enp6f/AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAC6OGMqAAAAIHRSTlMA//3/Ayn////////////////////fAAAAAAAAAAAAAM8IlVsAAAl7SURBVHja5d2HdqM4FADQeMmuChKi5f9/dZ8EGLApQgUVdObs5GSdjK+fylMBfn7ClN/fn0eVX/XnSd5//32SGLz//PMgsfI+SDx6HyN+ex8iXngfIV55HyD+8GYv/vJmLt7wZi3e9GYs3vFmK971Zio+8GYpPvRmKD7xZic+9WYm1vBmJdbyZiTe9P73X7bibe/rlat4z5ureN+bp/jIm6P42Juf+Mybm/jcm5dYx5uTWM+bj1jXm4tY35uH+Io3B/E1b/riq97Uxde9aYtNvCmLzbzpik29qYrNvWmKbbwpiu286YltvamJ7b1piV14UxK78aYjduVNRezOm4bYpTcFsVtv/GLX3tjF7r1xi314Yxb78cYr9uWNVezPG6fYpzdGsV9vfGLf3tjE/r1xie/wxiS+xxuP+C5vLOL7vHGI7/TGIL7XG158tze0+H5vWHEIb0hxGG84cShvKHE4bxixW29flRiztqEoVrGNl9OuZdJHp2+UxbtgVjcCRSc29CLRAHXWMa68RH7ZtlVJxu+Tsuooj0h84kVb1L5eUnHJJA/Ll0J8K/5+VYUPg81DiM/iy+hHDZ5jJ6PXjtFDNUhfL6H+u64H84czv1yVhgWI8Wl9rgqxFdbviloVBX91xfjyz5betO/PCYLdy2A3RX1/rT5vv01RtM0yrARXwxv+KLQo6AvijI46uPfvIRi+aG5vxxr9FS00e91eguHj6c/6urlpi7t7Lp3+mY9UGFePu1pWEPRCpMBCYzSDpl3KJnCvWG88wkV5QlWCtlBNEkJcVF0vODobf9uC3Dw6aY6/rGBHUC5o39UMWmSpvtHNbb1kVds1Er/1k+X4A7eJdfON70hMygqG33mImoYjyoqvovB119AFHn8MYL7F2vlVM3W8wOybumUlJt8ituir+Dov+cJD4OumKZajkn+xfj4J3XQLwdxQHnbd60Rrs/Q3ZpkX8me++4Y1pkQDe+ezEvfl1ZfmCxtvF3LERqPrXrHLr9+DbptJXJsfsTX1dO5zwF4n4rfNnS7OB9uZ2ptR1z28ZMtfWN41W7w6/wUw2cyebdiQdOOPbzWexJfn+2yY6botsiukH4lI5UV82Yu+YmEm/O4YhjpdD6tDbDWTdie+vp7TFaczII1Sr38HUt0Cn1PM7mPlwJXYYP1KLVK5qMHAE+U4lxIKTIePQv6fr8zajdjAS49GEP1CVQS7aUrIZzB82cnMuvbQV5usT3YHOcKV0korm7qDRZVGClx+1yJ7sdF6rAITe7CQPQF5x5FNDUVglWNWGz2jrdhs/Vkc5giXWrEEM/Rery/ll7BEIus6x1v/hp3YdH8BViNXq23mjVjI3zWtAIkh2MMssd35N2zE5vspq7muDbhXNRlPTaUc+mgyrgs5zjLNvchFfIe62yI5CNGpEaMBjKCL3l35MxVb7JfRol026c5U3Ki+gI9ZDBrTGegTEXwWneN9p0teVNbrbnoxYPCj93b2yUFQBR3n/f1Yi+VANYzELsXX4luuOxC2TDvKzZUo3VoNsAlcDemMXD+SXZZwurd4sT4LsnwDaFyLaTCMKF2xqt/XR6YGjcOvWgcQcszjzdmwd1V8uf3S4U2hd9Prhr8FBBjb9VulDG37zqURhoZcfG5BWIoN+iuoYwhaa79MiYSs6MQmwKqHqsHI5skDhy4bE+HyjIBJ/ww9ChLD+IHecwcMWLwzXOoWuZ+E2ncuPdQhnbUUfbHReCSzgWHWNm4eCgVmWyn+tUqNp2mI7LRaD2d9zMZfmcmPW0p0rHtI9t1DdbRLuCY6w62H002G+YZcfoDsh78nrlxWRlYTB1k193meyzS/QsMWCelVTZajBrTqut3NeDUPOPVN1xIyJ+a8pm7FFvlzVUwzdKjT0IvKlBcGFWrubeZtxmF7hndyi5U6FFudr4OQVkMayeX76wpCiVV9JuN2FFFr+rAFOR3vEq7EducJZVaE5xQXBqnabvESOoFezfjr+RBTL4MMQ7MTseX5SQCzRUihG8PHGe/R7xKUUrV/AX8L0bdqp4U040mJAnd7pwQuiK3Pi5bLHVyhKqTZkNTvbhKrlQUxns0kBGNuLv79tT0fy5fr0dh8JY/ubS5X0zZ68z6Oyg1jDE8ftAcPx2K7qQvrKmY2glYF6ei6QIfY8nWdhxGrbltkDpZV+s/2CDT0WlMmKIw7q61DQIX5KoKDRlzhvQKpJNV44f6HwdtSHbP9fLH5LPOkm9aKMdY7dbI8+L0u9GglYfPFkIQw5D691BSXB+ds2il6tN1/ET3o6Fn1Ufi0ZEk65Dyd1qvV5eHRIlwtT7dfAvOD9S91boRdy6X1kunzGB+DNQrdX7Mbena0KMsO8eICmeZ06VTsDTysTEJCQRZlHo5oXZImxITYHxixk8NoyM+Sx0mM/YFlFCHKZb0oyPvlXKdin+DjnsvT5WtntdovWO6hYSZHJ6ZKxTrvl+udxNgveCP72Io4ggvcqsrh1sOB2DP4hTpWqun+VPDXD9CKHJ0kcby5hGyL1nrW/gCExukhrPs43T78C3W57DAnLrseVjs4X3xCCMH1W/WwyFXtH1s13iAOKV5m4jIVUeXduPFRWh3gCICL0uz1FHDUvPdz4WngGMPxcLgSpm+arqthbUOWGmr52dqd5TGeoOL7L5cPXKsD3B4gtRg7OWyZkDjUcdqUvSnF2OGR+CTEIS96SNubRoydX7gUuTj0pWmpe2OPsafLS6MVR3ABcQbeeGPs9SYAEYqjuM1DJt4YY3zDrVqiEsdyM558vHHF+LYbakUijueWabndzjOOGN9828Pg4qhubJnh7WlDxzjIzWkDitO//XAiN5j+e9INtcOJn3aT+MCPAfh70mMPQoif9iiPKB7W8vekh9PcK37aA5cieqTW35MeIfa8h8Q97zGAz3vQ4/Me5fm8h7U+73G8z3vg8vMeqf28h6b7Ecfs9SGO2+teHLvXtTh+r1txCl6X4jS87sSpeF2J0/G6EafkdSFOy2svTs1rK07PaydO0WsjTtNrLk7VaypO12smTtlrIk7be12cuveqOH3vNXEO3iviPLz64ly8uuJ8vHrinLw64ry85+LcvGfi/LzH4hy9R+I8vfviXL174ny9O+KMvZrijLxa4qy8GuLMvKfi7Lwn4gy9h+IsvQfiTL274my9O+KMvZvirL0b4sy9X+LsvR/iB3hX4kd4F+KHeN/ix3hH8YO8Svwo7496/uDPo8pvKO//eJXr4US1u2QAAAAASUVORK5CYII=";
+  const svgSGH05 = () => `<image href="${SGH05_PNG}" x="0" y="0" width="120" height="120"/>`;
+  function figCorrosif() {
+    return `<figure class="fig-cours sch-fig"><svg viewBox="0 0 120 120" class="sch" style="max-width:130px" role="img" aria-label="Pictogramme de danger SGH05 corrosif : losange à bord rouge ; deux tubes à essai versent un liquide qui ronge une surface et une main.">${svgSGH05()}</svg><figcaption>Pictogramme « corrosif » (SGH05) : le produit attaque la peau, les yeux et certains matériaux.</figcaption></figure>`;
+  }
+  // Figure : la réaction acide-base, ion par ion (modèle moléculaire : H blanc, O rouge)
+  function figNeutralisation() {
+    const H = (x, y) => `<circle cx="${x}" cy="${y}" r="9" fill="#F4F4F4" stroke="#8A9399" stroke-width="1.2"/><text x="${x}" y="${y + 3.5}" text-anchor="middle" class="sch-t sch-gr">H</text>`;
+    const O = (x, y) => `<circle cx="${x}" cy="${y}" r="13" fill="#D23B30" stroke="none"/><text x="${x}" y="${y + 4}" class="sch-blanc" text-anchor="middle">O</text>`;
+    const ch = (x, y, c) => `<text x="${x}" y="${y}" class="sch-t sch-gr" text-anchor="middle">${c}</text>`;
+    const s = H(40, 60) + ch(52, 46, "+") + T(40, 98, "ion hydrogène", "sch-t sch-pt") + T(40, 110, "H⁺", "sch-t sch-gr")
+      + `<text x="78" y="65" class="sch-t sch-gr" text-anchor="middle">+</text>`
+      + H(105, 60) + O(124, 60) + ch(142, 44, "−") + T(116, 98, "ion hydroxyde", "sch-t sch-pt") + T(116, 110, "HO⁻", "sch-t sch-gr")
+      + `<path d="M162 60H206M200 55L207 60L200 65" class="sch-fl"/>`
+      + O(262, 64) + H(245, 50) + H(279, 50) + T(262, 98, "molécule d'eau", "sch-t sch-pt") + T(262, 110, "H₂O", "sch-t sch-gr");
+    return fig("0 0 320 118", s, "Un ion hydrogène H⁺ et un ion hydroxyde HO⁻ se rencontrent et forment une molécule d'eau H₂O : les charges + et − se compensent.", 380);
+  }
+
+  // ---------- Animation 1 : mesurer le pH (papier pH avec l'agitateur, ou pH-mètre) ----------
+  function animPH(el) {
+    const x0 = 20, w = 280, Y0 = 186; let liq = LIQUIDES[0], outil = "papier", occupe = false;
+    el.innerHTML = `<span class="a-titre">Mesurer le pH d'une solution</span>
+      <p class="small">Choisir une solution à gauche, un appareil à droite, puis toucher « Mesurer ».</p>
+      <div class="ph-zone">
+        <div><span class="ph-lab">Les solutions</span><div class="a-bts ph-liq">${LIQUIDES.map((l) => `<button type="button" class="btn btn-ghost btn-sm" data-l="${l.id}">${l.nom}</button>`).join("")}</div></div>
+        <div class="ph-manip"><span class="ph-lab">La manipulation</span><div class="a-bts"><button type="button" class="btn btn-ghost btn-sm" data-o="papier">Papier pH</button><button type="button" class="btn btn-ghost btn-sm" data-o="phmetre">pH-mètre</button><button type="button" class="btn btn-primary btn-sm" data-go>Mesurer</button></div></div>
+      </div>
+      <svg viewBox="0 0 320 214" class="sch at-anim ph-anim" role="img" aria-label="Un bécher contenant le liquide, un agitateur en verre, une coupelle avec du papier pH (ou un pH-mètre), et l'échelle de pH de 0 à 14."></svg>
+      <div class="a-res" aria-live="polite"></div>
+      <p class="small muted">On ne trempe jamais le papier pH dans la solution : on y dépose une goutte avec l'agitateur.</p>`;
+    const svg = el.querySelector("svg"), res = el.querySelector(".a-res");
+    const becher = `<path d="M38 70V146a6 6 0 0 0 6 6h72a6 6 0 0 0 6-6V70M38 70h-4M122 70h4" class="sch-fin"/>`;
+    function dessiner() {
+      svg.innerHTML = becher + `<path d="M39.4 100V145.5a5 5 0 0 0 5 5h71.2a5 5 0 0 0 5-5V100Z" fill="${liq.teinte}" stroke="none" data-liq/>`
+        + `<path d="M39.4 100H120.6" stroke="#9DB7C4" stroke-width="1"/>` + T(80, 166, liq.nom, "sch-t sch-gr")
+        + (liq.corrosif ? `<g transform="translate(6 74) scale(.22)">${svgSGH05()}</g>` : "")
+        + (outil === "papier"
+          ? `<path d="M196 138h88c-4 8-12 10-44 10s-40-2-44-10z" fill="var(--surface)" class="sch-fin"/><rect x="214" y="129" width="52" height="9" rx="1.5" fill="#EBC66A" stroke="none"/>`
+            + `<circle cx="240" cy="133.5" r="0" fill="${couleurPH(liq.pH)}" data-tache/>` + T(240, 162, "papier pH", "sch-t sch-pt")
+            + `<g data-outil transform="translate(160 8)"><path d="M0 0V64" stroke="#A8C3CF" stroke-width="4.5"/><circle cx="0" cy="66" r="0" fill="${liq.teinte}" stroke="#9DB7C4" stroke-width=".8" data-goutte/></g>`
+          : `<rect x="196" y="18" width="98" height="46" rx="6" class="sch-fond"/><rect x="204" y="25" width="82" height="22" rx="3" class="sch-lcdbg"/><text x="245" y="41.5" text-anchor="middle" class="sch-lcdt2" data-lcd>--,-</text>`
+            + T(245, 58, "pH-mètre", "sch-t sch-pt") + `<path d="" class="sch-fin" data-cable/>`
+            + `<g data-outil transform="translate(160 16)"><rect x="-5" y="0" width="10" height="60" rx="3" fill="#5C6A70" stroke="none"/><path d="M-3.5 60h7v10a3.5 3.5 0 0 1-7 0z" fill="#CFE3EA" stroke="#7D97A1" stroke-width="1"/></g>`)
+        + svgEchelle(x0, Y0, w, 12, true)
+        + `<path d="M0 0l-6-9h12z" transform="translate(${xEch(x0, w, 7)} ${Y0 - 2})" fill="var(--ink)" stroke="none" data-curseur opacity="0"/>`;
+      cable();
+      el.querySelectorAll("[data-l]").forEach((b) => b.classList.toggle("on", b.dataset.l === liq.id));
+      el.querySelectorAll("[data-o]").forEach((b) => b.classList.toggle("on", b.dataset.o === outil));
+      res.innerHTML = outil === "papier" ? "Le papier pH donne une <strong>valeur entière</strong> du pH : c'est une estimation." : "Le pH-mètre donne une valeur <strong>plus précise</strong> du pH (avec une décimale).";
+    }
+    const pos = () => { const t = svg.querySelector("[data-outil]").getAttribute("transform").match(/[-\d.]+/g); return [+t[0], +t[1]]; };
+    const placer = (x, y) => { svg.querySelector("[data-outil]").setAttribute("transform", `translate(${x.toFixed(1)} ${y.toFixed(1)})`); cable(); };
+    function cable() { const c = svg.querySelector("[data-cable]"); if (!c) return; const [x, y] = pos(); c.setAttribute("d", `M245 64C245 ${y - 30} ${x} ${y - 40} ${x} ${y}`); }
+    const aller = (x, y, ms) => { const [a, b] = pos(); return tween(ms, (e) => placer(lerp(a, x, e), lerp(b, y, e))); };
+    async function mesurer() {
+      if (occupe) return; occupe = true; el.querySelectorAll("button").forEach((b) => { b.disabled = true; });
+      dessiner(); const v = outil === "papier" ? liq.pH : liq.mesure, cur = svg.querySelector("[data-curseur]");
+      if (outil === "papier") {
+        await aller(80, 8, 500); await aller(80, 58, 600); await pause(250);                         // l'agitateur plonge dans la solution
+        const g = svg.querySelector("[data-goutte]"); await aller(80, 8, 500); g.setAttribute("r", "3");   // il ressort avec une goutte
+        await aller(240, 8, 700); await aller(240, 63, 600);                                              // il touche le papier pH
+        g.setAttribute("r", "0"); const t = svg.querySelector("[data-tache]");
+        await tween(500, (e) => t.setAttribute("r", (5.5 * e).toFixed(2)));
+        await aller(160, 8, 600);
+      } else {
+        await aller(80, 16, 600); await aller(80, 64, 700);
+        const lcd = svg.querySelector("[data-lcd]");
+        await tween(1100, (e) => { lcd.textContent = NB(lerp(7, v, e).toFixed(1)); });
+        lcd.textContent = NB(v.toFixed(1));
+      }
+      cur.setAttribute("opacity", "1");
+      await tween(700, (e) => cur.setAttribute("transform", `translate(${lerp(xEch(x0, w, 7), xEch(x0, w, v), e).toFixed(1)} ${Y0 - 2})`));
+      const n = nature(v);
+      res.innerHTML = (outil === "papier" ? `La tache prend la couleur de la case <strong>${v}</strong> du nuancier : pH ≈ ${v}.` : `Le pH-mètre affiche <strong>pH = ${NB(v.toFixed(1))}</strong>.`)
+        + ` ${maj(liq.le)} est <strong>${n}</strong> (pH ${v < 7 ? "inférieur à" : v > 7 ? "supérieur à" : "égal à"} 7).`
+        + (liq.corrosif ? `<br>⚠ Solution <strong>corrosive</strong> : lunettes, gants et blouse obligatoires.` : "");
+      el.querySelectorAll("button").forEach((b) => { b.disabled = false; }); occupe = false;
+    }
+    el.querySelectorAll("[data-l]").forEach((b) => b.onclick = () => { if (occupe) return; liq = LIQUIDES.find((l) => l.id === b.dataset.l); dessiner(); });
+    el.querySelectorAll("[data-o]").forEach((b) => b.onclick = () => { if (occupe) return; outil = b.dataset.o; dessiner(); });
+    el.querySelector("[data-go]").onclick = mesurer;
+    dessiner();
+  }
+
+  // ---------- Animation 2 : l'acide chlorhydrique attaque le fer (bulles, test du dihydrogène, test à la soude) ----------
+  function animAcideMetal(el) {
+    el.innerHTML = `<span class="a-titre">Expérience : l'acide chlorhydrique et le fer</span>
+      <p class="small">Réaliser les trois étapes dans l'ordre.</p>
+      <div class="a-bts"><button type="button" class="btn btn-ghost btn-sm" data-e="1">1. Verser la poudre de fer</button><button type="button" class="btn btn-ghost btn-sm" data-e="2" disabled>2. Tester le gaz</button><button type="button" class="btn btn-ghost btn-sm" data-e="3" disabled>3. Tester la solution</button><button type="button" class="btn btn-ghost btn-sm" data-e="0">Recommencer</button></div>
+      <svg viewBox="0 0 320 200" class="sch at-anim" role="img" aria-label="Un tube à essai contenant de l'acide chlorhydrique, dans lequel on verse de la poudre de fer."></svg>
+      <div class="ion-bilan am-bilan"><div><b data-b="ph">2</b><span>pH de<br>la solution</span></div><div><b data-b="gaz">?</b><span>gaz qui<br>se dégage</span></div><div><b data-b="ion">?</b><span>ion qui<br>se forme</span></div></div>
+      <div class="a-res" aria-live="polite">L'acide chlorhydrique est une solution acide (pH = 2) : elle contient des ions hydrogène H⁺ et des ions chlorure Cl⁻.</div>`;
+    const svg = el.querySelector("svg"), res = el.querySelector(".a-res"), B = (k) => el.querySelector(`[data-b="${k}"]`), bt = (k) => el.querySelector(`[data-e="${k}"]`);
+    const X = 90, HAUT = 96;  // tube de gauche : x de 75 à 105, surface du liquide à y = 96
+    let etat, bulles, t0, boucle = null, fait, occupe = false;
+    const tube = (x, top, liqY, coul, attr) => `<path d="M${x - 13.5} ${liqY}V158a13.5 13.5 0 0 0 27 0V${liqY}Z" fill="${coul}" stroke="none" ${attr || ""}/><path d="M${x - 15} ${top}V158a15 15 0 0 0 30 0V${top}" class="sch-fin"/>`;
+    function initial() {
+      clearInterval(boucle); etat = 0; bulles = []; fait = { gaz: false, sol: false };
+      svg.innerHTML = tube(X, 40, HAUT, "#E6EFF4", "data-l1") + `<g data-fer></g><g data-bulles></g><g data-flamme></g><g data-t2></g>`
+        + T(X, 190, "acide chlorhydrique", "sch-t sch-pt");
+      B("ph").textContent = "2"; B("gaz").textContent = "?"; B("ion").textContent = "?";
+      bt(1).disabled = false; bt(2).disabled = true; bt(3).disabled = true;
+      res.innerHTML = "L'acide chlorhydrique est une solution acide (pH = 2) : elle contient des ions hydrogène H⁺ et des ions chlorure Cl⁻.";
+    }
+    // grains de fer au fond du tube ; il en reste de moins en moins
+    const GRAINS = Array.from({ length: 14 }, (_, k) => [X - 9 + (k * 5.3) % 18, 164 - Math.floor(k / 4) * 3.6 - (k % 2) * 1.2]);
+    const dessinerFer = (n, dy) => { svg.querySelector("[data-fer]").innerHTML = GRAINS.slice(0, n).map(([x, y], k) => `<circle cx="${x.toFixed(1)}" cy="${(y - (dy ? dy * (1 + k % 3) : 0)).toFixed(1)}" r="2.1" fill="#5E676B" stroke="none"/>`).join(""); };
+    function vivre() {
+      const t = (performance.now() - t0) / 1000, avance = Math.min(1, t / 9);   // la réaction ralentit en 9 s environ
+      const n = Math.round(14 - 7 * avance); dessinerFer(n);
+      if (Math.random() < 0.9 - 0.6 * avance) bulles.push({ x: X - 9 + Math.random() * 18, y: 158, r: 1.3 + Math.random() * 1.6, v: 0.9 + Math.random() * 0.8 });
+      bulles.forEach((b) => { b.y -= b.v * 2.2; b.x += Math.sin(b.y / 6) * 0.25; }); bulles = bulles.filter((b) => b.y > HAUT + 2);
+      svg.querySelector("[data-bulles]").innerHTML = bulles.map((b) => `<circle cx="${b.x.toFixed(1)}" cy="${b.y.toFixed(1)}" r="${b.r.toFixed(1)}" fill="none" stroke="#7FA8BA" stroke-width=".9"/>`).join("");
+      const l1 = svg.querySelector("[data-l1]"); if (l1) l1.setAttribute("fill", melCoul("#E6EFF4", "#DCEFCF", avance));
+      B("ph").textContent = NB((2 + 2.5 * avance).toFixed(1));
+      if (!svg.isConnected) clearInterval(boucle);
+    }
+    const bloquer = (oui) => { occupe = oui; bt(0).disabled = oui; };
+    async function etape1() {
+      bt(1).disabled = true; etat = 1; bloquer(true);
+      await tween(900, (e) => dessinerFer(14, (1 - e) * 40));
+      t0 = performance.now(); boucle = setInterval(vivre, 50);
+      // on bouche aussitôt le tube pour recueillir le gaz
+      const g = svg.querySelector("[data-flamme]"); g.innerHTML = `<rect x="${X - 10}" y="6" width="20" height="14" rx="3" fill="#C9A27A" stroke="none" data-bouchon/>`;
+      const bouchon = g.querySelector("[data-bouchon]"); await tween(600, (e) => bouchon.setAttribute("y", (6 + 24 * e).toFixed(1)));
+      res.innerHTML = "Des <strong>bulles</strong> de gaz apparaissent : une transformation chimique a lieu. On <strong>bouche</strong> aussitôt le tube pour recueillir le gaz. Le fer disparaît peu à peu et le pH augmente : des ions H⁺ sont consommés.";
+      await pause(1500); bt(2).disabled = false; bt(3).disabled = false; bloquer(false);
+    }
+    async function etape2() {
+      if (occupe) return; bt(2).disabled = true; bloquer(true); const g = svg.querySelector("[data-flamme]");
+      res.innerHTML = "On retire le bouchon et on approche aussitôt une flamme de l'ouverture du tube…";
+      const bouchon = g.querySelector("[data-bouchon]"); await tween(400, (e) => bouchon.setAttribute("y", (30 - 24 * e).toFixed(1))); bouchon.remove();
+      g.insertAdjacentHTML("beforeend", `<g data-al transform="translate(190 60)"><path d="M0 0L-58 22" stroke="#B9874E" stroke-width="3"/><path d="M0-9c-5 6-5 12 0 12s5-6 0-12z" fill="#F5A623" stroke="none"/><path d="M0-4c-2.2 3-2.2 6 0 6s2.2-3 0-6z" fill="#FFE27A" stroke="none"/></g>`);
+      const al = g.querySelector("[data-al]");
+      await tween(800, (e) => al.setAttribute("transform", `translate(${lerp(190, X + 8, e).toFixed(1)} ${lerp(60, 36, e).toFixed(1)})`));
+      g.insertAdjacentHTML("beforeend", `<g data-pop><path d="M${X} 18l4 9 9-4-5 9 9 4-9 4 5 9-9-4-4 9-4-9-9 4 5-9-9-4 9-4-5-9 9 4z" fill="#FFD24A" stroke="#F08A24" stroke-width="1"/><text x="${X + 30}" y="22" class="sch-t sch-gr">Pop !</text></g>`);
+      await pause(900); g.querySelector("[data-pop]").remove(); await tween(500, (e) => al.setAttribute("transform", `translate(${lerp(X + 8, 220, e).toFixed(1)} ${lerp(36, 60, e).toFixed(1)})`)); al.remove();
+      B("gaz").textContent = "H₂"; fait.gaz = true; bloquer(false);
+      res.innerHTML = "Une petite <strong>détonation</strong> au contact de la flamme : le gaz est du <strong>dihydrogène H₂</strong>."; fin();
+    }
+    async function etape3() {
+      if (occupe) return; bt(3).disabled = true; bloquer(true); const g = svg.querySelector("[data-t2]"), x2 = 232;
+      g.innerHTML = tube(x2, 70, 160, "#DCEFCF", "data-l2") + T(x2, 190, "un peu de la solution", "sch-t sch-pt") + `<g data-pr></g><g data-gt></g>`;
+      const l2 = g.querySelector("[data-l2]");
+      await tween(800, (e) => { const y = lerp(160, 118, e); l2.setAttribute("d", `M${x2 - 13.5} ${y}V158a13.5 13.5 0 0 0 27 0V${y}Z`); });
+      g.querySelector("[data-gt]").innerHTML = `<path d="M${x2} 30v14" class="sch-fin"/>` + T(x2, 24, "+ soude", "sch-t sch-pt");
+      const pr = g.querySelector("[data-pr]");
+      for (let k = 0; k < 3; k++) {
+        const gt = document.createElementNS("http://www.w3.org/2000/svg", "path"); gt.setAttribute("fill", "#7FB6DD"); g.appendChild(gt);
+        await tween(450, (e) => { const y = lerp(48, 116, e); gt.setAttribute("d", `M${x2} ${y}c-2.4 3.4-2.4 6 0 6s2.4-2.6 0-6z`); }); gt.remove();
+        pr.insertAdjacentHTML("beforeend", [[-6, 0, 4.5], [4, -4, 5], [8, 6, 4], [-3, 9, 5.5], [-9, 12, 4], [5, 16, 5], [0, 22, 4.5], [-7, 24, 4], [8, 26, 4.5]].slice(k * 3, k * 3 + 3)
+          .map(([dx, dy, r]) => `<circle cx="${x2 + dx}" cy="${132 + dy}" r="${r}" fill="#5F8F4E" class="tt-pr at-pop"/>`).join(""));
+      }
+      g.querySelector("[data-gt]").innerHTML = ""; B("ion").textContent = "Fe²⁺"; fait.sol = true; bloquer(false);
+      res.innerHTML = "Avec la soude, un <strong>précipité vert</strong> se forme : la solution contient des <strong>ions fer II Fe²⁺</strong>."; fin();
+    }
+    function fin() {
+      if (!fait.gaz || !fait.sol) return;
+      res.innerHTML = "<strong>Bilan</strong> : le fer et les ions hydrogène H⁺ de l'acide sont les <strong>réactifs</strong> ; le dihydrogène H₂ et les ions fer II Fe²⁺ sont les <strong>produits</strong>.<br>Équation de la réaction : <strong>Fe + 2 H⁺ → Fe²⁺ + H₂</strong>. Les ions chlorure Cl⁻ ne participent pas à la réaction.";
+    }
+    bt(1).onclick = etape1; bt(2).onclick = etape2; bt(3).onclick = etape3; bt(0).onclick = () => { if (!occupe) initial(); };
+    initial();
+  }
+
+  // ---------- Questions fabriquées (QCM avec « pourquoi », dans l'ordre des propositions) ----------
+  const qNature = (liste) => (liste || [1, 2.5, 4, 6.5, 7, 8.2, 10, 12.5]).map((p) => {
+    const n = nature(p), R = ["acide", "neutre", "basique", "on ne peut pas savoir sans le nom de la solution"];
+    const why = { acide: p > 7 ? `Une solution acide a un pH inférieur à 7 ; ici ${NB(p)} est supérieur à 7.` : "Une solution de pH 7 n'est ni acide ni basique.",
+      neutre: "Seule une solution de pH égal à 7 est neutre.",
+      basique: p < 7 ? `Une solution basique a un pH supérieur à 7 ; ici ${NB(p)} est inférieur à 7.` : "Une solution de pH 7 n'est ni acide ni basique." };
+    return { question: `Une solution a un pH égal à ${NB(p)}. Cette solution est…`, reponses: R, bonne: R.indexOf(n),
+      explication: `pH = ${NB(p)} : ${p < 7 ? "inférieur à 7, la solution est acide" : p > 7 ? "supérieur à 7, la solution est basique" : "égal à 7, la solution est neutre"}.`,
+      pourquoi: R.map((r, k) => (r === n ? null : k === 3 ? "La valeur du pH suffit : il faut la comparer à 7." : why[r])) };
+  });
+  const qIonsPH = (liste) => (liste || [2, 3.5, 5, 7, 9, 11, 13]).map((p) => {
+    const R = ["Plus d'ions H⁺ que d'ions HO⁻", "Plus d'ions HO⁻ que d'ions H⁺", "Autant d'ions H⁺ que d'ions HO⁻", "Aucun ion H⁺ ni HO⁻"], b = p < 7 ? 0 : p > 7 ? 1 : 2;
+    const W = [p > 7 ? "C'est le cas d'une solution acide (pH < 7)." : "C'est le cas d'une solution acide (pH < 7) ; ici pH = 7.",
+      p < 7 ? "C'est le cas d'une solution basique (pH > 7)." : "C'est le cas d'une solution basique (pH > 7) ; ici pH = 7.",
+      "C'est le cas d'une solution neutre (pH = 7).", "Une solution aqueuse contient toujours des ions H⁺ et des ions HO⁻."];
+    return { question: `Une solution a un pH égal à ${NB(p)}. Que contient-elle ?`, reponses: R, bonne: b,
+      explication: `pH ${p < 7 ? "< 7 : solution acide, plus d'ions H⁺" : p > 7 ? "> 7 : solution basique, plus d'ions HO⁻" : "= 7 : solution neutre, autant d'ions H⁺ que d'ions HO⁻"}.`,
+      pourquoi: W.map((w, k) => (k === b ? null : w)) };
+  });
+  // la plus acide / la plus basique parmi 4 liquides de la vie courante
+  function qPlus(n) {
+    const out = [];
+    for (let i = 0; i < n; i++) {
+      const L = melg(LIQUIDES).slice(0, 4), acide = i % 2 === 0, tri = L.slice().sort((a, b) => a.pH - b.pH), bon = acide ? tri[0] : tri[3];
+      const R = L.map((l) => `${l.nom} (pH = ${l.pH})`);
+      out.push({ question: `Parmi ces liquides, lequel est le plus ${acide ? "acide" : "basique"} ?`, reponses: R, bonne: L.indexOf(bon),
+        explication: `Plus le pH est ${acide ? "petit" : "grand"}, plus la solution est ${acide ? "acide" : "basique"} : ${bon.le} (pH = ${bon.pH}).`,
+        pourquoi: L.map((l) => (l === bon ? null : `pH = ${l.pH} : ${acide ? "plus grand" : "plus petit"} que ${bon.pH}, donc moins ${acide ? "acide" : "basique"}.`)) });
+    }
+    return out;
+  }
+  const DILUES = [["du jus de citron", 2], ["du vinaigre", 3], ["de l'acide chlorhydrique", 1], ["de l'eau de Javel", 12], ["de la soude", 13], ["de l'eau savonneuse", 10]];
+  const qDilution = () => DILUES.map(([nom, p]) => {
+    const ac = p < 7, R = ac ? ["Il augmente et se rapproche de 7", "Il diminue", "Il devient supérieur à 7", `Il reste égal à ${p}`] : ["Il diminue et se rapproche de 7", "Il augmente", "Il devient inférieur à 7", `Il reste égal à ${p}`];
+    return { question: `On ajoute beaucoup d'eau à ${nom} (pH = ${p}). Que devient son pH ?`, reponses: R, bonne: 0,
+      explication: `En diluant une solution ${ac ? "acide" : "basique"}, son pH se rapproche de 7, sans le dépasser : elle devient moins ${ac ? "acide" : "basique"}.`,
+      pourquoi: [null, ac ? "La solution devient moins acide : son pH ne peut pas diminuer." : "La solution devient moins basique : son pH ne peut pas augmenter.",
+        ac ? "L'eau ne rend pas une solution basique : le pH s'approche de 7 sans le dépasser." : "L'eau ne rend pas une solution acide : le pH s'approche de 7 sans passer en dessous.",
+        "L'eau ajoutée change la solution : son pH change."] };
+  });
+  // lecture : papier pH + nuancier
+  function genPapier() {
+    const p = 1 + Math.floor(Math.random() * 13), faux = melg([p - 2, p + 2, p - 3, p + 3, 14 - p].filter((x, i, t) => x >= 0 && x <= 14 && x !== p && Math.abs(x - p) > 1 && t.indexOf(x) === i)).slice(0, 3);
+    const R = [p].concat(faux);
+    return { figure: figPapier(p), question: "On a déposé une goutte de solution sur le papier pH. À l'aide du nuancier, quel est le pH de cette solution ?", reponses: R.map((x) => "pH = " + x), bonne: 0,
+      explication: `La tache a la couleur de la case ${p} du nuancier : pH ≈ ${p}, la solution est ${nature(p)}.`,
+      pourquoi: R.map((x, k) => (k === 0 ? null : `La case ${x} du nuancier n'a pas la même couleur que la tache.`)) };
+  }
+  // lecture : indicateur coloré « rouge de phénol » (d'après le brevet 2024 Métropole-Antilles-Guyane)
+  const ROUGE = [["jaune", "#F3D23B", "de 0 à 6,6"], ["orange", "#F08A24", "de 6,6 à 8,4"], ["rouge", "#D7263D", "de 8,4 à 14"]];
+  const figRouge = () => `<div class="table-wrap"><table class="mes-table tbl-serre"><thead><tr><th>Couleur du rouge de phénol</th>${ROUGE.map((r) => `<th>${pastille(r[1])}${r[0]}</th>`).join("")}</tr></thead><tbody><tr><td>pH de la solution</td>${ROUGE.map((r) => `<td>${r[2]}</td>`).join("")}</tr></tbody></table></div>`;
+  function genRouge() {
+    const k = Math.floor(Math.random() * 3), c = ROUGE[k][0];
+    const R = ["acide", "basique", "on ne peut pas conclure : son pH est entre 6,6 et 8,4", "neutre, car son pH vaut exactement 7"], bon = [0, 2, 1][k];
+    return { figure: figRouge(), question: `Quelques gouttes de rouge de phénol donnent une couleur ${c} à une eau. D'après le tableau, cette eau est…`, reponses: R, bonne: bon,
+      explication: `Couleur ${c} : pH ${ROUGE[k][2]}. ${k === 0 ? "Le pH est inférieur à 7 : l'eau est acide." : k === 2 ? "Le pH est supérieur à 7 : l'eau est basique." : "Ce domaine contient des pH inférieurs et supérieurs à 7 : on ne peut pas conclure."}`,
+      pourquoi: R.map((r, i) => (i === bon ? null : [
+        k === 2 ? "Couleur rouge : pH de 8,4 à 14, donc supérieur à 7." : "Couleur orange : le pH peut aussi être supérieur à 7.",
+        k === 0 ? "Couleur jaune : pH de 0 à 6,6, donc inférieur à 7." : "Couleur orange : le pH peut aussi être inférieur à 7.",
+        `Couleur ${c} : tout le domaine est ${k === 0 ? "inférieur" : "supérieur"} à 7, on peut conclure.`,
+        "Le rouge de phénol ne donne pas une valeur exacte du pH, seulement un domaine."][i])) };
+  }
+  // lecture : courbe du pH pendant la réaction entre le fer et l'acide chlorhydrique
+  const COURBE = [[0, 2], [5, 3], [10, 3.6], [15, 4], [20, 4.3], [25, 4.5], [30, 4.5]];
+  function figCourbe() {
+    const X = (t) => 46 + t * 8.4, Y = (p) => 166 - p * 20; let s = "";
+    for (let p = 0; p <= 7; p++) s += `<path d="M46 ${Y(p)}H298" class="sch-pointille"/>` + T(40, Y(p) + 3.5, p, "sch-t sch-pt", "end");
+    for (let t = 0; t <= 30; t += 5) s += `<path d="M${X(t)} 166V172" class="sch-fin"/>` + T(X(t), 183, t, "sch-t sch-pt");
+    s += `<path d="M46 20V166H302" class="sch-fin"/>` + T(14, 14, "pH", "sch-t sch-gr", "start") + T(302, 196, "temps (min)", "sch-t sch-pt", "end");
+    s += `<path d="${COURBE.map(([t, p], k) => (k ? "L" : "M") + X(t).toFixed(1) + " " + Y(p).toFixed(1)).join("")}" class="alt-courbe"/>`
+      + COURBE.map(([t, p]) => `<circle cx="${X(t).toFixed(1)}" cy="${Y(p).toFixed(1)}" r="3" fill="var(--titre)" stroke="none"/>`).join("");
+    return fig("0 0 310 200", s, "Évolution du pH de la solution pendant la réaction entre le fer et l'acide chlorhydrique.", 380);
+  }
+  const Q_COURBE = [
+    { question: "D'après la courbe, quel est le pH de l'acide chlorhydrique au début de l'expérience ?", reponses: ["2", "4,5", "0", "7"], bonne: 0,
+      explication: "À t = 0 min, la courbe part de pH = 2.", pourquoi: [null, "4,5 est le pH à la fin de l'expérience.", "Lire la valeur du pH à t = 0 min, pas l'origine des axes.", "7 est le pH d'une solution neutre."] },
+    { question: "D'après la courbe, comment évolue le pH pendant l'expérience ?", reponses: ["Il augmente, puis il reste constant", "Il diminue", "Il reste constant", "Il augmente jusqu'à 7"], bonne: 0,
+      explication: "Le pH passe de 2 à 4,5, puis ne change plus.", pourquoi: [null, "La courbe monte : le pH augmente.", "La courbe monte pendant les 25 premières minutes.", "La courbe se stabilise à 4,5, pas à 7."] },
+    { question: "Pourquoi le pH augmente-t-il pendant l'expérience ?", reponses: ["Des ions H⁺ sont consommés par la réaction", "Des ions H⁺ sont fabriqués par la réaction", "Le fer rend la solution neutre en se dissolvant sans réagir", "Le gaz qui se dégage est de l'eau"], bonne: 0,
+      explication: "Fe + 2 H⁺ → Fe²⁺ + H₂ : les ions H⁺ disparaissent, la solution devient moins acide.", pourquoi: [null, "S'il y avait plus d'ions H⁺, le pH diminuerait.", "Le fer réagit : il disparaît et des ions Fe²⁺ apparaissent.", "Le gaz est du dihydrogène H₂."] },
+    { question: "D'après la courbe, la solution est-elle encore acide à la fin de l'expérience ?", reponses: ["Oui, son pH (4,5) est inférieur à 7", "Non, elle est devenue neutre", "Non, elle est devenue basique", "On ne peut pas savoir"], bonne: 0,
+      explication: "À la fin, pH = 4,5 : la solution est moins acide, mais encore acide.", pourquoi: [null, "Il faudrait pH = 7.", "Il faudrait un pH supérieur à 7.", "La courbe donne le pH final : 4,5."] },
+    { question: "D'après la courbe, au bout de combien de temps le pH ne change-t-il plus ?", reponses: ["25 min environ", "5 min", "0 min", "Le pH change jusqu'à la fin"], bonne: 0,
+      explication: "À partir de 25 min, la courbe est horizontale : pH = 4,5.", pourquoi: [null, "À 5 min, le pH augmente encore.", "Au départ, le pH commence à augmenter.", "La courbe devient horizontale à partir de 25 min."] }
+  ];
+  const genCourbe = () => sansPq(Object.assign({ figure: figCourbe() }, alea(Q_COURBE)));
+  const genPH = () => sansPq(alea(alea([qNature, qIonsPH, () => qPlus(1), qDilution])()));
+
+  // ===== fin ACIDES =====
+
+  return { LIQUIDES, NUANCES, couleurPH, figEchelle, figPapier, figIonsPH, figDilution, figCorrosif, figNeutralisation, animPH, animAcideMetal, qNature, qIonsPH, qPlus, qDilution, genPapier, figRouge, genRouge, figCourbe, Q_COURBE, genCourbe, genPH,
+    IONS, TESTS, figAtomeIon, animIon, figBanque, figTest, qIonElectrons, qIonFormule, qIonProtons, qIonSigne, qTests, qNeutre, genIon, genTest, genNeutre, genEtiquette, figEtiquette, figModeleNumerote, qNeutrons, qNucleons, genNeutrons, EL, AB, du, grille, figTableau, svgCase, figCase, figAbondance, figStade, animAtome, animTableau, qProtons, qElectrons, qQuiEstZ, qSymboles, genCase, genTableau, genAbondance };
 })();
 </script>
 <script>
@@ -6560,6 +6908,414 @@ const ATOMES = (() => {
         { type: "redaction", points: 2, consigne: "Rédiger quelques phrases pour nommer les ions présents dans la solution S, en justifiant avec les résultats des tests, puis donner le nom de cette solution.",
           criteres: ["J'ai nommé les ions chlorure et les ions calcium, en citant pour chacun le réactif et le solide blanc observé.", "J'ai donné le nom de la solution : chlorure de calcium."],
           elements: "Avec le nitrate d'argent, un solide blanc se forme : la solution S contient des ions chlorure Cl⁻. Avec l'oxalate d'ammonium, un solide blanc se forme : elle contient des ions calcium Ca²⁺. Les deux autres tests sont négatifs : il n'y a ni ions fer II ni ions sulfate. La solution S est une solution de chlorure de calcium (Ca²⁺ + 2 Cl⁻)." }
+      ]
+    }
+  ]
+}
+);
+</script>
+<script>
+// Chapitre « acides » (3e, n° 6 dans la classe). Ajouté à CONTENU.chapitres (défini dans 03_contenu.html).
+// ==================================================================
+//  CHAPITRE 6 : ACIDES, BASES ET TRANSFORMATIONS CHIMIQUES (thème « Organisation et transformations de la matière »)
+//  3e chapitre du thème en 3ème : il réunit (demande de l'enseignant, 15/11/2026) les deux chapitres prévus au plan du 14/11,
+//  « Acides et bases : le pH » et « Réactions acide-métal et sécurité ».
+//  D'après le BO du cycle 4 : identifier le caractère acide ou basique d'une solution par mesure de pH ; associer ce caractère
+//  à la présence d'ions H⁺ et HO⁻ ; réactions entre solutions acides et basiques, entre solutions acides et métaux ;
+//  interpréter une transformation chimique comme une redistribution des atomes ; utiliser une équation de réaction FOURNIE ;
+//  tests caractéristiques à partir d'une banque fournie ; règles de sécurité (pictogramme corrosif, dilution).
+//  Notation de l'ion hydroxyde : HO⁻ (décision du 15/11). Équations toujours données, jamais à équilibrer.
+//  Exercice type brevet adapté d'une annale : brevet 2024, série générale, Métropole-Antilles-Guyane (sujet 24GENSCMEAG1),
+//  partie physique-chimie « le centre aquatique » (pH de l'eau, rouge de phénol, Fe + 2 H⁺ → Fe²⁺ + H₂, banque de tests).
+//  Figures, animations et questions fabriquées : module ATOMES, partie ACIDES (03_matiere.html). Pas de TP pour l'instant.
+//  Chaque mauvaise réponse des QCM a son explication (pourquoi: […], dans l'ordre des propositions).
+// ==================================================================
+(CONTENU.chapitres["3e"] = CONTENU.chapitres["3e"] || []).push(
+{
+  id: "acides", theme: "matiere",
+  titre: "Acides, bases et transformations chimiques",
+  resume: "Le pH, les ions H⁺ et HO⁻, les réactions des acides",
+  qcm: "Acides, bases et transformations chimiques",
+
+  // ======================== 1. RAPPEL ========================
+  rappel: {
+    intro: "Réviser les ions et les transformations chimiques vues avant. Chaque jeu change à chaque partie.",
+    activites: [
+      {
+        id: "qcm", type: "qcm", titre: "QCM éclair", desc: "5 questions sur les ions et les transformations", n: 5,
+        questions: [
+          { question: "Qu'est-ce qu'un ion ?", reponses: ["Un atome (ou un groupe d'atomes) qui a gagné ou perdu des électrons", "Un atome qui a perdu des protons", "Une molécule électriquement neutre", "Le noyau d'un atome"], bonne: 0,
+            explication: "Un ion porte une charge : il a gagné ou perdu un ou plusieurs électrons.",
+            pourquoi: [null, "Le noyau ne change pas : seuls des électrons sont gagnés ou perdus.", "Un ion porte une charge : il n'est pas neutre.", "Un ion garde son noyau et des électrons autour."] },
+          { question: "Quelle est la formule de l'ion hydrogène ?", reponses: ["H⁺", "H⁻", "H₂", "HO⁻"], bonne: 0,
+            explication: "L'atome d'hydrogène perd son unique électron : H⁺.",
+            pourquoi: [null, "L'atome d'hydrogène perd un électron : la charge est positive.", "H₂ est la molécule de dihydrogène, sans charge.", "HO⁻ est l'ion hydroxyde."] },
+          { question: "Quelle est la formule de l'ion hydroxyde ?", reponses: ["HO⁻", "H⁺", "H₂O", "O₂"], bonne: 0,
+            explication: "L'ion hydroxyde est formé d'un atome d'oxygène et d'un atome d'hydrogène, avec une charge − : HO⁻.",
+            pourquoi: [null, "H⁺ est l'ion hydrogène.", "H₂O est la molécule d'eau, sans charge.", "O₂ est la molécule de dioxygène."] },
+          { question: "La formule H₂ représente…", reponses: ["une molécule", "un ion positif", "un ion négatif", "un atome"], bonne: 0,
+            explication: "H₂ : deux atomes d'hydrogène liés, sans charge. C'est la molécule de dihydrogène.",
+            pourquoi: [null, "Il n'y a pas de charge en haut à droite.", "Il n'y a pas de charge en haut à droite.", "Le petit 2 indique deux atomes liés : c'est une molécule."] },
+          { question: "Quels ions contient l'acide chlorhydrique ?", reponses: ["Des ions H⁺ et des ions Cl⁻", "Des ions Na⁺ et des ions Cl⁻", "Des ions H⁺ et des ions HO⁻ seulement", "Aucun ion"], bonne: 0,
+            explication: "L'acide chlorhydrique est une solution d'ions hydrogène H⁺ et d'ions chlorure Cl⁻.",
+            pourquoi: [null, "(Na⁺ + Cl⁻), c'est l'eau salée.", "Les ions chlorure Cl⁻ sont présents : on les détecte avec le nitrate d'argent.", "C'est une solution ionique : elle contient des ions."] },
+          { question: "Au cours d'une transformation chimique…", reponses: ["des réactifs disparaissent et des produits apparaissent", "rien ne disparaît ni n'apparaît", "les atomes sont détruits", "seul l'état physique change"], bonne: 0,
+            explication: "Les réactifs sont consommés et de nouvelles espèces, les produits, se forment.",
+            pourquoi: [null, "De nouvelles espèces chimiques apparaissent.", "Les atomes ne sont jamais détruits : ils se réarrangent.", "Un changement d'état n'est pas une transformation chimique."] },
+          { question: "Au cours d'une transformation chimique, les atomes…", reponses: ["se conservent et se réarrangent", "disparaissent", "se transforment en d'autres atomes", "deviennent plus nombreux"], bonne: 0,
+            explication: "Les atomes des réactifs se retrouvent tous dans les produits, assemblés autrement.",
+            pourquoi: [null, "Aucun atome ne disparaît.", "Un atome de fer reste un atome de fer (même noyau).", "Le nombre d'atomes de chaque sorte reste le même."] },
+          { question: "Quelle est la masse totale des produits d'une transformation si les réactifs pèsent 12 g en tout ?", reponses: ["12 g", "Moins de 12 g", "Plus de 12 g", "On ne peut pas savoir"], bonne: 0,
+            explication: "La masse se conserve au cours d'une transformation chimique, car les atomes se conservent.",
+            pourquoi: [null, "La masse se conserve, même si un gaz se forme (il faut le compter).", "La masse se conserve : aucun atome n'est ajouté.", "La conservation de la masse permet de répondre."] },
+          { question: "Quel test met en évidence le dioxyde de carbone ?", reponses: ["L'eau de chaux se trouble", "Une flamme fait une petite détonation", "Une bûchette incandescente se rallume", "Le sulfate de cuivre anhydre bleuit"], bonne: 0,
+            explication: "Le dioxyde de carbone trouble l'eau de chaux.",
+            pourquoi: [null, "La détonation est le test du dihydrogène.", "La bûchette qui se rallume est le test du dioxygène.", "Le sulfate de cuivre anhydre met en évidence l'eau."] },
+          { question: "Avec la soude, une solution donne un précipité vert. Elle contient des ions…", reponses: ["fer II Fe²⁺", "cuivre II Cu²⁺", "fer III Fe³⁺", "chlorure Cl⁻"], bonne: 0,
+            explication: "D'après la banque de tests : soude + précipité vert → ions fer II Fe²⁺.",
+            pourquoi: [null, "Avec les ions cuivre II, le précipité est bleu.", "Avec les ions fer III, le précipité est rouille.", "Les ions chlorure se testent avec le nitrate d'argent."] }
+        ]
+      },
+      {
+        id: "relier", type: "relier", titre: "Relier les morceaux de phrases", desc: "Tracer un trait entre le début et la fin", n: 5,
+        paires: [
+          ["L'ion H⁺…", "…est l'ion hydrogène."],
+          ["L'ion HO⁻…", "…est l'ion hydroxyde."],
+          ["La molécule H₂O…", "…est la molécule d'eau."],
+          ["La molécule H₂…", "…est la molécule de dihydrogène."],
+          ["Les réactifs…", "…disparaissent pendant la transformation."],
+          ["Les produits…", "…apparaissent pendant la transformation."],
+          ["Au cours d'une transformation, la masse…", "…se conserve."],
+          ["Une solution ionique…", "…est électriquement neutre."],
+          ["L'eau de chaux…", "…se trouble avec le dioxyde de carbone."]
+        ]
+      },
+      {
+        id: "croises", type: "croises", titre: "Mots croisés de la chimie", desc: "Une nouvelle grille à chaque partie", n: 7,
+        mots: [
+          { mot: "ION",       indice: "Atome qui a gagné ou perdu des électrons." },
+          { mot: "REACTIF",   indice: "Espèce qui disparaît pendant une transformation." },
+          { mot: "PRODUIT",   indice: "Espèce qui apparaît pendant une transformation." },
+          { mot: "MOLECULE",  indice: "Assemblage d'atomes liés, sans charge." },
+          { mot: "HYDROXYDE", indice: "Nom de l'ion HO⁻." },
+          { mot: "HYDROGENE", indice: "Nom de l'ion H⁺." },
+          { mot: "CHLORURE",  indice: "Nom de l'ion Cl⁻." },
+          { mot: "PRECIPITE", indice: "Solide qui se forme pendant un test." },
+          { mot: "SOUDE",     indice: "Réactif qui donne un précipité vert avec Fe²⁺." },
+          { mot: "MASSE",     indice: "Elle se conserve pendant une transformation." },
+          { mot: "ATOME",     indice: "Il se conserve et se réarrange pendant une transformation." },
+          { mot: "FER",       indice: "Métal de symbole Fe." },
+          { mot: "ZINC",      indice: "Métal de symbole Zn." }
+        ]
+      }
+    ]
+  },
+
+  // ======================== 2. COURS ========================
+  cours: {
+    competences: [
+      "Je mesure le pH d'une solution et je dis si elle est acide, neutre ou basique.",
+      "J'associe le caractère acide ou basique aux ions H⁺ et HO⁻.",
+      "Je connais les dangers des solutions acides et basiques et l'effet d'une dilution sur le pH.",
+      "J'exploite l'équation d'une réaction d'un acide (avec une base ou un métal) et j'identifie les produits par des tests."
+    ],
+    blocs: [
+      { t: "h", texte: "1. Le pH d'une solution" },
+      { t: "p", texte: "Le jus de citron pique la langue ; le déboucheur dissout les cheveux qui bouchent un lavabo. Ces deux liquides ont des propriétés opposées : le premier est <strong>acide</strong>, le second est <strong>basique</strong>. Pour le savoir, on mesure leur <strong>pH</strong>." },
+      { t: "p", def: true, texte: "Le <strong>pH</strong> est un nombre <strong>sans unité</strong>, compris entre <strong>0 et 14</strong>. Il indique si une solution aqueuse est <strong>acide</strong>, <strong>neutre</strong> ou <strong>basique</strong>." },
+      { t: "p", rel: true, texte: "", items: ["pH <strong>inférieur à 7</strong> : la solution est <strong>acide</strong>", "pH <strong>égal à 7</strong> : la solution est <strong>neutre</strong>", "pH <strong>supérieur à 7</strong> : la solution est <strong>basique</strong>"] },
+      { t: "fig", html: ATOMES.figEchelle() },
+      { t: "p", texte: "Plus le pH est <strong>petit</strong>, plus la solution est <strong>acide</strong>. Plus le pH est <strong>grand</strong>, plus la solution est <strong>basique</strong>." },
+      { t: "exemple", type: "qcm", competence: 1, variantes: ATOMES.qNature([1.5, 3, 6.5, 7, 8.2, 11]) },
+      { t: "sh", texte: "Mesurer le pH" },
+      { t: "p", texte: "Avec du <strong>papier pH</strong> : on dépose une goutte de solution sur le papier avec un <strong>agitateur en verre</strong>, puis on compare la couleur obtenue avec le <strong>nuancier</strong>. On obtient une <strong>estimation</strong> du pH (une valeur entière)." },
+      { t: "p", texte: "Avec un <strong>pH-mètre</strong> : on plonge la sonde dans la solution et on lit la valeur affichée. La mesure est <strong>plus précise</strong>." },
+      { t: "anim", monter: (el) => ATOMES.animPH(el) },
+      { t: "methode", titre: "Exemple : lire un papier pH", items: [
+        "On dépose une goutte de vinaigre sur le papier pH avec l'agitateur.",
+        "La tache devient orange. Sur le nuancier, cette couleur est celle de la case 3.",
+        "pH ≈ 3 : c'est inférieur à 7.",
+        "<span class=\"phr\">Phrase réponse :</span> le vinaigre a un pH d'environ 3 ; c'est une solution acide."
+      ] },
+      { t: "p", texte: "Un <strong>indicateur coloré</strong>, comme le rouge de phénol utilisé pour l'eau des piscines, change de couleur selon le pH. Il indique seulement un <strong>domaine</strong> de pH :" },
+      { t: "fig", html: ATOMES.figRouge() },
+      { t: "exemple", type: "qcm", competence: 1, variantes: [ATOMES.genPapier(), ATOMES.genPapier(), ATOMES.genPapier()].concat(ATOMES.qPlus(4)) },
+      { t: "exemple", type: "vraifaux", competence: 1, variantes: [
+        { affirmation: "Une solution de pH 4 est acide.", vrai: true, explication: "4 est inférieur à 7." },
+        { affirmation: "Une solution de pH 9 est plus acide qu'une solution de pH 3.", vrai: false, explication: "Plus le pH est petit, plus la solution est acide : c'est la solution de pH 3." },
+        { affirmation: "Pour mesurer le pH avec du papier pH, on trempe la bande de papier dans la solution.", vrai: false, explication: "On dépose une goutte de solution sur le papier avec un agitateur en verre." },
+        { affirmation: "Le pH-mètre donne une valeur plus précise que le papier pH.", vrai: true, explication: "Le papier pH donne une estimation, le pH-mètre une valeur avec une décimale." },
+        { affirmation: "Le pH s'exprime en grammes.", vrai: false, explication: "Le pH est un nombre sans unité, compris entre 0 et 14." }
+      ] },
+
+      { t: "h", texte: "2. Les ions H⁺ et HO⁻" },
+      { t: "p", texte: "Toute solution aqueuse contient des <strong>ions hydrogène H⁺</strong> et des <strong>ions hydroxyde HO⁻</strong>. C'est leur nombre qui décide si la solution est acide ou basique." },
+      { t: "p", rel: true, texte: "Une solution <strong>acide</strong> contient <strong>plus d'ions H⁺</strong> que d'ions HO⁻. Une solution <strong>basique</strong> contient <strong>plus d'ions HO⁻</strong> que d'ions H⁺. Une solution <strong>neutre</strong> en contient <strong>autant</strong>." },
+      { t: "fig", html: ATOMES.figIonsPH() },
+      { t: "p", texte: "Plus une solution contient d'ions H⁺, plus elle est acide et plus son pH est <strong>petit</strong>." },
+      { t: "methode", titre: "Exemple : l'acide chlorhydrique et la soude", items: [
+        "L'acide chlorhydrique s'écrit (H⁺ + Cl⁻) : il contient beaucoup d'ions H⁺. Son pH est inférieur à 7 : il est acide.",
+        "La soude (hydroxyde de sodium) s'écrit (Na⁺ + HO⁻) : elle contient beaucoup d'ions HO⁻. Son pH est supérieur à 7 : elle est basique.",
+        "<span class=\"phr\">Phrase réponse :</span> l'acide chlorhydrique est acide car il contient plus d'ions H⁺ que d'ions HO⁻ ; la soude est basique car elle contient plus d'ions HO⁻ que d'ions H⁺."
+      ] },
+      { t: "exemple", type: "qcm", competence: 2, variantes: ATOMES.qIonsPH([2, 5.5, 7, 9, 12.5]) },
+      { t: "exemple", type: "qcm", competence: 2, variantes: [
+        { question: "Quel ion est en plus grand nombre dans une solution acide ?", reponses: ["L'ion hydrogène H⁺", "L'ion hydroxyde HO⁻", "L'ion chlorure Cl⁻", "L'ion sodium Na⁺"], bonne: 0,
+          explication: "Une solution acide contient plus d'ions H⁺ que d'ions HO⁻.",
+          pourquoi: [null, "Les ions HO⁻ dominent dans une solution basique.", "L'ion chlorure n'est pas présent dans toutes les solutions acides (le vinaigre n'en contient pas).", "L'ion sodium ne rend pas une solution acide."] },
+        { question: "La soude (Na⁺ + HO⁻) est une solution…", reponses: ["basique", "acide", "neutre", "sans ions"], bonne: 0,
+          explication: "Elle contient beaucoup d'ions hydroxyde HO⁻ : elle est basique (pH > 7).",
+          pourquoi: [null, "Une solution acide contient surtout des ions H⁺.", "Elle contient plus d'ions HO⁻ que d'ions H⁺.", "Les parenthèses indiquent les ions qu'elle contient."] },
+        { question: "Une solution contient autant d'ions H⁺ que d'ions HO⁻. Quel est son pH ?", reponses: ["7", "0", "14", "2"], bonne: 0,
+          explication: "Autant d'ions H⁺ que d'ions HO⁻ : la solution est neutre, pH = 7.",
+          pourquoi: [null, "pH = 0 : solution très acide, avec beaucoup plus d'ions H⁺.", "pH = 14 : solution très basique, avec beaucoup plus d'ions HO⁻.", "pH = 2 : solution acide."] },
+        { question: "On compare deux solutions acides. Celle qui a le pH le plus petit contient…", reponses: ["le plus d'ions H⁺", "le moins d'ions H⁺", "le plus d'ions HO⁻", "aucun ion H⁺"], bonne: 0,
+          explication: "Plus il y a d'ions H⁺, plus la solution est acide et plus son pH est petit.",
+          pourquoi: [null, "Moins d'ions H⁺ : la solution serait moins acide, son pH plus grand.", "Plus d'ions HO⁻ rendrait la solution moins acide.", "Une solution acide contient toujours des ions H⁺."] }
+      ] },
+
+      { t: "h", texte: "3. Dangers et dilution" },
+      { t: "p", texte: "Les solutions <strong>très acides</strong> (pH proche de 0) et <strong>très basiques</strong> (pH proche de 14) sont <strong>corrosives</strong> : elles attaquent la peau, les yeux et certains matériaux. Leur étiquette porte ce pictogramme :" },
+      { t: "fig", html: ATOMES.figCorrosif() },
+      { t: "p", rel: true, texte: "Pour manipuler un acide ou une base : porter une <strong>blouse</strong>, des <strong>lunettes</strong> et des <strong>gants</strong>. Ne jamais goûter, ni sentir de près, ni mélanger des produits ménagers." },
+      { t: "sh", texte: "Diluer une solution" },
+      { t: "p", def: true, texte: "<strong>Diluer</strong> une solution, c'est lui <strong>ajouter de l'eau</strong>. La solution diluée est moins concentrée, donc <strong>moins dangereuse</strong>." },
+      { t: "p", rel: true, texte: "Quand on dilue une solution <strong>acide</strong>, son pH <strong>augmente</strong> et se rapproche de 7. Quand on dilue une solution <strong>basique</strong>, son pH <strong>diminue</strong> et se rapproche de 7. Le pH ne <strong>dépasse jamais 7</strong>." },
+      { t: "fig", html: ATOMES.figDilution() },
+      { t: "p", texte: "Pour diluer un acide concentré, on verse toujours l'<strong>acide dans l'eau</strong>, jamais l'eau dans l'acide : le mélange chauffe et pourrait projeter de l'acide." },
+      { t: "exemple", type: "qcm", competence: 3, variantes: ATOMES.qDilution() },
+      { t: "exemple", type: "vraifaux", competence: 3, variantes: [
+        { affirmation: "Une solution de pH 1 peut être corrosive.", vrai: true, explication: "Les solutions très acides (pH proche de 0) sont corrosives." },
+        { affirmation: "En ajoutant beaucoup d'eau à du vinaigre, on obtient une solution basique.", vrai: false, explication: "En diluant, le pH se rapproche de 7 sans le dépasser : la solution reste acide." },
+        { affirmation: "Pour diluer un acide concentré, on verse l'acide dans l'eau.", vrai: true, explication: "Jamais l'inverse : le mélange chauffe et pourrait projeter de l'acide." },
+        { affirmation: "Une solution basique ne présente aucun danger.", vrai: false, explication: "Une solution très basique, comme le déboucheur, est corrosive." },
+        { affirmation: "Diluer une solution de soude fait diminuer son pH.", vrai: true, explication: "La soude est basique : en la diluant, son pH diminue et se rapproche de 7." }
+      ] },
+
+      { t: "h", texte: "4. Les transformations chimiques des acides" },
+      { t: "p", texte: "Rappel : au cours d'une <strong>transformation chimique</strong>, des <strong>réactifs</strong> disparaissent et des <strong>produits</strong> apparaissent. Les atomes ne disparaissent pas : ils se <strong>réarrangent</strong>. L'<strong>équation de la réaction</strong> résume la transformation : réactifs → produits." },
+      { t: "sh", texte: "Un acide et une base" },
+      { t: "p", texte: "Quand on mélange une solution acide et une solution basique, les ions H⁺ et les ions HO⁻ réagissent ensemble : ils forment des <strong>molécules d'eau</strong>." },
+      { t: "p", rel: true, texte: "Équation de la réaction entre un acide et une base : <strong>H⁺ + HO⁻ → H₂O</strong>." },
+      { t: "fig", html: ATOMES.figNeutralisation() },
+      { t: "p", texte: "Des ions H⁺ et HO⁻ disparaissent : le pH du mélange se rapproche de 7. Le mélange <strong>chauffe</strong> : on mélange peu à peu, avec lunettes et gants." },
+      { t: "sh", texte: "Un acide et un métal" },
+      { t: "p", texte: "L'acide chlorhydrique (H⁺ + Cl⁻) attaque certains métaux, comme le <strong>fer</strong>, le <strong>zinc</strong> ou l'<strong>aluminium</strong>." },
+      { t: "anim", monter: (el) => ATOMES.animAcideMetal(el) },
+      { t: "p", texte: "Pour identifier les produits, on utilise une <strong>banque de tests</strong> :" },
+      { t: "tableau", compact: true, entetes: ["Espèce cherchée", "Test", "Test positif si…"], lignes: [
+        ["Dihydrogène H₂", "Approcher une flamme", "petite détonation"], ["Dioxygène O₂", "Approcher une bûchette incandescente", "elle se rallume"],
+        ["Dioxyde de carbone CO₂", "Eau de chaux", "elle se trouble"], ["Ion fer II Fe²⁺", "Quelques gouttes de soude", "précipité vert"]] },
+      { t: "p", rel: true, texte: "Équation de la réaction entre le fer et l'acide chlorhydrique : <strong>Fe + 2 H⁺ → Fe²⁺ + H₂</strong>. Réactifs : le fer et les ions hydrogène. Produits : les ions fer II et le dihydrogène." },
+      { t: "methode", titre: "Exemple : vérifier que les atomes et les charges se conservent", items: [
+        "Équation : Fe + 2 H⁺ → Fe²⁺ + H₂.",
+        "Atomes de fer : 1 avant (Fe), 1 après (Fe²⁺).",
+        "Atomes d'hydrogène : 2 avant (2 H⁺), 2 après (H₂).",
+        "Charges : 2 charges + avant (2 H⁺), 2 charges + après (Fe²⁺).",
+        "<span class=\"phr\">Phrase réponse :</span> il y a les mêmes atomes et les mêmes charges avant et après : les atomes se sont seulement réarrangés."
+      ] },
+      { t: "p", texte: "Le zinc réagit de la même façon : Zn + 2 H⁺ → Zn²⁺ + H₂. En revanche, le <strong>cuivre</strong> et l'<strong>or</strong> ne sont pas attaqués par l'acide chlorhydrique : c'est pourquoi un bijou en or garde son éclat très longtemps." },
+      { t: "p", texte: "Conséquence pour la sécurité : on ne conserve pas un acide dans un récipient en fer, en zinc ou en aluminium. Il serait attaqué et il se formerait du dihydrogène, un gaz qui peut exploser." },
+      { t: "exemple", type: "qcm", competence: 4, variantes: [
+        { question: "Dans l'équation Fe + 2 H⁺ → Fe²⁺ + H₂, quels sont les réactifs ?", reponses: ["Le fer et les ions hydrogène", "Les ions fer II et le dihydrogène", "Le fer et le dihydrogène", "Les ions chlorure"], bonne: 0,
+          explication: "Les réactifs sont écrits à gauche de la flèche : Fe et H⁺.",
+          pourquoi: [null, "Ce sont les produits, à droite de la flèche.", "Le dihydrogène est un produit.", "Les ions chlorure ne participent pas à la réaction : ils n'apparaissent pas dans l'équation."] },
+        { question: "Quel gaz se dégage quand l'acide chlorhydrique attaque le fer ?", reponses: ["Le dihydrogène H₂", "Le dioxygène O₂", "Le dioxyde de carbone CO₂", "La vapeur d'eau H₂O"], bonne: 0,
+          explication: "Fe + 2 H⁺ → Fe²⁺ + H₂ : le gaz est du dihydrogène.",
+          pourquoi: [null, "Il n'y a pas d'atome d'oxygène dans les réactifs Fe et H⁺.", "Il n'y a pas d'atome de carbone dans les réactifs.", "Il n'y a pas d'atome d'oxygène dans les réactifs Fe et H⁺."] },
+        { question: "Comment montrer que le gaz formé est du dihydrogène ?", reponses: ["On approche une flamme : petite détonation", "On ajoute de l'eau de chaux : elle se trouble", "On approche une bûchette incandescente : elle se rallume", "On ajoute de la soude : précipité vert"], bonne: 0,
+          explication: "D'après la banque de tests, le dihydrogène produit une petite détonation au contact d'une flamme.",
+          pourquoi: [null, "C'est le test du dioxyde de carbone.", "C'est le test du dioxygène.", "C'est le test des ions fer II, pas d'un gaz."] },
+        { question: "Dans l'équation H⁺ + HO⁻ → H₂O, quel est le produit ?", reponses: ["L'eau H₂O", "L'ion hydrogène H⁺", "L'ion hydroxyde HO⁻", "Le dihydrogène H₂"], bonne: 0,
+          explication: "Le produit est à droite de la flèche : la molécule d'eau.",
+          pourquoi: [null, "H⁺ est un réactif : il est à gauche de la flèche.", "HO⁻ est un réactif : il est à gauche de la flèche.", "Le dihydrogène n'apparaît pas dans cette équation."] },
+        { question: "Après la réaction entre le fer et l'acide chlorhydrique, on ajoute de la soude dans la solution. On observe…", reponses: ["un précipité vert", "un précipité bleu", "un précipité rouille", "rien du tout"], bonne: 0,
+          explication: "La solution contient des ions fer II Fe²⁺ : précipité vert avec la soude.",
+          pourquoi: [null, "Le précipité bleu correspond aux ions cuivre II.", "Le précipité rouille correspond aux ions fer III ; ici, ce sont des ions fer II.", "Des ions Fe²⁺ se sont formés : le test est positif."] }
+      ] },
+      { t: "exemple", type: "qcm", competence: 4, variantes: [
+        { question: "Pendant la réaction entre le fer et l'acide chlorhydrique, le pH de la solution…", reponses: ["augmente", "diminue", "reste égal", "devient supérieur à 7 tout de suite"], bonne: 0,
+          explication: "Les ions H⁺ sont consommés : la solution devient moins acide, son pH augmente.",
+          pourquoi: [null, "Il faudrait que le nombre d'ions H⁺ augmente.", "Des ions H⁺ disparaissent : le pH change.", "Le pH augmente peu à peu ; la solution reste en général acide."] },
+        { question: "Fe + 2 H⁺ → Fe²⁺ + H₂. Combien d'atomes d'hydrogène y a-t-il de chaque côté de la flèche ?", reponses: ["2 de chaque côté", "1 à gauche, 2 à droite", "2 à gauche, 1 à droite", "Aucun à droite"], bonne: 0,
+          explication: "À gauche : 2 H⁺, soit 2 atomes. À droite : H₂, soit 2 atomes. Les atomes se conservent.",
+          pourquoi: [null, "Le 2 devant H⁺ indique 2 ions H⁺, donc 2 atomes d'hydrogène.", "Le petit 2 de H₂ indique 2 atomes d'hydrogène.", "La molécule H₂ contient 2 atomes d'hydrogène."] },
+        { question: "Lequel de ces métaux n'est pas attaqué par l'acide chlorhydrique ?", reponses: ["L'or", "Le fer", "Le zinc", "L'aluminium"], bonne: 0,
+          explication: "L'or et le cuivre ne réagissent pas avec l'acide chlorhydrique.",
+          pourquoi: [null, "Le fer est attaqué : Fe + 2 H⁺ → Fe²⁺ + H₂.", "Le zinc est attaqué : Zn + 2 H⁺ → Zn²⁺ + H₂.", "L'aluminium est attaqué par l'acide chlorhydrique."] },
+        { question: "Pourquoi ne conserve-t-on pas un acide dans un bidon en fer ?", reponses: ["L'acide attaquerait le fer et produirait du dihydrogène", "Le fer rendrait l'acide plus concentré", "Le fer se transformerait en or", "L'acide deviendrait basique au contact de l'air"], bonne: 0,
+          explication: "Fe + 2 H⁺ → Fe²⁺ + H₂ : le bidon serait rongé et il se formerait un gaz qui peut exploser.",
+          pourquoi: [null, "La réaction consomme des ions H⁺ : l'acide devient moins concentré.", "Un atome de fer reste un atome de fer : il devient un ion Fe²⁺.", "L'air ne rend pas un acide basique."] }
+      ] },
+
+      { t: "retenir", items: [
+        "Le pH (sans unité, de 0 à 14) se mesure avec du papier pH ou un pH-mètre. pH < 7 : acide ; pH = 7 : neutre ; pH > 7 : basique.",
+        "Une solution acide contient plus d'ions H⁺ que d'ions HO⁻ ; une solution basique, plus d'ions HO⁻ que d'ions H⁺.",
+        "Les solutions très acides ou très basiques sont corrosives : blouse, lunettes, gants. Diluer rapproche le pH de 7.",
+        "Acide + base : H⁺ + HO⁻ → H₂O. Acide + fer : Fe + 2 H⁺ → Fe²⁺ + H₂ (détonation avec une flamme, précipité vert avec la soude).",
+        "Au cours d'une transformation chimique, les atomes et les charges se conservent : ils se réarrangent."
+      ] },
+
+      { t: "h", texte: "Vocabulaire" },
+      { t: "exemple", type: "relier", n: 4, paires: [
+        ["pH", "Nombre sans unité, de 0 à 14."],
+        ["Solution acide", "Son pH est inférieur à 7."],
+        ["Solution basique", "Son pH est supérieur à 7."],
+        ["Solution neutre", "Son pH est égal à 7."],
+        ["Diluer", "Ajouter de l'eau à une solution."],
+        ["Corrosif", "Qui attaque la peau, les yeux et certains matériaux."],
+        ["Dihydrogène", "Gaz qui détone au contact d'une flamme."],
+        ["Équation de réaction", "Écriture : réactifs → produits."]
+      ] }
+    ]
+  },
+
+  // ======================== 4. ENTRAÎNEMENT ========================
+  // Dans l'ordre croissant de difficulté. Le dernier est un exercice type brevet.
+  entrainement: [
+    {
+      id: "tri", type: "tri", titre: "Acide ou basique ?", desc: "Trier 8 solutions", n: 8,
+      question: "Cette solution est-elle acide ou basique ?", oui: "Acide", non: "Basique",
+      items: [
+        { source: "Une solution de pH 3", oui: true, pourquoi: "3 est inférieur à 7 : solution acide." },
+        { source: "Une solution de pH 11", oui: false, pourquoi: "11 est supérieur à 7 : solution basique." },
+        { source: "Le jus de citron (pH 2)", oui: true, pourquoi: "pH 2 : inférieur à 7." },
+        { source: "L'eau de Javel (pH 12)", oui: false, pourquoi: "pH 12 : supérieur à 7." },
+        { source: "Le vinaigre (pH 3)", oui: true, pourquoi: "pH 3 : inférieur à 7." },
+        { source: "L'eau savonneuse (pH 10)", oui: false, pourquoi: "pH 10 : supérieur à 7." },
+        { source: "Une solution de pH 6,5", oui: true, pourquoi: "6,5 est inférieur à 7 : solution (un peu) acide." },
+        { source: "Une solution de pH 7,5", oui: false, pourquoi: "7,5 est supérieur à 7 : solution (un peu) basique." },
+        { source: "Une solution qui contient plus d'ions H⁺ que d'ions HO⁻", oui: true, pourquoi: "Plus d'ions H⁺ : solution acide." },
+        { source: "Une solution qui contient plus d'ions HO⁻ que d'ions H⁺", oui: false, pourquoi: "Plus d'ions HO⁻ : solution basique." },
+        { source: "L'acide chlorhydrique (H⁺ + Cl⁻)", oui: true, pourquoi: "Il contient beaucoup d'ions H⁺." },
+        { source: "La soude (Na⁺ + HO⁻)", oui: false, pourquoi: "Elle contient beaucoup d'ions HO⁻." },
+        { source: "Le déboucheur (pH 14)", oui: false, pourquoi: "pH 14 : très basique (et corrosif)." },
+        { source: "L'eau de pluie (pH 6)", oui: true, pourquoi: "pH 6 : légèrement inférieur à 7." }
+      ]
+    },
+    {
+      id: "reactifs", type: "tri", titre: "Réactif ou produit ?", desc: "Trier 8 espèces", n: 8,
+      question: "Dans cette réaction, cette espèce est-elle un réactif ou un produit ?", oui: "Réactif", non: "Produit",
+      items: [
+        { source: "Fe dans Fe + 2 H⁺ → Fe²⁺ + H₂", oui: true, pourquoi: "Le fer est à gauche de la flèche : il est consommé." },
+        { source: "H⁺ dans Fe + 2 H⁺ → Fe²⁺ + H₂", oui: true, pourquoi: "Les ions hydrogène sont à gauche de la flèche : ils sont consommés." },
+        { source: "Fe²⁺ dans Fe + 2 H⁺ → Fe²⁺ + H₂", oui: false, pourquoi: "Les ions fer II sont à droite de la flèche : ils se forment." },
+        { source: "H₂ dans Fe + 2 H⁺ → Fe²⁺ + H₂", oui: false, pourquoi: "Le dihydrogène est à droite de la flèche : il se forme." },
+        { source: "H⁺ dans H⁺ + HO⁻ → H₂O", oui: true, pourquoi: "À gauche de la flèche : il est consommé." },
+        { source: "HO⁻ dans H⁺ + HO⁻ → H₂O", oui: true, pourquoi: "À gauche de la flèche : il est consommé." },
+        { source: "H₂O dans H⁺ + HO⁻ → H₂O", oui: false, pourquoi: "À droite de la flèche : l'eau se forme." },
+        { source: "Zn dans Zn + 2 H⁺ → Zn²⁺ + H₂", oui: true, pourquoi: "Le zinc est à gauche de la flèche : il est consommé." },
+        { source: "Zn²⁺ dans Zn + 2 H⁺ → Zn²⁺ + H₂", oui: false, pourquoi: "Les ions zinc sont à droite de la flèche : ils se forment." },
+        { source: "Le gaz qui détone avec une flamme (fer + acide)", oui: false, pourquoi: "Le dihydrogène apparaît pendant la réaction : c'est un produit." },
+        { source: "Le métal qui disparaît (fer + acide)", oui: true, pourquoi: "Le fer disparaît : c'est un réactif." },
+        { source: "Les ions qui donnent un précipité vert avec la soude (fer + acide)", oui: false, pourquoi: "Les ions fer II se forment : ce sont des produits." }
+      ]
+    },
+    {
+      id: "vf", type: "vraifaux", titre: "Vrai ou faux ?", desc: "8 affirmations sur le chapitre", n: 8,
+      items: [
+        { affirmation: "Une solution de pH 7 est neutre.", vrai: true, explication: "pH = 7 : ni acide ni basique." },
+        { affirmation: "Le pH d'une solution peut valoir 20.", vrai: false, explication: "Le pH est compris entre 0 et 14." },
+        { affirmation: "Une solution de pH 2 est plus acide qu'une solution de pH 5.", vrai: true, explication: "Plus le pH est petit, plus la solution est acide." },
+        { affirmation: "Une solution basique contient plus d'ions HO⁻ que d'ions H⁺.", vrai: true, explication: "C'est ce qui la rend basique." },
+        { affirmation: "Une solution acide ne contient aucun ion HO⁻.", vrai: false, explication: "Elle en contient, mais moins que d'ions H⁺." },
+        { affirmation: "En diluant une solution acide, son pH diminue.", vrai: false, explication: "Il augmente et se rapproche de 7." },
+        { affirmation: "Le mélange d'un acide et d'une base forme de l'eau.", vrai: true, explication: "H⁺ + HO⁻ → H₂O." },
+        { affirmation: "Quand l'acide chlorhydrique attaque le fer, il se forme du dioxygène.", vrai: false, explication: "Il se forme du dihydrogène H₂ : Fe + 2 H⁺ → Fe²⁺ + H₂." },
+        { affirmation: "Pendant la réaction entre le fer et l'acide, le pH augmente.", vrai: true, explication: "Des ions H⁺ sont consommés." },
+        { affirmation: "Au cours d'une transformation chimique, des atomes disparaissent.", vrai: false, explication: "Les atomes se conservent : ils se réarrangent." },
+        { affirmation: "L'or est attaqué par l'acide chlorhydrique.", vrai: false, explication: "L'or et le cuivre ne réagissent pas avec l'acide chlorhydrique." },
+        { affirmation: "Le pictogramme « corrosif » signale un produit qui attaque la peau et les yeux.", vrai: true, explication: "Il faut porter des lunettes et des gants." }
+      ]
+    },
+    { id: "qcm", type: "qcm-tableur", titre: "Défi QCM", desc: "8 questions tirées au hasard", n: 8 },
+    {
+      id: "lecture", type: "qcm", titre: "Lire un pH", desc: "5 lectures : papier pH, indicateur, courbe", n: 5,
+      questions: [].concat(Array.from({ length: 5 }, () => ATOMES.genPapier()), Array.from({ length: 3 }, () => ATOMES.genRouge()),
+        ATOMES.Q_COURBE.map((q) => Object.assign({ figure: () => ATOMES.figCourbe() }, q)))
+    },
+    {
+      id: "ph", type: "qcm", titre: "Acide, neutre ou basique ?", desc: "5 questions sur le pH et les ions", n: 5,
+      questions: [].concat(ATOMES.qNature(), ATOMES.qIonsPH(), ATOMES.qPlus(6), ATOMES.qDilution())
+    },
+    {
+      id: "reactions", type: "qcm", titre: "Les réactions des acides", desc: "5 questions sur les équations et les tests", n: 5,
+      questions: [
+        { question: "Dans l'équation Zn + 2 H⁺ → Zn²⁺ + H₂, quels sont les produits ?", reponses: ["Les ions zinc Zn²⁺ et le dihydrogène H₂", "Le zinc et les ions hydrogène", "Le zinc et le dihydrogène", "Les ions hydrogène seulement"], bonne: 0,
+          explication: "Les produits sont à droite de la flèche.",
+          pourquoi: [null, "Ce sont les réactifs, à gauche de la flèche.", "Le zinc est un réactif.", "Les ions hydrogène sont des réactifs."] },
+        { question: "On verse de l'acide chlorhydrique sur de la poudre de zinc. Quel gaz se dégage ?", reponses: ["Du dihydrogène", "Du dioxygène", "Du dioxyde de carbone", "Du chlore"], bonne: 0,
+          explication: "Zn + 2 H⁺ → Zn²⁺ + H₂ : c'est du dihydrogène, comme avec le fer.",
+          pourquoi: [null, "Il n'y a pas d'oxygène dans les réactifs Zn et H⁺.", "Il n'y a pas de carbone dans les réactifs.", "Les ions chlorure ne participent pas à la réaction."] },
+        { question: "Dans l'équation Fe + 2 H⁺ → Fe²⁺ + H₂, combien de charges + y a-t-il de chaque côté ?", reponses: ["2 de chaque côté", "1 à gauche, 2 à droite", "2 à gauche, aucune à droite", "Aucune"], bonne: 0,
+          explication: "À gauche : 2 ions H⁺, soit 2 charges +. À droite : 1 ion Fe²⁺, soit 2 charges +. Les charges se conservent.",
+          pourquoi: [null, "Le 2 devant H⁺ indique 2 ions, donc 2 charges +.", "L'ion Fe²⁺ porte 2 charges +.", "Les ions H⁺ et Fe²⁺ portent des charges."] },
+        { question: "On mélange de l'acide chlorhydrique et de la soude. Quelle est l'équation de la réaction ?", reponses: ["H⁺ + HO⁻ → H₂O", "Fe + 2 H⁺ → Fe²⁺ + H₂", "H₂O → H⁺ + HO⁻", "Na⁺ + Cl⁻ → H₂O"], bonne: 0,
+          explication: "Les ions H⁺ de l'acide et les ions HO⁻ de la base forment de l'eau.",
+          pourquoi: [null, "C'est la réaction du fer avec un acide.", "Les réactifs sont les ions H⁺ et HO⁻ : ils sont à gauche de la flèche.", "Les ions Na⁺ et Cl⁻ ne contiennent ni hydrogène ni oxygène."] },
+        { question: "On mélange peu à peu de la soude à de l'acide chlorhydrique (pH = 1). Le pH du mélange…", reponses: ["augmente et se rapproche de 7", "diminue", "reste égal à 1", "devient égal à 0"], bonne: 0,
+          explication: "Les ions H⁺ réagissent avec les ions HO⁻ : il en reste de moins en moins, le pH augmente.",
+          pourquoi: [null, "Il faudrait ajouter des ions H⁺.", "Des ions H⁺ disparaissent : le pH change.", "Le mélange devient moins acide, pas plus."] },
+        { question: "Un élève approche une flamme d'un tube où l'acide attaque du fer. Il entend une petite détonation. Il conclut que le gaz est…", reponses: ["du dihydrogène", "du dioxygène", "du dioxyde de carbone", "de la vapeur d'eau"], bonne: 0,
+          explication: "D'après la banque de tests : détonation avec une flamme → dihydrogène.",
+          pourquoi: [null, "Le dioxygène rallume une bûchette incandescente.", "Le dioxyde de carbone trouble l'eau de chaux.", "La vapeur d'eau ne détone pas."] },
+        { question: "Quelle précaution prendre pour diluer de l'acide concentré ?", reponses: ["Verser l'acide dans l'eau, avec lunettes et gants", "Verser l'eau dans l'acide, sans protection", "Goûter pour vérifier la dilution", "Chauffer l'acide avant"], bonne: 0,
+          explication: "On verse toujours l'acide dans l'eau, jamais l'inverse : le mélange chauffe.",
+          pourquoi: [null, "Verser l'eau dans l'acide peut provoquer des projections d'acide.", "On ne goûte jamais un produit chimique.", "Chauffer un acide le rend plus dangereux."] },
+        { question: "Après la réaction entre le zinc et l'acide chlorhydrique, la solution contient des ions…", reponses: ["Zn²⁺ et Cl⁻", "Fe²⁺ et Cl⁻", "Zn²⁺ seulement", "Na⁺ et Cl⁻"], bonne: 0,
+          explication: "Des ions Zn²⁺ se forment ; les ions chlorure Cl⁻, qui ne réagissent pas, sont toujours là.",
+          pourquoi: [null, "Il n'y a pas de fer dans cette expérience.", "La solution reste neutre : les ions Cl⁻ sont toujours présents.", "Il n'y a pas d'ions sodium dans cette expérience."] }
+      ]
+    },
+    {
+      // Adapté du sujet de sciences du brevet 2024, série générale, Métropole-Antilles-Guyane (sujet 24GENSCMEAG1), partie physique-chimie
+      // « le centre aquatique » : mêmes données (pH conseillé 7,2 à 7,8 ; inconvénients d'un pH trop bas ou trop haut ; rouge de phénol
+      // C₁₉H₁₄O₅S et ses domaines ; Fe + 2 H⁺ → Fe²⁺ + H₂ ; banque de tests flamme, bûchette, soude), questions reprises (inconvénients,
+      // eau rouge, atomes de la formule, molécule/atome/ion, observations P1 à P4) et complétées (conformité, calcul, rédaction).
+      // La partie mécanique (plongeon) n'est pas reprise. Contexte transposé dans une piscine de Guyane.
+      id: "brevet", type: "brevet", titre: "Exercice type brevet", desc: "L'eau de la piscine (d'après le brevet 2024)",
+      documents: [
+        { titre: "Document 1 : le pH de l'eau d'une piscine", texte: "Le technicien d'une piscine de Guyane contrôle l'eau chaque matin. Son pH doit être compris entre 7,2 et 7,8. Si le pH est supérieur à 8, le chlore désinfecte moins bien l'eau et du calcaire se dépose. Si le pH est inférieur à 7, l'eau irrite la peau et les yeux des nageurs, et les équipements en métal s'usent plus vite." },
+        { titre: "Document 2 : le rouge de phénol", texte: "Pour contrôler le pH, le technicien ajoute quelques gouttes de rouge de phénol, de formule C₁₉H₁₄O₅S, à un échantillon d'eau. Sa couleur dépend du pH :",
+          figure: ATOMES.figRouge() },
+        { titre: "Document 3 : le fer et les ions H⁺", texte: "Les équipements des piscines sont en acier inoxydable, car le fer est fragilisé par une réaction chimique avec les ions hydrogène H⁺ de l'eau. Équation de la réaction : Fe + 2 H⁺ → Fe²⁺ + H₂." },
+        { titre: "Document 4 : banque de tests", texte: "Quelques tests caractéristiques.",
+          figure: `<div class="table-wrap"><table class="mes-table tbl-serre"><thead><tr><th>Test</th><th>Espèce mise en évidence</th><th>Observation</th></tr></thead><tbody>
+            <tr><td>Approcher une flamme</td><td>Dihydrogène H₂</td><td>Petite détonation</td></tr><tr><td>Approcher une bûchette incandescente</td><td>Dioxygène O₂</td><td>Elle se rallume</td></tr>
+            <tr><td>Ajouter de la soude</td><td>Ion fer II Fe²⁺</td><td>Précipité vert</td></tr><tr><td>Ajouter de la soude</td><td>Ion fer III Fe³⁺</td><td>Précipité rouille</td></tr></tbody></table></div>` }
+      ],
+      questions: [
+        { type: "multi", points: 2, consigne: "À l'aide du document 1, cocher les deux inconvénients d'une eau de piscine de pH inférieur à 7.",
+          options: [["L'eau irrite la peau et les yeux des nageurs", true], ["Les équipements en métal s'usent plus vite", true], ["Le chlore désinfecte moins bien l'eau", false], ["Du calcaire se dépose", false]],
+          explication: "D'après le document 1, un pH inférieur à 7 irrite la peau et les yeux et use les équipements en métal. Les deux autres inconvénients concernent un pH supérieur à 8." },
+        { type: "qcm", points: 2, question: "Avec le rouge de phénol, l'échantillon d'eau devient rouge. Cette eau est…",
+          reponses: ["basique, car son pH est compris entre 8,4 et 14", "acide, car son pH est compris entre 0 et 6,6", "neutre, car son pH vaut 7", "acide, car le rouge est la couleur des acides"], bonne: 0,
+          explication: "Couleur rouge : pH entre 8,4 et 14, donc supérieur à 7. L'eau est basique.",
+          pourquoi: [null, "Le domaine de 0 à 6,6 correspond à la couleur jaune.", "Le domaine de la couleur rouge commence à 8,4.", "Il faut lire le tableau du document 2 : rouge correspond à un pH de 8,4 à 14."] },
+        { type: "qcm", points: 1, question: "Le pH de cette eau est-il conforme (document 1) ?",
+          reponses: ["Non : il est supérieur à 8,4, donc trop élevé", "Oui : il est compris entre 7,2 et 7,8", "Non : il est inférieur à 7", "On ne peut pas savoir"], bonne: 0,
+          explication: "Le pH doit être entre 7,2 et 7,8 ; ici il est d'au moins 8,4 : il est trop élevé.",
+          pourquoi: [null, "Avec ce pH, le rouge de phénol serait orange, pas rouge.", "Couleur rouge : le pH est supérieur à 8,4.", "Le domaine de pH de la couleur rouge suffit pour conclure."] },
+        { type: "qcm", points: 1, question: "La formule du rouge de phénol est C₁₉H₁₄O₅S. S est le symbole du soufre. Quels sont les autres atomes de cette molécule ?",
+          reponses: ["Carbone, hydrogène et oxygène", "Calcium, hélium et or", "Chlore, hydrogène et oxygène", "Carbone, hydrogène et sodium"], bonne: 0,
+          explication: "C : carbone ; H : hydrogène ; O : oxygène. Les petits chiffres comptent les atomes.",
+          pourquoi: [null, "Le calcium est Ca, l'hélium He et l'or Au.", "Le chlore est Cl, pas C.", "Le sodium est Na, pas O."] },
+        { type: "qcm", points: 1, question: "Dans l'équation Fe + 2 H⁺ → Fe²⁺ + H₂ (document 3), quelle formule est celle d'une molécule ?",
+          reponses: ["H₂", "Fe", "H⁺", "Fe²⁺"], bonne: 0,
+          explication: "H₂ : deux atomes liés, sans charge. Fe est un atome ; H⁺ et Fe²⁺ sont des ions.",
+          pourquoi: [null, "Fe est un atome seul.", "H⁺ porte une charge : c'est un ion.", "Fe²⁺ porte une charge : c'est un ion."] },
+        { type: "multi", points: 1, consigne: "Dans l'équation du document 3, cocher les formules qui représentent des ions.",
+          options: [["H⁺", true], ["Fe²⁺", true], ["Fe", false], ["H₂", false]],
+          explication: "Un ion porte une charge écrite en haut à droite : H⁺ et Fe²⁺. Fe est un atome, H₂ une molécule." },
+        { type: "multi", points: 2, consigne: "À l'aide des documents 3 et 4, cocher les observations attendues quand le fer réagit avec une solution acide.",
+          options: [["Avec la soude, la solution donne un précipité vert", true], ["Avec la soude, la solution donne un précipité rouille", false], ["Le gaz formé produit une petite détonation avec une flamme", true], ["Le gaz formé rallume une bûchette incandescente", false]],
+          explication: "Les produits sont des ions fer II Fe²⁺ (précipité vert avec la soude) et du dihydrogène H₂ (petite détonation avec une flamme)." },
+        { type: "calcul", points: 1, contexte: { gen: () => { const n = [10, 20, 50][Math.floor(Math.random() * 3)]; return { texte: `D'après l'équation Fe + 2 H⁺ → Fe²⁺ + H₂, chaque atome de fer réagit avec 2 ions H⁺. Calculer le nombre d'ions H⁺ consommés quand ${n} atomes de fer réagissent.`, rep: 2 * n, u: "ions H⁺", repTxt: String(2 * n),
+            phrase: `${2 * n} ions H⁺ sont consommés.`,
+            corr: `1 atome de fer pour 2 ions H⁺, donc ${n} × 2 = ${2 * n} ions H⁺.` }; } } },
+        { type: "redaction", points: 2, consigne: "Rédiger quelques phrases pour expliquer pourquoi une eau trop acide abîme les équipements en fer, et ce que devient le pH de cette eau pendant la réaction.",
+          criteres: ["J'ai expliqué que les ions H⁺ de l'eau acide réagissent avec le fer (Fe + 2 H⁺ → Fe²⁺ + H₂) : le fer disparaît peu à peu.", "J'ai dit que des ions H⁺ sont consommés, donc que le pH de l'eau augmente."],
+          elements: "Une eau acide contient beaucoup d'ions hydrogène H⁺. Ils réagissent avec le fer selon l'équation Fe + 2 H⁺ → Fe²⁺ + H₂ : le fer se transforme en ions fer II et l'équipement s'use. Pendant la réaction, des ions H⁺ sont consommés : l'eau devient moins acide et son pH augmente." }
       ]
     }
   ]
@@ -15005,6 +15761,446 @@ const QUESTIONS = [
    "Avec les ions cuivre II, le précipité serait bleu.",
    "Le test au nitrate d'argent met en évidence des ions chlorure, pas des ions sulfate."
   ]
+ },
+ {
+  "id": "C6-01",
+  "chapitre": "Acides, bases et transformations chimiques",
+  "notion": "pH",
+  "difficulte": 1,
+  "question": "Quelles sont les valeurs possibles du pH d'une solution aqueuse ?",
+  "reponses": [
+   "De 0 à 14",
+   "De 0 à 100",
+   "De 1 à 10",
+   "De −7 à 7"
+  ],
+  "bonne": 0,
+  "explication": "Le pH est un nombre sans unité compris entre 0 et 14.",
+  "guyane": false,
+  "pourquoi": [
+   null,
+   "Le pH ne dépasse pas 14.",
+   "Le pH peut valoir 0, 11, 12, 13 ou 14.",
+   "Le pH n'est jamais négatif."
+  ]
+ },
+ {
+  "id": "C6-02",
+  "chapitre": "Acides, bases et transformations chimiques",
+  "notion": "pH",
+  "difficulte": 1,
+  "question": "Une solution de pH 3 est…",
+  "reponses": [
+   "acide",
+   "basique",
+   "neutre",
+   "corrosive dans tous les cas"
+  ],
+  "bonne": 0,
+  "explication": "3 est inférieur à 7 : la solution est acide.",
+  "guyane": false,
+  "pourquoi": [
+   null,
+   "Une solution basique a un pH supérieur à 7.",
+   "Une solution neutre a un pH égal à 7.",
+   "Seules les solutions très acides ou très basiques sont corrosives."
+  ]
+ },
+ {
+  "id": "C6-03",
+  "chapitre": "Acides, bases et transformations chimiques",
+  "notion": "pH",
+  "difficulte": 1,
+  "question": "Une solution de pH 12 est…",
+  "reponses": [
+   "basique",
+   "acide",
+   "neutre",
+   "de l'eau pure"
+  ],
+  "bonne": 0,
+  "explication": "12 est supérieur à 7 : la solution est basique.",
+  "guyane": false,
+  "pourquoi": [
+   null,
+   "Une solution acide a un pH inférieur à 7.",
+   "Une solution neutre a un pH égal à 7.",
+   "L'eau pure a un pH égal à 7."
+  ]
+ },
+ {
+  "id": "C6-04",
+  "chapitre": "Acides, bases et transformations chimiques",
+  "notion": "pH",
+  "difficulte": 1,
+  "question": "Quel est le pH de l'eau pure ?",
+  "reponses": [
+   "7",
+   "0",
+   "14",
+   "1"
+  ],
+  "bonne": 0,
+  "explication": "L'eau pure est neutre : pH = 7.",
+  "guyane": false,
+  "pourquoi": [
+   null,
+   "pH 0 : solution très acide.",
+   "pH 14 : solution très basique.",
+   "pH 1 : solution très acide."
+  ]
+ },
+ {
+  "id": "C6-05",
+  "chapitre": "Acides, bases et transformations chimiques",
+  "notion": "pH",
+  "difficulte": 2,
+  "question": "Laquelle de ces solutions est la plus acide ?",
+  "reponses": [
+   "Une solution de pH 2",
+   "Une solution de pH 5",
+   "Une solution de pH 7",
+   "Une solution de pH 11"
+  ],
+  "bonne": 0,
+  "explication": "Plus le pH est petit, plus la solution est acide.",
+  "guyane": false,
+  "pourquoi": [
+   null,
+   "pH 5 : moins acide que pH 2.",
+   "pH 7 : solution neutre.",
+   "pH 11 : solution basique."
+  ]
+ },
+ {
+  "id": "C6-06",
+  "chapitre": "Acides, bases et transformations chimiques",
+  "notion": "pH",
+  "difficulte": 1,
+  "question": "Comment utilise-t-on le papier pH ?",
+  "reponses": [
+   "On y dépose une goutte de solution avec un agitateur",
+   "On trempe la bande de papier dans le bécher",
+   "On le chauffe au-dessus de la solution",
+   "On le plonge dans l'eau pure d'abord"
+  ],
+  "bonne": 0,
+  "explication": "On dépose une goutte avec un agitateur, puis on compare la couleur au nuancier.",
+  "guyane": false,
+  "pourquoi": [
+   null,
+   "On ne trempe pas le papier : on dépose une goutte.",
+   "Chauffer ne permet pas de mesurer le pH.",
+   "L'eau pure modifierait la mesure."
+  ]
+ },
+ {
+  "id": "C6-07",
+  "chapitre": "Acides, bases et transformations chimiques",
+  "notion": "pH",
+  "difficulte": 2,
+  "question": "Quel appareil donne la mesure du pH la plus précise ?",
+  "reponses": [
+   "Le pH-mètre",
+   "Le papier pH",
+   "Le thermomètre",
+   "Le voltmètre"
+  ],
+  "bonne": 0,
+  "explication": "Le pH-mètre affiche une valeur avec une décimale ; le papier pH donne une estimation.",
+  "guyane": false,
+  "pourquoi": [
+   null,
+   "Le papier pH donne seulement une valeur entière.",
+   "Le thermomètre mesure une température.",
+   "Le voltmètre mesure une tension."
+  ]
+ },
+ {
+  "id": "C6-08",
+  "chapitre": "Acides, bases et transformations chimiques",
+  "notion": "Ions H⁺ et HO⁻",
+  "difficulte": 1,
+  "question": "Une solution acide contient…",
+  "reponses": [
+   "plus d'ions H⁺ que d'ions HO⁻",
+   "plus d'ions HO⁻ que d'ions H⁺",
+   "autant d'ions H⁺ que d'ions HO⁻",
+   "aucun ion"
+  ],
+  "bonne": 0,
+  "explication": "C'est la présence d'ions H⁺ en plus grand nombre qui rend une solution acide.",
+  "guyane": false,
+  "pourquoi": [
+   null,
+   "C'est le cas d'une solution basique.",
+   "C'est le cas d'une solution neutre.",
+   "Une solution aqueuse contient toujours des ions H⁺ et HO⁻."
+  ]
+ },
+ {
+  "id": "C6-09",
+  "chapitre": "Acides, bases et transformations chimiques",
+  "notion": "Ions H⁺ et HO⁻",
+  "difficulte": 1,
+  "question": "Quel ion rend une solution basique ?",
+  "reponses": [
+   "L'ion hydroxyde HO⁻",
+   "L'ion hydrogène H⁺",
+   "L'ion chlorure Cl⁻",
+   "L'ion fer II Fe²⁺"
+  ],
+  "bonne": 0,
+  "explication": "Une solution basique contient plus d'ions HO⁻ que d'ions H⁺.",
+  "guyane": false,
+  "pourquoi": [
+   null,
+   "L'ion H⁺ rend une solution acide.",
+   "L'ion chlorure ne décide pas du pH.",
+   "L'ion fer II ne décide pas du pH."
+  ]
+ },
+ {
+  "id": "C6-10",
+  "chapitre": "Acides, bases et transformations chimiques",
+  "notion": "Ions H⁺ et HO⁻",
+  "difficulte": 2,
+  "question": "Une solution contient plus d'ions HO⁻ que d'ions H⁺. Son pH peut être…",
+  "reponses": [
+   "10",
+   "4",
+   "7",
+   "1"
+  ],
+  "bonne": 0,
+  "explication": "Plus d'ions HO⁻ : la solution est basique, son pH est supérieur à 7.",
+  "guyane": false,
+  "pourquoi": [
+   null,
+   "pH 4 : solution acide, avec plus d'ions H⁺.",
+   "pH 7 : autant d'ions H⁺ que d'ions HO⁻.",
+   "pH 1 : solution très acide."
+  ]
+ },
+ {
+  "id": "C6-11",
+  "chapitre": "Acides, bases et transformations chimiques",
+  "notion": "Sécurité et dilution",
+  "difficulte": 1,
+  "question": "Que signifie ce pictogramme de danger : deux tubes qui versent un liquide sur une main et sur une surface ?",
+  "reponses": [
+   "Corrosif",
+   "Inflammable",
+   "Toxique pour l'environnement",
+   "Gaz sous pression"
+  ],
+  "bonne": 0,
+  "explication": "C'est le pictogramme « corrosif » : le produit attaque la peau et les matériaux.",
+  "guyane": false,
+  "pourquoi": [
+   null,
+   "Le pictogramme « inflammable » montre une flamme.",
+   "Le pictogramme de l'environnement montre un arbre et un poisson.",
+   "Le pictogramme des gaz montre une bouteille de gaz."
+  ]
+ },
+ {
+  "id": "C6-12",
+  "chapitre": "Acides, bases et transformations chimiques",
+  "notion": "Sécurité et dilution",
+  "difficulte": 2,
+  "question": "On dilue du jus de citron (pH 2) avec beaucoup d'eau. Son pH peut devenir…",
+  "reponses": [
+   "4",
+   "1",
+   "8",
+   "2"
+  ],
+  "bonne": 0,
+  "explication": "En diluant un acide, le pH augmente et se rapproche de 7 sans le dépasser.",
+  "guyane": false,
+  "pourquoi": [
+   null,
+   "Le pH d'un acide augmente quand on le dilue.",
+   "Le pH ne dépasse pas 7 : la solution reste acide.",
+   "L'eau ajoutée change le pH."
+  ]
+ },
+ {
+  "id": "C6-13",
+  "chapitre": "Acides, bases et transformations chimiques",
+  "notion": "Sécurité et dilution",
+  "difficulte": 2,
+  "question": "Pour diluer un acide concentré, il faut…",
+  "reponses": [
+   "verser l'acide dans l'eau",
+   "verser l'eau dans l'acide",
+   "mélanger sans lunettes",
+   "goûter le mélange"
+  ],
+  "bonne": 0,
+  "explication": "On verse toujours l'acide dans l'eau, avec lunettes et gants : le mélange chauffe.",
+  "guyane": false,
+  "pourquoi": [
+   null,
+   "Verser l'eau dans l'acide peut provoquer des projections.",
+   "Il faut toujours porter des lunettes.",
+   "On ne goûte jamais un produit chimique."
+  ]
+ },
+ {
+  "id": "C6-14",
+  "chapitre": "Acides, bases et transformations chimiques",
+  "notion": "Réactions",
+  "difficulte": 1,
+  "question": "Quand l'acide chlorhydrique attaque le fer, quel gaz se dégage ?",
+  "reponses": [
+   "Le dihydrogène",
+   "Le dioxygène",
+   "Le dioxyde de carbone",
+   "Le diazote"
+  ],
+  "bonne": 0,
+  "explication": "Fe + 2 H⁺ → Fe²⁺ + H₂ : le gaz est du dihydrogène.",
+  "guyane": false,
+  "pourquoi": [
+   null,
+   "Il n'y a pas d'oxygène dans les réactifs Fe et H⁺.",
+   "Il n'y a pas de carbone dans les réactifs.",
+   "Il n'y a pas d'azote dans les réactifs."
+  ]
+ },
+ {
+  "id": "C6-15",
+  "chapitre": "Acides, bases et transformations chimiques",
+  "notion": "Réactions",
+  "difficulte": 1,
+  "question": "Quel test met en évidence le dihydrogène ?",
+  "reponses": [
+   "Une flamme provoque une petite détonation",
+   "L'eau de chaux se trouble",
+   "Une bûchette incandescente se rallume",
+   "La soude donne un précipité vert"
+  ],
+  "bonne": 0,
+  "explication": "Le dihydrogène détone au contact d'une flamme.",
+  "guyane": false,
+  "pourquoi": [
+   null,
+   "C'est le test du dioxyde de carbone.",
+   "C'est le test du dioxygène.",
+   "C'est le test des ions fer II."
+  ]
+ },
+ {
+  "id": "C6-16",
+  "chapitre": "Acides, bases et transformations chimiques",
+  "notion": "Réactions",
+  "difficulte": 2,
+  "question": "Fe + 2 H⁺ → Fe²⁺ + H₂. Quels sont les produits de la réaction ?",
+  "reponses": [
+   "Fe²⁺ et H₂",
+   "Fe et H⁺",
+   "Fe et H₂",
+   "H⁺ seulement"
+  ],
+  "bonne": 0,
+  "explication": "Les produits sont écrits à droite de la flèche.",
+  "guyane": false,
+  "pourquoi": [
+   null,
+   "Ce sont les réactifs.",
+   "Le fer est un réactif.",
+   "Les ions H⁺ sont des réactifs."
+  ]
+ },
+ {
+  "id": "C6-17",
+  "chapitre": "Acides, bases et transformations chimiques",
+  "notion": "Réactions",
+  "difficulte": 2,
+  "question": "Quelle est l'équation de la réaction entre un acide et une base ?",
+  "reponses": [
+   "H⁺ + HO⁻ → H₂O",
+   "H₂O → H₂ + O",
+   "Fe + 2 H⁺ → Fe²⁺ + H₂",
+   "H⁺ + Cl⁻ → HO⁻"
+  ],
+  "bonne": 0,
+  "explication": "Les ions H⁺ et HO⁻ forment des molécules d'eau.",
+  "guyane": false,
+  "pourquoi": [
+   null,
+   "L'eau n'est pas un réactif de cette réaction.",
+   "C'est la réaction d'un acide avec le fer.",
+   "Les atomes ne se conservent pas dans cette écriture."
+  ]
+ },
+ {
+  "id": "C6-18",
+  "chapitre": "Acides, bases et transformations chimiques",
+  "notion": "Réactions",
+  "difficulte": 3,
+  "question": "Pendant la réaction entre le fer et l'acide chlorhydrique, le pH passe de 2 à 4. Pourquoi ?",
+  "reponses": [
+   "Des ions H⁺ sont consommés",
+   "Des ions H⁺ sont produits",
+   "Des ions HO⁻ disparaissent",
+   "Le fer rend la solution basique"
+  ],
+  "bonne": 0,
+  "explication": "Fe + 2 H⁺ → Fe²⁺ + H₂ : il reste moins d'ions H⁺, la solution est moins acide.",
+  "guyane": false,
+  "pourquoi": [
+   null,
+   "Avec plus d'ions H⁺, le pH diminuerait.",
+   "Les ions HO⁻ ne participent pas à cette réaction.",
+   "À pH 4, la solution est encore acide."
+  ]
+ },
+ {
+  "id": "C6-19",
+  "chapitre": "Acides, bases et transformations chimiques",
+  "notion": "Réactions",
+  "difficulte": 3,
+  "question": "Fe + 2 H⁺ → Fe²⁺ + H₂. Pourquoi dit-on que les atomes se conservent ?",
+  "reponses": [
+   "Il y a 1 atome de fer et 2 atomes d'hydrogène de chaque côté",
+   "Il y a autant de molécules de chaque côté",
+   "Le fer ne change pas",
+   "Les ions H⁺ ne réagissent pas"
+  ],
+  "bonne": 0,
+  "explication": "Avant : 1 Fe et 2 H ; après : 1 Fe (dans Fe²⁺) et 2 H (dans H₂).",
+  "guyane": false,
+  "pourquoi": [
+   null,
+   "Il y a 3 espèces à gauche et 2 à droite : on compte les atomes, pas les espèces.",
+   "Le fer devient un ion Fe²⁺.",
+   "Les ions H⁺ sont des réactifs : ils sont consommés."
+  ]
+ },
+ {
+  "id": "C6-20",
+  "chapitre": "Acides, bases et transformations chimiques",
+  "notion": "Réactions",
+  "difficulte": 2,
+  "question": "Lequel de ces métaux n'est pas attaqué par l'acide chlorhydrique ?",
+  "reponses": [
+   "Le cuivre",
+   "Le fer",
+   "Le zinc",
+   "L'aluminium"
+  ],
+  "bonne": 0,
+  "explication": "Le cuivre et l'or ne réagissent pas avec l'acide chlorhydrique.",
+  "guyane": false,
+  "pourquoi": [
+   null,
+   "Le fer est attaqué : il se forme du dihydrogène.",
+   "Le zinc est attaqué : Zn + 2 H⁺ → Zn²⁺ + H₂.",
+   "L'aluminium est attaqué par l'acide chlorhydrique."
+  ]
  }
 ];
 
@@ -15026,6 +16222,10 @@ const QUESTIONS = [
     centrales: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="9" r="1.6"/><path d="M12 7.4V2.5M13.4 9.8l4.3 2.4M10.6 9.8l-4.3 2.4M12 10.6V22M8 22h8"/></svg>',
     puissance: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13 2L4 14h7l-1 8 9-12h-7z"/></svg>',
     chimie: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 22a7 7 0 007-7c0-4-3-6.5-4-10-1.5 2-2 3.5-2 5-1.5-1-2.5-2.5-2.5-4C7 8 5 11 5 15a7 7 0 007 7z"/></svg>',
+    // 3ème, thème matière (15/11) : tableau périodique, ion (+ et −), goutte avec pH
+    elements: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2.5" y="3" width="5" height="5" rx="1"/><rect x="16.5" y="3" width="5" height="5" rx="1"/><rect x="2.5" y="10" width="5" height="5" rx="1"/><rect x="9.5" y="10" width="5" height="5" rx="1"/><rect x="16.5" y="10" width="5" height="5" rx="1"/><rect x="2.5" y="17" width="5" height="4.5" rx="1"/><rect x="9.5" y="17" width="5" height="4.5" rx="1"/><rect x="16.5" y="17" width="5" height="4.5" rx="1"/></svg>',
+    ions: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="12" r="6.5"/><path d="M9 9v6M6 12h6"/><circle cx="19" cy="7" r="3.2"/><path d="M17.4 7h3.2"/></svg>',
+    acides: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2.5c3.8 4.6 6.5 8 6.5 11.4a6.5 6.5 0 0 1-13 0C5.5 10.5 8.2 7.1 12 2.5z"/><text x="12" y="17.2" text-anchor="middle" font-size="7" font-weight="800" fill="currentColor" stroke="none" font-family="inherit">pH</text></svg>',
     lock: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 018 0v4"/></svg>',
     etoile: '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2l2.9 6.3 6.9.7-5.2 4.6 1.5 6.8L12 17l-6.1 3.4 1.5-6.8L2.2 9l6.9-.7z"/></svg>',
     spectre: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 4l6 14H4z"/><path d="M1 13l6-1.5"/><path d="M14 10.5l8-3M14.6 12.5H22M15.2 14.5l6.8 3"/></svg>',
@@ -15259,7 +16459,7 @@ const QUESTIONS = [
   // la garde aussi un moment en cache. On compare donc la version de cette page avec le petit fichier version.json
   // publié en même temps : à l'ouverture et à chaque retour sur l'onglet (au plus une fois par minute).
   // Si une version plus récente est en ligne, un bandeau propose de mettre à jour. La progression (pseudo, points…) est conservée.
-  const VERSION_APPLI = "2026-11-14 22:24:39"; // remplacée par la date d'assemblage (assembler.py)
+  const VERSION_APPLI = "2026-11-14 23:50:00"; // remplacée par la date d'assemblage (assembler.py)
   let derniereVerif = 0;
   function verifierMaj() {
     if (!/^https?:$/.test(location.protocol) || VERSION_APPLI.indexOf("__") === 0) return; // fichier ouvert sur l'ordinateur : rien à vérifier
@@ -16173,7 +17373,7 @@ const QUESTIONS = [
       if (b.t === "h") return `<h3 id="cb${k}">${esc(b.texte)}</h3>`;
       if (b.t === "sh") return `<h4 class="st">${esc(b.texte)}</h4>`;
       if (b.t === "fig") return b.html; // schéma dessiné par l'appli (SCHEMAS, 03_contenu.html)
-      if (b.t === "p" && (b.def || b.rel)) return `<div class="def${b.rel ? " rel" : ""}"><span class="def-t">${COEUR}${b.def ? "Définition" : "À connaître par cœur"}</span><p>${sousTitre(b.texte)}</p></div>`;
+      if (b.t === "p" && (b.def || b.rel)) return `<div class="def${b.rel ? " rel" : ""}"><span class="def-t">${COEUR}${b.def ? "Définition" : "À connaître par cœur"}</span>${b.items ? `${b.texte ? `<p>${sousTitre(b.texte)}</p>` : ""}<ul class="def-liste">${b.items.map((i) => `<li>${i}</li>`).join("")}</ul>` : `<p>${sousTitre(b.texte)}</p>`}</div>`; // items : le cadre contient une liste
       if (b.t === "p") return `<p>${sousTitre(b.texte)}</p>`;
       if (b.t === "liste") return `<ul>${b.items.map((i) => `<li>${i}</li>`).join("")}</ul>`;
       if (b.t === "tableau") return `<div class="table-wrap"><table${b.compact ? ' class="mes-table"' : ""}><thead><tr>${b.entetes.map((e) => `<th>${esc(e)}</th>`).join("")}</tr></thead><tbody>${b.lignes.map((l) => `<tr>${l.map((c) => `<td>${esc(c)}</td>`).join("")}</tr>`).join("")}</tbody></table></div>`;
