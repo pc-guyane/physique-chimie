@@ -1228,6 +1228,8 @@ const REGLAGES = {
     "3e-centrales": true,   // Les centrales électriques
     "3e-puissance": true,   // La puissance électrique
     "3e-chimie": false,     // L'énergie chimique et ses conversions
+    "3e-elements": false,   // Les éléments chimiques de l'Univers (thème matière ; rappel, cours, entraînement ; à relire)
+    "3e-ions": true,        // Les ions, des particules chargées (thème matière ; rappel, cours, entraînement ; relu et validé le 15/11)
     "4e-intensite": false,  // 4ème : l'intensité du courant électrique (cours + TP)
     "4e-tension": true,     // 4ème : la tension électrique (cours + TP)
     "4e-ohm": false,        // 4ème : la résistance et la loi d'Ohm (cours + TP)
@@ -2780,6 +2782,486 @@ const CONTENU = {
   }
 };
 
+</script>
+<style>
+/* ===== 3ème · Organisation et transformations de la matière : module ATOMES (03_matiere.html) ===== */
+.at-anim { display: block; width: 100%; max-width: 340px; height: auto; margin: 0 auto; }
+.at-anim text { font-family: var(--f-body); }
+.at-p { fill: #D23B30; } .at-n { fill: #9AA5AB; } .at-e { fill: #2F6FD1; }
+.at-sg { fill: #fff; font-size: 8px; font-weight: 800; text-anchor: middle; pointer-events: none; }
+.at-bord { fill: none; stroke: var(--line); stroke-width: 1.2; stroke-dasharray: 2 5; }
+.at-leg { font-size: 10.5px; fill: var(--muted); }
+.sch text.at-z { font-size: 15px; font-weight: 800; fill: var(--titre); }
+.sch text.at-a { font-size: 15px; font-weight: 800; fill: var(--muted); }
+.sch text.at-sym { font-size: 46px; font-weight: 800; }
+.ab-bar { fill: var(--accent); stroke: none; } .ab-autre { fill: var(--muted); stroke: none; }
+.sch text.ab-val { font-weight: 700; font-variant-numeric: tabular-nums; }
+.st-herbe { fill: #4C9A5B; stroke: none; } .st-ligne { stroke: #fff; stroke-width: 1.4; fill: none; } .st-noyau { fill: #D23B30; stroke: #fff; stroke-width: .6; }
+.tp-bloc { display: flex; flex-direction: column; gap: .3rem; width: 100%; max-width: 400px; margin: 0 auto; }
+.tp-grille { display: grid; grid-template-columns: repeat(8, minmax(0, 1fr)); gap: 3px; }
+.tp-case { position: relative; aspect-ratio: 1 / 1.08; min-width: 0; margin: 0; padding: 0; border: 1.5px solid var(--line); border-radius: 6px; background: var(--surface); color: var(--ink); font: inherit; line-height: 1; display: flex; align-items: center; justify-content: center; }
+button.tp-case { cursor: pointer; }
+.tp-case .a, .tp-case .z { position: absolute; left: 3px; font-size: .56rem; font-weight: 700; line-height: 1; font-variant-numeric: tabular-nums; }
+.tp-case .a { top: 3px; color: var(--muted); } .tp-case .z { bottom: 3px; color: var(--titre); }
+.tp-case .s { font-weight: 800; font-size: .98rem; margin-left: .55rem; }
+.tp-case.on { border-color: var(--accent); background: var(--accent-soft); }
+.tp-vide { visibility: hidden; }
+.tbl-serre { font-size: .88rem; } .tbl-serre th, .tbl-serre td { padding: .45rem .3rem; } /* tableau à colonnes étroites (documents du brevet) */
+.tp-note { font-size: .8rem; color: var(--muted); margin: .15rem 0 0; }
+.at-pop { animation: at-pop .45s ease-out; transform-box: fill-box; transform-origin: center; }
+@keyframes at-pop { from { transform: scale(2.6); opacity: .15; } to { transform: scale(1); opacity: 1; } }
+/* Ions : bilan des charges de l'animation, pastille de couleur d'un précipité, tube à essai */
+.ion-bilan { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: .4rem; text-align: center; }
+.ion-bilan div { border: 1.5px solid var(--line); border-radius: 8px; padding: .3rem .2rem; background: var(--surface); }
+.ion-bilan b { display: block; font-size: 1.3rem; line-height: 1.2; font-variant-numeric: tabular-nums; }
+.ion-bilan span { display: block; font-size: .74rem; line-height: 1.2; color: var(--muted); }
+.ion-bilan .p b { color: #D23B30; } .ion-bilan .e b { color: #2F6FD1; }
+.pr-dot { display: inline-block; width: .8rem; height: .8rem; border-radius: 50%; border: 1px solid var(--muted); vertical-align: -.08rem; margin-right: .3rem; }
+.sch .tt-pr { stroke: rgba(0, 0, 0, .35); stroke-width: .6; } .sch .tt-goutte { fill: #7FB6DD; stroke: none; }
+</style>
+<script>
+// ============================================================
+//  3ème · « Organisation et transformations de la matière » : module ATOMES
+//  Données des éléments (tableau périodique simplifié), figures (case, diagrammes d'abondance, stade),
+//  2 animations du cours (modèle de l'atome, tableau périodique à toucher) et générateurs de questions.
+//  Nombre de masse A (nombre de nucléons) de l'atome le plus courant : EL[s].a ; nombre de neutrons = A − Z.
+//  Utilisé par les chapitres « Les éléments chimiques de l'Univers » et « Les ions, des particules chargées » (partie IONS, en bas).
+//  Abondances : pourcentages de la MASSE, valeurs arrondies (Univers : H 74, He 24 ; Terre entière : Fe 32, O 30, Si 15, Mg 14 ;
+//  corps humain : O 65, C 18, H 10, N 3). Tailles : atome 10⁻¹⁰ m, noyau 10⁻¹⁵ m (ordres de grandeur).
+// ============================================================
+const ATOMES = (() => {
+  const alea = (t) => t[Math.floor(Math.random() * t.length)];
+  const melg = (t) => t.map((x) => [Math.random(), x]).sort((a, b) => a[0] - b[0]).map((x) => x[1]);
+  const maj = (s) => s.charAt(0).toUpperCase() + s.slice(1);
+  const pl = (n, mot) => n + " " + mot + (n > 1 ? "s" : "");
+  const du = (le) => le.replace(/^le /, "du ").replace(/^la /, "de la ").replace(/^l'/, "de l'"); // « le fer » → « du fer »
+  const fig = (vb, svg, leg, h) => `<figure class="fig-cours sch-fig"><svg viewBox="${vb}" class="sch"${h ? ` style="max-width:${h}px"` : ""} role="img" aria-label="${leg.replace(/"/g, "'")}">${svg}</svg><figcaption>${leg}</figcaption></figure>`;
+  const T = (x, y, t, cls, anc) => `<text x="${x}" y="${y}" class="${cls || "sch-t"}" text-anchor="${anc || "middle"}">${t}</text>`;
+
+  // ---------- Les éléments : z = numéro atomique ; n = neutrons de l'atome le plus courant (pour l'animation seulement) ----------
+  const EL = {
+    H: { z: 1, nom: "Hydrogène", de: "d'hydrogène", le: "l'hydrogène", n: 0 }, He: { z: 2, nom: "Hélium", de: "d'hélium", le: "l'hélium", n: 2 },
+    Li: { z: 3, nom: "Lithium", de: "de lithium", le: "le lithium" }, Be: { z: 4, nom: "Béryllium", de: "de béryllium", le: "le béryllium" },
+    B: { z: 5, nom: "Bore", de: "de bore", le: "le bore" }, C: { z: 6, nom: "Carbone", de: "de carbone", le: "le carbone", n: 6 },
+    N: { z: 7, nom: "Azote", de: "d'azote", le: "l'azote" }, O: { z: 8, nom: "Oxygène", de: "d'oxygène", le: "l'oxygène", n: 8 },
+    F: { z: 9, nom: "Fluor", de: "de fluor", le: "le fluor" }, Ne: { z: 10, nom: "Néon", de: "de néon", le: "le néon" },
+    Na: { z: 11, nom: "Sodium", de: "de sodium", le: "le sodium", n: 12 }, Mg: { z: 12, nom: "Magnésium", de: "de magnésium", le: "le magnésium" },
+    Al: { z: 13, nom: "Aluminium", de: "d'aluminium", le: "l'aluminium" }, Si: { z: 14, nom: "Silicium", de: "de silicium", le: "le silicium" },
+    P: { z: 15, nom: "Phosphore", de: "de phosphore", le: "le phosphore" }, S: { z: 16, nom: "Soufre", de: "de soufre", le: "le soufre" },
+    Cl: { z: 17, nom: "Chlore", de: "de chlore", le: "le chlore" }, Ar: { z: 18, nom: "Argon", de: "d'argon", le: "l'argon" },
+    Fe: { z: 26, nom: "Fer", de: "de fer", le: "le fer" }, Cu: { z: 29, nom: "Cuivre", de: "de cuivre", le: "le cuivre" },
+    Zn: { z: 30, nom: "Zinc", de: "de zinc", le: "le zinc" }, Ag: { z: 47, nom: "Argent", de: "d'argent", le: "l'argent" },
+    Au: { z: 79, nom: "Or", de: "d'or", le: "l'or" }
+  };
+  const MASSE = {H: 1, He: 4, Li: 7, Be: 9, B: 11, C: 12, N: 14, O: 16, F: 19, Ne: 20, Na: 23, Mg: 24, Al: 27, Si: 28, P: 31, S: 32, Cl: 35, Ar: 40, Fe: 56, Cu: 63, Zn: 64, Ag: 107, Au: 197}; // nombre de masse A de l'atome le plus courant
+  Object.keys(EL).forEach((s) => { EL[s].sym = s; EL[s].a = MASSE[s]; });
+  const LIGNES = [["H", "", "", "", "", "", "", "He"], ["Li", "Be", "B", "C", "N", "O", "F", "Ne"], ["Na", "Mg", "Al", "Si", "P", "S", "Cl", "Ar"]];
+  const LOURDS = ["Fe", "Cu", "Zn", "Ag", "Au"];
+
+  // ---------- Tableau périodique simplifié (18 premières cases + 5 métaux plus lourds) ----------
+  // actif = true : cases à toucher (animation du cours) ; sinon simple figure pour une question.
+  function grille(actif, surligne) {
+    const dedans = (s) => `<span class="a">${EL[s].a}</span><span class="s">${s}</span><span class="z">${EL[s].z}</span>`;
+    const c = (s) => !s ? '<span class="tp-case tp-vide"></span>'
+      : actif ? `<button type="button" class="tp-case" data-s="${s}" aria-label="${EL[s].nom}, nombre de masse ${EL[s].a}, numéro atomique ${EL[s].z}">${dedans(s)}</button>`
+        : `<span class="tp-case${s === surligne ? " on" : ""}">${dedans(s)}</span>`;
+    return `<div class="tp-bloc"><div class="tp-grille">${LIGNES.map((l) => l.map(c).join("")).join("")}</div>
+      <p class="tp-note">Quelques métaux plus lourds :</p><div class="tp-grille">${LOURDS.map(c).join("")}</div></div>`;
+  }
+  const figTableau = () => grille(false);
+
+  // ---------- Case d'un élément ----------
+  function svgCase(s, legendes) {
+    const e = EL[s];
+    // notation symbolique : nombre de masse A en haut à gauche du symbole, numéro atomique Z en bas à gauche
+    // largeurs approchées (police de 46 px pour le symbole, 15 px pour A et Z) : l'ensemble « A/Z + symbole » est centré dans la case
+    const lc = String(Math.max(e.a, e.z)).length * 8.6, ls = s.length === 1 ? 33 : 62, x0 = 170 - (lc + 3 + ls) / 2, xg = x0 + lc, xs = xg + 3;
+    const boite = `<rect x="120" y="12" width="100" height="116" rx="10" class="sch-fond"/>${T(xg, 64, e.a, "at-a", "end")}${T(xs, 86, s, "at-sym", "start")}${T(xg, 96, e.z, "at-z", "end")}${T(170, 116, e.nom, "sch-t")}`;
+    if (!legendes) return `<svg viewBox="112 4 116 132" class="sch" style="max-width:128px" role="img" aria-label="Case du tableau périodique : nombre de masse ${e.a}, symbole ${s}, numéro atomique ${e.z}, ${e.nom}">${boite}</svg>`;
+    return boite + `<path d="M98 58H${(xg - lc - 3).toFixed(0)}M98 91H${(xg - lc - 3).toFixed(0)}M248 70H${(xs + ls + 4).toFixed(0)}M248 112H${170 + e.nom.length * 3.4 + 4}" class="sch-fin"/>
+      ${T(54, 55, "nombre de", "sch-t sch-pt")}${T(54, 67, "masse A", "sch-t sch-pt")}${T(54, 88, "numéro", "sch-t sch-pt")}${T(54, 100, "atomique Z", "sch-t sch-pt")}${T(284, 74, "symbole", "sch-t sch-pt")}${T(284, 116, "nom", "sch-t sch-pt")}`;
+  }
+  const figCase = (s) => fig("0 0 320 140", svgCase(s, true), `La case ${du(EL[s].le)} dans le tableau périodique : son nombre de masse A (en haut à gauche), son numéro atomique Z (en bas à gauche), son symbole et son nom.`);
+
+  // ---------- Diagrammes d'abondance (pourcentages de la masse, arrondis) ----------
+  const AB = {
+    univers: { titre: "Dans l'Univers", ou: "dans l'Univers", de: "de l'Univers", lignes: [["Hydrogène", 74], ["Hélium", 24], ["Autres éléments", 2]] },
+    terre: { titre: "Dans la Terre", ou: "dans la Terre", de: "de la Terre", lignes: [["Fer", 32], ["Oxygène", 30], ["Silicium", 15], ["Magnésium", 14], ["Autres éléments", 9]] },
+    corps: { titre: "Dans le corps humain", ou: "dans le corps humain", de: "du corps humain", lignes: [["Oxygène", 65], ["Carbone", 18], ["Hydrogène", 10], ["Azote", 3], ["Autres éléments", 4]] }
+  };
+  const ART = { "Hydrogène": "l'hydrogène", "Hélium": "l'hélium", "Fer": "le fer", "Oxygène": "l'oxygène", "Silicium": "le silicium", "Magnésium": "le magnésium", "Carbone": "le carbone", "Azote": "l'azote" };
+  function figAbondance(quoi) {
+    const cles = quoi ? [quoi] : ["univers", "terre", "corps"];
+    let y = 4, s = "";
+    cles.forEach((k) => {
+      const P = AB[k]; y += 14; s += T(8, y, P.titre, "sch-gr", "start"); y += 6;
+      P.lignes.forEach(([nom, pc]) => {
+        y += 16;
+        s += `${T(8, y, nom, "sch-t", "start")}<rect x="104" y="${y - 9}" width="${(pc * 1.6).toFixed(1)}" height="10" rx="2" class="${nom.startsWith("Autres") ? "ab-autre" : "ab-bar"}"/>${T(110 + pc * 1.6, y, pc + " %", "sch-t ab-val", "start")}`;
+      });
+      y += 10;
+    });
+    const leg = quoi ? `Les éléments chimiques ${AB[quoi].ou}, en pourcentage de la masse (valeurs arrondies).` : "Les éléments chimiques les plus abondants, en pourcentage de la masse (valeurs arrondies).";
+    return fig(`0 0 320 ${y}`, s, leg);
+  }
+
+  // ---------- L'atome agrandi à la taille d'un stade ----------
+  function figStade() {
+    const s = `<rect x="20" y="14" width="280" height="118" rx="4" class="st-herbe"/><path d="M160 14V132M20 46H56V100H20M300 46H264V100H300" class="st-ligne"/><circle cx="160" cy="73" r="20" class="st-ligne"/>
+      <circle cx="160" cy="73" r="2.2" class="st-noyau"/><path d="M163 70L196 40" class="st-ligne"/>${T(200, 38, "le noyau : 1 mm", "sch-t sch-blanc", "start")}
+      <path d="M20 148H300M20 143V153M300 143V153" class="sch-fin"/>${T(160, 166, "l'atome : 100 m", "sch-t sch-gr")}`;
+    return fig("0 0 320 174", s, "Si un atome avait la taille d'un stade de football (100 m), son noyau serait une tête d'épingle de 1 mm posée au centre du terrain.");
+  }
+
+  // ---------- Animation 1 : le modèle de l'atome (noyau + électrons en mouvement) ----------
+  function animAtome(el) {
+    const CHOIX = ["H", "He", "C", "O", "Na"], cx = 160, cy = 108, fr = (x) => x - Math.floor(x);
+    let cur = "C", pts = [], orb = [];
+    el.innerHTML = `<span class="a-titre">Modèle : à l'intérieur d'un atome</span>
+      <p class="small">Choisir un atome pour voir son noyau et ses électrons.</p>
+      <div class="a-bts">${CHOIX.map((s) => `<button type="button" class="btn btn-ghost btn-sm" data-s="${s}">${EL[s].nom}</button>`).join("")}</div>
+      <svg viewBox="0 0 320 236" class="at-anim" role="img"></svg>
+      <div class="a-res" aria-live="polite"></div>
+      <p class="small muted">Ce modèle n'est pas à l'échelle : en réalité, le noyau est 100 000 fois plus petit que l'atome.</p>`;
+    const svg = el.querySelector("svg"), res = el.querySelector(".a-res");
+    const pos = (o, t) => { const a = o.ph + o.w * t, x = o.a * Math.cos(a), y = o.b * Math.sin(a); return [cx + x * o.c - y * o.s, cy + x * o.s + y * o.c]; };
+    function dessiner() {
+      const e = EL[cur], Z = e.z, N = e.n, A = Z + N, rn = A > 12 ? 5.2 : 6.6;
+      // nucléons en spirale serrée ; protons et neutrons alternés
+      const sorte = []; let p = Z, n = N; while (p + n > 0) { if (p > 0 && (p >= n || n === 0)) { sorte.push("p"); p--; } else { sorte.push("n"); n--; } }
+      let s = `<circle cx="${cx}" cy="${cy}" r="102" class="at-bord"/>`;
+      sorte.forEach((k, i) => {
+        const r = A === 1 ? 0 : rn * 1.18 * Math.sqrt(i + 0.35), a = i * 2.39996, x = (cx + r * Math.cos(a)).toFixed(1), y = (cy + r * Math.sin(a)).toFixed(1);
+        s += `<circle cx="${x}" cy="${y}" r="${rn}" class="${k === "p" ? "at-p" : "at-n"}"/>${k === "p" ? `<text x="${x}" y="${(+y + 2.8).toFixed(1)}" class="at-sg">+</text>` : ""}`;
+      });
+      orb = []; for (let i = 0; i < Z; i++) { const a = 58 + 40 * fr(i * 0.618 + 0.13), rot = i * 2.39996; orb.push({ a, b: a * (0.75 + 0.25 * fr(i * 0.37 + 0.5)), c: Math.cos(rot), s: Math.sin(rot), w: (0.55 + 0.6 * fr(i * 0.71 + 0.2)) * (i % 2 ? 1 : -1), ph: i * 2.1 }); }
+      s += orb.map((o) => { const [x, y] = pos(o, 0); return `<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="4.6" class="at-e" data-e/>`; }).join("");
+      s += `<circle cx="34" cy="226" r="5.5" class="at-p"/><text x="34" y="228.8" class="at-sg">+</text>${T(44, 230, "proton", "at-leg", "start")}
+        <circle cx="122" cy="226" r="5.5" class="at-n"/>${T(132, 230, "neutron", "at-leg", "start")}<circle cx="216" cy="226" r="4.6" class="at-e"/>${T(226, 230, "électron (−)", "at-leg", "start")}`;
+      svg.innerHTML = s; pts = Array.from(svg.querySelectorAll("[data-e]"));
+      svg.setAttribute("aria-label", `Modèle de l'atome ${e.de} : ${pl(Z, "proton")} et ${pl(N, "neutron")} dans le noyau, ${pl(Z, "électron")} autour.`);
+      res.innerHTML = `<strong>${e.nom} (${cur})</strong> : dans le noyau, ${pl(Z, "proton")} (+) ${N ? "et " + pl(N, "neutron") : "et aucun neutron"}, soit <strong>A = ${A} nucléon${A > 1 ? "s" : ""}</strong> ; autour du noyau, ${pl(Z, "électron")} (−).<br>Autant de charges + que de charges − : l'atome est <strong>neutre</strong>.`;
+      el.querySelectorAll("[data-s]").forEach((b) => b.classList.toggle("on", b.dataset.s === cur));
+    }
+    el.querySelectorAll("[data-s]").forEach((b) => b.onclick = () => { cur = b.dataset.s; dessiner(); });
+    dessiner();
+    if (window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    const boucle = (t) => {
+      if (!svg.isConnected) return;
+      pts.forEach((c, i) => { const [x, y] = pos(orb[i], t / 1000); c.setAttribute("cx", x.toFixed(1)); c.setAttribute("cy", y.toFixed(1)); });
+      requestAnimationFrame(boucle);
+    };
+    requestAnimationFrame(boucle);
+  }
+
+  // ---------- Animation 2 : le tableau périodique à toucher ----------
+  function animTableau(el) {
+    el.innerHTML = `<span class="a-titre">Le début du tableau périodique</span>
+      <p class="small">Toucher une case pour lire la carte d'identité de l'élément.</p>${grille(true)}
+      <div class="a-res" aria-live="polite">Touche une case.</div>
+      <p class="small muted">Dans chaque case : le nombre de masse A en haut à gauche (pour l'atome le plus courant), le numéro atomique Z en bas à gauche. Le tableau complet compte 118 éléments ; ici, ses 18 premières cases et cinq métaux plus lourds.</p>`;
+    const res = el.querySelector(".a-res");
+    el.querySelectorAll(".tp-case[data-s]").forEach((b) => b.onclick = () => {
+      const e = EL[b.dataset.s];
+      el.querySelectorAll(".tp-case.on").forEach((x) => x.classList.remove("on")); b.classList.add("on");
+      res.innerHTML = `<strong>${e.nom}</strong> · symbole <strong>${e.sym}</strong> · <strong>Z = ${e.z}</strong> · <strong>A = ${e.a}</strong><br>Son noyau contient ${pl(e.z, "proton")} et ${pl(e.a - e.z, "neutron")} (${e.a} − ${e.z}) ; l'atome possède ${pl(e.z, "électron")}.`;
+    });
+  }
+
+  // ---------- Modèle de l'atome d'oxygène 16, repères numérotés (exercice type brevet : légender) ----------
+  function figModeleNumerote() {
+    const cx = 150, cy = 92, sorte = [];
+    for (let i = 0; i < 16; i++) sorte.push(i % 2 ? "n" : "p");
+    let s = `<circle cx="${cx}" cy="${cy}" r="74" class="at-bord"/><circle cx="${cx}" cy="${cy}" r="22" class="sch-fin" style="stroke-dasharray:3 3"/>`;
+    sorte.forEach((k, i) => { const r = 5.6 * Math.sqrt(i + 0.35), a = i * 2.39996, x = (cx + r * Math.cos(a)).toFixed(1), y = (cy + r * Math.sin(a)).toFixed(1);
+      s += `<circle cx="${x}" cy="${y}" r="4.6" class="${k === "p" ? "at-p" : "at-n"}" style="stroke:none"/>`; });
+    for (let i = 0; i < 8; i++) { const a = i * Math.PI / 4 + 0.3, r = i % 2 ? 74 : 52; s += `<circle cx="${(cx + r * Math.cos(a)).toFixed(1)}" cy="${(cy + r * Math.sin(a)).toFixed(1)}" r="4" class="at-e" style="stroke:none"/>`; }
+    const rep = (n, x1, y1, x2, y2) => `<path d="M${x1} ${y1}L${x2} ${y2}" class="sch-fin"/><circle cx="${x2}" cy="${y2}" r="9" class="sch-fond"/>${T(x2, y2 + 4, n, "sch-t sch-gr")}`;
+    const e = [cx + 52 * Math.cos(0.3), cy + 52 * Math.sin(0.3)];
+    s += rep("1", cx - 18, cy - 14, 40, 22) + rep("2", e[0].toFixed(1), e[1].toFixed(1), 268, 120);
+    s += rep("3", cx + 3.3, cy + 1.9, 262, 40) + rep("4", cx - 5, cy + 6, 46, 160);
+    return fig("0 0 300 184", s, "Document : un modèle de l'atome d'oxygène 16 (il n'est pas à l'échelle). Les particules rouges et grises sont dans le noyau.");
+  }
+
+  // ---------- Nombre de masse : questions fabriquées (QCM avec « pourquoi ») ----------
+  const POUR_A = ["C", "N", "O", "Na", "Mg", "Al", "Cl", "Fe", "Au"];
+  const qNeutrons = (liste) => (liste || POUR_A).map((s) => { const e = EL[s], Z = e.z, A = e.a, N = A - Z;
+    const R = [String(N), String(A), String(A + Z)], P = [null, `${A} est le nombre de nucléons (protons + neutrons), pas le nombre de neutrons.`, "On ne fait pas une addition : on enlève les protons aux nucléons, N = A − Z."];
+    if (Z !== N) { R.push(String(Z)); P.push(`${Z} est le nombre de protons (Z).`); } else { R.push(String(N + 1)); P.push(`Recompte : ${A} − ${Z} = ${N}.`); }
+    return { question: `Le noyau d'un atome ${e.de} contient Z = ${Z} protons et A = ${A} nucléons. Combien de neutrons contient-il ?`,
+      reponses: R, bonne: 0, explication: `Nombre de neutrons = A − Z = ${A} − ${Z} = ${N}.`, pourquoi: P }; });
+  const qNucleons = (liste) => (liste || POUR_A).map((s) => { const e = EL[s], Z = e.z, A = e.a, N = A - Z;
+    return { question: `Le noyau d'un atome ${e.de} contient ${Z} protons et ${N} neutrons. Quel est son nombre de masse A ?`,
+      reponses: [String(A), String(Z), String(Z * N), String(A + Z)], bonne: 0, explication: `A est le nombre de nucléons (protons + neutrons) : A = ${Z} + ${N} = ${A}.`,
+      pourquoi: [null, `${Z} est le nombre de protons (Z), pas le nombre de nucléons.`, "On additionne les protons et les neutrons ; on ne les multiplie pas.", "Les protons sont comptés deux fois : A = protons + neutrons."] }; });
+
+  // ---------- Questions fabriquées à partir des éléments (QCM avec « pourquoi » pour chaque mauvaise réponse) ----------
+  const POUR_Q = ["C", "N", "O", "Na", "Mg", "Al", "Si", "Cl", "Fe", "Cu", "Au"];
+  // 1. Lire le nombre de protons sur la case
+  const qProtons = (liste) => (liste || POUR_Q).map((s) => { const e = EL[s], Z = e.z; return {
+    figure: () => svgCase(s), question: `Voici la case ${du(e.le)} dans le tableau périodique. Combien de protons contient le noyau de cet atome ?`,
+    reponses: [String(Z), String(e.a), String(Z + 1), "On ne peut pas le savoir"], bonne: 0,
+    explication: `Le numéro atomique Z, en bas à gauche du symbole, vaut ${Z} : le noyau contient ${pl(Z, "proton")}.`,
+    pourquoi: [null, `${e.a}, en haut à gauche, est le nombre de masse A : le nombre de nucléons (protons + neutrons).`, `Relis la case : le numéro atomique, en bas à gauche, est Z = ${Z}.`, "Si : le numéro atomique Z, écrit dans la case, est le nombre de protons."] }; });
+  // 2. Neutralité : autant d'électrons que de protons
+  const qElectrons = (liste) => (liste || POUR_Q).map((s) => { const e = EL[s], Z = e.z; return {
+    question: `Le noyau d'un atome ${e.de} contient ${Z} protons. Combien d'électrons possède cet atome ?`,
+    reponses: [String(Z), "0", String(2 * Z), String(Z - 1)], bonne: 0,
+    explication: `Un atome est électriquement neutre : il possède autant d'électrons que de protons, donc ${Z} électrons.`,
+    pourquoi: [null, "Un atome possède toujours des électrons autour de son noyau.", "Autant d'électrons que de protons, pas le double.", "Il manquerait une charge − : l'atome ne serait plus neutre."] }; });
+  // 3. Retrouver un élément dans le tableau à partir de Z
+  const qQuiEstZ = (liste) => (liste || ["C", "N", "O", "Na", "Al", "Cl", "Fe", "Au"]).map((s) => { const e = EL[s];
+    const autres = melg(Object.keys(EL).filter((x) => x !== s)).slice(0, 3);
+    return { figure: figTableau, question: `À l'aide du tableau, quel élément a pour numéro atomique Z = ${e.z} ?`,
+      reponses: [e.nom].concat(autres.map((x) => EL[x].nom)), bonne: 0,
+      explication: `Dans le tableau, la case n° ${e.z} porte le symbole ${s} : c'est ${e.le}.`,
+      pourquoi: [null].concat(autres.map((x) => `${maj(EL[x].le)} (${x}) a pour numéro atomique Z = ${EL[x].z}.`)) }; });
+  // 4. Symboles (distracteurs = erreurs courantes)
+  const qSymboles = [
+    { question: "Quel est le symbole du fer ?", reponses: ["Fe", "F", "FE", "Fr"], bonne: 0, explication: "Fe : une majuscule suivie d'une minuscule (du latin ferrum).",
+      pourquoi: [null, "F est le symbole du fluor.", "La deuxième lettre d'un symbole est toujours une minuscule.", "Fr est un autre élément (le francium)."] },
+    { question: "Quel est le symbole du sodium ?", reponses: ["So", "Na", "S", "N"], bonne: 1, explication: "Na : il vient du nom latin du sodium, natrium.",
+      pourquoi: ["So n'existe pas : le symbole vient du latin natrium.", null, "S est le symbole du soufre.", "N est le symbole de l'azote."] },
+    { question: "Quel est le symbole de l'or ?", reponses: ["Or", "O", "Au", "Ag"], bonne: 2, explication: "Au : il vient du nom latin de l'or, aurum.",
+      pourquoi: ["Le symbole ne vient pas du français mais du latin aurum.", "O est le symbole de l'oxygène.", null, "Ag est le symbole de l'argent."] },
+    { question: "Quel est le symbole de l'azote ?", reponses: ["A", "Az", "Na", "N"], bonne: 3, explication: "N : il vient de « nitrogène », l'ancien nom de l'azote.",
+      pourquoi: ["A n'est pas un symbole du tableau périodique.", "Az n'existe pas : le symbole vient de « nitrogène ».", "Na est le symbole du sodium.", null] },
+    { question: "Quel est le symbole du cuivre ?", reponses: ["Cu", "C", "Co", "CU"], bonne: 0, explication: "Cu : une majuscule suivie d'une minuscule (du latin cuprum).",
+      pourquoi: [null, "C est le symbole du carbone.", "Co est le symbole du cobalt.", "La deuxième lettre d'un symbole est toujours une minuscule."] },
+    { question: "Quel est le symbole de l'hélium ?", reponses: ["H", "He", "HE", "Hl"], bonne: 1, explication: "He : une majuscule suivie d'une minuscule.",
+      pourquoi: ["H est le symbole de l'hydrogène.", null, "La deuxième lettre d'un symbole est toujours une minuscule.", "Hl n'existe pas dans le tableau périodique."] },
+    { question: "Quel élément a pour symbole Cl ?", reponses: ["Le chlore", "Le carbone", "Le calcium", "Le cuivre"], bonne: 0, explication: "Cl est le symbole du chlore.",
+      pourquoi: [null, "Le carbone a pour symbole C.", "Le calcium a pour symbole Ca.", "Le cuivre a pour symbole Cu."] },
+    { question: "Quel élément a pour symbole O ?", reponses: ["L'or", "L'oxygène", "L'hydrogène", "Le zinc"], bonne: 1, explication: "O est le symbole de l'oxygène.",
+      pourquoi: ["L'or a pour symbole Au.", null, "L'hydrogène a pour symbole H.", "Le zinc a pour symbole Zn."] }
+  ];
+
+  // ---------- Test V2 : lectures (case, tableau, diagramme) et calculs d'échelle ----------
+  function genCase() {
+    const s = alea(POUR_Q), e = EL[s], Z = e.z, A = e.a, N = A - Z, quoi = alea(["protons", "électrons", "neutrons"]);
+    if (quoi === "neutrons") return { figure: svgCase(s), question: "Voici la case d'un élément du tableau périodique. Combien de neutrons contient le noyau de cet atome ?",
+      reponses: [String(N), String(A), String(A + Z), String(N === Z ? N + 1 : Z)], bonne: 0,
+      explication: `Nombre de neutrons = A − Z = ${A} − ${Z} = ${N}.` };
+    return { figure: svgCase(s), question: quoi === "protons" ? "Voici la case d'un élément du tableau périodique. Combien de protons contient le noyau de cet atome ?" : "Voici la case d'un élément du tableau périodique. Combien d'électrons possède cet atome ?",
+      reponses: [String(Z), String(A), String(Z + 1), "On ne peut pas le savoir"], bonne: 0,
+      explication: quoi === "protons" ? `Le numéro atomique Z (en bas à gauche) vaut ${Z} : le noyau contient ${Z} protons.` : `Z = ${Z} : le noyau contient ${Z} protons. L'atome est neutre : il possède aussi ${Z} électrons.` };
+  }
+  function genTableau() {
+    const q = alea(qQuiEstZ());
+    return { figure: figTableau(), question: q.question, reponses: q.reponses, bonne: 0, explication: q.explication };
+  }
+  function genAbondance() {
+    const k = alea(["univers", "terre", "corps"]), P = AB[k], vrais = P.lignes.filter((l) => !l[0].startsWith("Autres"));
+    if (Math.random() < 0.5) {
+      const top = vrais[0][0], autres = melg(Object.keys(ART).filter((n) => n !== top)).slice(0, 3);
+      return { figure: figAbondance(k), question: `D'après le diagramme, quel est l'élément le plus abondant ${P.ou} ?`,
+        reponses: [maj(ART[top])].concat(autres.map((n) => maj(ART[n]))), bonne: 0,
+        explication: `La barre la plus longue est celle ${du(ART[top])} : ${vrais[0][1]} % de la masse ${P.de}.` };
+    }
+    const l = alea(vrais), faux = melg([...new Set(P.lignes.map((x) => x[1]).concat([l[1] + 10, 100 - l[1]]))].filter((v) => v !== l[1] && v > 0)).slice(0, 3);
+    return { figure: figAbondance(k), question: `D'après le diagramme, quel pourcentage de la masse ${P.de} représente ${ART[l[0]]} ?`,
+      reponses: [l[1] + " %"].concat(faux.map((v) => v + " %")), bonne: 0,
+      explication: `On lit la valeur au bout de la barre « ${l[0]} » : ${l[1]} %.` };
+  }
+
+  function genNeutrons() {
+    const q = alea(qNeutrons());
+    return { question: q.question, reponses: q.reponses, bonne: 0, explication: q.explication };
+  }
+
+  // ============================================================
+  //  IONS (chapitre « Les ions, des particules chargées », 15/11/2026)
+  //  Un ion = un atome (ou un groupe d'atomes) qui a gagné ou perdu des électrons ; le noyau ne change pas.
+  //  Formule : symbole puis charge en exposant, le nombre avant le signe (Cu²⁺), pas de 1 (Na⁺).
+  //  Tests : banque TOUJOURS affichée avec la question (BO : « à partir d'une banque fournie »).
+  // ============================================================
+  const expo = (q) => (Math.abs(q) > 1 ? "⁰¹²³⁴"[Math.abs(q)] : "") + (q > 0 ? "⁺" : "⁻");
+  const IONS = {
+    "H⁺": { s: "H", q: 1, nom: "ion hydrogène" }, "Li⁺": { s: "Li", q: 1, nom: "ion lithium" }, "Na⁺": { s: "Na", q: 1, nom: "ion sodium" },
+    "Mg²⁺": { s: "Mg", q: 2, nom: "ion magnésium" }, "Al³⁺": { s: "Al", q: 3, nom: "ion aluminium" }, "Cl⁻": { s: "Cl", q: -1, nom: "ion chlorure" },
+    "F⁻": { s: "F", q: -1, nom: "ion fluorure" }, "Fe²⁺": { s: "Fe", q: 2, nom: "ion fer II" }, "Fe³⁺": { s: "Fe", q: 3, nom: "ion fer III" },
+    "Cu²⁺": { s: "Cu", q: 2, nom: "ion cuivre II" }, "Zn²⁺": { s: "Zn", q: 2, nom: "ion zinc" }, "Ag⁺": { s: "Ag", q: 1, nom: "ion argent" }
+  };
+  Object.keys(IONS).forEach((f) => { IONS[f].f = f; });
+  const ionDe = (f) => { const i = IONS[f], e = EL[i.s]; return { i, e, s: i.s, Z: e.z, n: Math.abs(i.q), ne: e.z - i.q, pos: i.q > 0 }; };
+
+  // ---------- Modèle (pas à l'échelle) : noyau en spirale + électrons sur des trajectoires ----------
+  const frac = (x) => x - Math.floor(x);
+  function orbites(ne, R) {
+    const o = [];
+    for (let i = 0; i < ne; i++) { const a = R * (0.57 + 0.39 * frac(i * 0.618 + 0.13)), rot = i * 2.39996; o.push({ a, b: a * (0.75 + 0.25 * frac(i * 0.37 + 0.5)), c: Math.cos(rot), s: Math.sin(rot), w: (0.55 + 0.6 * frac(i * 0.71 + 0.2)) * (i % 2 ? 1 : -1), ph: i * 2.1 }); }
+    return o;
+  }
+  const posOrb = (o, t, cx, cy) => { const a = o.ph + o.w * t, x = o.a * Math.cos(a), y = o.b * Math.sin(a); return [cx + x * o.c - y * o.s, cy + x * o.s + y * o.c]; };
+  function svgNoyau(cx, cy, Z, N, rn, signes) {
+    const sorte = []; let p = Z, n = N, s = "";
+    while (p + n > 0) { if (p > 0 && (p >= n || n === 0)) { sorte.push("p"); p--; } else { sorte.push("n"); n--; } }
+    sorte.forEach((k, i) => {
+      const r = Z + N === 1 ? 0 : rn * 1.18 * Math.sqrt(i + 0.35), a = i * 2.39996, x = (cx + r * Math.cos(a)).toFixed(1), y = (cy + r * Math.sin(a)).toFixed(1);
+      s += `<circle cx="${x}" cy="${y}" r="${rn}" class="${k === "p" ? "at-p" : "at-n"}" style="stroke:none"/>${k === "p" && signes ? `<text x="${x}" y="${(+y + 2.8).toFixed(1)}" class="at-sg">+</text>` : ""}`;
+    });
+    return s;
+  }
+  function svgModele(cx, cy, s, ne, R) {
+    const e = EL[s];
+    return `<circle cx="${cx}" cy="${cy}" r="${R}" class="at-bord"/>` + svgNoyau(cx, cy, e.z, e.a - e.z, R / 102 * 5.2, false)
+      + orbites(ne, R).map((o) => { const [x, y] = posOrb(o, 0, cx, cy); return `<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="2.6" class="at-e" style="stroke:none"/>`; }).join("");
+  }
+
+  // ---------- Figure : de l'atome à l'ion (deux modèles côte à côte, bilan des charges dessous) ----------
+  function figAtomeIon(f) {
+    const { i, e, s, Z, n, ne, pos } = ionDe(f);
+    const bilan = (x, titre, nel, charge) => T(x, 138, titre, "sch-t sch-gr") + T(x, 152, `${pl(Z, "proton")} : ${Z} +`, "sch-t") + T(x, 165, `${pl(nel, "électron")} : ${nel} −`, "sch-t") + T(x, 180, charge, "sch-t sch-gr");
+    const svg = svgModele(80, 66, s, Z, 52) + svgModele(240, 66, s, ne, 52)
+      + `<path d="M141 66H178M172 61L179 66L172 71" class="sch-fl"/>${T(160, 55, pos ? "perd" : "gagne", "sch-t sch-pt")}${T(160, 82, pl(n, "électron"), "sch-t sch-pt")}`
+      + bilan(80, `Atome ${e.de} ${s}`, Z, "charge : 0 (neutre)") + bilan(240, `${maj(i.nom)} ${f}`, ne, `${pl(n, "charge")} ${pos ? "+" : "−"} en trop`);
+    return fig("0 0 320 188", svg, `L'atome ${e.de} ${pos ? "perd" : "gagne"} ${pl(n, "électron")} : il devient l'${i.nom} ${f}. Le noyau ne change pas. (Modèle : il n'est pas à l'échelle.)`);
+  }
+
+  // ---------- Animation : fabriquer un ion en retirant ou en ajoutant des électrons ----------
+  function animIon(el) {
+    const CHOIX = ["Na", "Mg", "Al", "Cl"], STABLE = { Na: 1, Mg: 2, Al: 3, Cl: -1 }, NOM = { Na: "ion sodium", Mg: "ion magnésium", Al: "ion aluminium", Cl: "ion chlorure" }, cx = 160, cy = 106, R = 100;
+    let cur = "Na", ne = EL.Na.z, pts = [], orb = [], attente = null;
+    el.innerHTML = `<span class="a-titre">Modèle : de l'atome à l'ion</span>
+      <p class="small">Choisir un atome, puis lui retirer ou lui ajouter des électrons.</p>
+      <div class="a-bts">${CHOIX.map((s) => `<button type="button" class="btn btn-ghost btn-sm" data-s="${s}">${EL[s].nom}</button>`).join("")}</div>
+      <svg viewBox="0 0 320 212" class="at-anim" role="img"></svg>
+      <div class="a-bts"><button type="button" class="btn btn-ghost btn-sm" data-d="-1">− Retirer un électron</button><button type="button" class="btn btn-ghost btn-sm" data-d="1">+ Ajouter un électron</button><button type="button" class="btn btn-ghost btn-sm" data-d="0">Revenir à l'atome</button></div>
+      <div class="ion-bilan"><div class="p"><b data-b="p"></b><span>charges +<br>(protons)</span></div><div class="e"><b data-b="e"></b><span>charges −<br>(électrons)</span></div><div><b data-b="q"></b><span>charge<br>de l'ensemble</span></div></div>
+      <div class="a-res" aria-live="polite"></div>
+      <p class="small muted">Le noyau ne change jamais : seuls des électrons sont perdus ou gagnés. Ce modèle n'est pas à l'échelle.</p>`;
+    const svg = el.querySelector("svg"), res = el.querySelector(".a-res"), B = (k) => el.querySelector(`[data-b="${k}"]`);
+    function dessiner(nouveau) {
+      const e = EL[cur], Z = e.z, q = Z - ne;
+      orb = orbites(ne, R);
+      const t = performance.now() / 1000;
+      svg.innerHTML = `<circle cx="${cx}" cy="${cy}" r="${R + 2}" class="at-bord"/>` + svgNoyau(cx, cy, Z, e.a - Z, 5.2, true)
+        + orb.map((o, k) => { const [x, y] = posOrb(o, t, cx, cy); return `<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="4.6" class="at-e${nouveau && k === ne - 1 ? " at-pop" : ""}" data-e/>`; }).join("");
+      pts = Array.from(svg.querySelectorAll("[data-e]"));
+      const formule = q === 0 ? cur : cur + expo(q);
+      svg.setAttribute("aria-label", `Modèle : ${pl(Z, "proton")} dans le noyau, ${pl(ne, "électron")} autour. Formule : ${formule}.`);
+      B("p").textContent = Z; B("e").textContent = ne; B("q").textContent = q === 0 ? "0" : (q > 0 ? "+" : "−") + Math.abs(q);
+      let txt;
+      if (q === 0) txt = `<strong>Atome ${e.de} (${cur})</strong> : ${Z} protons (+) et ${Z} électrons (−). Autant de charges + que de charges − : l'atome est <strong>neutre</strong>.`;
+      else {
+        txt = `${Z} protons (+) et ${pl(ne, "électron")} (−) : il y a <strong>${pl(Math.abs(q), "charge")} ${q > 0 ? "+" : "−"} en trop</strong>. C'est un <strong>ion ${q > 0 ? "positif" : "négatif"}</strong>, de formule <strong>${formule}</strong>.`;
+        txt += q === STABLE[cur] ? `<br>✔ C'est l'<strong>${NOM[cur]}</strong> : l'ion que forme ${e.le} dans la nature.` : `<br>Dans la nature, ${e.le} forme plutôt l'ion ${cur}${expo(STABLE[cur])} : essaie de l'obtenir.`;
+      }
+      res.innerHTML = txt;
+      el.querySelectorAll("[data-s]").forEach((b) => b.classList.toggle("on", b.dataset.s === cur));
+      el.querySelector('[data-d="-1"]').disabled = q >= 3; el.querySelector('[data-d="1"]').disabled = q <= -2; el.querySelector('[data-d="0"]').disabled = q === 0;
+    }
+    el.querySelectorAll("[data-s]").forEach((b) => b.onclick = () => { clearTimeout(attente); cur = b.dataset.s; ne = EL[cur].z; dessiner(); });
+    el.querySelectorAll("[data-d]").forEach((b) => b.onclick = () => {
+      const d = +b.dataset.d; clearTimeout(attente);
+      if (d === 0) { ne = EL[cur].z; dessiner(); return; }
+      if (d === 1) { ne++; dessiner(true); return; }
+      // retrait : le dernier électron s'efface, puis on redessine
+      const dernier = pts[pts.length - 1]; ne--;
+      if (dernier) { dernier.style.transition = "opacity .3s"; dernier.style.opacity = "0"; el.querySelectorAll("[data-d]").forEach((x) => { x.disabled = true; }); attente = setTimeout(() => dessiner(), 300); } else dessiner();
+    });
+    dessiner();
+    if (window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    const boucle = (t) => {
+      if (!svg.isConnected) return;
+      pts.forEach((c, k) => { if (!orb[k]) return; const [x, y] = posOrb(orb[k], t / 1000, cx, cy); c.setAttribute("cx", x.toFixed(1)); c.setAttribute("cy", y.toFixed(1)); });
+      requestAnimationFrame(boucle);
+    };
+    requestAnimationFrame(boucle);
+  }
+
+  // ---------- Tests d'ions : banque fournie + dessin d'un test dans un tube à essai ----------
+  // c = couleur du précipité ; sol = teinte de la solution testée (Cu²⁺ bleue, Fe²⁺ vert pâle, Fe³⁺ jaune orangé, les autres incolores)
+  const TESTS = [
+    { f: "Cl⁻", nom: "ion chlorure", reactif: "Nitrate d'argent", court: "nitrate d'argent", avec: "le nitrate d'argent", coul: "blanc", detail: "blanc, noircit à la lumière", c: "#F4F3EC", sol: "#E4EEF4" },
+    { f: "Cu²⁺", nom: "ion cuivre II", reactif: "Soude", court: "soude", avec: "la soude", coul: "bleu", detail: "bleu", c: "#2F74D0", sol: "#BFE0F5" },
+    { f: "Fe²⁺", nom: "ion fer II", reactif: "Soude", court: "soude", avec: "la soude", coul: "vert", detail: "vert", c: "#5F8F4E", sol: "#E1F0D9" },
+    { f: "Fe³⁺", nom: "ion fer III", reactif: "Soude", court: "soude", avec: "la soude", coul: "rouille", detail: "rouille", c: "#B4541E", sol: "#F4E3B5" },
+    { f: "Zn²⁺", nom: "ion zinc", reactif: "Soude", court: "soude", avec: "la soude", coul: "blanc", detail: "blanc", c: "#F4F3EC", sol: "#E4EEF4" }
+  ];
+  const pastille = (c) => `<i class="pr-dot" style="background:${c}"></i>`;
+  const figBanque = () => `<div class="table-wrap"><table class="mes-table tbl-serre"><thead><tr><th>Ion testé</th><th>Réactif ajouté</th><th>Précipité</th></tr></thead><tbody>${TESTS.map((t) => `<tr><td>${maj(t.nom)} ${t.f}</td><td>${t.reactif}</td><td>${pastille(t.c)}${t.detail}</td></tr>`).join("")}</tbody></table></div><p class="small muted">Banque de tests (toujours fournie). Soude : solution d'hydroxyde de sodium.</p>`;
+  // cache = true : la légende ne donne pas le nom de l'ion (question)
+  function figTest(t, cache) {
+    if (typeof t === "string") t = TESTS.find((x) => x.f === t);
+    const tube = (x, prec) => `<path d="M${x + 1.5} 70V118a14.5 14.5 0 0 0 29 0V70Z" fill="${t.sol}" stroke="none"/>`
+      + (prec ? [[-6, 0, 5], [3, -5, 6], [8, 3, 5], [-2, 6, 6.5], [6, 10, 5], [-8, 8, 4.5], [0, 14, 5]].map(([dx, dy, r]) => `<circle cx="${x + 16 + dx}" cy="${108 + dy}" r="${r}" fill="${t.c}" class="tt-pr"/>`).join("") : "")
+      + `<path d="M${x} 44V118a16 16 0 0 0 32 0V44" class="sch-fin"/>`;
+    const svg = T(86, 12, "+ quelques gouttes de", "sch-t sch-pt") + T(86, 24, t.court, "sch-t sch-gr")
+      + `<path d="M86 28v8" class="sch-fin"/><path d="M86 42c-2.4 3.4-2.4 6 0 6s2.4-2.6 0-6zM86 54c-2.4 3.4-2.4 6 0 6s2.4-2.6 0-6z" class="tt-goutte"/>`
+      + tube(70, false) + tube(218, true) + `<path d="M124 92H194M188 87L195 92L188 97" class="sch-fl"/>`
+      + T(86, 150, "solution à tester", "sch-t sch-pt") + T(234, 150, `précipité ${t.coul}`, "sch-t sch-gr");
+    return fig("0 0 320 158", svg, cache ? `Résultat du test : avec quelques gouttes de ${t.court}, il se forme un précipité ${t.coul}.` : `Test de l'${t.nom} ${t.f} : avec quelques gouttes de ${t.court}, il se forme un précipité ${t.coul}.`, 340);
+  }
+
+  // ---------- Questions fabriquées sur les ions (QCM avec « pourquoi ») ----------
+  const POUR_ION = ["Li⁺", "Na⁺", "Mg²⁺", "Al³⁺", "Cl⁻", "F⁻", "Fe²⁺", "Fe³⁺", "Cu²⁺", "Zn²⁺", "Ag⁺"];
+  // 1. Nombre d'électrons d'un ion
+  const qIonElectrons = (liste) => (liste || POUR_ION).map((f) => { const { i, e, Z, n, ne, pos } = ionDe(f); return {
+    question: `L'atome ${e.de} possède ${Z} électrons. Combien d'électrons possède l'${i.nom} ${f} ?`,
+    reponses: [String(ne), String(Z), String(pos ? Z + n : Z - n), String(n)], bonne: 0,
+    explication: `${f} porte ${pl(n, "charge")} ${pos ? "+" : "−"} : l'atome a ${pos ? "perdu" : "gagné"} ${pl(n, "électron")}. ${Z} ${pos ? "−" : "+"} ${n} = ${ne} électrons.`,
+    pourquoi: [null, `${Z} est le nombre d'électrons de l'atome. L'ion en a ${pos ? "perdu" : "gagné"} ${n}.`, pos ? "C'est l'inverse : un ion positif a perdu des électrons, il n'en a pas gagné." : "C'est l'inverse : un ion négatif a gagné des électrons, il n'en a pas perdu.", `${n} est le nombre d'électrons ${pos ? "perdus" : "gagnés"}, pas le nombre d'électrons de l'ion.`] }; });
+  // 2. Écrire la formule à partir du nombre de protons et d'électrons
+  const qIonFormule = (liste) => (liste || POUR_ION).map((f) => { const { e, s, Z, n, ne, pos } = ionDe(f), m = n === 1 ? 2 : n - 1; return {
+    question: `Un ion possède ${Z} protons et ${ne} électrons. L'élément de numéro atomique ${Z} est ${e.le} (${s}). Quelle est la formule de cet ion ?`,
+    reponses: [f, s + expo(pos ? -n : n), s + expo(pos ? m : -m), s], bonne: 0,
+    explication: `${Z} charges + et ${ne} charges − : il y a ${pl(n, "charge")} ${pos ? "+" : "−"} en trop. L'ion s'écrit ${f}.`,
+    pourquoi: [null, pos ? "Il y a plus de protons (+) que d'électrons (−) : la charge est positive." : "Il y a plus d'électrons (−) que de protons (+) : la charge est négative.", `Compte l'écart entre ${Z} et ${ne} : ${pl(n, "charge")} en trop, pas ${m}.`, "Sans charge, ce serait un atome : il aurait autant d'électrons que de protons."] }; });
+  // 3. Le noyau ne change pas
+  const qIonProtons = (liste) => (liste || POUR_ION).map((f) => { const { i, e, Z, n, ne, pos } = ionDe(f); return {
+    question: `L'atome ${e.de} a pour numéro atomique Z = ${Z}. Combien de protons contient le noyau de l'${i.nom} ${f} ?`,
+    reponses: [String(Z), String(ne), String(pos ? Z + n : Z - n), String(e.a)], bonne: 0,
+    explication: `Quand un atome devient un ion, seul son nombre d'électrons change : le noyau garde ses ${Z} protons.`,
+    pourquoi: [null, `${ne} est le nombre d'électrons de l'ion. Le noyau, lui, n'a pas changé.`, `Le noyau ne change pas quand un atome devient un ion : il garde ses ${Z} protons.`, `${e.a} est le nombre de masse A (le nombre de nucléons).`] }; });
+  // 4. Électrons perdus ou gagnés ?
+  const qIonSigne = (liste) => (liste || POUR_ION).map((f) => { const { i, e, n, pos } = ionDe(f); return {
+    question: `Pour devenir l'${i.nom} ${f}, l'atome ${e.de} a…`,
+    reponses: [`${pos ? "perdu" : "gagné"} ${pl(n, "électron")}`, `${pos ? "gagné" : "perdu"} ${pl(n, "électron")}`, `perdu ${pl(n, "proton")}`, `gagné ${pl(n, "proton")}`], bonne: 0,
+    explication: `${f} porte ${pl(n, "charge")} ${pos ? "+" : "−"} : l'atome a ${pos ? "perdu" : "gagné"} ${pl(n, "électron")}, de charge négative.`,
+    pourquoi: [null, pos ? "En gagnant des électrons (−), il deviendrait un ion négatif." : "En perdant des électrons (−), il deviendrait un ion positif.", "Le noyau ne change jamais : un atome ne perd pas de protons.", "Le noyau ne change jamais : un atome ne gagne pas de protons."] }; });
+  // 5. Identifier un ion avec la banque de tests (dessin du résultat + banque au-dessus de la question)
+  const qTests = () => TESTS.map((t) => { const autres = melg(TESTS.filter((x) => x.f !== t.f)).slice(0, 3); return {
+    figure: () => figTest(t, true) + figBanque(),
+    question: `On ajoute quelques gouttes de ${t.court} dans une solution : un précipité ${t.coul} se forme. À l'aide de la banque de tests, quel ion a-t-on mis en évidence ?`,
+    reponses: [`L'${t.nom} ${t.f}`].concat(autres.map((x) => `L'${x.nom} ${x.f}`)), bonne: 0,
+    explication: `Dans la banque : ${t.court} + précipité ${t.coul} → ${t.nom} ${t.f}.`,
+    pourquoi: [null].concat(autres.map((x) => x.court === t.court ? `D'après la banque, l'${x.nom} donne un précipité ${x.coul} avec ${x.avec}.` : `L'${x.nom} se teste avec ${x.avec}, pas avec ${t.avec}.`)) }; });
+  // 6. Neutralité d'une solution : combien d'ions chlorure pour un ion positif ?
+  const SOLUTIONS = [["chlorure de sodium", "Na⁺", 1], ["chlorure de cuivre II", "Cu²⁺", 2], ["chlorure de fer II", "Fe²⁺", 2], ["chlorure de fer III", "Fe³⁺", 3], ["chlorure de zinc", "Zn²⁺", 2], ["chlorure de calcium", "Ca²⁺", 2], ["chlorure d'aluminium", "Al³⁺", 3]];
+  const qNeutre = (liste) => SOLUTIONS.filter((x) => !liste || liste.includes(x[1])).map(([nom, cat, n]) => {
+    const faux = n === 1 ? [2, 3, 0] : n === 2 ? [1, 3, 4] : [1, 2, 6];
+    const pq = (k) => k === 0 ? "Sans ion négatif, la solution ne serait pas électriquement neutre." : `${pl(k, "ion")} Cl⁻ ${k > 1 ? "apportent" : "apporte"} ${pl(k, "charge")} − : il en faut ${n} pour compenser ${n > 1 ? "les " + n + " charges +" : "la charge +"} de l'ion ${cat}.`;
+    return { question: `Une solution de ${nom} contient des ions ${cat} et des ions Cl⁻. Elle est électriquement neutre. Pour 1 ion ${cat}, combien d'ions Cl⁻ contient-elle ?`,
+      reponses: [String(n)].concat(faux.map(String)), bonne: 0,
+      explication: `L'ion ${cat} porte ${pl(n, "charge")} + ; chaque ion Cl⁻ porte 1 charge −. Il faut ${pl(n, "ion")} Cl⁻ pour 1 ion ${cat} : (${cat} + ${n > 1 ? n + " " : ""}Cl⁻).`,
+      pourquoi: [null].concat(faux.map(pq)) }; });
+
+  // ---------- Test V2 : lectures (ion, test, étiquette d'eau, neutralité) ----------
+  const sansPq = (q) => ({ figure: typeof q.figure === "function" ? q.figure() : q.figure, question: q.question, reponses: q.reponses, bonne: q.bonne, explication: q.explication });
+  const genIon = () => sansPq(alea(alea([qIonElectrons, qIonFormule, qIonProtons, qIonSigne])()));
+  const genTest = () => sansPq(alea(qTests()));
+  const genNeutre = () => sansPq(alea(qNeutre()));
+  // Étiquette d'une eau de source (valeurs plausibles, inventées ; toutes différentes pour une lecture sans ambiguïté)
+  function etiquette() {
+    return [["calcium", "Ca²⁺", alea([64, 78, 94, 120])], ["magnésium", "Mg²⁺", alea([8, 12, 20, 26])], ["sodium", "Na⁺", alea([5, 9, 14])],
+      ["chlorure", "Cl⁻", alea([7, 11, 18])], ["sulfate", "SO₄²⁻", alea([15, 33, 46])], ["hydrogénocarbonate", "HCO₃⁻", alea([240, 300, 360])]];
+  }
+  const figEtiquette = (L) => `<div class="table-wrap"><table class="mes-table tbl-serre"><thead><tr><th>Ion</th><th>Formule</th><th>mg par litre</th></tr></thead><tbody>${L.map((l) => `<tr><td>${maj(l[0])}</td><td>${l[1]}</td><td>${l[2]}</td></tr>`).join("")}</tbody></table></div><p class="small muted">Étiquette d'une eau de source : masse de chaque ion dans un litre d'eau.</p>`;
+  function genEtiquette() {
+    const L = etiquette(), figure = figEtiquette(L);
+    if (Math.random() < 0.5) {
+      const l = alea(L.slice(0, 5)), faux = melg(L.filter((x) => x !== l)).slice(0, 3);
+      return { figure, question: `D'après l'étiquette, quelle masse d'ions ${l[0]} contient un litre de cette eau ?`, reponses: [l[2] + " mg"].concat(faux.map((x) => x[2] + " mg")), bonne: 0,
+        explication: `Sur la ligne « ${maj(l[0])} » (${l[1]}), on lit ${l[2]} mg par litre.` };
+    }
+    const neg = alea(L.slice(3)), posi = L.slice(0, 3);
+    return { figure, question: "Parmi ces ions de l'étiquette, lequel est un ion négatif ?", reponses: [`L'ion ${neg[0]}`].concat(posi.map((x) => `L'ion ${x[0]}`)), bonne: 0,
+      explication: `Sa formule, ${neg[1]}, porte le signe − : c'est un ion négatif. Les ions ${posi.map((x) => x[1]).join(", ")} sont positifs.` };
+  }
+
+  return { IONS, TESTS, figAtomeIon, animIon, figBanque, figTest, qIonElectrons, qIonFormule, qIonProtons, qIonSigne, qTests, qNeutre, genIon, genTest, genNeutre, genEtiquette, figEtiquette, figModeleNumerote, qNeutrons, qNucleons, genNeutrons, EL, AB, du, grille, figTableau, svgCase, figCase, figAbondance, figStade, animAtome, animTableau, qProtons, qElectrons, qQuiEstZ, qSymboles, genCase, genTableau, genAbondance };
+})();
 </script>
 <script>
 // Chapitre « spectre » (2nde, n° 1 dans la classe). Ajouté à CONTENU.chapitres (défini dans 03_contenu.html).
@@ -5280,6 +5762,804 @@ const CONTENU = {
         { type: "redaction", points: 3, consigne: "Rédiger un court paragraphe pour conseiller la commune : panneaux solaires ou groupe électrogène ? Donner au moins deux arguments.",
           criteres: ["J'ai donné un argument sur le climat : le solaire ne rejette pas de CO₂ en fonctionnant, contrairement à la combustion du gazole (effet de serre).", "J'ai donné un argument sur les ressources : le Soleil est renouvelable et abondant en Guyane ; le gazole s'épuise et doit être transporté en pirogue.", "J'ai cité une limite du solaire : il faut des batteries (coût, recyclage) et parfois garder le groupe électrogène en secours."],
           elements: "Les panneaux solaires utilisent une source renouvelable, abondante en Guyane, et ne rejettent pas de dioxyde de carbone en fonctionnant ; ils évitent aussi de transporter le gazole en pirogue. Mais il faut des batteries pour la nuit (coût, recyclage), et on peut garder le groupe électrogène en secours." }
+      ]
+    }
+  ]
+}
+);
+</script>
+<script>
+// Chapitre « elements » (3e, n° 4 dans la classe). Ajouté à CONTENU.chapitres (défini dans 03_contenu.html).
+// ==================================================================
+//  CHAPITRE 4 : LES ÉLÉMENTS CHIMIQUES DE L'UNIVERS (thème « Organisation et transformations de la matière »)
+//  1er des 4 chapitres du thème en 3ème (plan validé le 14/11/2026) : éléments de l'Univers → ions → pH → réactions acide-métal.
+//  D'après le BO du cycle 4 : éléments sur Terre et dans l'Univers, ressources ; constituants de l'atome et du noyau ;
+//  symboles et classification périodique ; puissances de dix. Nombre de masse A ajouté le 15/11 (demande de l'enseignant) :
+//  nombre de neutrons = A − Z. Exercice type brevet adapté d'une annale (Métropole 2019) : règle valable pour tous les chapitres.
+//  Figures, animations et questions fabriquées : module ATOMES (03_matiere.html). Pas de TP pour l'instant.
+//  Chaque mauvaise réponse des QCM a son explication (pourquoi: […], dans l'ordre des propositions).
+// ==================================================================
+(CONTENU.chapitres["3e"] = CONTENU.chapitres["3e"] || []).push(
+{
+  id: "elements", theme: "matiere",
+  titre: "Les éléments chimiques de l'Univers",
+  resume: "Atomes, noyau et tableau périodique",
+  qcm: "Les éléments chimiques de l'Univers",
+
+  // ======================== 1. RAPPEL ========================
+  rappel: {
+    intro: "Réviser ce que tu as vu en 4ème sur les atomes et les molécules, et ce que tu sais déjà de l'Univers. Chaque jeu change à chaque partie.",
+    activites: [
+      {
+        id: "qcm", type: "qcm", titre: "QCM éclair", desc: "5 questions sur les atomes, les molécules et l'Univers", n: 5,
+        questions: [
+          { question: "De quoi une molécule est-elle faite ?", reponses: ["D'atomes liés entre eux", "De cellules", "D'électricité", "De lumière"], bonne: 0,
+            explication: "Une molécule est un assemblage d'atomes liés entre eux.",
+            pourquoi: [null, "Les cellules sont les « briques » du vivant ; elles sont elles-mêmes faites de molécules.", "L'électricité n'est pas de la matière.", "La lumière n'est pas de la matière."] },
+          { question: "Quel est le symbole de l'atome d'oxygène ?", reponses: ["Ox", "O", "H", "C"], bonne: 1,
+            explication: "L'atome d'oxygène a pour symbole O.",
+            pourquoi: ["Ox n'existe pas : le symbole de l'oxygène est une seule lettre.", null, "H est le symbole de l'hydrogène.", "C est le symbole du carbone."] },
+          { question: "La molécule d'eau a pour formule H₂O. Elle contient…", reponses: ["2 atomes d'hydrogène et 1 atome d'oxygène", "1 atome d'hydrogène et 2 atomes d'oxygène", "2 atomes d'hydrogène et 2 atomes d'oxygène", "3 atomes d'oxygène"], bonne: 0,
+            explication: "Le petit 2 écrit après H indique 2 atomes d'hydrogène ; O sans chiffre : 1 atome d'oxygène.",
+            pourquoi: [null, "Le petit 2 est placé après H : il compte les atomes d'hydrogène.", "O n'est suivi d'aucun chiffre : il n'y a qu'un atome d'oxygène.", "H est le symbole de l'hydrogène, pas de l'oxygène."] },
+          { question: "Quelle est la formule du dioxyde de carbone ?", reponses: ["CO", "CO₂", "C₂O", "O₂"], bonne: 1,
+            explication: "« Di-oxyde » : 2 atomes d'oxygène pour 1 atome de carbone, soit CO₂.",
+            pourquoi: ["CO est le monoxyde de carbone (un seul atome d'oxygène).", null, "C₂O contiendrait 2 atomes de carbone et 1 seul atome d'oxygène.", "O₂ est le dioxygène : il ne contient pas de carbone."] },
+          { question: "Le méthane a pour formule CH₄. Combien d'atomes contient une molécule de méthane ?", reponses: ["4", "5", "2", "1"], bonne: 1,
+            explication: "1 atome de carbone + 4 atomes d'hydrogène = 5 atomes.",
+            pourquoi: ["Tu as oublié l'atome de carbone : 1 + 4 = 5.", null, "2, c'est le nombre de sortes d'atomes (C et H), pas le nombre d'atomes.", "Une molécule contient plusieurs atomes liés."] },
+          { question: "Quel est le gaz le plus abondant dans l'air ?", reponses: ["Le dioxygène (O₂)", "Le diazote (N₂)", "Le dioxyde de carbone (CO₂)", "Le dihydrogène (H₂)"], bonne: 1,
+            explication: "L'air contient environ 78 % de diazote et 21 % de dioxygène.",
+            pourquoi: ["Le dioxygène ne représente qu'environ 21 % de l'air.", null, "Il y a très peu de dioxyde de carbone dans l'air (moins de 0,1 %).", "Il n'y a presque pas de dihydrogène dans l'air."] },
+          { question: "Quelle est la formule du dioxygène ?", reponses: ["O", "2O", "O₂", "O₃"], bonne: 2,
+            explication: "La molécule de dioxygène est formée de 2 atomes d'oxygène liés : O₂.",
+            pourquoi: ["O seul représente un atome d'oxygène, pas la molécule.", "Le nombre d'atomes s'écrit en petit, après le symbole : O₂.", null, "O₃ est l'ozone (3 atomes d'oxygène)."] },
+          { question: "Autour de quelle étoile la Terre tourne-t-elle ?", reponses: ["La Lune", "Le Soleil", "L'étoile Polaire", "Mars"], bonne: 1,
+            explication: "La Terre est une planète du système solaire : elle tourne autour du Soleil.",
+            pourquoi: ["La Lune n'est pas une étoile : c'est le satellite naturel de la Terre.", null, "L'étoile Polaire est une étoile très lointaine.", "Mars est une planète, pas une étoile."] },
+          { question: "Comment s'appelle notre galaxie ?", reponses: ["Le système solaire", "La Voie lactée", "Andromède", "La Grande Ourse"], bonne: 1,
+            explication: "Le système solaire fait partie d'une galaxie : la Voie lactée.",
+            pourquoi: ["Le système solaire n'est qu'une toute petite partie de notre galaxie.", null, "Andromède est une autre galaxie, voisine de la nôtre.", "La Grande Ourse est une constellation : un dessin d'étoiles dans le ciel."] },
+          { question: "Le protoxyde d'azote, un gaz à effet de serre, a pour formule N₂O. Sa molécule contient…", reponses: ["2 atomes d'azote et 1 atome d'oxygène", "1 atome d'azote et 2 atomes d'oxygène", "2 atomes de sodium et 1 atome d'oxygène", "3 atomes d'azote"], bonne: 0,
+            explication: "N est le symbole de l'azote : N₂O contient 2 atomes d'azote et 1 atome d'oxygène.",
+            pourquoi: [null, "Le petit 2 est placé après N : il compte les atomes d'azote.", "Le sodium a pour symbole Na ; N est l'azote.", "O est le symbole de l'oxygène, pas de l'azote."] }
+        ]
+      },
+      {
+        id: "relier", type: "relier", titre: "Relier les morceaux de phrases", desc: "Tracer un trait entre le début et la fin", n: 5,
+        paires: [
+          ["Un atome…", "…est une « brique » de la matière, extrêmement petite."],
+          ["Une molécule…", "…est un assemblage d'atomes liés entre eux."],
+          ["La formule H₂O…", "…est celle de la molécule d'eau."],
+          ["La formule CO₂…", "…est celle du dioxyde de carbone."],
+          ["Le symbole C…", "…est celui de l'atome de carbone."],
+          ["Le Soleil…", "…est une étoile."],
+          ["La Voie lactée…", "…est notre galaxie."],
+          ["La Terre…", "…est une planète du système solaire."]
+        ]
+      },
+      {
+        id: "croises", type: "croises", titre: "Mots croisés de la matière", desc: "Une nouvelle grille à chaque partie", n: 7,
+        mots: [
+          { mot: "ATOME",     indice: "« Brique » de la matière, extrêmement petite." },
+          { mot: "MOLECULE",  indice: "Assemblage d'atomes liés entre eux." },
+          { mot: "FORMULE",   indice: "H₂O est la … chimique de l'eau." },
+          { mot: "SYMBOLE",   indice: "Lettre (ou deux lettres) qui représente un atome : C, H, O…" },
+          { mot: "CARBONE",   indice: "Atome de symbole C." },
+          { mot: "HYDROGENE", indice: "Atome de symbole H." },
+          { mot: "OXYGENE",   indice: "Atome de symbole O." },
+          { mot: "AZOTE",     indice: "Atome de symbole N." },
+          { mot: "METHANE",   indice: "Gaz de formule CH₄." },
+          { mot: "ETOILE",    indice: "Le Soleil en est une." },
+          { mot: "GALAXIE",   indice: "La Voie lactée en est une." },
+          { mot: "PLANETE",   indice: "La Terre en est une." },
+          { mot: "UNIVERS",   indice: "Il contient toutes les galaxies." }
+        ]
+      }
+    ]
+  },
+
+  // ======================== 2. COURS ========================
+  cours: {
+    competences: [
+      "Je cite les éléments chimiques les plus abondants dans l'Univers et sur Terre.",
+      "Je décris un atome : un noyau (protons et neutrons) et des électrons ; je calcule son nombre de neutrons.",
+      "J'utilise le tableau périodique pour trouver le symbole et le numéro atomique d'un élément.",
+      "Je compare la taille d'un atome à celle de son noyau."
+    ],
+    blocs: [
+      { t: "h", texte: "1. Les éléments chimiques dans l'Univers et sur Terre" },
+      { t: "p", def: true, texte: "Toute la matière est faite d'<strong>atomes</strong> : les étoiles, les planètes, l'air, l'eau, ton corps… Il existe une centaine de sortes d'atomes : ce sont les <strong>éléments chimiques</strong> (hydrogène, carbone, oxygène, fer, or…)." },
+      { t: "p", texte: "Dans l'<strong>Univers</strong>, deux éléments dominent très largement : l'<strong>hydrogène (H)</strong> et l'<strong>hélium (He)</strong>. Les étoiles, comme le Soleil, en sont presque entièrement faites. Dans la <strong>Terre</strong>, les éléments les plus abondants sont le fer, l'oxygène et le silicium." },
+      { t: "fig", html: ATOMES.figAbondance() },
+      { t: "p", texte: "D'où viennent les éléments ? L'hydrogène et l'hélium se sont formés au tout début de l'Univers, il y a environ 13,8 milliards d'années. Les éléments plus lourds (carbone, oxygène, fer…) ont été fabriqués <strong>dans les étoiles</strong>. À la mort des étoiles, ils sont dispersés dans l'espace : ils ont servi à former la Terre… et ton corps." },
+      { t: "p", texte: "La matière est <strong>partout de même nature</strong> : les atomes d'une étoile lointaine sont les mêmes que ceux de la Terre. Le télescope spatial James Webb, lancé depuis Kourou en 2021, analyse la lumière des étoiles et des galaxies pour connaître les éléments qu'elles contiennent." },
+      { t: "p", texte: "Sur Terre, certains éléments sont <strong>rares</strong> ou difficiles à extraire : l'or, le lithium des batteries, les « terres rares » des téléphones et des éoliennes. Leurs réserves sont limitées : il faut les économiser et les <strong>recycler</strong>." },
+      { t: "exemple", type: "qcm", competence: 1, variantes: [
+        { question: "Quels sont les deux éléments les plus abondants dans l'Univers ?", reponses: ["L'hydrogène et l'hélium", "L'oxygène et le fer", "Le carbone et l'oxygène", "Le fer et le silicium"], bonne: 0,
+          explication: "L'hydrogène (H) et l'hélium (He) forment presque toute la matière des étoiles.",
+          pourquoi: [null, "L'oxygène et le fer sont abondants dans la Terre, pas dans l'Univers.", "Ce sont deux éléments abondants dans le corps humain.", "Ce sont deux éléments abondants dans la Terre."] },
+        { figure: () => ATOMES.figAbondance("terre"), question: "D'après le diagramme, quel est l'élément le plus abondant dans la Terre ?", reponses: ["L'hydrogène", "Le fer", "L'hélium", "Le silicium"], bonne: 1,
+          explication: "La barre la plus longue est celle du fer : 32 % de la masse de la Terre.",
+          pourquoi: ["L'hydrogène est le plus abondant dans l'Univers, pas dans la Terre.", null, "L'hélium est abondant dans les étoiles, pas dans la Terre.", "Le silicium ne représente que 15 % de la masse de la Terre."] },
+        { question: "Où les éléments comme le carbone, l'oxygène et le fer ont-ils été fabriqués ?", reponses: ["Dans les océans", "Dans les volcans", "Dans les étoiles", "Dans les usines"], bonne: 2,
+          explication: "Les éléments plus lourds que l'hydrogène et l'hélium ont été fabriqués dans les étoiles.",
+          pourquoi: ["Les océans contiennent des éléments, mais ils ne les fabriquent pas.", "Les volcans font remonter des roches : ils ne fabriquent pas d'éléments.", null, "Une usine assemble des atomes qui existent déjà : elle n'en fabrique pas."] }
+      ] },
+      { t: "exemple", type: "vraifaux", competence: 1, variantes: [
+        { affirmation: "L'élément le plus abondant dans l'Univers est l'hydrogène.", vrai: true, explication: "Avec l'hélium, il forme presque toute la matière des étoiles." },
+        { affirmation: "Les atomes d'une étoile lointaine sont de la même nature que ceux de la Terre.", vrai: true, explication: "La matière est partout de même nature dans l'Univers." },
+        { affirmation: "Le corps humain contient surtout de l'hélium.", vrai: false, explication: "Il contient surtout de l'oxygène, du carbone et de l'hydrogène." },
+        { affirmation: "Les réserves d'or et de terres rares de la Terre sont illimitées.", vrai: false, explication: "Ce sont des éléments rares : leurs réserves sont limitées, il faut les recycler." }
+      ] },
+
+      { t: "h", texte: "2. L'atome : un noyau et des électrons" },
+      { t: "p", def: true, texte: "Un <strong>atome</strong> est formé d'un <strong>noyau</strong>, au centre, et d'<strong>électrons</strong> qui se déplacent autour du noyau." },
+      { t: "anim", monter: (el) => ATOMES.animAtome(el) },
+      { t: "p", texte: "Les électrons portent une charge électrique <strong>négative (−)</strong>. Le noyau porte une charge électrique <strong>positive (+)</strong>." },
+      { t: "p", texte: "Entre le noyau et les électrons, il n'y a rien : c'est du <strong>vide</strong>. On dit que l'atome a une structure <strong>lacunaire</strong>." },
+      { t: "exemple", type: "qcm", competence: 2, variantes: [
+        { question: "Où se trouve le noyau d'un atome ?", reponses: ["Au centre de l'atome", "Autour des électrons", "À la surface de l'atome", "En dehors de l'atome"], bonne: 0,
+          explication: "Le noyau est au centre ; les électrons se déplacent autour de lui.",
+          pourquoi: [null, "C'est l'inverse : ce sont les électrons qui se déplacent autour du noyau.", "Le noyau est au centre de l'atome, pas au bord.", "Le noyau fait partie de l'atome : il est en son centre."] },
+        { question: "Quelle est la charge électrique d'un électron ?", reponses: ["Positive", "Négative", "Nulle", "Cela dépend de l'atome"], bonne: 1,
+          explication: "Tous les électrons portent la même charge négative (−).",
+          pourquoi: ["La charge positive est celle du noyau (des protons).", null, "La particule sans charge est le neutron.", "Tous les électrons sont identiques, quel que soit l'atome."] },
+        { question: "Qu'y a-t-il entre le noyau et les électrons d'un atome ?", reponses: ["De l'air", "De l'eau", "Du vide", "D'autres atomes"], bonne: 2,
+          explication: "Entre le noyau et les électrons, il n'y a rien : l'atome a une structure lacunaire.",
+          pourquoi: ["L'air est lui-même fait de molécules, donc d'atomes : il ne peut pas être dans un atome.", "L'eau est faite de molécules, donc d'atomes : elle ne peut pas être dans un atome.", null, "Un atome ne contient pas d'autres atomes."] }
+      ] },
+
+      { t: "h", texte: "3. Protons, neutrons et neutralité de l'atome" },
+      { t: "p", def: true, texte: "Le noyau est formé de <strong>protons</strong>, de charge positive (+), et de <strong>neutrons</strong>, qui n'ont pas de charge. Les protons et les neutrons sont appelés les <strong>nucléons</strong>." },
+      { t: "tableau", compact: true, entetes: ["Particule", "Où ?", "Charge"], lignes: [["Proton", "Dans le noyau", "Positive (+)"], ["Neutron", "Dans le noyau", "Aucune"], ["Électron", "Autour du noyau", "Négative (−)"]] },
+      { t: "p", rel: true, texte: "Un atome contient <strong>autant d'électrons (−) que de protons (+)</strong> : les charges se compensent. Un atome est <strong>électriquement neutre</strong>." },
+      { t: "methode", titre: "Exemple : l'atome de carbone", items: [
+        "Le noyau d'un atome de carbone contient 6 protons (et 6 neutrons) : il porte 6 charges positives.",
+        "L'atome est neutre : il y a donc aussi <strong>6 électrons</strong> autour du noyau (6 charges négatives).",
+        "<span class=\"phr\">Phrase réponse :</span> l'atome de carbone possède 6 protons et 6 électrons ; il est électriquement neutre."
+      ] },
+      { t: "exemple", type: "vraifaux", competence: 2, variantes: [
+        { affirmation: "Les protons et les neutrons se trouvent dans le noyau.", vrai: true, explication: "Ce sont les nucléons." },
+        { affirmation: "Les neutrons portent une charge négative.", vrai: false, explication: "Les neutrons n'ont pas de charge. La charge négative est celle des électrons." },
+        { affirmation: "Un atome contient autant d'électrons que de protons.", vrai: true, explication: "C'est pour cela qu'il est électriquement neutre." },
+        { affirmation: "Un atome porte une charge électrique positive.", vrai: false, explication: "Les charges + des protons et les charges − des électrons se compensent : l'atome est neutre." },
+        { affirmation: "Les électrons se trouvent dans le noyau.", vrai: false, explication: "Les électrons se déplacent autour du noyau." },
+        { affirmation: "Tous les atomes ont autant de neutrons que de protons.", vrai: false, explication: "Pas toujours : le sodium a 11 protons et 12 neutrons." }
+      ] },
+      { t: "exemple", type: "qcm", competence: 2, variantes: ATOMES.qElectrons(["C", "O", "Na", "Al", "Cl"]) },
+      { t: "sh", ajout: "A-titre", texte: "Le nombre de masse A" },
+      { t: "p", ajout: "A-def", def: true, texte: "Le <strong>nombre de masse</strong>, noté <strong>A</strong>, est le <strong>nombre de nucléons</strong> du noyau, c'est-à-dire le nombre de protons + le nombre de neutrons." },
+      { t: "p", ajout: "A-rel", rel: true, texte: "<strong>Nombre de neutrons = A − Z</strong> (nombre de nucléons moins nombre de protons)." },
+      { t: "methode", ajout: "A-ex", titre: "Exemple : l'atome de sodium", items: [
+        "Le noyau d'un atome de sodium a pour numéro atomique <strong>Z = 11</strong> et pour nombre de masse <strong>A = 23</strong>.",
+        "Nombre de protons : Z = 11. Nombre de neutrons : A − Z = 23 − 11 = <strong>12</strong>. Nombre d'électrons : 11 (l'atome est neutre).",
+        "<span class=\"phr\">Phrase réponse :</span> l'atome de sodium contient 11 protons, 12 neutrons et 11 électrons."
+      ] },
+      { t: "exemple", ajout: "A-exo", type: "qcm", competence: 2, variantes: [].concat(ATOMES.qNeutrons(["C", "O", "Na", "Al", "Cl"]), ATOMES.qNucleons(["N", "Mg"])) },
+
+      { t: "h", texte: "4. Lire le tableau périodique" },
+      { t: "p", texte: "Tous les éléments chimiques sont rangés dans le <strong>tableau périodique</strong>. Chaque case correspond à un élément. Autour de son <strong>symbole</strong>, on lit le <strong>nombre de masse A</strong> en haut à gauche et le <strong>numéro atomique Z</strong> en bas à gauche (on écrit par exemple ¹²₆C pour le carbone)." },
+      { t: "fig", html: ATOMES.figCase("C") },
+      { t: "p", def: true, texte: "Le <strong>numéro atomique</strong>, noté <strong>Z</strong>, est le <strong>nombre de protons</strong> du noyau. Comme l'atome est neutre, c'est aussi son nombre d'électrons." },
+      { t: "p", texte: "Le <strong>symbole</strong> commence toujours par une <strong>majuscule</strong>, parfois suivie d'une minuscule : H, C, O, N, Fe, Cu, Au… Attention : <strong>Co</strong> est le cobalt (un atome), alors que <strong>CO</strong> est le monoxyde de carbone (une molécule : un atome C et un atome O)." },
+      { t: "anim", monter: (el) => ATOMES.animTableau(el) },
+      { t: "methode", titre: "Exemple : l'or", items: [
+        "Dans le tableau périodique, la case de l'or indique le symbole <strong>Au</strong>, le numéro atomique <strong>Z = 79</strong> (en bas à gauche) et le nombre de masse <strong>A = 197</strong> (en haut à gauche).",
+        "Le noyau d'un atome d'or contient donc 79 protons. L'atome est neutre : il possède aussi 79 électrons.",
+        "Comme A = 197, son noyau contient 197 − 79 = <strong>118 neutrons</strong>.",
+        "<span class=\"phr\">Phrase réponse :</span> un atome d'or possède 79 protons, 118 neutrons et 79 électrons."
+      ] },
+      { t: "exemple", type: "qcm", competence: 3, variantes: ATOMES.qProtons(["N", "Na", "Si", "Fe", "Cu"]) },
+      { t: "exemple", type: "qcm", competence: 3, variantes: ATOMES.qSymboles.slice(0, 5) },
+
+      { t: "h", texte: "5. Des dimensions minuscules : les puissances de dix" },
+      { t: "p", texte: "Un atome est extrêmement petit : son diamètre est d'environ 0,000 000 000 1 m. Pour éviter d'écrire tous ces zéros, on utilise une <strong>puissance de dix</strong> : <strong>10⁻¹⁰ m</strong> (le chiffre 1 est à la 10ᵉ place après la virgule)." },
+      { t: "tableau", compact: true, entetes: ["Objet", "Diamètre (ordre de grandeur)"], lignes: [["Atome", "10⁻¹⁰ m"], ["Noyau de l'atome", "10⁻¹⁵ m"]] },
+      { t: "p", rel: true, texte: "Le noyau est environ <strong>100 000 fois plus petit</strong> que l'atome. Pourtant, presque toute la <strong>masse</strong> de l'atome est dans son noyau." },
+      { t: "fig", html: ATOMES.figStade() },
+      { t: "methode", titre: "Exemple : l'atome agrandi", items: [
+        "On imagine un atome agrandi jusqu'à la taille d'un stade de football : 100 m.",
+        "Le noyau est 100 000 fois plus petit : 100 m ÷ 100 000 = 0,001 m = <strong>1 mm</strong>.",
+        "<span class=\"phr\">Phrase réponse :</span> le noyau aurait la taille d'une tête d'épingle au centre du stade ; tout le reste de l'atome est du vide."
+      ] },
+      { t: "exemple", type: "qcm", competence: 4, variantes: [
+        { question: "Quel est l'ordre de grandeur du diamètre d'un atome ?", reponses: ["10⁻¹⁰ m", "10⁻¹⁵ m", "10⁻² m", "10¹⁰ m"], bonne: 0,
+          explication: "Un atome mesure environ 10⁻¹⁰ m, soit 0,000 000 000 1 m.",
+          pourquoi: [null, "10⁻¹⁵ m est le diamètre du noyau, 100 000 fois plus petit.", "10⁻² m, c'est 1 cm : beaucoup trop grand pour un atome.", "10¹⁰ m, c'est 10 milliards de mètres : l'exposant doit être négatif."] },
+        { question: "Combien de fois le noyau est-il plus petit que l'atome ?", reponses: ["10 fois", "1 000 fois", "100 000 fois", "5 fois"], bonne: 2,
+          explication: "Le noyau (10⁻¹⁵ m) est environ 100 000 fois plus petit que l'atome (10⁻¹⁰ m).",
+          pourquoi: ["C'est beaucoup plus : 100 000 fois.", "C'est encore 100 fois plus : 100 000 fois.", null, "5 est l'écart entre les exposants 10 et 15 : il correspond à 10⁵ = 100 000."] },
+        { question: "Où se trouve presque toute la masse d'un atome ?", reponses: ["Dans les électrons", "Dans le noyau", "Dans le vide", "Elle est répartie partout"], bonne: 1,
+          explication: "Les protons et les neutrons sont beaucoup plus lourds que les électrons : la masse est concentrée dans le noyau.",
+          pourquoi: ["Les électrons sont très légers par rapport aux protons et aux neutrons.", null, "Le vide ne contient pas de matière : il n'a pas de masse.", "La masse est concentrée dans le minuscule noyau."] },
+        { question: "Si un atome avait la taille d'un stade de 100 m, quelle serait la taille de son noyau ?", reponses: ["1 mm", "1 cm", "1 m", "10 m"], bonne: 0,
+          explication: "100 m ÷ 100 000 = 0,001 m = 1 mm : une tête d'épingle au centre du stade.",
+          pourquoi: [null, "1 cm serait seulement 10 000 fois plus petit que 100 m.", "1 m serait seulement 100 fois plus petit que 100 m.", "10 m serait seulement 10 fois plus petit que 100 m."] }
+      ] },
+
+      { t: "retenir", items: [
+        "Dans l'Univers, les éléments les plus abondants sont l'hydrogène (H) et l'hélium (He). Les éléments plus lourds ont été fabriqués dans les étoiles.",
+        "Un atome est formé d'un noyau (protons +, neutrons sans charge) et d'électrons (−) qui se déplacent autour du noyau.",
+        "Un atome contient autant d'électrons que de protons : il est électriquement neutre.",
+        "Le numéro atomique Z est le nombre de protons du noyau. Le tableau périodique donne Z et le symbole de chaque élément.",
+        "Le nombre de masse A est le nombre de nucléons (protons + neutrons). Nombre de neutrons = A − Z.",
+        "Diamètre d'un atome : 10⁻¹⁰ m ; du noyau : 10⁻¹⁵ m. Le noyau est 100 000 fois plus petit que l'atome, mais il contient presque toute sa masse."
+      ] },
+
+      { t: "h", texte: "Vocabulaire" },
+      { t: "exemple", type: "relier", n: 4, paires: [
+        ["Atome", "Un noyau entouré d'électrons."],
+        ["Noyau", "Centre de l'atome, formé de protons et de neutrons."],
+        ["Électron", "Particule de charge négative, autour du noyau."],
+        ["Proton", "Particule de charge positive, dans le noyau."],
+        ["Neutron", "Particule sans charge, dans le noyau."],
+        ["Nucléons", "Les protons et les neutrons."],
+        ["Numéro atomique Z", "Nombre de protons du noyau."],
+        ["Nombre de masse A", "Nombre de nucléons (protons + neutrons) du noyau."],
+        ["Structure lacunaire", "L'atome est presque entièrement fait de vide."]
+      ] }
+    ]
+  },
+
+  // ======================== 4. ENTRAÎNEMENT ========================
+  // Dans l'ordre croissant de difficulté. Le dernier est un exercice type brevet.
+  entrainement: [
+    {
+      id: "tri", type: "tri", titre: "Atome ou molécule ?", desc: "Trier 8 formules", n: 8,
+      question: "Cette écriture représente-t-elle un atome ou une molécule ?", oui: "Atome", non: "Molécule",
+      items: [
+        { source: "Fe", oui: true, pourquoi: "Un seul symbole, sans chiffre : c'est l'atome de fer." },
+        { source: "H₂O", oui: false, pourquoi: "Deux atomes d'hydrogène et un atome d'oxygène liés : c'est la molécule d'eau." },
+        { source: "O₂", oui: false, pourquoi: "Deux atomes d'oxygène liés : c'est la molécule de dioxygène." },
+        { source: "Au", oui: true, pourquoi: "Au est un seul symbole (majuscule + minuscule) : l'atome d'or." },
+        { source: "CO₂", oui: false, pourquoi: "Un atome de carbone et deux atomes d'oxygène liés : c'est une molécule." },
+        { source: "He", oui: true, pourquoi: "He est un seul symbole : l'atome d'hélium." },
+        { source: "C", oui: true, pourquoi: "Un seul symbole : c'est l'atome de carbone." },
+        { source: "CH₄", oui: false, pourquoi: "Un atome de carbone et quatre atomes d'hydrogène liés : la molécule de méthane." },
+        { source: "N₂", oui: false, pourquoi: "Deux atomes d'azote liés : c'est la molécule de diazote." },
+        { source: "Cu", oui: true, pourquoi: "Cu est un seul symbole : l'atome de cuivre." },
+        { source: "Na", oui: true, pourquoi: "Na est un seul symbole (majuscule + minuscule) : l'atome de sodium." },
+        { source: "H₂", oui: false, pourquoi: "Deux atomes d'hydrogène liés : c'est la molécule de dihydrogène." },
+        { source: "N₂O", oui: false, pourquoi: "Deux atomes d'azote et un atome d'oxygène liés : la molécule de protoxyde d'azote." },
+        { source: "Co", oui: true, pourquoi: "Co (majuscule + minuscule) est un seul symbole : l'atome de cobalt." },
+        { source: "CO", oui: false, pourquoi: "Deux majuscules, donc deux atomes (C et O) : la molécule de monoxyde de carbone." }
+      ]
+    },
+    {
+      id: "symboles", type: "relier", titre: "Éléments et symboles", desc: "Relier chaque élément à son symbole", n: 5,
+      paires: [
+        ["Hydrogène", "H"], ["Hélium", "He"], ["Carbone", "C"], ["Azote", "N"], ["Oxygène", "O"], ["Sodium", "Na"],
+        ["Aluminium", "Al"], ["Silicium", "Si"], ["Chlore", "Cl"], ["Fer", "Fe"], ["Cuivre", "Cu"], ["Or", "Au"]
+      ]
+    },
+    {
+      id: "vf", type: "vraifaux", titre: "Vrai ou faux ?", desc: "8 affirmations à juger", n: 8,
+      items: [
+        { affirmation: "L'hydrogène est l'élément le plus abondant dans l'Univers.", vrai: true, explication: "Avec l'hélium, il forme presque toute la matière des étoiles." },
+        { affirmation: "Le fer est l'élément le plus abondant dans l'Univers.", vrai: false, explication: "C'est l'hydrogène. Le fer est abondant dans la Terre." },
+        { affirmation: "Les éléments lourds, comme le fer, ont été fabriqués dans les étoiles.", vrai: true, explication: "Seuls l'hydrogène et l'hélium datent du tout début de l'Univers." },
+        { affirmation: "Les atomes de la Terre sont différents de ceux des étoiles.", vrai: false, explication: "La matière est partout de même nature dans l'Univers." },
+        { affirmation: "Le noyau d'un atome contient des protons et des neutrons.", vrai: true, explication: "Ce sont les nucléons." },
+        { affirmation: "Les électrons se trouvent dans le noyau.", vrai: false, explication: "Ils se déplacent autour du noyau." },
+        { affirmation: "Un proton porte une charge positive.", vrai: true, explication: "Proton : charge + ; électron : charge − ; neutron : pas de charge." },
+        { affirmation: "Un neutron porte une charge négative.", vrai: false, explication: "Le neutron n'a pas de charge. La charge négative est celle de l'électron." },
+        { affirmation: "Un atome contient autant d'électrons que de protons.", vrai: true, explication: "C'est pour cela qu'il est électriquement neutre." },
+        { affirmation: "Le numéro atomique Z est le nombre de protons du noyau.", vrai: true, explication: "Il est écrit dans la case de l'élément, dans le tableau périodique." },
+        { affirmation: "Un atome d'hydrogène (Z = 1) possède 1 proton et 1 électron.", vrai: true, explication: "Z = 1 : un proton dans le noyau, et un électron pour que l'atome soit neutre." },
+        { affirmation: "Le nombre de masse A est le nombre de nucléons du noyau.", vrai: true, explication: "A = nombre de protons + nombre de neutrons." },
+        { affirmation: "Un atome de sodium (Z = 11, A = 23) contient 23 neutrons.", vrai: false, explication: "23 est le nombre de nucléons. Neutrons : A − Z = 23 − 11 = 12." },
+        { affirmation: "Un atome d'aluminium (Z = 13, A = 27) contient 14 neutrons.", vrai: true, explication: "Neutrons = A − Z = 27 − 13 = 14." },
+        { affirmation: "Le symbole du sodium est So.", vrai: false, explication: "C'est Na, du latin natrium." },
+        { affirmation: "Le symbole Co représente le monoxyde de carbone.", vrai: false, explication: "Co est le cobalt (un atome). Le monoxyde de carbone s'écrit CO, avec deux majuscules." },
+        { affirmation: "Un atome est presque entièrement fait de vide.", vrai: true, explication: "Sa structure est lacunaire : le noyau est 100 000 fois plus petit que l'atome." },
+        { affirmation: "Presque toute la masse d'un atome est dans ses électrons.", vrai: false, explication: "Elle est dans le noyau : les électrons sont très légers." },
+        { affirmation: "Il faut recycler les éléments rares, comme l'or des téléphones.", vrai: true, explication: "Leurs réserves sur Terre sont limitées." }
+      ]
+    },
+    { id: "qcm", type: "qcm-tableur", titre: "Défi QCM", desc: "8 questions tirées au hasard", n: 8 },
+    {
+      id: "carte", type: "qcm", titre: "La carte d'identité d'un atome", desc: "5 questions avec le tableau périodique", n: 5,
+      questions: [].concat(ATOMES.qProtons(), ATOMES.qElectrons(), ATOMES.qNeutrons(), ATOMES.qNucleons(), ATOMES.qQuiEstZ(), ATOMES.qSymboles.slice(5))
+    },
+    {
+      id: "tailles", type: "qcm", titre: "Tout petit, presque vide", desc: "5 questions sur la taille de l'atome", n: 5,
+      questions: [
+        { question: "Le diamètre d'un atome est d'environ 10⁻¹⁰ m, celui de son noyau d'environ 10⁻¹⁵ m. Lequel est le plus petit ?", reponses: ["Le noyau", "L'atome", "Ils ont la même taille", "On ne peut pas les comparer"], bonne: 0,
+          explication: "10⁻¹⁵ m est plus petit que 10⁻¹⁰ m : le noyau est 100 000 fois plus petit que l'atome.",
+          pourquoi: [null, "Le noyau est à l'intérieur de l'atome : il est forcément plus petit.", "10⁻¹⁵ m et 10⁻¹⁰ m sont deux valeurs différentes.", "Les deux diamètres sont en mètres : on peut les comparer."] },
+        { question: "Combien de fois l'atome est-il plus grand que son noyau ?", reponses: ["5 fois", "1 000 fois", "100 000 fois", "10 fois"], bonne: 2,
+          explication: "L'atome est environ 100 000 fois plus grand que son noyau.",
+          pourquoi: ["5 est l'écart entre les exposants 10 et 15 : il correspond à 10⁵ = 100 000.", "C'est encore 100 fois plus : 100 000 fois.", null, "C'est beaucoup plus : 100 000 fois."] },
+        { question: "Que vaut 10⁵ ?", reponses: ["50", "100 000", "0,000 01", "500 000"], bonne: 1,
+          explication: "10⁵ = 10 × 10 × 10 × 10 × 10 = 100 000 (un 1 suivi de 5 zéros).",
+          pourquoi: ["10⁵ n'est pas 10 × 5 : c'est 10 multiplié 5 fois par lui-même.", null, "0,000 01, c'est 10⁻⁵ (exposant négatif).", "10⁵ s'écrit avec un 1 suivi de 5 zéros."] },
+        { question: "Comment s'écrit 10⁻³ m en écriture décimale ?", reponses: ["0,001 m", "0,003 m", "1 000 m", "−1 000 m"], bonne: 0,
+          explication: "10⁻³ = 0,001 : le 1 est à la 3ᵉ place après la virgule. C'est 1 mm.",
+          pourquoi: [null, "L'exposant indique la place du 1 après la virgule, pas le chiffre à écrire.", "1 000, c'est 10³ (exposant positif).", "Un exposant négatif donne un nombre très petit, pas un nombre négatif."] },
+        { question: "On agrandit un atome jusqu'à la taille d'un stade de 100 m. Quelle est alors la taille de son noyau ?", reponses: ["1 mm", "1 cm", "1 m", "10 m"], bonne: 0,
+          explication: "100 m ÷ 100 000 = 0,001 m = 1 mm : une tête d'épingle au centre du stade.",
+          pourquoi: [null, "1 cm serait seulement 10 000 fois plus petit que 100 m.", "1 m serait seulement 100 fois plus petit que 100 m.", "10 m serait seulement 10 fois plus petit que 100 m."] },
+        { question: "On agrandit un noyau jusqu'à la taille d'une bille de 1 cm. Quel est alors le diamètre de l'atome ?", reponses: ["1 km", "1 m", "100 m", "10 cm"], bonne: 0,
+          explication: "1 cm × 100 000 = 100 000 cm = 1 000 m = 1 km.",
+          pourquoi: [null, "1 m = 100 cm : ce serait seulement 100 fois plus grand que la bille.", "100 m = 10 000 cm : ce serait 10 000 fois plus grand, pas 100 000.", "10 cm serait seulement 10 fois plus grand que la bille."] },
+        { question: "Où se trouve presque toute la masse d'un atome ?", reponses: ["Dans les électrons", "Dans le noyau", "Dans le vide, entre le noyau et les électrons", "Elle est répartie partout"], bonne: 1,
+          explication: "Les protons et les neutrons sont beaucoup plus lourds que les électrons : la masse est concentrée dans le noyau.",
+          pourquoi: ["Les électrons sont très légers par rapport aux protons et aux neutrons.", null, "Le vide ne contient pas de matière : il n'a pas de masse.", "La masse est concentrée dans le minuscule noyau."] },
+        { question: "On dit que l'atome a une structure lacunaire. Pourquoi ?", reponses: ["Il est presque entièrement fait de vide", "Il n'a pas de noyau", "Il est plein de matière", "Ses électrons sont collés au noyau"], bonne: 0,
+          explication: "Le noyau est 100 000 fois plus petit que l'atome : entre le noyau et les électrons, il n'y a que du vide.",
+          pourquoi: [null, "Tout atome possède un noyau, en son centre.", "C'est le contraire : la matière est concentrée dans le minuscule noyau.", "Les électrons se déplacent loin du noyau."] }
+      ]
+    },
+    {
+      // Adapté du sujet de physique-chimie du brevet 2019 (série générale, Métropole), partie « atomes d'oxygène » :
+      // mêmes données (fiches d'identité des atomes d'oxygène 16, 17, 18), questions réécrites et complétées (neutrons, abondance).
+      id: "brevet", type: "brevet", titre: "Exercice type brevet", desc: "La glace, mémoire du climat (d'après le brevet 2019)",
+      documents: [
+        { titre: "Document 1 : la glace, mémoire du climat", texte: "En Antarctique et dans les glaciers des montagnes, la neige s'entasse depuis des milliers d'années et se transforme en glace. Les scientifiques y prélèvent de longs cylindres de glace, appelés carottes. La glace est de l'eau, de formule H₂O. Dans cette eau, il existe plusieurs sortes d'atomes d'oxygène. En mesurant la proportion d'oxygène 18 par rapport à l'oxygène 16, on peut estimer la température de l'air au moment où la neige est tombée." },
+        { titre: "Document 2 : un modèle de l'atome d'oxygène", texte: "Ce schéma représente un atome d'oxygène 16. Quatre éléments sont repérés par les numéros 1 à 4.", figure: ATOMES.figModeleNumerote() },
+        { titre: "Document 3 : les fiches d'identité des atomes d'oxygène", texte: "Les trois sortes d'atomes d'oxygène présentes dans la nature (l'abondance est la part de chaque sorte parmi tous les atomes d'oxygène).",
+          figure: `<div class="table-wrap"><table class="mes-table tbl-serre"><thead><tr><th>Oxygène</th><th>Z</th><th>A</th><th>e⁻</th><th>Masse*</th><th>Abondance</th></tr></thead><tbody>
+            <tr><td>16</td><td>8</td><td>16</td><td>8</td><td>2,67</td><td>99,76 %</td></tr><tr><td>17</td><td>8</td><td>17</td><td>8</td><td>2,84</td><td>0,04 %</td></tr>
+            <tr><td>18</td><td>8</td><td>18</td><td>8</td><td>3,01</td><td>0,20 %</td></tr></tbody></table></div><p class="small muted">Z : numéro atomique · A : nombre de nucléons (nombre de masse) · e⁻ : nombre d'électrons · * masse de l'atome, en × 10⁻²⁶ kg.</p>` }
+      ],
+      questions: [
+        { type: "qcm", points: 2, question: "Dans le document 2, que représentent les repères 1, 2, 3 et 4 ?",
+          reponses: ["1 : noyau · 2 : électron · 3 : proton · 4 : neutron", "1 : électron · 2 : noyau · 3 : proton · 4 : neutron", "1 : noyau · 2 : proton · 3 : électron · 4 : neutron", "1 : noyau · 2 : électron · 3 : neutron · 4 : proton"], bonne: 0,
+          explication: "Le noyau (1) est au centre ; les électrons (2) sont autour ; dans le noyau, les protons (3) portent la charge + et les neutrons (4) n'ont pas de charge.",
+          pourquoi: [null, "Le repère 1 entoure le centre de l'atome : c'est le noyau. Le repère 2 montre une particule autour du noyau : un électron.", "Le repère 2 montre une particule autour du noyau : c'est un électron. Les protons sont dans le noyau.", "Les protons et les neutrons sont inversés : le repère 3 montre une particule rouge (proton), le repère 4 une particule grise (neutron)."] },
+        { type: "qcm", points: 1, question: "À l'aide du document 3, combien de protons contient le noyau de chacun des trois atomes d'oxygène ?",
+          reponses: ["8 pour chacun, car ils ont tous le numéro atomique Z = 8", "16, 17 et 18", "8, 9 et 10", "On ne peut pas le savoir"], bonne: 0,
+          explication: "Le numéro atomique Z est le nombre de protons : Z = 8 pour les trois atomes, donc 8 protons chacun.",
+          pourquoi: [null, "16, 17 et 18 sont les nombres de nucléons (A), pas les nombres de protons.", "8, 9 et 10 sont les nombres de neutrons (A − Z).", "Si : le numéro atomique Z, donné dans le document 3, est le nombre de protons."] },
+        { type: "calcul", points: 2, contexte: { gen: () => ({ texte: "À l'aide du document 3, calculer le nombre de neutrons contenus dans le noyau d'un atome d'oxygène 18.", rep: 10, u: "neutrons", repTxt: "10",
+            phrase: "Le noyau d'un atome d'oxygène 18 contient 10 neutrons.",
+            corr: "Nombre de neutrons = A − Z = 18 − 8 = 10." }) } },
+        { type: "qcm", points: 1, question: "D'après le document 3, quelle sorte d'atome d'oxygène est la plus abondante dans la nature ?",
+          reponses: ["L'oxygène 16", "L'oxygène 17", "L'oxygène 18", "Elles sont aussi abondantes les unes que les autres"], bonne: 0,
+          explication: "L'oxygène 16 représente 99,76 % des atomes d'oxygène : presque tous.",
+          pourquoi: [null, "L'oxygène 17 est le plus rare : 0,04 %.", "L'oxygène 18 ne représente que 0,20 % des atomes d'oxygène.", "Les abondances sont très différentes : 99,76 %, 0,04 % et 0,20 %."] },
+        { type: "multi", points: 2, consigne: "À l'aide du document 3, cocher toutes les affirmations exactes.",
+          options: [["Les trois atomes appartiennent au même élément chimique : l'oxygène.", true], ["Les trois atomes ont le même nombre d'électrons.", true], ["Les trois atomes ont le même nombre de neutrons.", false], ["L'atome d'oxygène 18 est le plus lourd, car son noyau contient plus de neutrons.", true]],
+          explication: "Même Z = 8 : même élément, 8 protons et 8 électrons. Les nombres de neutrons sont différents (8, 9 et 10) : l'oxygène 18 a le noyau le plus lourd (3,01 × 10⁻²⁶ kg)." },
+        { type: "redaction", points: 2, consigne: "Rédiger quelques phrases pour expliquer ce que l'oxygène 16, l'oxygène 17 et l'oxygène 18 ont en commun, et ce qui les différencie.",
+          criteres: ["J'ai dit qu'ils ont le même numéro atomique Z = 8 : même nombre de protons (et d'électrons), donc le même élément, l'oxygène.", "J'ai dit qu'ils n'ont pas le même nombre de neutrons (8, 9 et 10), donc pas le même nombre de masse A ni la même masse."],
+          elements: "Les trois atomes ont le même numéro atomique Z = 8 : ils ont 8 protons et 8 électrons, ce sont tous des atomes d'oxygène. Ils diffèrent par leur nombre de neutrons (16 − 8 = 8, 17 − 8 = 9 et 18 − 8 = 10) : leur nombre de masse A et leur masse sont différents." }
+      ]
+    }
+  ]
+}
+);
+</script>
+<script>
+// Chapitre « ions » (3e, n° 5 dans la classe). Ajouté à CONTENU.chapitres (défini dans 03_contenu.html).
+// ==================================================================
+//  CHAPITRE 5 : LES IONS, DES PARTICULES CHARGÉES (thème « Organisation et transformations de la matière »)
+//  2e des 4 chapitres du thème en 3ème (plan validé le 14/11/2026) : éléments de l'Univers → ions → pH → réactions acide-métal.
+//  D'après le BO du cycle 4 : notions de molécules, atomes, ions ; interpréter une formule chimique ;
+//  mettre en œuvre des tests caractéristiques d'espèces chimiques À PARTIR D'UNE BANQUE FOURNIE (la banque est toujours affichée).
+//  Les ions H⁺ et HO⁻ sont seulement nommés ici : leur lien avec l'acidité est l'objet du chapitre suivant (pH).
+//  Notation de l'ion hydroxyde : HO⁻ (comme dans les chapitres de lycée de l'appli) ; « parfois écrit OH⁻ » est signalé une fois.
+//  Exercice type brevet adapté d'une annale : brevet 2023, série professionnelle, sujet 23PROSCMEAG1 (absorbeur d'humidité).
+//  Figures, animation et questions fabriquées : module ATOMES, partie IONS (03_matiere.html). Pas de TP pour l'instant.
+//  Chaque mauvaise réponse des QCM a son explication (pourquoi: […], dans l'ordre des propositions).
+// ==================================================================
+(CONTENU.chapitres["3e"] = CONTENU.chapitres["3e"] || []).push(
+{
+  id: "ions", theme: "matiere",
+  titre: "Les ions, des particules chargées",
+  resume: "Formation, formules et tests des ions",
+  qcm: "Les ions, des particules chargées",
+
+  // ======================== 1. RAPPEL ========================
+  rappel: {
+    intro: "Réviser ce que tu sais déjà sur l'atome : son noyau, ses électrons et sa neutralité. Chaque jeu change à chaque partie.",
+    activites: [
+      {
+        id: "qcm", type: "qcm", titre: "QCM éclair", desc: "5 questions sur l'atome", n: 5,
+        questions: [
+          { question: "De quoi un atome est-il formé ?", reponses: ["D'un noyau et d'électrons", "De molécules", "Uniquement de protons", "D'un noyau et d'air"], bonne: 0,
+            explication: "Un atome est formé d'un noyau, au centre, et d'électrons qui se déplacent autour.",
+            pourquoi: [null, "C'est l'inverse : ce sont les molécules qui sont faites d'atomes.", "Il y a aussi des neutrons dans le noyau et des électrons autour.", "Entre le noyau et les électrons, il n'y a que du vide."] },
+          { question: "Quelle est la charge électrique d'un électron ?", reponses: ["Positive", "Négative", "Nulle", "Cela dépend de l'atome"], bonne: 1,
+            explication: "Tous les électrons portent la même charge négative (−).",
+            pourquoi: ["La charge positive est celle des protons.", null, "La particule sans charge est le neutron.", "Tous les électrons sont identiques, quel que soit l'atome."] },
+          { question: "Quelle est la charge électrique d'un proton ?", reponses: ["Positive", "Négative", "Nulle", "Cela dépend de l'atome"], bonne: 0,
+            explication: "Proton : charge + ; électron : charge − ; neutron : pas de charge.",
+            pourquoi: [null, "La charge négative est celle des électrons.", "La particule sans charge est le neutron.", "Tous les protons sont identiques, quel que soit l'atome."] },
+          { question: "Où se trouvent les protons d'un atome ?", reponses: ["Autour du noyau", "Dans le noyau", "Entre les atomes", "À la surface de l'atome"], bonne: 1,
+            explication: "Les protons et les neutrons forment le noyau, au centre de l'atome.",
+            pourquoi: ["Ce sont les électrons qui se déplacent autour du noyau.", null, "Les protons font partie de l'atome : ils sont dans son noyau.", "Le noyau est au centre de l'atome, pas au bord."] },
+          { question: "Quelle particule de l'atome ne porte aucune charge électrique ?", reponses: ["Le proton", "L'électron", "Le neutron", "Le noyau"], bonne: 2,
+            explication: "Le neutron, comme son nom l'indique, est neutre : il n'a pas de charge.",
+            pourquoi: ["Le proton porte une charge positive.", "L'électron porte une charge négative.", null, "Le noyau contient des protons : il est chargé positivement."] },
+          { question: "Pourquoi un atome est-il électriquement neutre ?", reponses: ["Il contient autant d'électrons que de protons", "Il ne contient aucune charge", "Il contient autant de neutrons que de protons", "Il n'a pas d'électrons"], bonne: 0,
+            explication: "Les charges − des électrons compensent exactement les charges + des protons.",
+            pourquoi: [null, "Il contient des charges + (protons) et des charges − (électrons), en nombre égal.", "Les neutrons n'ont pas de charge : ils ne comptent pas pour la neutralité.", "Tout atome possède des électrons autour de son noyau."] },
+          { question: "Que représente le numéro atomique Z d'un atome ?", reponses: ["Son nombre de neutrons", "Son nombre de protons", "Son nombre de nucléons", "Sa masse en grammes"], bonne: 1,
+            explication: "Z est le nombre de protons du noyau ; c'est aussi le nombre d'électrons de l'atome.",
+            pourquoi: ["Le nombre de neutrons se calcule : A − Z.", null, "Le nombre de nucléons est le nombre de masse A.", "Z est un nombre de particules, pas une masse."] },
+          { question: "L'atome de sodium a pour numéro atomique Z = 11. Combien d'électrons possède-t-il ?", reponses: ["11", "22", "0", "10"], bonne: 0,
+            explication: "Un atome est neutre : 11 protons, donc 11 électrons.",
+            pourquoi: [null, "Autant d'électrons que de protons, pas le double.", "Un atome possède toujours des électrons autour de son noyau.", "Avec 10 électrons pour 11 protons, il ne serait plus neutre."] },
+          { question: "Le noyau d'un atome de fer contient 26 protons. Combien d'électrons possède cet atome ?", reponses: ["26", "56", "13", "27"], bonne: 0,
+            explication: "Un atome est neutre : il possède autant d'électrons que de protons, donc 26.",
+            pourquoi: [null, "56 est son nombre de masse A (nucléons), pas son nombre d'électrons.", "Autant d'électrons que de protons, pas la moitié.", "Avec 27 électrons pour 26 protons, il ne serait plus neutre."] },
+          { question: "Quel est le symbole du chlore ?", reponses: ["C", "Ch", "Cl", "CL"], bonne: 2,
+            explication: "Cl : une majuscule suivie d'une minuscule.",
+            pourquoi: ["C est le symbole du carbone.", "Ch n'existe pas dans le tableau périodique.", null, "La deuxième lettre d'un symbole est toujours une minuscule."] },
+          { question: "Quel élément a pour symbole Cu ?", reponses: ["Le cuivre", "Le carbone", "Le calcium", "Le chlore"], bonne: 0,
+            explication: "Cu est le symbole du cuivre (du latin cuprum).",
+            pourquoi: [null, "Le carbone a pour symbole C.", "Le calcium a pour symbole Ca.", "Le chlore a pour symbole Cl."] }
+        ]
+      },
+      {
+        id: "relier", type: "relier", titre: "Relier les morceaux de phrases", desc: "Tracer un trait entre le début et la fin", n: 5,
+        paires: [
+          ["Le noyau…", "…est au centre de l'atome."],
+          ["Les électrons…", "…portent une charge négative."],
+          ["Les protons…", "…portent une charge positive."],
+          ["Les neutrons…", "…n'ont pas de charge électrique."],
+          ["Un atome…", "…est électriquement neutre."],
+          ["Le numéro atomique Z…", "…est le nombre de protons du noyau."],
+          ["Une molécule…", "…est un assemblage d'atomes liés entre eux."],
+          ["Le symbole Na…", "…est celui du sodium."],
+          ["Le symbole Fe…", "…est celui du fer."]
+        ]
+      },
+      {
+        id: "croises", type: "croises", titre: "Mots croisés de l'atome", desc: "Une nouvelle grille à chaque partie", n: 7,
+        mots: [
+          { mot: "ATOME",    indice: "Un noyau entouré d'électrons." },
+          { mot: "NOYAU",    indice: "Centre de l'atome." },
+          { mot: "ELECTRON", indice: "Particule de charge négative, autour du noyau." },
+          { mot: "PROTON",   indice: "Particule de charge positive, dans le noyau." },
+          { mot: "NEUTRON",  indice: "Particule sans charge, dans le noyau." },
+          { mot: "NEUTRE",   indice: "Un atome est électriquement …" },
+          { mot: "POSITIVE", indice: "Charge d'un proton." },
+          { mot: "NEGATIVE", indice: "Charge d'un électron." },
+          { mot: "MOLECULE", indice: "Assemblage d'atomes liés entre eux." },
+          { mot: "SYMBOLE",  indice: "Cl est le … du chlore." },
+          { mot: "SODIUM",   indice: "Élément de symbole Na." },
+          { mot: "CHLORE",   indice: "Élément de symbole Cl." },
+          { mot: "CUIVRE",   indice: "Élément de symbole Cu." },
+          { mot: "ZINC",     indice: "Élément de symbole Zn." }
+        ]
+      }
+    ]
+  },
+
+  // ======================== 2. COURS ========================
+  cours: {
+    competences: [
+      "Je sais ce qu'est un ion et je le distingue d'un atome ou d'une molécule.",
+      "Je trouve la charge, la formule et le nombre d'électrons d'un ion.",
+      "J'explique pourquoi une solution ionique est électriquement neutre.",
+      "J'identifie un ion à l'aide d'un test et d'une banque de tests."
+    ],
+    blocs: [
+      { t: "h", texte: "1. De l'atome à l'ion" },
+      { t: "p", texte: "L'eau de l'océan qui borde la Guyane est salée. Pourtant, on n'y voit aucun grain de sel : le sel s'y trouve sous la forme de particules minuscules et <strong>chargées</strong>, les <strong>ions</strong>. On trouve aussi des ions dans l'eau minérale, dans le sang, dans le sol…" },
+      { t: "p", texte: "Rappel : un <strong>atome</strong> possède autant d'électrons (−) que de protons (+). Il est <strong>électriquement neutre</strong>." },
+      { t: "p", def: true, texte: "Un <strong>ion</strong> est un atome (ou un groupe d'atomes) qui a <strong>gagné ou perdu</strong> un ou plusieurs <strong>électrons</strong>. Un ion porte une <strong>charge électrique</strong> : il n'est pas neutre." },
+      { t: "p", rel: true, texte: "Quand un atome devient un ion, <strong>son noyau ne change pas</strong> : il garde le même nombre de protons. Seul son nombre d'<strong>électrons</strong> change." },
+      { t: "anim", monter: (el) => ATOMES.animIon(el) },
+      { t: "exemple", type: "qcm", competence: 1, variantes: [
+        { question: "Qu'est-ce qu'un ion ?", reponses: ["Un atome (ou un groupe d'atomes) qui a gagné ou perdu des électrons", "Un atome qui a perdu des protons", "Une molécule électriquement neutre", "Un atome qui n'a plus de noyau"], bonne: 0,
+          explication: "Un ion est un atome ou un groupe d'atomes qui a gagné ou perdu un ou plusieurs électrons.",
+          pourquoi: [null, "Le noyau ne change jamais : seuls des électrons sont gagnés ou perdus.", "Un ion porte une charge électrique : il n'est pas neutre.", "Un ion garde son noyau, avec tous ses protons."] },
+        { question: "Quand un atome devient un ion, qu'est-ce qui change ?", reponses: ["Son nombre de protons", "Son nombre d'électrons", "Son nombre de neutrons", "Son symbole"], bonne: 1,
+          explication: "Seul le nombre d'électrons change : le noyau reste le même.",
+          pourquoi: ["Les protons sont dans le noyau, et le noyau ne change pas.", null, "Les neutrons sont dans le noyau, et le noyau ne change pas.", "C'est toujours le même élément : il garde son symbole (Na devient Na⁺)."] },
+        { question: "Un ion est-il électriquement neutre ?", reponses: ["Non : il porte une charge positive ou négative", "Oui, comme un atome", "Oui, car il n'a plus d'électrons", "Seulement s'il est dans l'eau"], bonne: 0,
+          explication: "Un ion n'a pas autant d'électrons que de protons : il porte une charge électrique.",
+          pourquoi: [null, "L'atome est neutre, mais l'ion a gagné ou perdu des électrons.", "Un ion garde en général des électrons ; il en a seulement gagné ou perdu quelques-uns.", "Un ion est chargé, qu'il soit dans l'eau ou non."] }
+      ] },
+      { t: "exemple", type: "vraifaux", competence: 1, variantes: [
+        { affirmation: "Un ion porte une charge électrique.", vrai: true, explication: "Il n'a pas autant d'électrons que de protons." },
+        { affirmation: "Pour devenir un ion, un atome gagne ou perd des protons.", vrai: false, explication: "Le noyau ne change pas : l'atome gagne ou perd des électrons." },
+        { affirmation: "L'ion sodium a le même nombre de protons que l'atome de sodium.", vrai: true, explication: "Le noyau ne change pas : 11 protons dans les deux cas." },
+        { affirmation: "Un ion possède autant d'électrons que de protons.", vrai: false, explication: "C'est vrai pour un atome. Un ion a gagné ou perdu des électrons." }
+      ] },
+
+      { t: "h", texte: "2. Ions positifs et ions négatifs" },
+      { t: "p", texte: "Un électron porte une charge <strong>négative</strong>. Un atome qui <strong>perd</strong> des électrons a donc plus de charges + que de charges − : il devient un <strong>ion positif</strong>." },
+      { t: "fig", html: ATOMES.figAtomeIon("Na⁺") },
+      { t: "p", texte: "Un atome qui <strong>gagne</strong> des électrons a plus de charges − que de charges + : il devient un <strong>ion négatif</strong>." },
+      { t: "fig", html: ATOMES.figAtomeIon("Cl⁻") },
+      { t: "tableau", compact: true, entetes: ["", "L'atome a…", "Il y a…", "Exemple"], lignes: [["Ion positif", "perdu des électrons", "plus de + que de −", "Na⁺"], ["Ion négatif", "gagné des électrons", "plus de − que de +", "Cl⁻"]] },
+      { t: "p", texte: "Attention au piège : <strong>perdre</strong> des électrons donne un ion <strong>positif</strong>, car on enlève des charges négatives." },
+      { t: "exemple", type: "qcm", competence: 2, variantes: ATOMES.qIonSigne(["Na⁺", "Cl⁻", "Cu²⁺", "Al³⁺", "F⁻"]) },
+
+      { t: "h", texte: "3. La formule d'un ion" },
+      { t: "p", texte: "La formule d'un ion s'écrit avec le <strong>symbole</strong> de l'élément, suivi de sa <strong>charge, en haut à droite</strong> : d'abord le nombre de charges, puis le signe. S'il n'y a qu'une seule charge, on n'écrit pas le 1." },
+      { t: "tableau", compact: true, entetes: ["Nom de l'ion", "Formule", "L'atome a…"], lignes: [
+        ["Ion sodium", "Na⁺", "perdu 1 électron"], ["Ion chlorure", "Cl⁻", "gagné 1 électron"], ["Ion cuivre II", "Cu²⁺", "perdu 2 électrons"],
+        ["Ion fer II", "Fe²⁺", "perdu 2 électrons"], ["Ion fer III", "Fe³⁺", "perdu 3 électrons"], ["Ion zinc", "Zn²⁺", "perdu 2 électrons"], ["Ion hydrogène", "H⁺", "perdu 1 électron"]] },
+      { t: "p", texte: "Le chiffre romain rappelle la charge de l'ion : fer <strong>II</strong> pour Fe²⁺, fer <strong>III</strong> pour Fe³⁺. L'ion formé par l'atome de chlore s'appelle l'ion <strong>chlorure</strong>." },
+      { t: "methode", titre: "Exemple : l'ion cuivre II, Cu²⁺", items: [
+        "L'atome de cuivre a pour numéro atomique Z = 29 : il possède 29 protons et 29 électrons.",
+        "La formule Cu²⁺ indique 2 charges + en trop : l'atome a <strong>perdu 2 électrons</strong>.",
+        "Nombre d'électrons de l'ion : 29 − 2 = <strong>27</strong>. Le noyau n'a pas changé : toujours 29 protons.",
+        "<span class=\"phr\">Phrase réponse :</span> l'ion cuivre II possède 29 protons et 27 électrons."
+      ] },
+      { t: "methode", titre: "Exemple : l'ion chlorure, Cl⁻", items: [
+        "L'atome de chlore a pour numéro atomique Z = 17 : il possède 17 protons et 17 électrons.",
+        "La formule Cl⁻ indique 1 charge − en trop : l'atome a <strong>gagné 1 électron</strong>.",
+        "Nombre d'électrons de l'ion : 17 + 1 = <strong>18</strong>. Le noyau n'a pas changé : toujours 17 protons.",
+        "<span class=\"phr\">Phrase réponse :</span> l'ion chlorure possède 17 protons et 18 électrons."
+      ] },
+      { t: "exemple", type: "qcm", competence: 2, variantes: ATOMES.qIonElectrons(["Na⁺", "Mg²⁺", "Al³⁺", "Cl⁻", "Zn²⁺"]) },
+      { t: "exemple", type: "qcm", competence: 2, variantes: ATOMES.qIonFormule(["Na⁺", "Cu²⁺", "Fe³⁺", "Cl⁻", "Al³⁺"]) },
+      { t: "sh", texte: "Des ions formés de plusieurs atomes" },
+      { t: "p", texte: "Certains ions sont formés d'un <strong>groupe d'atomes</strong> liés entre eux, qui porte une charge : l'ion <strong>hydroxyde HO⁻</strong> (un atome d'oxygène et un atome d'hydrogène ; on l'écrit parfois OH⁻), l'ion <strong>sulfate SO₄²⁻</strong>, l'ion <strong>nitrate NO₃⁻</strong>." },
+      { t: "p", rel: true, texte: "Pour reconnaître un ion dans une formule, on cherche la <strong>charge en haut à droite</strong> : Cu est un atome, H₂O est une molécule, Cu²⁺ et HO⁻ sont des ions." },
+      { t: "exemple", type: "qcm", competence: 1, variantes: [
+        { question: "Parmi ces formules, laquelle est celle d'un ion ?", reponses: ["Cu²⁺", "Cu", "H₂O", "CO₂"], bonne: 0,
+          explication: "Cu²⁺ porte une charge, écrite en haut à droite : c'est un ion.",
+          pourquoi: [null, "Cu, sans charge, est l'atome de cuivre.", "H₂O est une molécule : elle ne porte pas de charge.", "CO₂ est une molécule : elle ne porte pas de charge."] },
+        { question: "Parmi ces formules, laquelle est celle d'un ion ?", reponses: ["O₂", "Cl", "Cl⁻", "CH₄"], bonne: 2,
+          explication: "Cl⁻ porte une charge négative : c'est l'ion chlorure.",
+          pourquoi: ["O₂ est la molécule de dioxygène : elle ne porte pas de charge.", "Cl, sans charge, est l'atome de chlore.", null, "CH₄ est la molécule de méthane : elle ne porte pas de charge."] },
+        { question: "La formule Fe³⁺ représente…", reponses: ["un atome", "une molécule", "un ion négatif", "un ion positif"], bonne: 3,
+          explication: "La charge 3+ en haut à droite indique un ion positif : l'ion fer III.",
+          pourquoi: ["Un atome est neutre : sa formule ne porte pas de charge.", "Une molécule est formée de plusieurs atomes et ne porte pas de charge.", "Le signe + indique une charge positive.", null] },
+        { question: "La formule H₂O représente…", reponses: ["une molécule", "un ion positif", "un ion négatif", "un atome"], bonne: 0,
+          explication: "H₂O : trois atomes liés, sans charge. C'est la molécule d'eau.",
+          pourquoi: [null, "Il n'y a aucune charge en haut à droite : ce n'est pas un ion.", "Il n'y a aucune charge en haut à droite : ce n'est pas un ion.", "Elle contient plusieurs atomes (2 H et 1 O) liés entre eux."] },
+        { question: "La formule SO₄²⁻ représente…", reponses: ["un ion négatif formé de plusieurs atomes", "une molécule", "un atome", "un ion positif"], bonne: 0,
+          explication: "Un groupe d'atomes (1 S et 4 O) qui porte 2 charges − : c'est l'ion sulfate.",
+          pourquoi: [null, "Une molécule ne porte pas de charge ; ici, on lit 2− en haut à droite.", "Il y a plusieurs atomes (S et O), et une charge.", "Le signe − indique une charge négative."] }
+      ] },
+
+      { t: "h", texte: "4. Les solutions ioniques sont neutres" },
+      { t: "p", def: true, texte: "Une <strong>solution ionique</strong> est un liquide qui contient des ions dissous. Exemple : l'eau salée contient des ions sodium Na⁺ et des ions chlorure Cl⁻." },
+      { t: "p", rel: true, texte: "Une solution ionique contient toujours des ions positifs <strong>et</strong> des ions négatifs. Il y a <strong>autant de charges + que de charges −</strong> : la solution est <strong>électriquement neutre</strong>." },
+      { t: "p", texte: "Le <strong>nom</strong> d'une solution donne les ions qu'elle contient : d'abord l'ion négatif, puis l'ion positif. On écrit ses ions entre parenthèses." },
+      { t: "tableau", compact: true, entetes: ["Solution", "Ions qu'elle contient"], lignes: [
+        ["Chlorure de sodium (eau salée)", "(Na⁺ + Cl⁻)"], ["Sulfate de cuivre", "(Cu²⁺ + SO₄²⁻)"], ["Chlorure de cuivre II", "(Cu²⁺ + 2 Cl⁻)"],
+        ["Chlorure de fer III", "(Fe³⁺ + 3 Cl⁻)"], ["Hydroxyde de sodium (soude)", "(Na⁺ + HO⁻)"], ["Nitrate d'argent", "(Ag⁺ + NO₃⁻)"]] },
+      { t: "methode", titre: "Exemple : le chlorure de cuivre II", items: [
+        "Cette solution contient des ions cuivre II, Cu²⁺, et des ions chlorure, Cl⁻.",
+        "Un ion Cu²⁺ porte 2 charges +. Un ion Cl⁻ porte 1 seule charge −.",
+        "Pour que la solution soit neutre, il faut <strong>2 ions Cl⁻ pour 1 ion Cu²⁺</strong> : 2 charges + et 2 charges −.",
+        "<span class=\"phr\">Phrase réponse :</span> la solution de chlorure de cuivre II s'écrit (Cu²⁺ + 2 Cl⁻)."
+      ] },
+      { t: "p", texte: "Certains ions colorent la solution : elle est <strong>bleue</strong> avec les ions Cu²⁺, <strong>vert pâle</strong> avec les ions Fe²⁺, <strong>jaune orangé</strong> avec les ions Fe³⁺. Mais beaucoup d'ions sont incolores (Na⁺, Cl⁻, Zn²⁺…) : la couleur ne suffit pas pour les reconnaître." },
+      { t: "exemple", type: "qcm", competence: 3, variantes: [
+        { question: "Pourquoi une solution ionique est-elle électriquement neutre ?", reponses: ["Elle contient autant de charges + que de charges −", "Elle ne contient aucun ion", "Elle contient seulement des ions positifs", "Ses ions ont perdu leur charge dans l'eau"], bonne: 0,
+          explication: "Les charges des ions positifs et celles des ions négatifs se compensent exactement.",
+          pourquoi: [null, "Une solution ionique contient des ions : c'est sa définition.", "Avec seulement des ions positifs, elle serait chargée positivement.", "Les ions gardent leur charge dans l'eau ; ce sont les charges + et − qui se compensent."] },
+        { question: "Quels ions contient une solution de chlorure de sodium ?", reponses: ["Des ions Na⁺ et des ions Cl⁻", "Seulement des ions Cl⁻", "Des ions Cu²⁺ et des ions Cl⁻", "Des ions Na⁺ et des ions SO₄²⁻"], bonne: 0,
+          explication: "Chlorure → ions chlorure Cl⁻ ; sodium → ions sodium Na⁺.",
+          pourquoi: [null, "Une solution contient toujours des ions positifs et des ions négatifs.", "Cu²⁺ est l'ion cuivre II : il n'y en a pas dans le chlorure de sodium.", "SO₄²⁻ est l'ion sulfate ; ici, l'ion négatif est l'ion chlorure."] },
+        { question: "Quels ions contient une solution de sulfate de cuivre ?", reponses: ["Des ions Cu²⁺ et des ions SO₄²⁻", "Des ions Cu²⁺ et des ions Cl⁻", "Des ions Na⁺ et des ions SO₄²⁻", "Seulement des ions Cu²⁺"], bonne: 0,
+          explication: "Sulfate → ions sulfate SO₄²⁻ ; cuivre → ions cuivre II Cu²⁺.",
+          pourquoi: [null, "Cl⁻ est l'ion chlorure ; ici, l'ion négatif est l'ion sulfate.", "Na⁺ est l'ion sodium ; ici, l'ion positif est l'ion cuivre II.", "Une solution contient toujours des ions positifs et des ions négatifs."] }
+      ] },
+      { t: "exemple", type: "qcm", competence: 3, variantes: ATOMES.qNeutre(["Na⁺", "Cu²⁺", "Fe³⁺", "Zn²⁺"]) },
+
+      { t: "h", texte: "5. Reconnaître des ions : les tests" },
+      { t: "p", texte: "Pour savoir si une solution contient un ion, on réalise un <strong>test</strong> : on ajoute quelques gouttes d'une autre solution, appelée <strong>réactif</strong>. Si l'ion cherché est présent, un <strong>précipité</strong> apparaît." },
+      { t: "p", def: true, texte: "Un <strong>précipité</strong> est un solide qui se forme dans un liquide quand on mélange deux solutions." },
+      { t: "fig", html: ATOMES.figTest("Cu²⁺") },
+      { t: "p", texte: "Le réactif utilisé et la <strong>couleur du précipité</strong> permettent de reconnaître l'ion, grâce à une <strong>banque de tests</strong>. Elle est toujours fournie : inutile de l'apprendre par cœur, il faut savoir s'en servir." },
+      { t: "fig", html: ATOMES.figBanque() },
+      { t: "methode", titre: "Méthode : réaliser un test", items: [
+        "Mettre ses lunettes et ses gants : la soude est corrosive, le nitrate d'argent est dangereux.",
+        "Verser un peu de la solution à tester dans un tube à essai.",
+        "Ajouter quelques gouttes du réactif.",
+        "Observer : un précipité se forme-t-il ? De quelle couleur ?",
+        "Comparer avec la banque de tests pour conclure."
+      ] },
+      { t: "p", texte: "Si <strong>aucun précipité</strong> ne se forme, le test est <strong>négatif</strong> : la solution ne contient pas l'ion cherché." },
+      { t: "methode", titre: "Exemple : une solution bleue inconnue", items: [
+        "Premier tube : avec quelques gouttes de soude (solution d'hydroxyde de sodium), un précipité <strong>bleu</strong> se forme. D'après la banque, la solution contient des ions cuivre II, Cu²⁺.",
+        "Deuxième tube : avec quelques gouttes de nitrate d'argent, un précipité <strong>blanc</strong> se forme. La solution contient aussi des ions chlorure, Cl⁻.",
+        "<span class=\"phr\">Phrase réponse :</span> la solution contient des ions Cu²⁺ et des ions Cl⁻ : c'est une solution de chlorure de cuivre II."
+      ] },
+      { t: "exemple", type: "qcm", competence: 4, variantes: ATOMES.qTests() },
+      { t: "exemple", type: "qcm", competence: 4, variantes: [
+        { figure: () => ATOMES.figBanque(), question: "À l'aide de la banque de tests, quel réactif faut-il utiliser pour chercher des ions chlorure Cl⁻ ?", reponses: ["Le nitrate d'argent", "La soude", "L'eau salée", "Aucun : on regarde la couleur de la solution"], bonne: 0,
+          explication: "Dans la banque, la ligne « Ion chlorure Cl⁻ » indique le nitrate d'argent.",
+          pourquoi: [null, "D'après la banque, la soude sert à tester les ions Cu²⁺, Fe²⁺, Fe³⁺ et Zn²⁺.", "L'eau salée contient elle-même des ions chlorure : elle ne peut pas servir de réactif.", "Les ions chlorure sont incolores : la couleur de la solution ne dit rien."] },
+        { question: "Qu'est-ce qu'un précipité ?", reponses: ["Un solide qui se forme quand on mélange deux solutions", "Un gaz qui s'échappe du tube", "Un liquide coloré", "Un réactif que l'on ajoute goutte à goutte"], bonne: 0,
+          explication: "Un précipité est un solide qui apparaît dans le liquide au cours du test.",
+          pourquoi: [null, "Un précipité est un solide, pas un gaz.", "Une solution peut être colorée sans contenir de précipité : le précipité est un solide.", "Le réactif est la solution que l'on ajoute ; le précipité est le solide qui se forme."] },
+        { figure: () => ATOMES.figBanque(), question: "On ajoute de la soude dans une solution : aucun précipité ne se forme. Que peut-on conclure ?", reponses: ["La solution ne contient pas d'ions Cu²⁺, Fe²⁺, Fe³⁺ ni Zn²⁺", "La solution contient des ions cuivre II", "La solution ne contient aucun ion", "La solution contient des ions chlorure"], bonne: 0,
+          explication: "Test négatif : aucun des ions que la soude met en évidence n'est présent.",
+          pourquoi: [null, "Avec des ions cuivre II, un précipité bleu se serait formé.", "Elle peut contenir d'autres ions, que la soude ne met pas en évidence (Na⁺, Cl⁻…).", "Pour le savoir, il faut faire le test au nitrate d'argent."] }
+      ] },
+
+      { t: "retenir", items: [
+        "Un ion est un atome (ou un groupe d'atomes) qui a gagné ou perdu un ou plusieurs électrons. Son noyau ne change pas.",
+        "Un atome qui perd des électrons devient un ion positif (Na⁺, Cu²⁺) ; un atome qui gagne des électrons devient un ion négatif (Cl⁻).",
+        "La formule d'un ion : le symbole, puis la charge en haut à droite (Cu²⁺ : 2 charges + en trop).",
+        "Une solution ionique contient des ions positifs et des ions négatifs ; elle est électriquement neutre.",
+        "Un test (réactif + couleur du précipité) permet d'identifier un ion à l'aide d'une banque de tests."
+      ] },
+
+      { t: "h", texte: "Vocabulaire" },
+      { t: "exemple", type: "relier", n: 4, paires: [
+        ["Ion", "Atome ou groupe d'atomes qui a gagné ou perdu des électrons."],
+        ["Ion positif", "Il a perdu un ou plusieurs électrons."],
+        ["Ion négatif", "Il a gagné un ou plusieurs électrons."],
+        ["Solution ionique", "Liquide qui contient des ions dissous."],
+        ["Précipité", "Solide qui se forme quand on mélange deux solutions."],
+        ["Réactif", "Solution que l'on ajoute pour faire un test."],
+        ["Banque de tests", "Tableau qui associe chaque ion à son test."],
+        ["Électriquement neutre", "Autant de charges + que de charges −."]
+      ] }
+    ]
+  },
+
+  // ======================== 4. ENTRAÎNEMENT ========================
+  // Dans l'ordre croissant de difficulté. Le dernier est un exercice type brevet.
+  entrainement: [
+    {
+      id: "tri", type: "tri", titre: "Ion ou pas ?", desc: "Trier 8 formules", n: 8,
+      question: "Cette formule est-elle celle d'un ion ?", oui: "Ion", non: "Pas un ion",
+      items: [
+        { source: "Na⁺", oui: true, pourquoi: "Une charge + en haut à droite : c'est l'ion sodium." },
+        { source: "Na", oui: false, pourquoi: "Pas de charge : c'est l'atome de sodium." },
+        { source: "Cl⁻", oui: true, pourquoi: "Une charge − en haut à droite : c'est l'ion chlorure." },
+        { source: "Cl", oui: false, pourquoi: "Pas de charge : c'est l'atome de chlore." },
+        { source: "Cu²⁺", oui: true, pourquoi: "Deux charges + : c'est l'ion cuivre II." },
+        { source: "Cu", oui: false, pourquoi: "Pas de charge : c'est l'atome de cuivre." },
+        { source: "H₂O", oui: false, pourquoi: "Pas de charge : c'est la molécule d'eau. Le petit 2 compte les atomes d'hydrogène." },
+        { source: "HO⁻", oui: true, pourquoi: "Un groupe d'atomes qui porte une charge − : c'est l'ion hydroxyde." },
+        { source: "Fe³⁺", oui: true, pourquoi: "Trois charges + : c'est l'ion fer III." },
+        { source: "Fe", oui: false, pourquoi: "Pas de charge : c'est l'atome de fer." },
+        { source: "CO₂", oui: false, pourquoi: "Pas de charge : c'est la molécule de dioxyde de carbone." },
+        { source: "SO₄²⁻", oui: true, pourquoi: "Un groupe d'atomes qui porte deux charges − : c'est l'ion sulfate." },
+        { source: "O₂", oui: false, pourquoi: "Pas de charge : c'est la molécule de dioxygène. Le petit 2 est en bas : il compte les atomes." },
+        { source: "Zn²⁺", oui: true, pourquoi: "Deux charges + : c'est l'ion zinc." },
+        { source: "H⁺", oui: true, pourquoi: "Une charge + : c'est l'ion hydrogène." },
+        { source: "CH₄", oui: false, pourquoi: "Pas de charge : c'est la molécule de méthane." }
+      ]
+    },
+    {
+      id: "signe", type: "tri", titre: "Positif ou négatif ?", desc: "Trier 8 ions", n: 8,
+      question: "L'ion est-il positif ou négatif ?", oui: "Positif", non: "Négatif",
+      items: [
+        { source: "L'ion Na⁺", oui: true, pourquoi: "Le signe + : l'atome de sodium a perdu 1 électron." },
+        { source: "L'ion Cl⁻", oui: false, pourquoi: "Le signe − : l'atome de chlore a gagné 1 électron." },
+        { source: "L'ion Cu²⁺", oui: true, pourquoi: "2+ : l'atome de cuivre a perdu 2 électrons." },
+        { source: "L'ion HO⁻", oui: false, pourquoi: "Le signe − : l'ion hydroxyde porte une charge négative." },
+        { source: "L'ion SO₄²⁻", oui: false, pourquoi: "2− : l'ion sulfate porte deux charges négatives." },
+        { source: "L'ion Fe³⁺", oui: true, pourquoi: "3+ : l'atome de fer a perdu 3 électrons." },
+        { source: "Un atome a perdu 2 électrons", oui: true, pourquoi: "Il a perdu 2 charges − : il lui reste 2 charges + en trop." },
+        { source: "Un atome a gagné 1 électron", oui: false, pourquoi: "Il a gagné 1 charge − : il a 1 charge − en trop." },
+        { source: "Un ion avec 13 protons et 10 électrons", oui: true, pourquoi: "13 charges + pour 10 charges − : 3 charges + en trop (Al³⁺)." },
+        { source: "Un ion avec 17 protons et 18 électrons", oui: false, pourquoi: "17 charges + pour 18 charges − : 1 charge − en trop (Cl⁻)." },
+        { source: "Un ion avec 11 protons et 10 électrons", oui: true, pourquoi: "11 charges + pour 10 charges − : 1 charge + en trop (Na⁺)." },
+        { source: "Un ion avec 9 protons et 10 électrons", oui: false, pourquoi: "9 charges + pour 10 charges − : 1 charge − en trop (F⁻)." },
+        { source: "L'ion NO₃⁻", oui: false, pourquoi: "Le signe − : l'ion nitrate porte une charge négative." },
+        { source: "L'ion Zn²⁺", oui: true, pourquoi: "2+ : l'atome de zinc a perdu 2 électrons." }
+      ]
+    },
+    {
+      id: "formules", type: "relier", titre: "Noms et formules", desc: "Relier chaque ion à sa formule", n: 5,
+      paires: [
+        ["Ion sodium", "Na⁺"], ["Ion chlorure", "Cl⁻"], ["Ion cuivre II", "Cu²⁺"], ["Ion fer II", "Fe²⁺"], ["Ion fer III", "Fe³⁺"],
+        ["Ion zinc", "Zn²⁺"], ["Ion hydrogène", "H⁺"], ["Ion hydroxyde", "HO⁻"], ["Ion sulfate", "SO₄²⁻"], ["Ion argent", "Ag⁺"]
+      ]
+    },
+    {
+      id: "vf", type: "vraifaux", titre: "Vrai ou faux ?", desc: "8 affirmations à juger", n: 8,
+      items: [
+        { affirmation: "Un ion est un atome qui a gagné ou perdu un ou plusieurs électrons.", vrai: true, explication: "Ce peut aussi être un groupe d'atomes, comme l'ion sulfate." },
+        { affirmation: "Pour devenir un ion, un atome gagne ou perd des protons.", vrai: false, explication: "Le noyau ne change pas : seuls des électrons sont gagnés ou perdus." },
+        { affirmation: "Un atome qui perd un électron devient un ion positif.", vrai: true, explication: "Il a perdu une charge − : il lui reste une charge + en trop." },
+        { affirmation: "Un atome qui gagne un électron devient un ion positif.", vrai: false, explication: "Il a une charge − en trop : c'est un ion négatif." },
+        { affirmation: "L'ion Cu²⁺ a perdu 2 électrons par rapport à l'atome de cuivre.", vrai: true, explication: "2+ : deux charges + en trop, donc 2 électrons en moins." },
+        { affirmation: "L'ion Cl⁻ possède un électron de plus que l'atome de chlore.", vrai: true, explication: "17 protons et 18 électrons : une charge − en trop." },
+        { affirmation: "L'ion Na⁺ possède 12 électrons (Z = 11 pour le sodium).", vrai: false, explication: "Il a perdu 1 électron : 11 − 1 = 10 électrons." },
+        { affirmation: "L'ion fer III a pour formule Fe³⁺.", vrai: true, explication: "Le chiffre romain III rappelle les 3 charges +." },
+        { affirmation: "L'ion Fe²⁺ et l'ion Fe³⁺ ont le même nombre de protons.", vrai: true, explication: "Ce sont deux ions du fer : 26 protons chacun. Ils n'ont pas le même nombre d'électrons." },
+        { affirmation: "La formule H₂O est celle d'un ion.", vrai: false, explication: "C'est une molécule : elle ne porte pas de charge." },
+        { affirmation: "Une solution ionique est électriquement neutre.", vrai: true, explication: "Elle contient autant de charges + que de charges −." },
+        { affirmation: "Une solution de chlorure de sodium contient seulement des ions Na⁺.", vrai: false, explication: "Elle contient des ions Na⁺ et des ions Cl⁻ : une solution contient toujours des ions positifs et négatifs." },
+        { affirmation: "La solution de chlorure de cuivre II contient 2 ions Cl⁻ pour 1 ion Cu²⁺.", vrai: true, explication: "Il faut 2 charges − pour compenser les 2 charges + de Cu²⁺." },
+        { affirmation: "Un précipité est un solide qui se forme quand on mélange deux solutions.", vrai: true, explication: "C'est lui que l'on observe pendant un test." },
+        { affirmation: "Les ions chlorure donnent un précipité bleu avec le nitrate d'argent.", vrai: false, explication: "Le précipité est blanc (il noircit à la lumière). Le précipité bleu est celui des ions cuivre II avec la soude." },
+        { affirmation: "Si aucun précipité ne se forme, l'ion cherché n'est pas présent.", vrai: true, explication: "Le test est négatif." },
+        { affirmation: "Toutes les solutions ioniques sont colorées.", vrai: false, explication: "Beaucoup d'ions sont incolores : l'eau salée, par exemple, est incolore." },
+        { affirmation: "Pour faire un test avec de la soude, il faut porter des lunettes et des gants.", vrai: true, explication: "La soude est corrosive." }
+      ]
+    },
+    { id: "qcm", type: "qcm-tableur", titre: "Défi QCM", desc: "8 questions tirées au hasard", n: 8 },
+    {
+      id: "carte", type: "qcm", titre: "La carte d'identité d'un ion", desc: "5 questions sur les protons et les électrons", n: 5,
+      questions: [].concat(ATOMES.qIonElectrons(), ATOMES.qIonFormule(), ATOMES.qIonProtons(), ATOMES.qIonSigne())
+    },
+    {
+      id: "neutre", type: "qcm", titre: "Des solutions bien équilibrées", desc: "5 questions sur les solutions ioniques", n: 5,
+      questions: [].concat(ATOMES.qNeutre(), [
+        { question: "Une solution de chlorure de zinc contient les ions…", reponses: ["Zn²⁺ et Cl⁻", "Zn²⁺ et SO₄²⁻", "Na⁺ et Cl⁻", "Zn²⁺ seulement"], bonne: 0,
+          explication: "Chlorure → Cl⁻ ; zinc → Zn²⁺.",
+          pourquoi: [null, "SO₄²⁻ est l'ion sulfate ; ici, l'ion négatif est l'ion chlorure.", "Na⁺ est l'ion sodium ; ici, l'ion positif est l'ion zinc.", "Une solution contient toujours des ions positifs et des ions négatifs."] },
+        { question: "Une solution contient des ions Fe²⁺ et des ions SO₄²⁻. Comment s'appelle-t-elle ?", reponses: ["Sulfate de fer II", "Chlorure de fer II", "Sulfate de cuivre", "Sulfate de fer III"], bonne: 0,
+          explication: "On nomme d'abord l'ion négatif (sulfate), puis l'ion positif (fer II).",
+          pourquoi: [null, "L'ion chlorure est Cl⁻ ; ici, l'ion négatif est l'ion sulfate SO₄²⁻.", "L'ion cuivre II est Cu²⁺ ; ici, l'ion positif est Fe²⁺.", "L'ion fer III est Fe³⁺ ; ici, on a Fe²⁺ : le fer II."] },
+        { question: "Une solution contient des ions Na⁺ et des ions HO⁻. Comment s'appelle-t-elle ?", reponses: ["Hydroxyde de sodium (soude)", "Chlorure de sodium", "Nitrate d'argent", "Sulfate de sodium"], bonne: 0,
+          explication: "HO⁻ est l'ion hydroxyde, Na⁺ l'ion sodium : c'est la soude.",
+          pourquoi: [null, "Le chlorure de sodium contient des ions Cl⁻, pas des ions HO⁻.", "Le nitrate d'argent contient les ions Ag⁺ et NO₃⁻.", "Le sulfate de sodium contiendrait des ions SO₄²⁻."] },
+        { question: "Dans une solution de sulfate de cuivre (Cu²⁺ + SO₄²⁻), pour 1 ion Cu²⁺, il y a…", reponses: ["1 ion SO₄²⁻", "2 ions SO₄²⁻", "4 ions SO₄²⁻", "aucun ion SO₄²⁻"], bonne: 0,
+          explication: "Cu²⁺ porte 2 charges +, SO₄²⁻ porte 2 charges − : un ion de chaque suffit.",
+          pourquoi: [null, "2 ions SO₄²⁻ apporteraient 4 charges − pour seulement 2 charges +.", "Le petit 4 compte les atomes d'oxygène dans l'ion sulfate, pas le nombre d'ions.", "Sans ion négatif, la solution ne serait pas neutre."] },
+        { question: "Une solution contient 100 ions Na⁺. Combien d'ions Cl⁻ contient-elle pour être neutre ?", reponses: ["100", "50", "200", "0"], bonne: 0,
+          explication: "Chaque ion porte une seule charge : il faut autant d'ions Cl⁻ que d'ions Na⁺.",
+          pourquoi: [null, "50 ions Cl⁻ n'apporteraient que 50 charges − pour 100 charges +.", "200 ions Cl⁻ apporteraient 200 charges − pour 100 charges +.", "Sans ion négatif, la solution ne serait pas neutre."] }
+      ])
+    },
+    {
+      id: "tests", type: "qcm", titre: "Le labo des ions", desc: "5 questions avec la banque de tests", n: 5,
+      questions: [].concat(ATOMES.qTests(), [
+        { figure: () => ATOMES.figBanque(), question: "À l'aide de la banque, quel réactif faut-il utiliser pour chercher des ions fer III, Fe³⁺ ?", reponses: ["La soude", "Le nitrate d'argent", "L'eau distillée", "Le chlorure de sodium"], bonne: 0,
+          explication: "Dans la banque : ion fer III → soude, précipité rouille.",
+          pourquoi: [null, "Le nitrate d'argent sert à tester les ions chlorure.", "L'eau distillée ne contient pas d'ions : elle ne donne aucun précipité.", "Le chlorure de sodium n'est pas un réactif de la banque."] },
+        { figure: () => ATOMES.figBanque(), question: "Une solution donne un précipité vert avec la soude et un précipité blanc avec le nitrate d'argent. Quels ions contient-elle ?", reponses: ["Fe²⁺ et Cl⁻", "Cu²⁺ et Cl⁻", "Fe³⁺ et Cl⁻", "Fe²⁺ et Zn²⁺"], bonne: 0,
+          explication: "Soude + vert → Fe²⁺ ; nitrate d'argent + blanc → Cl⁻. C'est du chlorure de fer II.",
+          pourquoi: [null, "Avec les ions Cu²⁺, le précipité serait bleu.", "Avec les ions Fe³⁺, le précipité serait rouille.", "Le test au nitrate d'argent met en évidence les ions chlorure, pas les ions zinc."] },
+        { figure: () => ATOMES.figBanque(), question: "On teste de l'eau de mer avec du nitrate d'argent. Qu'observe-t-on ?", reponses: ["Un précipité blanc", "Un précipité bleu", "Un précipité rouille", "Rien du tout"], bonne: 0,
+          explication: "L'eau de mer contient des ions chlorure Cl⁻ : précipité blanc avec le nitrate d'argent.",
+          pourquoi: [null, "Le précipité bleu est celui des ions cuivre II avec la soude.", "Le précipité rouille est celui des ions fer III avec la soude.", "L'eau de mer est salée : elle contient des ions chlorure."] },
+        { figure: () => ATOMES.figBanque(), question: "Une solution de sulfate de cuivre est testée avec la soude. Qu'observe-t-on ?", reponses: ["Un précipité bleu", "Un précipité vert", "Un précipité blanc", "Rien du tout"], bonne: 0,
+          explication: "Elle contient des ions Cu²⁺ : précipité bleu avec la soude.",
+          pourquoi: [null, "Le précipité vert est celui des ions fer II.", "Le précipité blanc avec la soude est celui des ions zinc.", "Elle contient des ions cuivre II, que la soude met en évidence."] },
+        { figure: () => ATOMES.figBanque(), question: "On ajoute du nitrate d'argent dans une eau : aucun précipité ne se forme. Que peut-on conclure ?", reponses: ["Cette eau ne contient pas d'ions chlorure", "Cette eau contient des ions chlorure", "Cette eau ne contient aucun ion", "Cette eau contient des ions cuivre II"], bonne: 0,
+          explication: "Test négatif : pas d'ions chlorure (ou trop peu pour être vus).",
+          pourquoi: [null, "Avec des ions chlorure, un précipité blanc se serait formé.", "Elle peut contenir d'autres ions, que ce test ne met pas en évidence.", "Les ions cuivre II se testent avec la soude."] },
+        { question: "Avant de réaliser un test avec de la soude, que faut-il faire ?", reponses: ["Mettre des lunettes et des gants", "Goûter la solution", "Chauffer le tube à essai", "Sentir le flacon de très près"], bonne: 0,
+          explication: "La soude est corrosive : on protège ses yeux et ses mains.",
+          pourquoi: [null, "On ne goûte jamais un produit au laboratoire.", "Le test se fait à froid : il n'y a rien à chauffer.", "On ne respire jamais un produit chimique de près."] }
+      ])
+    },
+    {
+      // Adapté du sujet de physique-chimie du brevet 2023, série professionnelle (sujet 23PROSCMEAG1), partie « absorbeur d'humidité » :
+      // mêmes données (banque de tests : chlorure, fer II, calcium, sulfate ; résultats des 4 tests sur la solution S), questions reprises
+      // (atomes de la molécule d'eau, ordre du protocole, ions présents) et complétées (formule et électrons de l'ion calcium, neutralité).
+      id: "brevet", type: "brevet", titre: "Exercice type brevet", desc: "L'absorbeur d'humidité (d'après le brevet 2023)",
+      documents: [
+        { titre: "Document 1 : un absorbeur d'humidité", texte: "En Guyane, l'air est très humide : le linge sèche mal et des moisissures apparaissent dans les placards. Un absorbeur d'humidité contient une poudre blanche qui capte l'eau de l'air. L'eau, de formule H₂O, dissout peu à peu la poudre : il se forme une solution, notée S, qui s'écoule dans un bac. On cherche quels ions contient cette solution S." },
+        { titre: "Document 2 : banque de tests d'identification des ions", texte: "Chaque ion est mis en évidence par un réactif.",
+          figure: `<div class="table-wrap"><table class="mes-table tbl-serre"><thead><tr><th>Ion testé</th><th>Réactif</th><th>Test positif si…</th></tr></thead><tbody>
+            <tr><td>Chlorure Cl⁻</td><td>Nitrate d'argent</td><td>un solide blanc se forme</td></tr><tr><td>Fer II Fe²⁺</td><td>Hydroxyde de sodium</td><td>un solide vert foncé se forme</td></tr>
+            <tr><td>Calcium Ca²⁺</td><td>Oxalate d'ammonium</td><td>un solide blanc se forme</td></tr><tr><td>Sulfate SO₄²⁻</td><td>Chlorure de baryum</td><td>un solide blanc se forme</td></tr></tbody></table></div>` },
+        { titre: "Document 3 : résultats des tests sur la solution S", texte: "On verse la solution S dans quatre tubes à essai, puis on ajoute un réactif différent dans chaque tube.",
+          figure: `<div class="table-wrap"><table class="mes-table tbl-serre"><thead><tr><th>Réactif ajouté</th><th>Observation</th></tr></thead><tbody>
+            <tr><td>Nitrate d'argent</td><td>Un solide blanc se forme</td></tr><tr><td>Hydroxyde de sodium</td><td>Aucun solide ne se forme</td></tr>
+            <tr><td>Oxalate d'ammonium</td><td>Un solide blanc se forme</td></tr><tr><td>Chlorure de baryum</td><td>Aucun solide ne se forme</td></tr></tbody></table></div>` },
+        { titre: "Document 4 : les étapes du test des ions chlorure, dans le désordre", texte: "Voici les quatre étapes du protocole, écrites dans le désordre.",
+          figure: `<ul><li><strong>A.</strong> Observer le contenu du tube à essai.</li><li><strong>B.</strong> Verser un peu de solution S dans un tube à essai.</li><li><strong>C.</strong> Mettre ses lunettes et ses gants.</li><li><strong>D.</strong> Ajouter quelques gouttes de nitrate d'argent.</li></ul>` }
+      ],
+      questions: [
+        { type: "qcm", points: 1, question: "La molécule d'eau a pour formule H₂O (document 1). De quels atomes est-elle formée ?",
+          reponses: ["2 atomes d'hydrogène et 1 atome d'oxygène", "1 atome d'hydrogène et 2 atomes d'oxygène", "2 atomes d'hélium et 1 atome d'oxygène", "2 atomes d'hydrogène et 2 atomes d'oxygène"], bonne: 0,
+          explication: "Le petit 2 écrit après H compte les atomes d'hydrogène ; O sans chiffre : 1 atome d'oxygène.",
+          pourquoi: [null, "Le petit 2 est placé après H : il compte les atomes d'hydrogène.", "H est le symbole de l'hydrogène ; l'hélium s'écrit He.", "O n'est suivi d'aucun chiffre : il n'y a qu'un atome d'oxygène."] },
+        { type: "qcm", points: 2, question: "Dans quel ordre faut-il réaliser les étapes du document 4 ?",
+          reponses: ["C, B, D, A", "B, D, A, C", "C, D, B, A", "A, B, D, C"], bonne: 0,
+          explication: "On se protège (C), on verse la solution (B), on ajoute le réactif (D), puis on observe (A).",
+          pourquoi: [null, "On met ses lunettes et ses gants avant de manipuler, pas à la fin.", "On verse d'abord la solution à tester dans le tube, puis on ajoute les gouttes de réactif.", "On ne peut observer le résultat qu'après avoir ajouté le réactif."] },
+        { type: "multi", points: 2, consigne: "À l'aide des documents 2 et 3, cocher les ions présents dans la solution S.",
+          options: [["L'ion chlorure Cl⁻", true], ["L'ion fer II Fe²⁺", false], ["L'ion calcium Ca²⁺", true], ["L'ion sulfate SO₄²⁻", false]],
+          explication: "Solide blanc avec le nitrate d'argent : ions chlorure. Solide blanc avec l'oxalate d'ammonium : ions calcium. Aucun solide avec l'hydroxyde de sodium ni avec le chlorure de baryum : pas d'ions fer II, pas d'ions sulfate." },
+        { type: "qcm", points: 1, question: "Pour devenir l'ion calcium Ca²⁺, l'atome de calcium a…",
+          reponses: ["perdu 2 électrons", "gagné 2 électrons", "perdu 2 protons", "gagné 2 protons"], bonne: 0,
+          explication: "2+ : deux charges + en trop. L'atome a perdu 2 électrons, de charge négative.",
+          pourquoi: [null, "En gagnant des électrons (−), il deviendrait un ion négatif.", "Le noyau ne change jamais : un atome ne perd pas de protons.", "Le noyau ne change jamais : un atome ne gagne pas de protons."] },
+        { type: "calcul", points: 1, contexte: { gen: () => ({ texte: "L'atome de calcium a pour numéro atomique Z = 20. Calculer le nombre d'électrons de l'ion calcium Ca²⁺.", rep: 18, u: "électrons", repTxt: "18",
+            phrase: "L'ion calcium Ca²⁺ possède 18 électrons.",
+            corr: "L'atome possède 20 électrons. L'ion Ca²⁺ en a perdu 2 : 20 − 2 = 18." }) } },
+        { type: "qcm", points: 1, question: "La solution S est électriquement neutre. Pour 1 ion calcium Ca²⁺, combien d'ions chlorure Cl⁻ contient-elle ?",
+          reponses: ["2", "1", "4", "0"], bonne: 0,
+          explication: "Ca²⁺ porte 2 charges + ; chaque ion Cl⁻ porte 1 charge − : il faut 2 ions Cl⁻.",
+          pourquoi: [null, "1 ion Cl⁻ n'apporte qu'une charge − pour 2 charges +.", "4 ions Cl⁻ apporteraient 4 charges − pour seulement 2 charges +.", "Sans ion négatif, la solution ne serait pas neutre."] },
+        { type: "redaction", points: 2, consigne: "Rédiger quelques phrases pour nommer les ions présents dans la solution S, en justifiant avec les résultats des tests, puis donner le nom de cette solution.",
+          criteres: ["J'ai nommé les ions chlorure et les ions calcium, en citant pour chacun le réactif et le solide blanc observé.", "J'ai donné le nom de la solution : chlorure de calcium."],
+          elements: "Avec le nitrate d'argent, un solide blanc se forme : la solution S contient des ions chlorure Cl⁻. Avec l'oxalate d'ammonium, un solide blanc se forme : elle contient des ions calcium Ca²⁺. Les deux autres tests sont négatifs : il n'y a ni ions fer II ni ions sulfate. La solution S est une solution de chlorure de calcium (Ca²⁺ + 2 Cl⁻)." }
       ]
     }
   ]
@@ -12845,6 +14125,886 @@ const QUESTIONS = [
    null,
    "Un entonnoir sert à verser, pas à mesurer."
   ]
+ },
+ {
+  "id": "C4-01",
+  "chapitre": "Les éléments chimiques de l'Univers",
+  "notion": "Univers",
+  "difficulte": 1,
+  "question": "Quel est l'élément chimique le plus abondant dans l'Univers ?",
+  "reponses": [
+   "L'oxygène",
+   "L'hydrogène",
+   "Le fer",
+   "Le carbone"
+  ],
+  "bonne": 1,
+  "explication": "L'hydrogène est de très loin l'élément le plus abondant : les étoiles en sont surtout faites.",
+  "guyane": false,
+  "pourquoi": [
+   "L'oxygène est abondant dans la Terre et dans le corps humain, pas dans l'Univers.",
+   null,
+   "Le fer est abondant dans la Terre, mais rare dans l'Univers.",
+   "Le carbone est abondant dans le corps humain, mais rare dans l'Univers."
+  ]
+ },
+ {
+  "id": "C4-02",
+  "chapitre": "Les éléments chimiques de l'Univers",
+  "notion": "Univers",
+  "difficulte": 1,
+  "question": "Après l'hydrogène, quel est l'élément le plus abondant dans l'Univers ?",
+  "reponses": [
+   "L'hélium",
+   "L'azote",
+   "Le silicium",
+   "L'or"
+  ],
+  "bonne": 0,
+  "explication": "L'hydrogène et l'hélium forment à eux deux presque toute la matière de l'Univers.",
+  "guyane": false,
+  "pourquoi": [
+   null,
+   "L'azote est abondant dans l'air de la Terre, pas dans l'Univers.",
+   "Le silicium est abondant dans les roches de la Terre.",
+   "L'or est un élément très rare."
+  ]
+ },
+ {
+  "id": "C4-03",
+  "chapitre": "Les éléments chimiques de l'Univers",
+  "notion": "Étoiles",
+  "difficulte": 2,
+  "question": "De quoi le Soleil est-il presque entièrement fait ?",
+  "reponses": [
+   "De fer et de roche",
+   "D'hydrogène et d'hélium",
+   "D'oxygène et de carbone",
+   "De feu, sans matière"
+  ],
+  "bonne": 1,
+  "explication": "Comme les autres étoiles, le Soleil est fait surtout d'hydrogène et d'hélium.",
+  "guyane": false,
+  "pourquoi": [
+   "Le fer et les roches forment des planètes comme la Terre, pas les étoiles.",
+   null,
+   "L'oxygène et le carbone sont abondants dans les êtres vivants.",
+   "Le Soleil est fait de matière : des atomes d'hydrogène et d'hélium, très chauds."
+  ]
+ },
+ {
+  "id": "C4-04",
+  "chapitre": "Les éléments chimiques de l'Univers",
+  "notion": "Origine des éléments",
+  "difficulte": 3,
+  "question": "Où les atomes de carbone de ton corps ont-ils été fabriqués, il y a très longtemps ?",
+  "reponses": [
+   "Dans les océans",
+   "Dans les plantes",
+   "Dans des étoiles",
+   "Au centre de la Terre"
+  ],
+  "bonne": 2,
+  "explication": "Le carbone, comme tous les éléments lourds, a été fabriqué dans des étoiles, avant la naissance de la Terre.",
+  "guyane": false,
+  "pourquoi": [
+   "Les océans contiennent du carbone, mais ils ne fabriquent pas d'atomes.",
+   "Les plantes utilisent des atomes de carbone qui existent déjà (ceux du CO₂).",
+   null,
+   "La Terre ne fabrique pas d'éléments : ils étaient là à sa formation."
+  ]
+ },
+ {
+  "id": "C4-05",
+  "chapitre": "Les éléments chimiques de l'Univers",
+  "notion": "Matière dans l'Univers",
+  "difficulte": 2,
+  "question": "Le télescope James Webb, lancé depuis Kourou en 2021, observe des galaxies très lointaines. Les atomes d'hydrogène qu'elles contiennent sont…",
+  "reponses": [
+   "de la même nature que ceux de la Terre",
+   "beaucoup plus gros que ceux de la Terre",
+   "faits d'une matière inconnue",
+   "dépourvus de noyau"
+  ],
+  "bonne": 0,
+  "explication": "La matière est partout de même nature dans l'Univers.",
+  "guyane": true,
+  "pourquoi": [
+   null,
+   "Un atome d'hydrogène a la même taille partout dans l'Univers.",
+   "C'est la même matière que sur Terre : les mêmes éléments chimiques.",
+   "Tout atome possède un noyau."
+  ]
+ },
+ {
+  "id": "C4-06",
+  "chapitre": "Les éléments chimiques de l'Univers",
+  "notion": "Ressources",
+  "difficulte": 2,
+  "question": "Pourquoi faut-il recycler les métaux rares des téléphones ?",
+  "reponses": [
+   "Leurs réserves sur Terre sont limitées",
+   "Ils disparaissent quand on les utilise",
+   "Ils sont fabriqués dans des usines",
+   "Ils sont très abondants sur Terre"
+  ],
+  "bonne": 0,
+  "explication": "Ce sont des éléments rares ou difficiles à extraire : les recycler économise les réserves.",
+  "guyane": false,
+  "pourquoi": [
+   null,
+   "Les atomes ne disparaissent pas : on peut justement les récupérer.",
+   "Une usine ne fabrique pas d'éléments : il faut les extraire du sol.",
+   "S'ils étaient abondants, on n'aurait pas besoin de les économiser."
+  ]
+ },
+ {
+  "id": "C4-07",
+  "chapitre": "Les éléments chimiques de l'Univers",
+  "notion": "Noyau",
+  "difficulte": 1,
+  "question": "Quelles particules trouve-t-on dans le noyau d'un atome ?",
+  "reponses": [
+   "Des protons et des électrons",
+   "Des protons et des neutrons",
+   "Des électrons et des neutrons",
+   "Seulement des électrons"
+  ],
+  "bonne": 1,
+  "explication": "Le noyau contient les nucléons : les protons et les neutrons.",
+  "guyane": false,
+  "pourquoi": [
+   "Les électrons ne sont pas dans le noyau : ils se déplacent autour.",
+   null,
+   "Les électrons ne sont pas dans le noyau : ils se déplacent autour.",
+   "Les électrons se déplacent autour du noyau, pas dedans."
+  ]
+ },
+ {
+  "id": "C4-08",
+  "chapitre": "Les éléments chimiques de l'Univers",
+  "notion": "Charges",
+  "difficulte": 1,
+  "question": "Quelle particule porte une charge électrique négative ?",
+  "reponses": [
+   "Le proton",
+   "Le neutron",
+   "L'électron",
+   "Le noyau"
+  ],
+  "bonne": 2,
+  "explication": "L'électron porte une charge négative (−).",
+  "guyane": false,
+  "pourquoi": [
+   "Le proton porte une charge positive (+).",
+   "Le neutron n'a pas de charge.",
+   null,
+   "Le noyau porte une charge positive : il contient les protons."
+  ]
+ },
+ {
+  "id": "C4-09",
+  "chapitre": "Les éléments chimiques de l'Univers",
+  "notion": "Neutralité",
+  "difficulte": 2,
+  "question": "Pourquoi un atome est-il électriquement neutre ?",
+  "reponses": [
+   "Il ne contient aucune charge électrique",
+   "Il contient autant d'électrons que de protons",
+   "Il contient autant de neutrons que de protons",
+   "Ses électrons sont dans le noyau"
+  ],
+  "bonne": 1,
+  "explication": "Les charges − des électrons compensent exactement les charges + des protons.",
+  "guyane": false,
+  "pourquoi": [
+   "Il contient des charges + (protons) et des charges − (électrons), en nombre égal.",
+   null,
+   "Les neutrons n'ont pas de charge : ils ne compensent rien.",
+   "Les électrons se déplacent autour du noyau."
+  ]
+ },
+ {
+  "id": "C4-10",
+  "chapitre": "Les éléments chimiques de l'Univers",
+  "notion": "Numéro atomique",
+  "difficulte": 2,
+  "question": "Le numéro atomique Z d'un élément est…",
+  "reponses": [
+   "le nombre de neutrons de son noyau",
+   "sa masse en grammes",
+   "le nombre de protons de son noyau",
+   "le nombre d'atomes dans une molécule"
+  ],
+  "bonne": 2,
+  "explication": "Z est le nombre de protons du noyau ; c'est aussi le nombre d'électrons de l'atome.",
+  "guyane": false,
+  "pourquoi": [
+   "Z compte les protons, pas les neutrons.",
+   "Z est un nombre de particules, pas une masse.",
+   null,
+   "Z concerne un seul atome, pas une molécule."
+  ]
+ },
+ {
+  "id": "C4-11",
+  "chapitre": "Les éléments chimiques de l'Univers",
+  "notion": "Numéro atomique",
+  "difficulte": 2,
+  "question": "Le numéro atomique de l'oxygène est Z = 8. Un atome d'oxygène possède donc…",
+  "reponses": [
+   "8 protons et 8 électrons",
+   "8 protons et aucun électron",
+   "4 protons et 4 électrons",
+   "16 protons et 8 électrons"
+  ],
+  "bonne": 0,
+  "explication": "Z = 8 : 8 protons dans le noyau et, comme l'atome est neutre, 8 électrons.",
+  "guyane": false,
+  "pourquoi": [
+   null,
+   "Sans électrons, l'atome ne serait pas neutre.",
+   "Z n'est pas à partager : il y a 8 protons et 8 électrons.",
+   "Z = 8 est directement le nombre de protons : il ne faut pas le doubler."
+  ]
+ },
+ {
+  "id": "C4-12",
+  "chapitre": "Les éléments chimiques de l'Univers",
+  "notion": "Symboles",
+  "difficulte": 1,
+  "question": "Quel est le symbole de l'aluminium ?",
+  "reponses": [
+   "A",
+   "Al",
+   "AL",
+   "Au"
+  ],
+  "bonne": 1,
+  "explication": "Al : une majuscule suivie d'une minuscule.",
+  "guyane": false,
+  "pourquoi": [
+   "A n'est pas un symbole du tableau périodique.",
+   null,
+   "La deuxième lettre d'un symbole est toujours une minuscule.",
+   "Au est le symbole de l'or."
+  ]
+ },
+ {
+  "id": "C4-13",
+  "chapitre": "Les éléments chimiques de l'Univers",
+  "notion": "Symboles",
+  "difficulte": 2,
+  "question": "On trouve de l'or dans le sol de la Guyane. Quel est le symbole de cet élément ?",
+  "reponses": [
+   "Or",
+   "O",
+   "Au",
+   "Ag"
+  ],
+  "bonne": 2,
+  "explication": "Au : il vient du nom latin de l'or, aurum.",
+  "guyane": true,
+  "pourquoi": [
+   "Le symbole ne vient pas du mot français, mais du latin aurum.",
+   "O est le symbole de l'oxygène.",
+   null,
+   "Ag est le symbole de l'argent."
+  ]
+ },
+ {
+  "id": "C4-14",
+  "chapitre": "Les éléments chimiques de l'Univers",
+  "notion": "Dimensions",
+  "difficulte": 2,
+  "question": "Le diamètre d'un atome est de l'ordre de…",
+  "reponses": [
+   "10⁻¹⁰ m",
+   "10⁻³ m",
+   "10⁻¹⁵ m",
+   "10¹⁰ m"
+  ],
+  "bonne": 0,
+  "explication": "Un atome mesure environ 10⁻¹⁰ m, soit 0,000 000 000 1 m.",
+  "guyane": false,
+  "pourquoi": [
+   null,
+   "10⁻³ m, c'est 1 mm : un atome est bien plus petit.",
+   "10⁻¹⁵ m est le diamètre du noyau.",
+   "10¹⁰ m, c'est 10 milliards de mètres : l'exposant doit être négatif."
+  ]
+ },
+ {
+  "id": "C4-15",
+  "chapitre": "Les éléments chimiques de l'Univers",
+  "notion": "Dimensions",
+  "difficulte": 3,
+  "question": "Le noyau d'un atome est environ … plus petit que l'atome.",
+  "reponses": [
+   "10 fois",
+   "1 000 fois",
+   "100 000 fois",
+   "2 fois"
+  ],
+  "bonne": 2,
+  "explication": "10⁻¹⁵ m pour le noyau, 10⁻¹⁰ m pour l'atome : le noyau est 100 000 fois plus petit.",
+  "guyane": false,
+  "pourquoi": [
+   "C'est beaucoup plus : 100 000 fois.",
+   "C'est encore 100 fois plus : 100 000 fois.",
+   null,
+   "C'est beaucoup plus : 100 000 fois."
+  ]
+ },
+ {
+  "id": "C4-16",
+  "chapitre": "Les éléments chimiques de l'Univers",
+  "notion": "Structure lacunaire",
+  "difficulte": 2,
+  "question": "On dit que l'atome a une structure lacunaire. Cela signifie que…",
+  "reponses": [
+   "il est presque entièrement fait de vide",
+   "il n'a pas de noyau",
+   "ses électrons sont collés au noyau",
+   "il est plein de matière partout"
+  ],
+  "bonne": 0,
+  "explication": "Entre le minuscule noyau et les électrons, il n'y a que du vide.",
+  "guyane": false,
+  "pourquoi": [
+   null,
+   "Tout atome possède un noyau, en son centre.",
+   "Les électrons se déplacent loin du noyau.",
+   "C'est le contraire : la matière est concentrée dans le noyau."
+  ]
+ },
+ {
+  "id": "C4-17",
+  "chapitre": "Les éléments chimiques de l'Univers",
+  "notion": "Nombre de masse",
+  "difficulte": 1,
+  "question": "Le nombre de masse A d'un atome est…",
+  "reponses": [
+   "le nombre de protons de son noyau",
+   "le nombre de nucléons de son noyau",
+   "le nombre de ses électrons",
+   "sa masse en grammes"
+  ],
+  "bonne": 1,
+  "explication": "A est le nombre de nucléons : protons + neutrons.",
+  "guyane": false,
+  "pourquoi": [
+   "Le nombre de protons, c'est le numéro atomique Z.",
+   null,
+   "Le nombre d'électrons est égal à Z dans un atome.",
+   "A est un nombre de particules, pas une masse en grammes."
+  ]
+ },
+ {
+  "id": "C4-18",
+  "chapitre": "Les éléments chimiques de l'Univers",
+  "notion": "Nombre de masse",
+  "difficulte": 2,
+  "question": "Un atome a pour numéro atomique Z = 13 et pour nombre de masse A = 27. Combien de neutrons contient son noyau ?",
+  "reponses": [
+   "27",
+   "13",
+   "14",
+   "40"
+  ],
+  "bonne": 2,
+  "explication": "Nombre de neutrons = A − Z = 27 − 13 = 14.",
+  "guyane": false,
+  "pourquoi": [
+   "27 est le nombre de nucléons (protons + neutrons).",
+   "13 est le nombre de protons.",
+   null,
+   "On n'additionne pas : on enlève les protons aux nucléons."
+  ]
+ },
+ {
+  "id": "C4-19",
+  "chapitre": "Les éléments chimiques de l'Univers",
+  "notion": "Nombre de masse",
+  "difficulte": 2,
+  "question": "Le noyau d'un atome de fluor contient 9 protons et 10 neutrons. Quel est son nombre de masse A ?",
+  "reponses": [
+   "9",
+   "10",
+   "19",
+   "1"
+  ],
+  "bonne": 2,
+  "explication": "A = protons + neutrons = 9 + 10 = 19.",
+  "guyane": false,
+  "pourquoi": [
+   "9 est le nombre de protons (Z).",
+   "10 est seulement le nombre de neutrons.",
+   null,
+   "On additionne protons et neutrons ; on ne fait pas la différence."
+  ]
+ },
+ {
+  "id": "C4-20",
+  "chapitre": "Les éléments chimiques de l'Univers",
+  "notion": "Nombre de masse",
+  "difficulte": 3,
+  "question": "L'oxygène 16 (Z = 8, A = 16) et l'oxygène 18 (Z = 8, A = 18) sont deux atomes d'oxygène. Qu'est-ce qui les différencie ?",
+  "reponses": [
+   "Leur nombre de protons",
+   "Leur nombre d'électrons",
+   "Leur nombre de neutrons",
+   "Leur symbole"
+  ],
+  "bonne": 2,
+  "explication": "Même Z = 8 (8 protons, 8 électrons) ; neutrons : 16 − 8 = 8 et 18 − 8 = 10.",
+  "guyane": false,
+  "pourquoi": [
+   "Ils ont le même numéro atomique Z = 8 : 8 protons chacun.",
+   "Ils sont neutres avec 8 protons : 8 électrons chacun.",
+   null,
+   "Ce sont deux atomes d'oxygène : même symbole O."
+  ]
+ },
+ {
+  "id": "C5-01",
+  "chapitre": "Les ions, des particules chargées",
+  "notion": "Définition",
+  "difficulte": 1,
+  "question": "Qu'est-ce qu'un ion ?",
+  "reponses": [
+   "Un atome (ou un groupe d'atomes) qui a gagné ou perdu des électrons",
+   "Un atome qui a perdu des protons",
+   "Une molécule neutre",
+   "Le noyau d'un atome"
+  ],
+  "bonne": 0,
+  "explication": "Un ion est un atome ou un groupe d'atomes qui a gagné ou perdu un ou plusieurs électrons.",
+  "guyane": false,
+  "pourquoi": [
+   null,
+   "Le noyau ne change pas : seuls des électrons sont gagnés ou perdus.",
+   "Un ion porte une charge électrique : il n'est pas neutre.",
+   "Un ion garde son noyau et des électrons autour."
+  ]
+ },
+ {
+  "id": "C5-02",
+  "chapitre": "Les ions, des particules chargées",
+  "notion": "Définition",
+  "difficulte": 1,
+  "question": "Quand un atome devient un ion, que devient son noyau ?",
+  "reponses": [
+   "Il ne change pas",
+   "Il perd des protons",
+   "Il gagne des protons",
+   "Il disparaît"
+  ],
+  "bonne": 0,
+  "explication": "Seul le nombre d'électrons change : le noyau garde tous ses protons.",
+  "guyane": false,
+  "pourquoi": [
+   null,
+   "Un atome ne perd jamais de protons en devenant un ion.",
+   "Un atome ne gagne jamais de protons en devenant un ion.",
+   "L'ion garde son noyau."
+  ]
+ },
+ {
+  "id": "C5-03",
+  "chapitre": "Les ions, des particules chargées",
+  "notion": "Charge",
+  "difficulte": 1,
+  "question": "Un atome perd un électron. Que devient-il ?",
+  "reponses": [
+   "Un ion négatif",
+   "Un ion positif",
+   "Une molécule",
+   "Il reste un atome neutre"
+  ],
+  "bonne": 1,
+  "explication": "Il perd une charge − : il lui reste une charge + en trop. C'est un ion positif.",
+  "guyane": false,
+  "pourquoi": [
+   "C'est l'inverse : il a perdu une charge négative.",
+   null,
+   "Une molécule est un assemblage d'atomes : rien à voir avec les électrons perdus.",
+   "Il n'a plus autant d'électrons que de protons : il n'est plus neutre."
+  ]
+ },
+ {
+  "id": "C5-04",
+  "chapitre": "Les ions, des particules chargées",
+  "notion": "Charge",
+  "difficulte": 1,
+  "question": "Un atome gagne un électron. Que devient-il ?",
+  "reponses": [
+   "Un ion négatif",
+   "Un ion positif",
+   "Un autre élément chimique",
+   "Il reste un atome neutre"
+  ],
+  "bonne": 0,
+  "explication": "Il a une charge − en trop : c'est un ion négatif.",
+  "guyane": false,
+  "pourquoi": [
+   null,
+   "C'est l'inverse : il a gagné une charge négative.",
+   "Son noyau ne change pas : c'est toujours le même élément.",
+   "Il a plus d'électrons que de protons : il n'est plus neutre."
+  ]
+ },
+ {
+  "id": "C5-05",
+  "chapitre": "Les ions, des particules chargées",
+  "notion": "Formule",
+  "difficulte": 1,
+  "question": "Quelle est la formule de l'ion sodium ?",
+  "reponses": [
+   "Na",
+   "Na⁺",
+   "Na⁻",
+   "So⁺"
+  ],
+  "bonne": 1,
+  "explication": "L'atome de sodium Na perd 1 électron : l'ion s'écrit Na⁺.",
+  "guyane": false,
+  "pourquoi": [
+   "Na, sans charge, est l'atome de sodium.",
+   null,
+   "L'ion sodium est positif : l'atome a perdu un électron.",
+   "Le symbole du sodium est Na (du latin natrium), pas So."
+  ]
+ },
+ {
+  "id": "C5-06",
+  "chapitre": "Les ions, des particules chargées",
+  "notion": "Formule",
+  "difficulte": 1,
+  "question": "Quelle est la formule de l'ion chlorure ?",
+  "reponses": [
+   "Cl⁺",
+   "Cl",
+   "Cl⁻",
+   "C⁻"
+  ],
+  "bonne": 2,
+  "explication": "L'atome de chlore Cl gagne 1 électron : l'ion chlorure s'écrit Cl⁻.",
+  "guyane": false,
+  "pourquoi": [
+   "L'ion chlorure est négatif : l'atome a gagné un électron.",
+   "Cl, sans charge, est l'atome de chlore.",
+   null,
+   "C est le symbole du carbone ; le chlore s'écrit Cl."
+  ]
+ },
+ {
+  "id": "C5-07",
+  "chapitre": "Les ions, des particules chargées",
+  "notion": "Formule",
+  "difficulte": 2,
+  "question": "Que signifie le « 2+ » dans la formule Cu²⁺ ?",
+  "reponses": [
+   "L'ion porte 2 charges + en trop",
+   "L'ion contient 2 atomes de cuivre",
+   "L'atome a gagné 2 électrons",
+   "L'ion possède 2 protons"
+  ],
+  "bonne": 0,
+  "explication": "L'atome de cuivre a perdu 2 électrons : il reste 2 charges + en trop.",
+  "guyane": false,
+  "pourquoi": [
+   null,
+   "Un nombre d'atomes s'écrirait en bas à droite (comme dans O₂), pas en haut.",
+   "En gagnant des électrons, l'ion serait négatif.",
+   "L'ion cuivre a 29 protons ; 2+ est sa charge."
+  ]
+ },
+ {
+  "id": "C5-08",
+  "chapitre": "Les ions, des particules chargées",
+  "notion": "Formule",
+  "difficulte": 2,
+  "question": "L'ion fer III a pour formule…",
+  "reponses": [
+   "Fe³⁺",
+   "Fe³⁻",
+   "Fe₃",
+   "3 Fe"
+  ],
+  "bonne": 0,
+  "explication": "Le chiffre romain III rappelle les 3 charges + : Fe³⁺.",
+  "guyane": false,
+  "pourquoi": [
+   null,
+   "L'ion fer III est positif : l'atome a perdu 3 électrons.",
+   "Fe₃, avec le 3 en bas, désignerait 3 atomes de fer liés, pas un ion.",
+   "3 Fe désigne trois atomes de fer séparés."
+  ]
+ },
+ {
+  "id": "C5-09",
+  "chapitre": "Les ions, des particules chargées",
+  "notion": "Électrons",
+  "difficulte": 2,
+  "question": "L'atome de sodium possède 11 électrons. Combien d'électrons possède l'ion Na⁺ ?",
+  "reponses": [
+   "10",
+   "11",
+   "12",
+   "1"
+  ],
+  "bonne": 0,
+  "explication": "Na⁺ : l'atome a perdu 1 électron. 11 − 1 = 10.",
+  "guyane": false,
+  "pourquoi": [
+   null,
+   "11 est le nombre d'électrons de l'atome ; l'ion en a perdu 1.",
+   "Un ion positif a perdu des électrons, il n'en a pas gagné.",
+   "1 est le nombre d'électrons perdus."
+  ]
+ },
+ {
+  "id": "C5-10",
+  "chapitre": "Les ions, des particules chargées",
+  "notion": "Électrons",
+  "difficulte": 2,
+  "question": "L'atome de chlore possède 17 électrons. Combien d'électrons possède l'ion Cl⁻ ?",
+  "reponses": [
+   "16",
+   "17",
+   "18",
+   "1"
+  ],
+  "bonne": 2,
+  "explication": "Cl⁻ : l'atome a gagné 1 électron. 17 + 1 = 18.",
+  "guyane": false,
+  "pourquoi": [
+   "Un ion négatif a gagné des électrons, il n'en a pas perdu.",
+   "17 est le nombre d'électrons de l'atome ; l'ion en a gagné 1.",
+   null,
+   "1 est le nombre d'électrons gagnés."
+  ]
+ },
+ {
+  "id": "C5-11",
+  "chapitre": "Les ions, des particules chargées",
+  "notion": "Électrons",
+  "difficulte": 3,
+  "question": "L'atome de cuivre a pour numéro atomique Z = 29. L'ion Cu²⁺ possède…",
+  "reponses": [
+   "29 protons et 27 électrons",
+   "27 protons et 29 électrons",
+   "29 protons et 31 électrons",
+   "27 protons et 27 électrons"
+  ],
+  "bonne": 0,
+  "explication": "Le noyau ne change pas (29 protons) ; l'atome a perdu 2 électrons : 29 − 2 = 27.",
+  "guyane": false,
+  "pourquoi": [
+   null,
+   "Les protons ne changent pas : c'est le nombre d'électrons qui diminue.",
+   "Avec 31 électrons, l'ion serait négatif (Cu²⁻).",
+   "Le noyau garde ses 29 protons."
+  ]
+ },
+ {
+  "id": "C5-12",
+  "chapitre": "Les ions, des particules chargées",
+  "notion": "Électrons",
+  "difficulte": 3,
+  "question": "Un ion possède 13 protons et 10 électrons. Quelle est sa charge ?",
+  "reponses": [
+   "3 charges + en trop",
+   "3 charges − en trop",
+   "Aucune : il est neutre",
+   "23 charges"
+  ],
+  "bonne": 0,
+  "explication": "13 charges + et 10 charges − : il reste 3 charges + en trop. C'est l'ion Al³⁺.",
+  "guyane": false,
+  "pourquoi": [
+   null,
+   "Il y a plus de protons (+) que d'électrons (−).",
+   "Il serait neutre avec autant d'électrons que de protons.",
+   "On ne fait pas une addition : on cherche l'écart entre 13 et 10."
+  ]
+ },
+ {
+  "id": "C5-13",
+  "chapitre": "Les ions, des particules chargées",
+  "notion": "Formule",
+  "difficulte": 2,
+  "question": "Parmi ces formules, laquelle est celle d'une molécule ?",
+  "reponses": [
+   "Cu²⁺",
+   "Cl⁻",
+   "H₂O",
+   "Fe"
+  ],
+  "bonne": 2,
+  "explication": "H₂O : plusieurs atomes liés, sans charge. C'est la molécule d'eau.",
+  "guyane": false,
+  "pourquoi": [
+   "Cu²⁺ porte une charge : c'est un ion.",
+   "Cl⁻ porte une charge : c'est un ion.",
+   null,
+   "Fe est un seul symbole : c'est l'atome de fer."
+  ]
+ },
+ {
+  "id": "C5-14",
+  "chapitre": "Les ions, des particules chargées",
+  "notion": "Solutions",
+  "difficulte": 1,
+  "question": "Une solution ionique est toujours…",
+  "reponses": [
+   "électriquement neutre",
+   "chargée positivement",
+   "chargée négativement",
+   "colorée"
+  ],
+  "bonne": 0,
+  "explication": "Elle contient autant de charges + que de charges −.",
+  "guyane": false,
+  "pourquoi": [
+   null,
+   "Les charges des ions négatifs compensent celles des ions positifs.",
+   "Les charges des ions positifs compensent celles des ions négatifs.",
+   "Beaucoup de solutions ioniques sont incolores, comme l'eau salée."
+  ]
+ },
+ {
+  "id": "C5-15",
+  "chapitre": "Les ions, des particules chargées",
+  "notion": "Solutions",
+  "difficulte": 2,
+  "question": "L'eau de l'océan Atlantique, au large de la Guyane, est salée. Quels ions contient-elle surtout ?",
+  "reponses": [
+   "Des ions sodium Na⁺ et des ions chlorure Cl⁻",
+   "Des ions cuivre II Cu²⁺ et des ions sulfate SO₄²⁻",
+   "Des ions fer III Fe³⁺ seulement",
+   "Aucun ion"
+  ],
+  "bonne": 0,
+  "explication": "Le sel est du chlorure de sodium : dans l'eau, il donne des ions Na⁺ et Cl⁻.",
+  "guyane": true,
+  "pourquoi": [
+   null,
+   "Ce sont les ions du sulfate de cuivre, une solution bleue.",
+   "Une solution contient toujours des ions positifs et des ions négatifs.",
+   "L'eau de mer est salée : elle contient beaucoup d'ions."
+  ]
+ },
+ {
+  "id": "C5-16",
+  "chapitre": "Les ions, des particules chargées",
+  "notion": "Solutions",
+  "difficulte": 3,
+  "question": "Une solution de chlorure de fer III contient des ions Fe³⁺ et des ions Cl⁻. Pour 1 ion Fe³⁺, il y a…",
+  "reponses": [
+   "3 ions Cl⁻",
+   "1 ion Cl⁻",
+   "2 ions Cl⁻",
+   "6 ions Cl⁻"
+  ],
+  "bonne": 0,
+  "explication": "Fe³⁺ porte 3 charges + : il faut 3 ions Cl⁻ (1 charge − chacun).",
+  "guyane": false,
+  "pourquoi": [
+   null,
+   "1 ion Cl⁻ n'apporte qu'une charge − pour 3 charges +.",
+   "2 ions Cl⁻ n'apportent que 2 charges − pour 3 charges +.",
+   "6 ions Cl⁻ apporteraient 6 charges − pour seulement 3 charges +."
+  ]
+ },
+ {
+  "id": "C5-17",
+  "chapitre": "Les ions, des particules chargées",
+  "notion": "Tests",
+  "difficulte": 1,
+  "question": "Qu'est-ce qu'un précipité ?",
+  "reponses": [
+   "Un solide qui se forme quand on mélange deux solutions",
+   "Un gaz qui se dégage",
+   "Un appareil de mesure",
+   "Une solution très colorée"
+  ],
+  "bonne": 0,
+  "explication": "C'est le solide que l'on voit apparaître pendant un test.",
+  "guyane": false,
+  "pourquoi": [
+   null,
+   "Un précipité est un solide, pas un gaz.",
+   "Ce n'est pas un instrument : c'est un solide qui se forme dans le tube.",
+   "Une solution colorée reste limpide ; un précipité est un solide."
+  ]
+ },
+ {
+  "id": "C5-18",
+  "chapitre": "Les ions, des particules chargées",
+  "notion": "Tests",
+  "difficulte": 2,
+  "question": "Avec quel réactif met-on en évidence les ions chlorure Cl⁻ ?",
+  "reponses": [
+   "Le nitrate d'argent",
+   "La soude",
+   "L'eau distillée",
+   "Le sulfate de cuivre"
+  ],
+  "bonne": 0,
+  "explication": "Nitrate d'argent + ions chlorure → précipité blanc qui noircit à la lumière.",
+  "guyane": false,
+  "pourquoi": [
+   null,
+   "La soude sert à tester les ions cuivre II, fer II, fer III et zinc.",
+   "L'eau distillée ne contient pas d'ions : elle ne donne aucun précipité.",
+   "Le sulfate de cuivre n'est pas le réactif de ce test."
+  ]
+ },
+ {
+  "id": "C5-19",
+  "chapitre": "Les ions, des particules chargées",
+  "notion": "Tests",
+  "difficulte": 2,
+  "question": "On ajoute de la soude dans une solution : un précipité bleu se forme. Quel ion a-t-on mis en évidence ?",
+  "reponses": [
+   "L'ion cuivre II Cu²⁺",
+   "L'ion fer II Fe²⁺",
+   "L'ion fer III Fe³⁺",
+   "L'ion chlorure Cl⁻"
+  ],
+  "bonne": 0,
+  "explication": "Soude + précipité bleu → ions cuivre II.",
+  "guyane": false,
+  "pourquoi": [
+   null,
+   "Avec les ions fer II, le précipité est vert.",
+   "Avec les ions fer III, le précipité est rouille.",
+   "Les ions chlorure se testent avec le nitrate d'argent."
+  ]
+ },
+ {
+  "id": "C5-20",
+  "chapitre": "Les ions, des particules chargées",
+  "notion": "Tests",
+  "difficulte": 3,
+  "question": "Une solution donne un précipité rouille avec la soude et un précipité blanc avec le nitrate d'argent. De quelle solution s'agit-il ?",
+  "reponses": [
+   "Du chlorure de fer III",
+   "Du chlorure de fer II",
+   "Du chlorure de cuivre II",
+   "Du sulfate de fer III"
+  ],
+  "bonne": 0,
+  "explication": "Rouille avec la soude → Fe³⁺ ; blanc avec le nitrate d'argent → Cl⁻.",
+  "guyane": false,
+  "pourquoi": [
+   null,
+   "Avec les ions fer II, le précipité serait vert.",
+   "Avec les ions cuivre II, le précipité serait bleu.",
+   "Le test au nitrate d'argent met en évidence des ions chlorure, pas des ions sulfate."
+  ]
  }
 ];
 
@@ -13099,7 +15259,7 @@ const QUESTIONS = [
   // la garde aussi un moment en cache. On compare donc la version de cette page avec le petit fichier version.json
   // publié en même temps : à l'ouverture et à chaque retour sur l'onglet (au plus une fois par minute).
   // Si une version plus récente est en ligne, un bandeau propose de mettre à jour. La progression (pseudo, points…) est conservée.
-  const VERSION_APPLI = "2026-11-14 12:22:51"; // remplacée par la date d'assemblage (assembler.py)
+  const VERSION_APPLI = "2026-11-14 22:24:39"; // remplacée par la date d'assemblage (assembler.py)
   let derniereVerif = 0;
   function verifierMaj() {
     if (!/^https?:$/.test(location.protocol) || VERSION_APPLI.indexOf("__") === 0) return; // fichier ouvert sur l'ordinateur : rien à vérifier
