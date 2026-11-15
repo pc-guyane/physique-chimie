@@ -1249,6 +1249,7 @@ const REGLAGES = {
     "3e-elements": false,   // Les éléments chimiques de l'Univers (thème matière ; rappel, cours, entraînement ; à relire)
     "3e-ions": false,       // Les ions, des particules chargées (thème matière ; rappel, cours, entraînement ; relu et validé le 15/11, fermé à la demande de l enseignant)
     "3e-acides": false,     // Acides, bases et transformations chimiques (thème matière ; rappel, cours, entraînement ; à relire)
+    "3e-mouvement": false,  // L'énergie au cours d'un mouvement (thème énergie ; rappel, cours, entraînement ; à relire)
     "4e-intensite": false,  // 4ème : l'intensité du courant électrique (cours + TP)
     "4e-tension": true,     // 4ème : la tension électrique (cours + TP)
     "4e-ohm": false,        // 4ème : la résistance et la loi d'Ohm (cours + TP)
@@ -7672,6 +7673,602 @@ const ATOMES = (() => {
         { type: "redaction", points: 2, consigne: "Rédiger quelques phrases pour expliquer pourquoi une eau trop acide abîme les équipements en fer, et ce que devient le pH de cette eau pendant la réaction.",
           criteres: ["J'ai expliqué que les ions H⁺ de l'eau acide réagissent avec le fer (Fe + 2 H⁺ → Fe²⁺ + H₂) : le fer disparaît peu à peu.", "J'ai dit que des ions H⁺ sont consommés, donc que le pH de l'eau augmente."],
           elements: "Une eau acide contient beaucoup d'ions hydrogène H⁺. Ils réagissent avec le fer selon l'équation Fe + 2 H⁺ → Fe²⁺ + H₂ : le fer se transforme en ions fer II et l'équipement s'use. Pendant la réaction, des ions H⁺ sont consommés : l'eau devient moins acide et son pH augmente." }
+      ]
+    }
+  ]
+}
+);
+</script>
+<style>
+/* ===== 3ème · L'énergie au cours d'un mouvement : module MOUV (04_chap_3e_7_mouvement.html) ===== */
+.mv-anim { display: block; width: 100%; max-width: 360px; height: auto; margin: 0 auto; }
+.mv-anim text, .mv-fig text { font-family: var(--f-body); }
+.mv-fig { display: block; width: 100%; max-width: 360px; height: auto; margin: 0 auto; }
+.mv-piste { fill: var(--line); } .mv-ec { fill: var(--accent); }
+.mv-route { fill: #59636A; } .mv-tiret { stroke: #fff; stroke-width: 2.5; stroke-dasharray: 14 12; }
+.mv-carro { fill: #2F6FD1; stroke: #1D4F9C; stroke-width: 1.2; stroke-linejoin: round; }
+.mv-vitre { fill: #CFE3F5; } .mv-phare { fill: #F4D35E; }
+.mv-roue { fill: #2B2B2B; } .mv-jante { fill: #B9C0C4; } .mv-rayon { stroke: #F2F2F2; stroke-width: 1.6; stroke-linecap: round; }
+.mv-bagage { fill: #C98A3D; stroke: #8A5A22; stroke-width: 1; }
+.mv-pilote { fill: none; stroke: var(--ink); stroke-width: 3.2; stroke-linecap: round; stroke-linejoin: round; } .mv-casque { fill: #D23B30; }
+.mv-t { font-size: 10.5px; fill: var(--muted); } .mv-val { font-size: 11.5px; font-weight: 700; fill: var(--titre); font-variant-numeric: tabular-nums; }
+.mv-rampe { fill: none; stroke: var(--ink); stroke-width: 3; stroke-linecap: round; } .mv-sol { fill: var(--accent-soft); }
+.mv-bille { fill: #D23B30; } .mv-reflet { fill: none; stroke: #fff; stroke-width: 1.6; stroke-linecap: round; opacity: .85; }
+.mv-ep { fill: #2F6FD1; } .mv-em { fill: #6B4FB3; } .mv-ecb { fill: #E39B2D; } .mv-th { fill: #C8402F; }
+.mv-tot { stroke: var(--muted); stroke-width: 1.2; stroke-dasharray: 4 3; }
+.mv-react { fill: #E39B2D; } .mv-frein { fill: #C8402F; } .mv-danger { fill: #F4D35E; stroke: #8A6D00; stroke-width: 1; }
+.mv-acc { fill: none; stroke: var(--ink); stroke-width: 1.2; }
+.mv-ax { stroke: var(--ink); stroke-width: 1.3; fill: none; } .mv-gr { stroke: var(--line); stroke-width: 1; }
+.mv-cb { fill: none; stroke: var(--accent); stroke-width: 2.6; stroke-linecap: round; }
+.mv-leg { display: flex; gap: .8rem; flex-wrap: wrap; justify-content: center; font-size: .85rem; color: var(--muted); margin: .2rem 0; }
+.mv-leg i { display: inline-block; width: .8rem; height: .8rem; border-radius: 3px; margin-right: .3rem; vertical-align: -.1rem; }
+.mv-phase { min-height: 1.4em; text-align: center; font-size: .9rem; margin: .1rem 0; }
+</style>
+<script>
+// Chapitre « mouvement » (3e, n° 7 dans la classe, thème énergie). Ajouté à CONTENU.chapitres (défini dans 03_contenu.html).
+// ==================================================================
+//  CHAPITRE : L'ÉNERGIE AU COURS D'UN MOUVEMENT (BO cycle 4 : énergie cinétique Ec = ½ m v², énergie potentielle
+//  « dépendant de la position », conservation de l'énergie)
+//  Exercice type brevet = vraie annale : brevet 2024, Métropole-Antilles-Guyane (24GENSCMEAG1), question 5 « plongeon à 10 m ».
+//  Tableau des distances d'arrêt (cours, entraînement, test V2) : valeurs du sujet zéro du brevet 2017 « La sécurité du freinage en voiture ».
+//  Module MOUV (global) : animations du cours, tableau des distances, courbe Ec(v), générateurs de calculs et de lectures
+//  (réutilisés par la banque du test V2, clé « 3e-mouvement »).
+//  Sans TP pour l'instant (pas de clé « tp ») ; chapitre créé FERMÉ (« 3e-mouvement »: false).
+// ==================================================================
+const MOUV = (function () {
+  const fmt = (x) => { const s = String(+(+x).toFixed(3)).split("."); return s[0].replace(/\B(?=(\d{3})+(?!\d))/g, " ") + (s[1] ? "," + s[1] : ""); };
+  const pick = (t) => t[Math.floor(Math.random() * t.length)];
+  const melange = (t) => { const a = t.slice(); for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
+  const calme = () => !!(window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches);
+  const MOUV_fmt = (x) => fmt(x);
+  const T = (x, y, s, c, a) => `<text x="${x}" y="${y}" class="${c || "mv-t"}"${a ? ` text-anchor="${a}"` : ""}>${s}</text>`;
+
+  // Distances d'arrêt sur route sèche, voiture bien entretenue, temps de réaction 1 s
+  // (valeurs du sujet zéro du brevet 2017 « La sécurité du freinage en voiture » ; vitesses en m/s arrondies à l'unité)
+  const DIST = [
+    { v: 30, ms: 8, dr: 8, df: 6 }, { v: 50, ms: 14, dr: 14, df: 16 }, { v: 90, ms: 25, dr: 25, df: 50 },
+    { v: 110, ms: 31, dr: 31, df: 75 }, { v: 130, ms: 36, dr: 36, df: 104 }
+  ];
+  function figTableauDist() {
+    return `<div class="table-wrap"><table class="mes-table tbl-serre"><thead><tr><th>v (km/h)</th><th>v (m/s)</th><th>D<sub>R</sub> (m)</th><th>D<sub>F</sub> (m)</th></tr></thead><tbody>${DIST.map((d) => `<tr><td>${d.v}</td><td>${d.ms}</td><td>${d.dr}</td><td>${d.df}</td></tr>`).join("")}</tbody></table></div><p class="tp-note">D<sub>R</sub> : distance de réaction ; D<sub>F</sub> : distance de freinage. Route sèche, voiture bien entretenue, temps de réaction de 1 s ; vitesses en m/s arrondies à l'unité.</p>`;
+  }
+
+  // ---------- Courbe : énergie cinétique d'une voiture de 1 000 kg en fonction de sa vitesse ----------
+  function figCourbeEc() {
+    const X = (v) => 46 + v * 254 / 30, Y = (e) => 182 - e * 160 / 450;
+    let s = "";
+    for (let v = 0; v <= 30; v += 5) s += `<path d="M${X(v)} ${Y(0)}V${Y(450)}" class="mv-gr"/>` + T(X(v), 196, v, "mv-t", "middle");
+    for (let e = 0; e <= 450; e += 50) s += `<path d="M${X(0)} ${Y(e)}H${X(30)}" class="mv-gr"/>` + (e % 100 === 0 ? T(40, Y(e) + 3.5, e, "mv-t", "end") : "");
+    let d = ""; for (let v = 0; v <= 30; v += 0.5) d += (v ? "L" : "M") + X(v).toFixed(1) + " " + Y(0.5 * v * v).toFixed(1);
+    s += `<path d="${d}" class="mv-cb"/><path d="M${X(0)} ${Y(0)}H${X(30) + 8}M${X(0)} ${Y(0)}V${Y(450) - 8}" class="mv-ax"/>`;
+    s += T(X(30) + 4, 208, "v (m/s)", "mv-t", "end") + T(8, 12, "Ec (kJ)", "mv-t", "start");
+    return `<svg viewBox="0 0 320 212" class="mv-fig" role="img" aria-label="Courbe de l'énergie cinétique d'une voiture de 1 000 kg en fonction de sa vitesse, de 0 à 30 m/s : 50 kJ à 10 m/s, 200 kJ à 20 m/s, 450 kJ à 30 m/s.">${s}</svg><p class="tp-note">Énergie cinétique d'une voiture de 1 000 kg en fonction de sa vitesse.</p>`;
+  }
+
+  // ---------- Dessins de véhicules (vue de côté, roues à rayons) ----------
+  function roue(cx, cy, r) {
+    return `<circle cx="${cx}" cy="${cy}" r="${r}" class="mv-roue"/><circle cx="${cx}" cy="${cy}" r="${(r * 0.55).toFixed(1)}" class="mv-jante"/>
+      <g data-roue="${cx},${cy}"><path d="M${cx - r * 0.5} ${cy}H${cx + r * 0.5}M${cx} ${cy - r * 0.5}V${cy + r * 0.5}" class="mv-rayon"/></g>`;
+  }
+  function vehicule(id) {
+    if (id === "scooter") return `<path d="M136 101q0-13 15-13h18l9 13z" class="mv-carro"/><rect x="140" y="84" width="24" height="6" rx="3" class="mv-roue"/>
+      <path d="M183 103L175 72M170 72h10" class="mv-pilote"/><path d="M152 66l3 18M154 71l18 3M155 84l15 4l2 12" class="mv-pilote"/>
+      <circle cx="151" cy="58" r="7" class="mv-casque"/>${roue(138, 104, 9)}${roue(184, 104, 9)}`;
+    const bag = id === "charge" ? `<rect x="134" y="62" width="26" height="8" rx="2" class="mv-bagage"/><rect x="162" y="64" width="22" height="6" rx="2" class="mv-bagage"/>` : "";
+    return `${bag}<path d="M110 102v-12q0-4 4-5l18-3l12-12q3-3 8-3h22q5 0 8 4l10 11l14 3q4 1 4 5v12z" class="mv-carro"/>
+      <path d="M137 81l9-9q2-2 5-2h10v11zM166 81v-11h7q3 0 5 2l8 9z" class="mv-vitre"/><rect x="204" y="88" width="6" height="4" rx="1.5" class="mv-phare"/>
+      ${roue(132, 104, 10)}${roue(190, 104, 10)}`;
+  }
+
+  // ---------- Animation 1 : l'énergie cinétique d'un véhicule (masse et vitesse à choisir) ----------
+  function animEc(el) {
+    const VEH = [{ id: "scooter", nom: "Scooter et pilote", m: 200 }, { id: "voiture", nom: "Voiture", m: 1000 }, { id: "charge", nom: "Voiture chargée", m: 2000 }];
+    const VIT = [36, 72, 108], EMAX = 0.5 * 2000 * 30 * 30;
+    let veh = VEH[1], v = 36, dash = 0, ang = 0, avant = null;
+    el.innerHTML = `<span class="a-titre">Modèle : l'énergie cinétique d'un véhicule</span>
+      <p class="small">Choisir un véhicule, puis une vitesse : la barre montre son énergie cinétique.</p>
+      <div class="a-bts">${VEH.map((x) => `<button type="button" class="btn btn-ghost btn-sm" data-m="${x.id}">${x.nom} (${fmt(x.m)} kg)</button>`).join("")}</div>
+      <div class="a-bts">${VIT.map((x) => `<button type="button" class="btn btn-ghost btn-sm" data-v="${x}">${x} km/h</button>`).join("")}</div>
+      <svg viewBox="0 0 320 146" class="mv-anim" role="img"></svg>
+      <div class="a-res" aria-live="polite"></div>`;
+    const svg = el.querySelector("svg"), res = el.querySelector(".a-res");
+    let tirets = null, roues = [];
+    function dessiner() {
+      const ms = v / 3.6, Ec = 0.5 * veh.m * ms * ms, w = Math.max(3, 280 * Ec / EMAX);
+      svg.innerHTML = `${T(20, 11, "Énergie cinétique", "mv-t")}${T(300, 11, "Ec = " + fmt(Ec) + " J", "mv-val", "end")}
+        <rect x="20" y="16" width="280" height="13" rx="6.5" class="mv-piste"/><rect x="20" y="16" width="${w.toFixed(1)}" height="13" rx="6.5" class="mv-ec"/>
+        <rect x="0" y="114" width="320" height="28" class="mv-route"/><path d="M-30 128H350" class="mv-tiret" data-tirets/>${vehicule(veh.id)}`;
+      svg.setAttribute("aria-label", `${veh.nom} de ${fmt(veh.m)} kg à ${v} km/h : énergie cinétique ${fmt(Ec)} J.`);
+      tirets = svg.querySelector("[data-tirets]"); roues = Array.from(svg.querySelectorAll("[data-roue]"));
+      const k = (v / 36) * (v / 36);
+      res.innerHTML = `<strong>${veh.nom}</strong> : m = ${fmt(veh.m)} kg ; v = ${v} km/h = ${fmt(ms)} m/s.<br>Ec = ½ × m × v² = 0,5 × ${fmt(veh.m)} × ${fmt(ms)}² = <strong>${fmt(Ec)} J</strong>.`
+        + (k > 1 ? `<br>La vitesse est ${v / 36} fois plus grande qu'à 36 km/h : l'énergie cinétique est <strong>${k} fois</strong> plus grande.` : "");
+      el.querySelectorAll("[data-m]").forEach((b) => b.classList.toggle("on", b.dataset.m === veh.id));
+      el.querySelectorAll("[data-v]").forEach((b) => b.classList.toggle("on", +b.dataset.v === v));
+    }
+    el.querySelectorAll("[data-m]").forEach((b) => b.onclick = () => { veh = VEH.find((x) => x.id === b.dataset.m); dessiner(); });
+    el.querySelectorAll("[data-v]").forEach((b) => b.onclick = () => { v = +b.dataset.v; dessiner(); });
+    dessiner();
+    if (calme()) return;
+    const boucle = (t) => {
+      if (!svg.isConnected) return;
+      const dt = avant == null ? 0 : Math.min(0.05, (t - avant) / 1000); avant = t;
+      const px = (v / 3.6) * 7;                       // vitesse d'affichage proportionnelle à la vraie vitesse
+      dash = (dash + px * dt) % 26; ang = (ang + px * dt / 10 * 57.3) % 360;
+      if (tirets) tirets.setAttribute("stroke-dashoffset", dash.toFixed(1));
+      roues.forEach((g) => g.setAttribute("transform", `rotate(${ang.toFixed(1)} ${g.dataset.roue.replace(",", " ")})`));
+      requestAnimationFrame(boucle);
+    };
+    requestAnimationFrame(boucle);
+  }
+
+  // ---------- Animation 2 : la bille sur la rampe (énergie de position ⇄ énergie cinétique, avec ou sans frottements) ----------
+  function animRampe(el) {
+    const cx = 102, base = 150, L = 84, H = 106, W = (2 * Math.PI) / 3.6;   // période d'un aller-retour : 3,6 s
+    let frott = false, t0 = null, fini = false, phase = "";
+    el.innerHTML = `<span class="a-titre">Modèle : une bille lâchée sur une rampe</span>
+      <p class="small">La bille est lâchée en haut, sans vitesse. Choisir le cas, puis observer les trois énergies.</p>
+      <div class="a-bts"><button type="button" class="btn btn-ghost btn-sm" data-f="0">Sans frottements</button><button type="button" class="btn btn-ghost btn-sm" data-f="1">Avec frottements</button><button type="button" class="btn btn-ghost btn-sm" data-r>Relâcher la bille</button></div>
+      <svg viewBox="0 0 320 196" class="mv-anim" role="img"></svg>
+      <div class="mv-leg"><span><i style="background:#2F6FD1"></i>Ep : énergie de position</span><span><i style="background:#E39B2D"></i>Ec : énergie cinétique</span><span><i style="background:#6B4FB3"></i>Em = Ep + Ec : énergie mécanique</span><span><i style="background:#C8402F"></i>Eth : énergie thermique</span></div>
+      <p class="mv-phase"></p>
+      <div class="a-res" aria-live="polite"></div>`;
+    const svg = el.querySelector("svg"), res = el.querySelector(".a-res"), ph = el.querySelector(".mv-phase");
+    let d = ""; for (let i = -1; i <= 1.0001; i += 0.05) d += (i > -1 ? "L" : "M") + (cx + i * L).toFixed(1) + " " + (base - H * i * i).toFixed(1);
+    const bx = [218, 245, 272, 299], top = 40, bas = 166;
+    svg.innerHTML = `<path d="${d}V170H${cx - L}z" class="mv-sol"/><path d="${d}" class="mv-rampe"/>
+      <g data-bille><circle r="8" class="mv-bille"/><path d="M-4 -3.5a5 5 0 0 1 5-2.5" class="mv-reflet" data-reflet/></g>
+      ${bx.map((x, i) => `<rect x="${x - 10}" width="20" rx="3" class="${["mv-ep", "mv-ecb", "mv-em", "mv-th"][i]}" data-b="${i}"/>`).join("")}<path d="M258.5 ${top - 2}V${bas + 2}" class="mv-gr" style="stroke-dasharray:2 3"/>
+      <path d="M204 ${top}H312" class="mv-tot"/>${T(312, top - 5, "énergie totale", "mv-t", "end")}<path d="M204 ${bas}H312" class="mv-ax"/>
+      ${["Ep", "Ec", "Em", "Eth"].map((n, k) => T(bx[k], 182, n, "mv-val", "middle")).join("")}`;
+    const bille = svg.querySelector("[data-bille]"), reflet = svg.querySelector("[data-reflet]"), barres = Array.from(svg.querySelectorAll("[data-b]"));
+    function poser(s, A) {
+      const x = cx + s * L, y = base - H * s * s, pente = -2 * H * s / L, n = Math.hypot(1, pente);
+      bille.setAttribute("transform", `translate(${(x + 8 * pente / n).toFixed(1)} ${(y - 8 / n).toFixed(1)})`);
+      reflet.setAttribute("transform", `rotate(${(s * L / 8 * 57.3).toFixed(0)})`);
+      const E = [s * s, Math.max(0, A * A - s * s), A * A, 1 - A * A];   // Ep, Ec, Em = Ep + Ec, Eth
+      barres.forEach((b, i) => { const h = E[i] * (bas - top); b.setAttribute("y", (bas - h).toFixed(1)); b.setAttribute("height", h.toFixed(1)); });
+    }
+    function texte() {
+      res.innerHTML = frott
+        ? "<strong>Avec frottements</strong>, une partie de l'énergie mécanique est convertie en <strong>énergie thermique</strong> (la bille et la rampe chauffent un peu) : la barre Em baisse pendant que la barre Eth monte. La bille remonte de moins en moins haut, puis s'arrête. L'énergie totale (Em + Eth), elle, se conserve."
+        : "<strong>Sans frottements</strong>, l'énergie de position et l'énergie cinétique s'échangent sans perte : à chaque instant, leur somme, l'<strong>énergie mécanique Em = Ep + Ec</strong>, garde la même valeur (la barre Em ne bouge pas). La bille remonte toujours à la même hauteur.";
+      el.querySelectorAll("[data-f]").forEach((b) => b.classList.toggle("on", (b.dataset.f === "1") === frott));
+    }
+    function relancer() { t0 = null; fini = false; phase = ""; texte(); poser(-1, 1); if (!calme()) requestAnimationFrame(boucle); else ph.textContent = "En haut : vitesse nulle, toute l'énergie est de l'énergie de position."; }
+    function dire(p) { if (p === phase) return; phase = p; ph.textContent = p; }
+    function boucle(t) {
+      if (!svg.isConnected || fini) return;
+      if (t0 == null) t0 = t;
+      const u = (t - t0) / 1000, A = frott ? Math.exp(-0.12 * u) : 1, s = -A * Math.cos(W * u), vit = A * W * Math.sin(W * u);
+      poser(s, A);
+      if (frott && A < 0.04) { poser(0, 0); fini = true; dire("La bille est arrêtée en bas : son énergie de position du départ est devenue de l'énergie thermique."); return; }
+      dire(s * vit < 0 ? "Elle descend : l'énergie de position se convertit en énergie cinétique." : "Elle remonte : l'énergie cinétique se convertit en énergie de position.");
+      requestAnimationFrame(boucle);
+    }
+    el.querySelectorAll("[data-f]").forEach((b) => b.onclick = () => { const f = b.dataset.f === "1"; if (f !== frott || fini) { frott = f; fini = true; setTimeout(relancer, 30); } });
+    el.querySelector("[data-r]").onclick = () => { fini = true; setTimeout(relancer, 30); };
+    relancer();
+  }
+
+  // ---------- Animation 3 : la distance d'arrêt (vitesse au choix, téléphone au volant) ----------
+  function animArret(el) {
+    const x0 = 34, k = 1.55;
+    let row = DIST[2], tel = false, id = 0;
+    el.innerHTML = `<span class="a-titre">Modèle : la distance d'arrêt d'une voiture</span>
+      <p class="small">Un danger apparaît au panneau jaune. Choisir une vitesse : la voiture parcourt la distance de réaction, puis la distance de freinage.</p>
+      <div class="a-bts">${DIST.map((d) => `<button type="button" class="btn btn-ghost btn-sm" data-v="${d.v}">${d.v} km/h</button>`).join("")}</div>
+      <div class="a-bts"><button type="button" class="btn btn-ghost btn-sm" data-tel>Téléphone au volant</button></div>
+      <svg viewBox="0 0 320 132" class="mv-anim" role="img"></svg>
+      <div class="mv-leg"><span><i style="background:#E39B2D"></i>Distance de réaction</span><span><i style="background:#C8402F"></i>Distance de freinage</span></div>
+      <div class="a-res" aria-live="polite"></div>`;
+    const svg = el.querySelector("svg"), res = el.querySelector(".a-res");
+    function lancer() {
+      const n = ++id, tr = tel ? 2 : 1, DR = row.ms * tr, DF = row.df, DA = DR + DF, Tb = 2 * DF / row.ms;
+      svg.setAttribute("aria-label", `À ${row.v} km/h, distance de réaction ${DR} m, distance de freinage ${DF} m, distance d'arrêt ${DA} m.`);
+      svg.innerHTML = `<rect x="0" y="62" width="320" height="34" class="mv-route"/><path d="M-30 79H350" class="mv-tiret"/>
+        <rect x="${x0}" y="98" width="0" height="7" class="mv-react" data-r/><rect x="${x0 + DR * k}" y="98" width="0" height="7" class="mv-frein" data-f/>
+        <g transform="translate(${x0} 20)"><path d="M0 0l11 19h-22z" class="mv-danger"/><path d="M0 6v6M0 15v.5" class="mv-acc" style="stroke-width:2"/></g><path d="M${x0} 40V62" class="mv-acc" style="stroke-dasharray:3 3"/>
+        <g data-auto><g transform="scale(.36) translate(-212 60)">${vehicule("voiture")}</g></g><g data-cote></g>`;
+      const auto = svg.querySelector("[data-auto]"), bR = svg.querySelector("[data-r]"), bF = svg.querySelector("[data-f]"), cote = svg.querySelector("[data-cote]");
+      res.innerHTML = tel ? "Le conducteur regarde son téléphone : il réagit en 2 s au lieu de 1 s." : "Le conducteur réagit en 1 s.";
+      const placer = (x) => {
+        auto.setAttribute("transform", `translate(${(x0 + x * k).toFixed(1)} 0)`);
+        bR.setAttribute("width", (Math.min(x, DR) * k).toFixed(1)); bF.setAttribute("width", (Math.max(0, x - DR) * k).toFixed(1));
+      };
+      const finir = () => {
+        placer(DA);
+        cote.innerHTML = `<path d="M${x0} 113H${x0 + DA * k}M${x0} 109v8M${x0 + DA * k} 109v8" class="mv-acc"/>${T(x0 + DA * k / 2, 128, "D_A = " + DA + " m", "mv-val", "middle").replace("D_A", "D<tspan baseline-shift=\"sub\" font-size=\"8\">A</tspan>")}`;
+        res.innerHTML = `À <strong>${row.v} km/h</strong> (environ ${row.ms} m/s), en ${tr} s de réaction, la voiture parcourt D<sub>R</sub> = ${row.ms} × ${tr} = <strong>${DR} m</strong> sans freiner, puis D<sub>F</sub> = <strong>${DF} m</strong> en freinant.<br>Distance d'arrêt : D<sub>A</sub> = D<sub>R</sub> + D<sub>F</sub> = ${DR} + ${DF} = <strong>${DA} m</strong>.`;
+      };
+      if (calme()) { finir(); return; }
+      let t0 = null;
+      const boucle = (t) => {
+        if (!svg.isConnected || n !== id) return;
+        if (t0 == null) t0 = t;
+        const u = (t - t0) / 1000;
+        if (u < tr) placer(row.ms * u);
+        else if (u < tr + Tb) { const b = u - tr; placer(DR + row.ms * b - 0.5 * (row.ms / Tb) * b * b); }
+        else { finir(); return; }
+        requestAnimationFrame(boucle);
+      };
+      placer(0); requestAnimationFrame(boucle);
+      el.querySelectorAll("[data-v]").forEach((b) => b.classList.toggle("on", +b.dataset.v === row.v));
+      el.querySelector("[data-tel]").classList.toggle("on", tel);
+    }
+    el.querySelectorAll("[data-v]").forEach((b) => b.onclick = () => { row = DIST.find((d) => d.v === +b.dataset.v); lancer(); });
+    el.querySelector("[data-tel]").onclick = () => { tel = !tel; lancer(); };
+    lancer();
+  }
+
+  // ---------- Générateurs de calculs (cours, entraînement, test V2) : réponses entières ----------
+  const OBJ = [
+    { de: "d'un cycliste et de son vélo", sujet: "Un cycliste et son vélo", verbe: "roulent", m: [70, 80, 90], v: [4, 5, 6, 8] },
+    { de: "d'un scooter et de son pilote", sujet: "Un scooter et son pilote", verbe: "roulent", m: [150, 200, 250], v: [8, 10, 12] },
+    { de: "d'une voiture", sujet: "Une voiture", verbe: "roule", m: [800, 1000, 1200], v: [10, 15, 20, 25] },
+    { de: "d'une pirogue chargée", sujet: "Une pirogue chargée", verbe: "avance", m: [400, 600], v: [4, 5, 6] }
+  ];
+  function ecMS() {
+    const o = pick(OBJ), m = pick(o.m), v = pick(o.v), E = 0.5 * m * v * v;
+    return { texte: `${o.sujet} (masse totale m = ${fmt(m)} kg) ${o.verbe} à v = ${v} m/s. Calcule l'énergie cinétique ${o.de}.`, rep: E, u: "J",
+      corr: `Ec = ½ × m × v² = 0,5 × ${fmt(m)} × ${v}² = 0,5 × ${fmt(m)} × ${v * v} = ${fmt(E)} J.`, phrase: `L'énergie cinétique ${o.de} vaut ${fmt(E)} J.`, m, v, o };
+  }
+  function ecKMH() {
+    const o = pick([OBJ[1], OBJ[2], OBJ[2]]), m = pick(o.m), kmh = pick(o === OBJ[1] ? [36] : [36, 54, 72, 90]), v = kmh / 3.6, E = 0.5 * m * v * v;
+    return { texte: `${o.sujet} (masse totale m = ${fmt(m)} kg) ${o.verbe} à ${kmh} km/h. Calcule l'énergie cinétique ${o.de}, en joules.`, rep: E, u: "J",
+      corr: `On convertit d'abord la vitesse : v = ${kmh} ÷ 3,6 = ${fmt(v)} m/s. Ec = ½ × m × v² = 0,5 × ${fmt(m)} × ${fmt(v)}² = ${fmt(E)} J.`, phrase: `L'énergie cinétique ${o.de} vaut ${fmt(E)} J.`, m, v, kmh, o };
+  }
+  const CHUTES = [
+    { sujet: "Une noix de coco tombe d'un cocotier", ep: [250, 300, 350] },
+    { sujet: "Une mangue se détache de sa branche", ep: [16, 20, 24] },
+    { sujet: "Un enfant se laisse glisser du haut d'un toboggan", ep: [1200, 1500, 1800] },
+    { sujet: "Un plongeur saute du ponton", ep: [1400, 2000, 2400] }
+  ];
+  function conserv(mode) {
+    const c = pick(CHUTES), Ep = pick(c.ep);
+    mode = mode || pick(["bas", "milieu", "thermique"]);
+    if (mode === "bas") return { texte: `${c.sujet}. Au départ, son énergie de position vaut ${fmt(Ep)} J et sa vitesse est nulle. On néglige les frottements. Calcule son énergie cinétique juste avant d'arriver en bas.`, rep: Ep, u: "J",
+      corr: `Sans frottements, l'énergie mécanique se conserve. En bas, toute l'énergie de position est devenue de l'énergie cinétique : Ec = ${fmt(Ep)} J.`, phrase: `Juste avant d'arriver en bas, l'énergie cinétique vaut ${fmt(Ep)} J.` };
+    if (mode === "milieu") { const ep2 = Ep / 2;
+      return { texte: `${c.sujet}. Au départ, son énergie de position vaut ${fmt(Ep)} J et sa vitesse est nulle. À mi-hauteur, son énergie de position ne vaut plus que ${fmt(ep2)} J. On néglige les frottements. Calcule son énergie cinétique à mi-hauteur.`, rep: Ep - ep2, u: "J",
+        corr: `L'énergie mécanique se conserve : Ec = ${fmt(Ep)} − ${fmt(ep2)} = ${fmt(Ep - ep2)} J. L'énergie de position perdue est devenue de l'énergie cinétique.`, phrase: `À mi-hauteur, l'énergie cinétique vaut ${fmt(Ep - ep2)} J.` }; }
+    const ec = Math.round(Ep * pick([0.7, 0.8, 0.9]));
+    return { texte: `${c.sujet}. Au départ, son énergie de position vaut ${fmt(Ep)} J et sa vitesse est nulle. Avec les frottements de l'air, son énergie cinétique ne vaut que ${fmt(ec)} J juste avant d'arriver en bas. Calcule l'énergie convertie en énergie thermique.`, rep: Ep - ec, u: "J",
+      corr: `L'énergie se conserve : énergie thermique = ${fmt(Ep)} − ${fmt(ec)} = ${fmt(Ep - ec)} J.`, phrase: `L'énergie convertie en énergie thermique vaut ${fmt(Ep - ec)} J.` };
+  }
+  function arret(mode) {
+    const d = pick(DIST);
+    mode = mode || pick(["DA", "DR"]);
+    if (mode === "DA") return { texte: `Une voiture roule à ${d.v} km/h. Sa distance de réaction vaut ${d.dr} m et sa distance de freinage ${d.df} m. Calcule sa distance d'arrêt.`, rep: d.dr + d.df, u: "m",
+      corr: `D_A = D_R + D_F = ${d.dr} + ${d.df} = ${d.dr + d.df} m.`.replace(/D_(\w)/g, "D$1"), phrase: `La distance d'arrêt vaut ${d.dr + d.df} m.`, d };
+    const tr = pick([1, 2]);
+    return { texte: `Une voiture roule à environ ${d.ms} m/s. ${tr === 2 ? "Le conducteur regarde son téléphone : son temps de réaction est de 2 s." : "Le temps de réaction du conducteur est de 1 s."} Pendant ce temps, la voiture garde la même vitesse. Calcule la distance de réaction.`, rep: d.ms * tr, u: "m",
+      corr: `Pendant le temps de réaction, la voiture parcourt d = v × t = ${d.ms} × ${tr} = ${d.ms * tr} m.`, phrase: `La distance de réaction vaut ${d.ms * tr} m.`, d, tr };
+  }
+
+  // ---------- Lectures du test V2 (QCM avec figure ; la bonne réponse en premier, le test mélange) ----------
+  function genTableau() {
+    const i = Math.floor(Math.random() * DIST.length), d = DIST[i], voisin = DIST[i === DIST.length - 1 ? i - 1 : i + 1];
+    if (Math.random() < 0.5) return { figure: figTableauDist(), question: `D'après le tableau, quelle est la distance d'arrêt d'une voiture qui roule à ${d.v} km/h ?`,
+      reponses: [`${d.dr + d.df} m`, `${d.df} m`, `${d.dr} m`, `${voisin.dr + voisin.df} m`], bonne: 0,
+      explication: `D_A = D_R + D_F = ${d.dr} + ${d.df} = ${d.dr + d.df} m.`.replace(/D_(\w)/g, "D$1") };
+    return { figure: figTableauDist(), question: `D'après le tableau, quelle est la distance de freinage d'une voiture qui roule à ${d.v} km/h ?`,
+      reponses: [...new Set([d.df, d.dr, d.dr + d.df, voisin.df].concat(DIST.map((x) => x.df)))].slice(0, 4).map((x) => x + " m"), bonne: 0,
+      explication: `On lit la colonne « distance de freinage » sur la ligne ${d.v} km/h : ${d.df} m.` };
+  }
+  function genCourbe() {
+    const v = pick([10, 20, 30]), E = 0.5 * v * v, autres = [50, 100, 200, 300, 450].filter((x) => x !== E);
+    if (Math.random() < 0.5) return { figure: figCourbeEc(), question: `D'après la courbe, quelle est l'énergie cinétique de la voiture quand elle roule à ${v} m/s ?`,
+      reponses: [`${E} kJ`].concat(melange(autres).slice(0, 3).map((x) => x + " kJ")), bonne: 0,
+      explication: `On part de ${v} m/s sur l'axe horizontal, on monte jusqu'à la courbe, puis on lit ${E} kJ sur l'axe vertical.` };
+    return { figure: figCourbeEc(), question: `D'après la courbe, à quelle vitesse roule la voiture quand son énergie cinétique vaut ${E} kJ ?`,
+      reponses: [`${v} m/s`].concat([10, 15, 20, 25, 30].filter((x) => x !== v).slice(0, 3).map((x) => x + " m/s")), bonne: 0,
+      explication: `On part de ${E} kJ sur l'axe vertical, on va jusqu'à la courbe, puis on descend lire ${v} m/s sur l'axe horizontal.` };
+  }
+
+
+  // ---------- Plongeon de 10 m (brevet 2024, 24GENSCMEAG1, document 5) : graphiques v(t) et Ec(t) redessinés ----------
+  // Simulation : saut vers le haut à 1,96 m/s, chute libre (g = 9,8 N/kg), impact à 1,62 s à 14 m/s ; plongeur de 60 kg (masse choisie).
+  function figPlongeon(quoi) {
+    const m = 60, g = 9.8, v0 = 1.96, ti = 1.62, vit = (t) => Math.abs(v0 - g * t);
+    const ec = quoi === "ec", ymax = ec ? 6000 : 16, pas = ec ? 500 : 1, lab = ec ? 1000 : 2;
+    const X = (t) => 44 + t * 270 / 1.7, Y = (y) => 186 - y * 166 / ymax;
+    let s = "";
+    for (let k = 0; k <= 85; k++) { const t = k * 0.02; s += `<path d="M${X(t).toFixed(1)} ${Y(0)}V${Y(ymax)}" class="mv-gr"${k % 5 ? ' style="opacity:.45"' : ""}/>`; if (k % 10 === 0) s += T(X(t).toFixed(1), 199, MOUV_fmt(+(t).toFixed(1)), "mv-t", "middle"); }
+    for (let y = 0; y <= ymax; y += pas) s += `<path d="M${X(0)} ${Y(y).toFixed(1)}H${X(1.7)}" class="mv-gr"/>` + (y % lab === 0 ? T(38, Y(y) + 3.5, MOUV_fmt(y), "mv-t", "end") : "");
+    let d = ""; for (let t = 0; t <= ti + 1e-9; t += 0.01) { const y = ec ? 0.5 * m * vit(t) ** 2 : vit(t); d += (t ? "L" : "M") + X(t).toFixed(1) + " " + Y(y).toFixed(1); }
+    s += `<path d="${d}" class="mv-cb"/><path d="M${X(0)} ${Y(0)}H${X(1.7) + 6}M${X(0)} ${Y(0)}V${Y(ymax) - 6}" class="mv-ax"/>`;
+    s += `<circle cx="${X(ti).toFixed(1)}" cy="${Y(ec ? 0.5 * m * vit(ti) ** 2 : vit(ti)).toFixed(1)}" r="3.5" class="mv-bille"/>` + T(X(ti) - 6, Y(ymax) + 10, "Impact", "mv-t", "end") + T(X(0) + 4, Y(ymax) + 10, "Début du plongeon", "mv-t", "start");
+    s += T(X(1.7) + 6, 211, "t (en s)", "mv-t", "end") + T(4, 10, ec ? "Ec (en J)" : "v (en m/s)", "mv-t", "start");
+    const titre = ec ? "Évolution de l'énergie cinétique Ec du plongeur en fonction du temps t (simulation)" : "Évolution de la vitesse v du plongeur en fonction du temps t (simulation)";
+    return `<svg viewBox="0 0 320 214" class="mv-fig" role="img" aria-label="${titre}. Début du plongeon à 0 s, impact à 1,62 s.">${s}</svg><p class="tp-note">${titre}. Une petite graduation horizontale = 0,02 s.</p>`;
+  }
+  return { figPlongeon, DIST, fmt, figTableauDist, figCourbeEc, animEc, animRampe, animArret, ecMS, ecKMH, conserv, arret, genTableau, genCourbe };
+})();
+
+(CONTENU.chapitres["3e"] = CONTENU.chapitres["3e"] || []).push(
+{
+  id: "mouvement", theme: "energie",
+  titre: "L'énergie au cours d'un mouvement",
+  resume: "Énergie cinétique, énergie de position et sécurité routière",
+  qcm: "L'énergie au cours d'un mouvement",
+
+  // ======================== 1. RAPPEL ========================
+  rappel: {
+    intro: "Réviser la vitesse (vue en 4ème) et les formes d'énergie (vues dans les chapitres précédents). Chaque jeu change à chaque partie.",
+    activites: [
+      {
+        id: "qcm", type: "qcm", titre: "QCM éclair", desc: "5 questions sur la vitesse et l'énergie", n: 5,
+        questions: [
+          { question: "Quelle relation permet de calculer une vitesse v à partir d'une distance d et d'une durée t ?", reponses: ["v = d × t", "v = d ÷ t", "v = t ÷ d", "v = d + t"], bonne: 1,
+            explication: "v = d ÷ t : on divise la distance parcourue par la durée du parcours.",
+            pourquoi: ["Multiplier donnerait une valeur qui grandit avec la durée : plus on met de temps, plus on irait vite ?", null, "C'est l'inverse : la distance se met en haut de la division.", "On n'additionne pas des mètres et des secondes."] },
+          { question: "Un élève parcourt 600 m en 300 s. Quelle est sa vitesse ?", reponses: ["2 m/s", "180 000 m/s", "0,5 m/s", "900 m/s"], bonne: 0,
+            explication: "v = d ÷ t = 600 ÷ 300 = 2 m/s.",
+            pourquoi: [null, "On a multiplié 600 par 300 au lieu de diviser.", "On a divisé la durée par la distance (300 ÷ 600).", "On a additionné la distance et la durée."] },
+          { question: "Quelle unité peut exprimer une vitesse ?", reponses: ["Le joule (J)", "Le mètre (m)", "Le mètre par seconde (m/s)", "Le kilogramme (kg)"], bonne: 2,
+            explication: "Une vitesse s'exprime en m/s ou en km/h.",
+            pourquoi: ["Le joule est l'unité de l'énergie.", "Le mètre est l'unité de longueur (distance).", null, "Le kilogramme est l'unité de masse."] },
+          { question: "Une voiture roule à 36 km/h. Quelle est sa vitesse en m/s ?", reponses: ["129,6 m/s", "36 m/s", "10 m/s", "3,6 m/s"], bonne: 2,
+            explication: "Pour passer des km/h aux m/s, on divise par 3,6 : 36 ÷ 3,6 = 10 m/s.",
+            pourquoi: ["On a multiplié par 3,6 au lieu de diviser.", "La valeur change quand on change d'unité.", null, "On a divisé par 10 au lieu de 3,6."] },
+          { question: "Un mouvement dont la vitesse diminue est un mouvement…", reponses: ["accéléré", "ralenti", "uniforme", "circulaire"], bonne: 1,
+            explication: "Vitesse qui diminue : mouvement ralenti. Vitesse constante : uniforme. Vitesse qui augmente : accéléré.",
+            pourquoi: ["Accéléré : la vitesse augmente.", null, "Uniforme : la vitesse ne change pas.", "Circulaire décrit la trajectoire, pas la vitesse."] },
+          { question: "Quelle est l'unité de l'énergie ?", reponses: ["Le watt (W)", "Le joule (J)", "Le volt (V)", "Le mètre par seconde (m/s)"], bonne: 1,
+            explication: "L'énergie s'exprime en joules (J).",
+            pourquoi: ["Le watt est l'unité de la puissance.", null, "Le volt est l'unité de la tension.", "C'est une unité de vitesse."] },
+          { question: "Dans une éolienne, le vent fait tourner les pales. L'éolienne convertit…", reponses: ["de l'énergie électrique en énergie cinétique", "de l'énergie chimique en énergie électrique", "de l'énergie cinétique du vent en énergie électrique", "de l'énergie lumineuse en énergie électrique"], bonne: 2,
+            explication: "Le vent en mouvement possède de l'énergie cinétique ; l'alternateur la convertit en énergie électrique.",
+            pourquoi: ["C'est l'inverse : l'éolienne produit de l'électricité.", "Le vent ne contient pas d'énergie chimique.", null, "Ça, c'est le panneau photovoltaïque."] },
+          { question: "Un convertisseur reçoit 100 J et fournit 60 J d'énergie utile. Quelle énergie est dissipée ?", reponses: ["160 J", "40 J", "60 J", "0 J : l'énergie disparaît"], bonne: 1,
+            explication: "L'énergie se conserve : énergie dissipée = 100 − 60 = 40 J.",
+            pourquoi: ["On a additionné au lieu de soustraire.", null, "60 J, c'est l'énergie utile.", "L'énergie ne disparaît jamais : elle est convertie."] }
+        ]
+      },
+      {
+        id: "relier", type: "relier", titre: "Relier les morceaux de phrases", desc: "Tracer un trait entre le début et la fin", n: 5,
+        paires: [
+          ["La vitesse v se calcule…", "…avec v = d ÷ t."],
+          ["Pour passer des km/h aux m/s…", "…on divise par 3,6."],
+          ["Un mouvement dont la vitesse augmente…", "…est un mouvement accéléré."],
+          ["Un mouvement dont la vitesse ne change pas…", "…est un mouvement uniforme."],
+          ["Le joule (J) est l'unité…", "…de l'énergie."],
+          ["Au cours d'une conversion, l'énergie…", "…se conserve : rien ne se perd, rien ne se crée."],
+          ["Une partie de l'énergie dissipée…", "…part le plus souvent sous forme de chaleur."]
+        ]
+      },
+      {
+        id: "croises", type: "croises", titre: "Mots croisés du mouvement", desc: "Une nouvelle grille à chaque partie", n: 7,
+        mots: [
+          { mot: "VITESSE",     indice: "Grandeur qui se calcule avec d ÷ t." },
+          { mot: "DISTANCE",    indice: "Longueur parcourue, notée d." },
+          { mot: "DUREE",       indice: "Temps mis pour un parcours, noté t." },
+          { mot: "TRAJECTOIRE", indice: "Ensemble des positions occupées par un objet en mouvement." },
+          { mot: "ACCELERE",    indice: "Se dit d'un mouvement dont la vitesse augmente." },
+          { mot: "RALENTI",     indice: "Se dit d'un mouvement dont la vitesse diminue." },
+          { mot: "UNIFORME",    indice: "Se dit d'un mouvement dont la vitesse ne change pas." },
+          { mot: "JOULE",       indice: "Unité de l'énergie." },
+          { mot: "THERMIQUE",   indice: "Forme d'énergie liée à la chaleur." },
+          { mot: "ELECTRIQUE",  indice: "Forme d'énergie fournie par une éolienne." },
+          { mot: "CONSERVATION", indice: "Rien ne se perd : c'est la … de l'énergie." },
+          { mot: "ALTERNATEUR", indice: "Convertisseur qui produit l'énergie électrique dans une centrale." }
+        ]
+      }
+    ]
+  },
+
+  // ======================== 2. COURS ========================
+  cours: {
+    competences: [
+      "Je reconnais un objet qui possède de l'énergie cinétique et je sais de quoi elle dépend.",
+      "Je calcule une énergie cinétique avec Ec = ½ × m × v², avec la vitesse en m/s.",
+      "Je décris les conversions entre énergie de position et énergie cinétique au cours d'un mouvement.",
+      "J'explique la distance d'arrêt et pourquoi la vitesse est dangereuse sur la route."
+    ],
+    blocs: [
+      { t: "h", texte: "1. L'énergie cinétique" },
+      { t: "p", def: true, texte: "Tout objet <strong>en mouvement</strong> possède une énergie liée à sa vitesse : l'<strong>énergie cinétique</strong>, notée <strong>Ec</strong>. Un objet immobile a une énergie cinétique nulle." },
+      { t: "p", texte: "L'énergie cinétique d'un objet est d'autant plus grande que sa <strong>masse</strong> est grande et que sa <strong>vitesse</strong> est grande. La vitesse compte beaucoup plus que la masse : si la vitesse <strong>double</strong>, l'énergie cinétique est multipliée par <strong>4</strong>." },
+      { t: "anim", monter: (el) => MOUV.animEc(el) },
+      { t: "exemple", type: "vraifaux", competence: 1, variantes: [
+        { affirmation: "Une voiture garée sur un parking possède de l'énergie cinétique.", vrai: false, explication: "Elle est immobile : sa vitesse est nulle, son énergie cinétique aussi." },
+        { affirmation: "À la même vitesse, un camion possède plus d'énergie cinétique qu'un scooter.", vrai: true, explication: "Le camion a une masse beaucoup plus grande." },
+        { affirmation: "Si une voiture roule deux fois plus vite, son énergie cinétique est multipliée par 2.", vrai: false, explication: "Elle est multipliée par 4 (2 × 2), car la vitesse est au carré." },
+        { affirmation: "Une noix de coco qui tombe possède de l'énergie cinétique.", vrai: true, explication: "Elle est en mouvement : elle a une vitesse, donc de l'énergie cinétique." }
+      ] },
+
+      { t: "h", texte: "2. Calculer une énergie cinétique" },
+      { t: "p", rel: true, texte: "<strong>Ec = ½ × m × v²</strong>, avec Ec en joules (J), la masse m en kilogrammes (kg) et la vitesse v en mètres par seconde (m/s). v² se lit « v au carré » : v × v." },
+      { t: "p", texte: "Attention : la vitesse doit être en <strong>m/s</strong>. Pour passer des km/h aux m/s, on <strong>divise par 3,6</strong> (exemple : 72 km/h = 72 ÷ 3,6 = 20 m/s)." },
+      { t: "methode", titre: "Méthode en 5 étapes", items: [
+        "Je repère les données et je convertis : m = 200 kg ; v = 36 km/h = 36 ÷ 3,6 = 10 m/s.",
+        "J'écris la formule : Ec = ½ × m × v².",
+        "Je remplace et je calcule : Ec = 0,5 × 200 × 10² = 0,5 × 200 × 100 = 10 000.",
+        "J'ajoute l'unité : Ec = <strong>10 000 J</strong>.",
+        "<span class=\"phr\">Phrase réponse :</span> l'énergie cinétique du scooter et de son pilote vaut <strong>10 000 J</strong>."
+      ] },
+      { t: "exemple", type: "qcm", competence: 2, variantes: [
+        { question: "Un cycliste et son vélo (m = 80 kg) roulent à 5 m/s. Quelle est leur énergie cinétique ?", reponses: ["1 000 J", "200 J", "2 000 J", "400 J"], bonne: 0,
+          explication: "Ec = 0,5 × 80 × 5² = 0,5 × 80 × 25 = 1 000 J.",
+          pourquoi: [null, "La vitesse n'a pas été mise au carré : 0,5 × 80 × 5 = 200.", "Le ½ a été oublié : 80 × 25 = 2 000.", "On a fait 80 × 5 : ni ½, ni carré."] },
+        { question: "Une voiture de 1 000 kg roule à 72 km/h. Quelle est son énergie cinétique ?", reponses: ["2 592 000 J", "200 000 J", "10 000 J", "400 000 J"], bonne: 1,
+          explication: "v = 72 ÷ 3,6 = 20 m/s. Ec = 0,5 × 1 000 × 20² = 0,5 × 1 000 × 400 = 200 000 J.",
+          pourquoi: ["La vitesse n'a pas été convertie en m/s (72 au lieu de 20).", null, "La vitesse n'a pas été mise au carré.", "Le ½ a été oublié."] },
+        { question: "Un ballon de 0,4 kg est lancé à 10 m/s. Quelle est son énergie cinétique ?", reponses: ["2 J", "40 J", "20 J", "4 J"], bonne: 2,
+          explication: "Ec = 0,5 × 0,4 × 10² = 0,5 × 0,4 × 100 = 20 J.",
+          pourquoi: ["La vitesse n'a pas été mise au carré.", "Le ½ a été oublié.", null, "On a fait 0,4 × 10."] }
+      ] },
+      { t: "exemple", type: "calcul", competence: 2, contextes: [{ gen: () => MOUV.ecMS() }, { gen: () => MOUV.ecKMH() }] },
+
+      { t: "h", texte: "3. Énergie de position et énergie mécanique" },
+      { t: "p", def: true, texte: "Un objet situé en <strong>hauteur</strong> possède une <strong>énergie de position</strong> (on dit aussi énergie potentielle). Elle est d'autant plus grande que l'objet est <strong>haut</strong> et que sa <strong>masse</strong> est grande." },
+      { t: "p", def: true, texte: "L'<strong>énergie mécanique</strong> d'un objet est la somme de son énergie cinétique et de son énergie de position : <strong>Em = Ec + Ep</strong>." },
+      { t: "p", texte: "Quand un objet <strong>descend</strong>, son énergie de position diminue et se <strong>convertit en énergie cinétique</strong> : il va de plus en plus vite. Quand il <strong>monte</strong>, c'est l'inverse. S'il n'y a <strong>pas de frottements</strong>, l'énergie mécanique se <strong>conserve</strong>. Avec des frottements, une partie est convertie en <strong>énergie thermique</strong> : l'énergie mécanique diminue, mais l'énergie totale se conserve toujours." },
+      { t: "anim", monter: (el) => MOUV.animRampe(el) },
+      { t: "methode", titre: "Exemple : la noix de coco qui tombe", items: [
+        "En haut du cocotier, la noix de coco est immobile : Ec = 0 J ; son énergie de position vaut Ep = 300 J.",
+        "À mi-hauteur : Ep = 150 J. On néglige les frottements de l'air : Ec = 300 − 150 = 150 J.",
+        "Juste avant le sol : Ep = 0 J, donc Ec = 300 J. Toute l'énergie de position est devenue de l'énergie cinétique.",
+        "<span class=\"phr\">Phrase réponse :</span> juste avant de toucher le sol, l'énergie cinétique de la noix de coco vaut <strong>300 J</strong>."
+      ] },
+      { t: "exemple", type: "qcm", competence: 3, variantes: [
+        { question: "Une bille roule sans frottements sur une rampe en U. Où son énergie cinétique est-elle la plus grande ?", reponses: ["Tout en haut, au départ", "Tout en bas de la rampe", "À mi-hauteur", "Elle est la même partout"], bonne: 1,
+          explication: "En bas, l'énergie de position est la plus petite : elle s'est convertie en énergie cinétique. La vitesse y est maximale.",
+          pourquoi: ["En haut, la bille est immobile : Ec = 0.", null, "À mi-hauteur, une partie seulement de l'énergie de position s'est convertie.", "C'est l'énergie mécanique (Ec + Ep) qui reste la même, pas Ec."] },
+        { question: "Un ballon lancé vers le haut monte. Que devient son énergie cinétique ?", reponses: ["Elle augmente", "Elle se convertit en énergie de position", "Elle disparaît", "Elle se convertit en énergie électrique"], bonne: 1,
+          explication: "Le ballon ralentit et prend de la hauteur : l'énergie cinétique se convertit en énergie de position.",
+          pourquoi: ["Le ballon ralentit : son énergie cinétique diminue.", null, "L'énergie ne disparaît jamais : elle se convertit.", "Aucun alternateur ici : pas d'énergie électrique."] },
+        { question: "Avec des frottements, une balle rebondit de moins en moins haut. Pourquoi ?", reponses: ["Une partie de l'énergie est convertie en énergie thermique", "L'énergie disparaît à chaque rebond", "Sa masse diminue", "L'énergie de position augmente"], bonne: 0,
+          explication: "À chaque rebond, une partie de l'énergie mécanique devient de l'énergie thermique : il en reste moins pour remonter.",
+          pourquoi: [null, "L'énergie ne disparaît pas : elle est convertie.", "Sa masse ne change pas.", "Si elle remonte moins haut, son énergie de position est plus petite."] }
+      ] },
+      { t: "exemple", type: "calcul", competence: 3, contextes: [{ gen: () => MOUV.conserv("bas") }, { gen: () => MOUV.conserv("milieu") }, { gen: () => MOUV.conserv("thermique") }] },
+
+      { t: "h", texte: "4. Vitesse et sécurité routière" },
+      { t: "p", def: true, texte: "La <strong>distance d'arrêt</strong> D<sub>A</sub> est la distance parcourue entre le moment où le conducteur voit un danger et l'arrêt de la voiture : <strong>D<sub>A</sub> = D<sub>R</sub> + D<sub>F</sub></strong>." },
+      { t: "liste", items: [
+        "La <strong>distance de réaction</strong> D<sub>R</sub> est parcourue pendant le temps de réaction du conducteur (environ 1 s), sans freiner. Elle augmente avec la fatigue, l'alcool ou le téléphone au volant.",
+        "La <strong>distance de freinage</strong> D<sub>F</sub> est parcourue pendant le freinage. Les freins convertissent l'énergie cinétique de la voiture en <strong>énergie thermique</strong> : les disques de frein chauffent.",
+        "Plus la vitesse est grande, plus l'énergie cinétique est grande : la distance de freinage <strong>augmente très vite</strong> avec la vitesse, et un choc est beaucoup plus violent."
+      ] },
+      { t: "anim", monter: (el) => MOUV.animArret(el) },
+      { t: "tableau", compact: true, entetes: ["Vitesse (km/h)", "Vitesse (m/s, arrondie)", "Distance de réaction (m)", "Distance de freinage (m)"],
+        lignes: MOUV.DIST.map((d) => [String(d.v), String(d.ms), String(d.dr), String(d.df)]) },
+      { t: "methode", titre: "Exemple : la distance d'arrêt à 90 km/h", items: [
+        "Dans le tableau, à 90 km/h : D<sub>R</sub> = 25 m et D<sub>F</sub> = 50 m.",
+        "J'écris la relation : D<sub>A</sub> = D<sub>R</sub> + D<sub>F</sub>.",
+        "Je calcule : D<sub>A</sub> = 25 + 50 = 75 m.",
+        "<span class=\"phr\">Phrase réponse :</span> à 90 km/h, la distance d'arrêt de la voiture vaut <strong>75 m</strong>, plus de 3 fois sa distance d'arrêt à 50 km/h (30 m)."
+      ] },
+      { t: "exemple", type: "qcm", competence: 4, variantes: [
+        { question: "D'après le tableau, quelle est la distance d'arrêt d'une voiture qui roule à 50 km/h ?", reponses: ["16 m", "14 m", "30 m", "2 m"], bonne: 2,
+          explication: "D_A = D_R + D_F = 14 + 16 = 30 m.".replace(/D_(\w)/g, "D$1"),
+          pourquoi: ["16 m, c'est seulement la distance de freinage.", "14 m, c'est seulement la distance de réaction.", null, "On additionne les deux distances, on ne les soustrait pas."] },
+        { question: "Pendant le freinage, l'énergie cinétique de la voiture est surtout convertie en…", reponses: ["énergie thermique, dans les freins", "énergie de position", "énergie électrique", "énergie chimique"], bonne: 0,
+          explication: "Les disques de frein chauffent : l'énergie cinétique devient de l'énergie thermique.",
+          pourquoi: [null, "La voiture ne monte pas : son énergie de position ne change pas.", "Sauf voiture hybride ou électrique, les freins ne produisent pas d'électricité.", "Il n'y a pas de transformation chimique dans les freins."] },
+        { question: "Un conducteur regarde son téléphone : son temps de réaction passe de 1 s à 2 s. Il roule à 25 m/s. Quelle est sa distance de réaction ?", reponses: ["25 m", "12,5 m", "27 m", "50 m"], bonne: 3,
+          explication: "d = v × t = 25 × 2 = 50 m : deux fois plus qu'un conducteur attentif.",
+          pourquoi: ["25 m, c'est la distance de réaction avec 1 s seulement.", "On a divisé par 2 au lieu de multiplier.", "On a additionné 25 et 2.", null] }
+      ] },
+      { t: "exemple", type: "vraifaux", competence: 4, variantes: [
+        { affirmation: "La distance d'arrêt est la somme de la distance de réaction et de la distance de freinage.", vrai: true, explication: "D_A = D_R + D_F.".replace(/D_(\w)/g, "D$1") },
+        { affirmation: "Si la vitesse double, la distance de freinage double aussi.", vrai: false, explication: "Elle fait bien plus que doubler, car l'énergie cinétique est multipliée par 4." },
+        { affirmation: "Téléphoner au volant augmente la distance de réaction.", vrai: true, explication: "Le conducteur met plus de temps à réagir : il parcourt plus de mètres sans freiner." },
+        { affirmation: "Pendant le temps de réaction, la voiture commence déjà à freiner.", vrai: false, explication: "Pendant le temps de réaction, le conducteur n'a pas encore appuyé sur la pédale : la vitesse ne change pas." }
+      ] },
+      { t: "retenir", items: [
+        "Tout objet en mouvement possède de l'énergie cinétique : Ec = ½ × m × v² (Ec en J, m en kg, v en m/s).",
+        "Pour passer des km/h aux m/s, on divise par 3,6. Si la vitesse double, l'énergie cinétique est multipliée par 4.",
+        "Un objet en hauteur possède de l'énergie de position. Énergie mécanique : Em = Ec + Ep.",
+        "Quand un objet descend, l'énergie de position se convertit en énergie cinétique ; sans frottements, l'énergie mécanique se conserve.",
+        "Distance d'arrêt : D<sub>A</sub> = D<sub>R</sub> + D<sub>F</sub> ; elle augmente très vite avec la vitesse."
+      ] }
+    ]
+  },
+
+  // ======================== 3. ENTRAÎNEMENT ========================
+  entrainement: [
+    {
+      id: "unites", type: "relier", titre: "Grandeurs et unités", desc: "Relier chaque grandeur à son unité", n: 5,
+      paires: [
+        ["L'énergie cinétique Ec", "s'exprime en joules (J)."],
+        ["La masse m", "s'exprime en kilogrammes (kg)."],
+        ["La vitesse v, dans Ec = ½ × m × v²", "s'exprime en mètres par seconde (m/s)."],
+        ["La distance d'arrêt", "s'exprime en mètres (m)."],
+        ["Le temps de réaction", "s'exprime en secondes (s)."],
+        ["Pour convertir des km/h en m/s", "on divise par 3,6."]
+      ]
+    },
+    {
+      id: "vf", type: "vraifaux", titre: "Vrai ou faux ?", desc: "8 affirmations à juger", n: 8,
+      items: [
+        { affirmation: "Un objet immobile a une énergie cinétique nulle.", vrai: true, explication: "Sa vitesse est nulle : Ec = ½ × m × 0² = 0." },
+        { affirmation: "Dans Ec = ½ × m × v², la vitesse peut être en km/h.", vrai: false, explication: "Elle doit être en m/s : on divise d'abord les km/h par 3,6." },
+        { affirmation: "Si la masse double, l'énergie cinétique double.", vrai: true, explication: "Ec est proportionnelle à la masse." },
+        { affirmation: "Si la vitesse est multipliée par 3, l'énergie cinétique est multipliée par 9.", vrai: true, explication: "3² = 9 : la vitesse est au carré." },
+        { affirmation: "Un objet en hauteur possède une énergie de position.", vrai: true, explication: "Plus il est haut et lourd, plus elle est grande." },
+        { affirmation: "L'énergie mécanique est la somme de l'énergie cinétique et de l'énergie de position.", vrai: true, explication: "Em = Ec + Ep." },
+        { affirmation: "Quand une mangue tombe, son énergie de position augmente.", vrai: false, explication: "Elle perd de la hauteur : son énergie de position diminue et devient de l'énergie cinétique." },
+        { affirmation: "Avec des frottements, de l'énergie disparaît.", vrai: false, explication: "Elle ne disparaît pas : elle est convertie en énergie thermique." },
+        { affirmation: "Sans frottements, l'énergie mécanique d'un objet se conserve.", vrai: true, explication: "L'énergie de position et l'énergie cinétique s'échangent sans perte." },
+        { affirmation: "Pendant un freinage, les freins chauffent.", vrai: true, explication: "Ils convertissent l'énergie cinétique en énergie thermique." },
+        { affirmation: "La distance de réaction dépend de la vitesse et du temps de réaction du conducteur.", vrai: true, explication: "D_R = v × t : plus on roule vite ou plus on réagit lentement, plus elle est grande.".replace(/D_(\w)/g, "D$1") },
+        { affirmation: "À 130 km/h, la distance d'arrêt est d'environ 30 m.", vrai: false, explication: "Elle vaut environ 36 + 104 = 140 m. 30 m, c'est à 50 km/h." },
+        { affirmation: "Une fusée Ariane qui décolle de Kourou gagne de l'énergie cinétique.", vrai: true, explication: "Sa vitesse augmente : son énergie cinétique augmente (et son énergie de position aussi)." }
+      ]
+    },
+    {
+      id: "tri", type: "tri", titre: "L'énergie cinétique augmente-t-elle ?", desc: "Trier 8 situations", n: 8,
+      question: "Dans cette situation, l'énergie cinétique augmente-t-elle ?", oui: "Elle augmente", non: "Elle n'augmente pas",
+      items: [
+        { source: "Une voiture accélère pour doubler", oui: true, pourquoi: "Sa vitesse augmente, donc son énergie cinétique aussi." },
+        { source: "Un cycliste freine avant un virage", oui: false, pourquoi: "Sa vitesse diminue : son énergie cinétique diminue." },
+        { source: "Une noix de coco tombe du cocotier", oui: true, pourquoi: "Elle va de plus en plus vite : l'énergie de position devient de l'énergie cinétique." },
+        { source: "Un ballon lancé vers le haut monte", oui: false, pourquoi: "Il ralentit : son énergie cinétique devient de l'énergie de position." },
+        { source: "Un camion roule à vitesse constante sur la route de Kourou", oui: false, pourquoi: "Vitesse et masse ne changent pas : son énergie cinétique reste la même." },
+        { source: "Une pirogue démarre sur le fleuve", oui: true, pourquoi: "Elle passe de l'arrêt au mouvement : sa vitesse augmente." },
+        { source: "Un skateur descend une rampe", oui: true, pourquoi: "Il perd de la hauteur et gagne de la vitesse." },
+        { source: "Une voiture s'arrête au feu rouge", oui: false, pourquoi: "Sa vitesse devient nulle : son énergie cinétique aussi." },
+        { source: "Une fusée Ariane décolle", oui: true, pourquoi: "Sa vitesse augmente très fortement." },
+        { source: "Une voiture garée au soleil", oui: false, pourquoi: "Elle est immobile : son énergie cinétique reste nulle." }
+      ]
+    },
+    { id: "qcm", type: "qcm-tableur", titre: "Défi QCM", desc: "8 questions tirées au hasard", n: 8 },
+    {
+      id: "calculs", type: "calcul", titre: "Calculer sans se tromper", desc: "4 calculs : énergie cinétique, conservation, distances", n: 4,
+      contextes: [{ gen: () => MOUV.ecMS() }, { gen: () => MOUV.ecKMH() }, { gen: () => MOUV.conserv() }, { gen: () => MOUV.arret() }]
+    },
+    {
+      id: "lire", type: "qcm", titre: "Lire, calculer, raisonner", desc: "6 questions avec une courbe ou un tableau", n: 6,
+      questions: [
+        { figure: () => MOUV.figCourbeEc(), question: "D'après la courbe, quelle est l'énergie cinétique de la voiture à 20 m/s ?", reponses: ["100 kJ", "200 kJ", "20 kJ", "400 kJ"], bonne: 1,
+          explication: "On part de 20 m/s, on monte jusqu'à la courbe et on lit 200 kJ. Vérification : Ec = 0,5 × 1 000 × 20² = 200 000 J = 200 kJ.",
+          pourquoi: ["La courbe n'est pas une droite : à 20 m/s, on n'a pas « deux fois 50 kJ ».", null, "On a lu la vitesse au lieu de l'énergie.", "On a lu trop haut, ou oublié le ½."] },
+        { figure: () => MOUV.figCourbeEc(), question: "D'après la courbe, quand la vitesse passe de 10 m/s à 20 m/s, l'énergie cinétique est multipliée par…", reponses: ["2", "4", "10", "20"], bonne: 1,
+          explication: "Elle passe de 50 kJ à 200 kJ : 200 ÷ 50 = 4. Vitesse doublée, énergie cinétique multipliée par 4.",
+          pourquoi: ["C'est la vitesse qui est multipliée par 2, pas l'énergie.", null, "On a confondu avec l'écart des vitesses (10 m/s).", "Aucune valeur de la courbe ne donne ce rapport."] },
+        { figure: () => MOUV.figTableauDist(), question: "D'après le tableau, quelle est la distance d'arrêt à 110 km/h ?", reponses: ["75 m", "31 m", "44 m", "106 m"], bonne: 3,
+          explication: "D_A = 31 + 75 = 106 m.".replace(/D_(\w)/g, "D$1"),
+          pourquoi: ["75 m, c'est seulement la distance de freinage.", "31 m, c'est seulement la distance de réaction.", "On a soustrait les distances au lieu de les additionner.", null] },
+        { figure: () => MOUV.figTableauDist(), question: "D'après le tableau, de 30 km/h à 90 km/h, la vitesse est multipliée par 3. La distance de freinage est multipliée par environ…", reponses: ["3", "8", "50", "1,5"], bonne: 1,
+          explication: "De 6 m à 50 m : 50 ÷ 6 ≈ 8. Elle augmente bien plus vite que la vitesse (en théorie × 9, comme l'énergie cinétique).",
+          pourquoi: ["Ce serait vrai si la distance de freinage était proportionnelle à la vitesse : ce n'est pas le cas.", null, "50 m est une distance, pas un rapport.", "La distance de freinage augmente, elle ne diminue pas."] },
+        { question: "Un scooter et son pilote (m = 200 kg) roulent à 54 km/h. Quelle est leur énergie cinétique ?", reponses: ["22 500 J", "291 600 J", "1 500 J", "45 000 J"], bonne: 0,
+          explication: "v = 54 ÷ 3,6 = 15 m/s. Ec = 0,5 × 200 × 15² = 0,5 × 200 × 225 = 22 500 J.",
+          pourquoi: [null, "La vitesse n'a pas été convertie en m/s.", "La vitesse n'a pas été mise au carré.", "Le ½ a été oublié."] },
+        { question: "Une voiture de 1 000 kg a une énergie cinétique de 50 000 J. Une seconde voiture, identique, roule deux fois plus vite. Quelle est son énergie cinétique ?", reponses: ["100 000 J", "200 000 J", "50 000 J", "2 500 000 J"], bonne: 1,
+          explication: "Vitesse doublée : énergie cinétique multipliée par 4. 50 000 × 4 = 200 000 J.",
+          pourquoi: ["On a multiplié par 2 : il faut multiplier par 4.", null, "La vitesse change, donc l'énergie cinétique change.", "On a mis l'énergie au carré au lieu de la vitesse."] },
+        { question: "Un enfant glisse sans frottements sur un toboggan. En haut, Ep = 1 500 J et Ec = 0 J. Que vaut son énergie mécanique en bas ?", reponses: ["0 J", "750 J", "1 500 J", "3 000 J"], bonne: 2,
+          explication: "Sans frottements, l'énergie mécanique se conserve : Em = 1 500 J en haut comme en bas.",
+          pourquoi: ["En bas, l'énergie de position est nulle, mais pas l'énergie cinétique.", "750 J, ce serait à mi-hauteur pour Ec ou Ep, pas pour Em.", null, "On a additionné deux fois la même énergie."] }
+      ]
+    },
+    {
+      // Exercice d'annale : brevet 2024, série générale, Métropole-Antilles-Guyane (sujet 24GENSCMEAG1),
+      // partie physique-chimie « Piscine et équilibre de l'eau », question 5 « Épreuve de plongeon à 10 mètres » (12 points).
+      // Énoncé et questions repris du sujet ; les deux graphiques du document 5 sont redessinés (simulation : impact à 1,62 s, 14 m/s).
+      // Corrigé : vi = 14 m/s = 50,4 km/h < 80 km/h. Les questions 1 à 4 du même sujet servent au chapitre « acides ».
+      id: "brevet", type: "brevet", titre: "Exercice type brevet", desc: "Brevet 2024 : l'épreuve de plongeon à 10 mètres",
+      documents: [
+        { titre: "Introduction (brevet 2024, Métropole-Antilles-Guyane)", texte: "La France accueille les Jeux olympiques et paralympiques de 2024. Le centre aquatique olympique, construit près du Stade de France, accueille les épreuves de natation artistique, de plongeon et de water-polo. Nous allons nous intéresser à la discipline du plongeon à 10 m." },
+        { titre: "Document 5 : épreuve de plongeon à 10 mètres", texte: "Des simulations permettent d'étudier le plongeon, afin de définir la tolérance du corps humain à un tel saut. Pour des raisons de sécurité, la fédération internationale de natation limite, en compétition, la vitesse atteinte lors du contact avec l'eau à 80 km/h environ.",
+          figure: MOUV.figPlongeon("ec") + MOUV.figPlongeon("v") }
+      ],
+      questions: [
+        { type: "qcm", points: 3, question: "5a. Décrire l'évolution de l'énergie cinétique du plongeur au cours du temps.",
+          reponses: ["Elle diminue un peu jusqu'à 0,2 s, puis augmente jusqu'à l'impact", "Elle reste constante pendant tout le plongeon", "Elle diminue pendant tout le plongeon", "Elle augmente, puis diminue avant l'impact"], bonne: 0,
+          explication: "Le plongeur saute d'abord un peu vers le haut : il ralentit, Ec diminue jusqu'à 0,2 s. Ensuite il tombe de plus en plus vite : Ec augmente jusqu'à l'impact." },
+        { type: "qcm", points: 2, question: "5b. Nommer la forme d'énergie qui est convertie en énergie cinétique au cours du plongeon.",
+          reponses: ["L'énergie de position (énergie potentielle de pesanteur)", "L'énergie thermique", "L'énergie chimique", "L'énergie électrique"], bonne: 0,
+          explication: "Le plongeur perd de la hauteur : son énergie de position (potentielle de pesanteur) se convertit en énergie cinétique." },
+        { type: "calcul", points: 2, contexte: { gen: () => ({ texte: "5c. À l'aide des graphiques, indiquer la durée du plongeon en seconde, notée ti.", rep: 1.62, u: "s", repTxt: "1,62", tol: 0.015,
+          corr: "Une graduation vaut 0,1 ÷ 5 = 0,02 s. L'impact a lieu une graduation après 1,6 s : ti = 1,6 + 0,02 = 1,62 s (1,6 s accepté).", phrase: "La durée du plongeon vaut ti = 1,62 s." }) } },
+        { type: "redaction", points: 5, consigne: "5d. À l'aide des graphiques, déterminer si la vitesse au moment de l'impact, notée vi, permet de respecter la norme de sécurité sur la vitesse atteinte lors du contact avec l'eau. Toute démarche même partielle sera prise en compte.",
+          criteres: ["J'ai lu sur le graphique la vitesse à l'impact : vi = 14 m/s.", "J'ai converti en km/h : 14 × 3,6 = 50,4 km/h.", "J'ai comparé à 80 km/h et conclu : 50,4 km/h < 80 km/h, la norme de sécurité est respectée.", "J'ai rédigé clairement, avec le bon vocabulaire et les unités."],
+          elements: "Sur le graphique de la vitesse, au moment de l'impact (ti = 1,62 s), on lit vi = 14 m/s. Pour comparer à la norme, on convertit : vi = 14 × 3,6 = 50,4 km/h. Or 50,4 km/h < 80 km/h : la vitesse du plongeur au moment de l'impact respecte la norme de sécurité." }
       ]
     }
   ]
@@ -16557,6 +17154,314 @@ const QUESTIONS = [
    "Le zinc est attaqué : Zn + 2 H⁺ → Zn²⁺ + H₂.",
    "L'aluminium est attaqué par l'acide chlorhydrique."
   ]
+ },
+ {
+  "id": "C7-01",
+  "chapitre": "L'énergie au cours d'un mouvement",
+  "notion": "Énergie cinétique",
+  "difficulte": 1,
+  "question": "Quel objet possède de l'énergie cinétique ?",
+  "reponses": [
+   "Une voiture garée",
+   "Un livre posé sur une table",
+   "Une pirogue qui avance sur le fleuve",
+   "Une maison"
+  ],
+  "bonne": 2,
+  "explication": "Seul un objet en mouvement possède de l'énergie cinétique.",
+  "guyane": true,
+  "pourquoi": [
+   "Elle est immobile : son énergie cinétique est nulle.",
+   "Il est immobile : pas d'énergie cinétique.",
+   null,
+   "Une maison ne bouge pas."
+  ]
+ },
+{
+  "id": "C7-02",
+  "chapitre": "L'énergie au cours d'un mouvement",
+  "notion": "Énergie cinétique",
+  "difficulte": 1,
+  "question": "Quelle est la relation de l'énergie cinétique ?",
+  "reponses": [
+   "Ec = m × v",
+   "Ec = ½ × m × v²",
+   "Ec = ½ × m² × v",
+   "Ec = m ÷ v²"
+  ],
+  "bonne": 1,
+  "explication": "Ec = ½ × m × v², avec Ec en J, m en kg et v en m/s.",
+  "guyane": false,
+  "pourquoi": [
+   "Il manque le ½ et le carré de la vitesse.",
+   null,
+   "C'est la vitesse qui est au carré, pas la masse.",
+   "On multiplie par v², on ne divise pas."
+  ]
+ },
+{
+  "id": "C7-03",
+  "chapitre": "L'énergie au cours d'un mouvement",
+  "notion": "Énergie cinétique",
+  "difficulte": 2,
+  "question": "Dans Ec = ½ × m × v², la vitesse doit être exprimée en…",
+  "reponses": [
+   "km/h",
+   "m/s",
+   "m",
+   "s"
+  ],
+  "bonne": 1,
+  "explication": "La vitesse doit être en m/s : on divise les km/h par 3,6.",
+  "guyane": false,
+  "pourquoi": [
+   "En km/h, le résultat ne serait pas en joules.",
+   null,
+   "Le mètre est une unité de distance.",
+   "La seconde est une unité de durée."
+  ]
+ },
+{
+  "id": "C7-04",
+  "chapitre": "L'énergie au cours d'un mouvement",
+  "notion": "Énergie cinétique",
+  "difficulte": 2,
+  "question": "Une voiture roule deux fois plus vite. Son énergie cinétique est…",
+  "reponses": [
+   "multipliée par 2",
+   "multipliée par 4",
+   "divisée par 2",
+   "la même"
+  ],
+  "bonne": 1,
+  "explication": "La vitesse est au carré : 2² = 4.",
+  "guyane": false,
+  "pourquoi": [
+   "Ce serait vrai pour la masse, pas pour la vitesse.",
+   null,
+   "Plus de vitesse donne plus d'énergie cinétique.",
+   "La vitesse change, donc Ec change."
+  ]
+ },
+{
+  "id": "C7-05",
+  "chapitre": "L'énergie au cours d'un mouvement",
+  "notion": "Calcul",
+  "difficulte": 2,
+  "question": "Un scooter et son pilote (m = 200 kg) roulent à 10 m/s. Quelle est leur énergie cinétique ?",
+  "reponses": [
+   "1 000 J",
+   "10 000 J",
+   "20 000 J",
+   "2 000 J"
+  ],
+  "bonne": 1,
+  "explication": "Ec = 0,5 × 200 × 10² = 0,5 × 200 × 100 = 10 000 J.",
+  "guyane": false,
+  "pourquoi": [
+   "La vitesse n'a pas été mise au carré.",
+   null,
+   "Le ½ a été oublié.",
+   "On a fait 200 × 10 : ni ½, ni carré."
+  ]
+ },
+{
+  "id": "C7-06",
+  "chapitre": "L'énergie au cours d'un mouvement",
+  "notion": "Calcul",
+  "difficulte": 3,
+  "question": "Une voiture de 1 000 kg roule à 90 km/h. Quelle est son énergie cinétique ?",
+  "reponses": [
+   "4 050 000 J",
+   "312 500 J",
+   "12 500 J",
+   "625 000 J"
+  ],
+  "bonne": 1,
+  "explication": "v = 90 ÷ 3,6 = 25 m/s. Ec = 0,5 × 1 000 × 25² = 312 500 J.",
+  "guyane": false,
+  "pourquoi": [
+   "La vitesse n'a pas été convertie en m/s.",
+   null,
+   "La vitesse n'a pas été mise au carré.",
+   "Le ½ a été oublié."
+  ]
+ },
+{
+  "id": "C7-07",
+  "chapitre": "L'énergie au cours d'un mouvement",
+  "notion": "Énergie mécanique",
+  "difficulte": 1,
+  "question": "Un objet situé en hauteur possède…",
+  "reponses": [
+   "une énergie de position",
+   "une énergie électrique",
+   "une énergie nucléaire",
+   "aucune énergie"
+  ],
+  "bonne": 0,
+  "explication": "Plus il est haut et lourd, plus son énergie de position est grande.",
+  "guyane": false,
+  "pourquoi": [
+   null,
+   "Il faudrait un générateur ou un alternateur.",
+   "L'énergie nucléaire vient des noyaux des atomes.",
+   "En hauteur, il possède une énergie de position."
+  ]
+ },
+{
+  "id": "C7-08",
+  "chapitre": "L'énergie au cours d'un mouvement",
+  "notion": "Énergie mécanique",
+  "difficulte": 1,
+  "question": "L'énergie mécanique d'un objet est…",
+  "reponses": [
+   "Em = Ec − Ep",
+   "Em = Ec × Ep",
+   "Em = Ec + Ep",
+   "Em = Ec ÷ Ep"
+  ],
+  "bonne": 2,
+  "explication": "C'est la somme de l'énergie cinétique et de l'énergie de position.",
+  "guyane": false,
+  "pourquoi": [
+   "On additionne, on ne soustrait pas.",
+   "On additionne, on ne multiplie pas.",
+   null,
+   "On additionne, on ne divise pas."
+  ]
+ },
+{
+  "id": "C7-09",
+  "chapitre": "L'énergie au cours d'un mouvement",
+  "notion": "Énergie mécanique",
+  "difficulte": 2,
+  "question": "Une mangue tombe de l'arbre (on néglige les frottements). Pendant sa chute…",
+  "reponses": [
+   "son énergie de position se convertit en énergie cinétique",
+   "son énergie cinétique se convertit en énergie de position",
+   "son énergie disparaît",
+   "son énergie mécanique augmente"
+  ],
+  "bonne": 0,
+  "explication": "Elle perd de la hauteur et gagne de la vitesse ; son énergie mécanique reste constante.",
+  "guyane": true,
+  "pourquoi": [
+   null,
+   "C'est ce qui se passe quand un objet monte.",
+   "L'énergie ne disparaît jamais.",
+   "Sans frottements, l'énergie mécanique se conserve."
+  ]
+ },
+{
+  "id": "C7-10",
+  "chapitre": "L'énergie au cours d'un mouvement",
+  "notion": "Énergie mécanique",
+  "difficulte": 3,
+  "question": "En haut d'un toboggan, un enfant a Ep = 1 200 J et Ec = 0 J. En bas, Ec = 900 J. Quelle énergie a été convertie en énergie thermique ?",
+  "reponses": [
+   "2 100 J",
+   "300 J",
+   "900 J",
+   "0 J"
+  ],
+  "bonne": 1,
+  "explication": "L'énergie se conserve : 1 200 − 900 = 300 J sont devenus de l'énergie thermique.",
+  "guyane": false,
+  "pourquoi": [
+   "On a additionné au lieu de soustraire.",
+   null,
+   "900 J, c'est l'énergie cinétique en bas.",
+   "Ec en bas est plus petite que Ep en haut : il y a eu des frottements."
+  ]
+ },
+{
+  "id": "C7-11",
+  "chapitre": "L'énergie au cours d'un mouvement",
+  "notion": "Sécurité routière",
+  "difficulte": 1,
+  "question": "La distance d'arrêt d'une voiture est égale à…",
+  "reponses": [
+   "la distance de freinage seulement",
+   "la distance de réaction + la distance de freinage",
+   "la distance de freinage − la distance de réaction",
+   "la distance de réaction seulement"
+  ],
+  "bonne": 1,
+  "explication": "Distance d'arrêt = distance de réaction + distance de freinage.",
+  "guyane": false,
+  "pourquoi": [
+   "Il faut aussi compter la distance parcourue avant de freiner.",
+   null,
+   "On additionne les deux distances.",
+   "Il faut aussi compter la distance de freinage."
+  ]
+ },
+{
+  "id": "C7-12",
+  "chapitre": "L'énergie au cours d'un mouvement",
+  "notion": "Sécurité routière",
+  "difficulte": 2,
+  "question": "Pendant un freinage, l'énergie cinétique d'une voiture est surtout convertie en…",
+  "reponses": [
+   "énergie de position",
+   "énergie thermique",
+   "énergie lumineuse",
+   "énergie nucléaire"
+  ],
+  "bonne": 1,
+  "explication": "Les freins chauffent : l'énergie cinétique devient de l'énergie thermique.",
+  "guyane": false,
+  "pourquoi": [
+   "La voiture ne monte pas.",
+   null,
+   "Les freins ne produisent presque pas de lumière.",
+   "Aucun noyau d'atome n'est transformé."
+  ]
+ },
+{
+  "id": "C7-13",
+  "chapitre": "L'énergie au cours d'un mouvement",
+  "notion": "Sécurité routière",
+  "difficulte": 2,
+  "question": "Un conducteur roule à 25 m/s et met 1 s à réagir. Quelle est sa distance de réaction ?",
+  "reponses": [
+   "25 m",
+   "26 m",
+   "2,5 m",
+   "50 m"
+  ],
+  "bonne": 0,
+  "explication": "d = v × t = 25 × 1 = 25 m.",
+  "guyane": false,
+  "pourquoi": [
+   null,
+   "On a additionné la vitesse et la durée.",
+   "On a divisé par 10.",
+   "Ce serait avec un temps de réaction de 2 s."
+  ]
+ },
+{
+  "id": "C7-14",
+  "chapitre": "L'énergie au cours d'un mouvement",
+  "notion": "Sécurité routière",
+  "difficulte": 2,
+  "question": "Quel comportement augmente la distance de réaction ?",
+  "reponses": [
+   "Porter sa ceinture",
+   "Regarder son téléphone en conduisant",
+   "Rouler moins vite",
+   "Bien entretenir ses freins"
+  ],
+  "bonne": 1,
+  "explication": "Distrait, le conducteur réagit plus tard : il parcourt plus de mètres sans freiner.",
+  "guyane": false,
+  "pourquoi": [
+   "La ceinture protège en cas de choc, elle ne change pas le temps de réaction.",
+   null,
+   "Rouler moins vite diminue la distance de réaction.",
+   "Les freins agissent sur la distance de freinage, pas sur la réaction."
+  ]
  }
 ];
 
@@ -16582,6 +17487,7 @@ const QUESTIONS = [
     elements: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2.5" y="3" width="5" height="5" rx="1"/><rect x="16.5" y="3" width="5" height="5" rx="1"/><rect x="2.5" y="10" width="5" height="5" rx="1"/><rect x="9.5" y="10" width="5" height="5" rx="1"/><rect x="16.5" y="10" width="5" height="5" rx="1"/><rect x="2.5" y="17" width="5" height="4.5" rx="1"/><rect x="9.5" y="17" width="5" height="4.5" rx="1"/><rect x="16.5" y="17" width="5" height="4.5" rx="1"/></svg>',
     ions: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="12" r="6.5"/><path d="M9 9v6M6 12h6"/><circle cx="19" cy="7" r="3.2"/><path d="M17.4 7h3.2"/></svg>',
     acides: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2.5c3.8 4.6 6.5 8 6.5 11.4a6.5 6.5 0 0 1-13 0C5.5 10.5 8.2 7.1 12 2.5z"/><text x="12" y="17.2" text-anchor="middle" font-size="7" font-weight="800" fill="currentColor" stroke="none" font-family="inherit">pH</text></svg>',
+    mouvement: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3.5 17a8.5 8.5 0 1 1 17 0"/><path d="M12 17l4.5-5"/><circle cx="12" cy="17" r="1.3"/><path d="M6.2 11.2l1.2 1M12 8.5v1.5M17.8 11.2l-1.2 1"/></svg>',
     lock: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 018 0v4"/></svg>',
     etoile: '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2l2.9 6.3 6.9.7-5.2 4.6 1.5 6.8L12 17l-6.1 3.4 1.5-6.8L2.2 9l6.9-.7z"/></svg>',
     spectre: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 4l6 14H4z"/><path d="M1 13l6-1.5"/><path d="M14 10.5l8-3M14.6 12.5H22M15.2 14.5l6.8 3"/></svg>',
@@ -16815,7 +17721,7 @@ const QUESTIONS = [
   // la garde aussi un moment en cache. On compare donc la version de cette page avec le petit fichier version.json
   // publié en même temps : à l'ouverture et à chaque retour sur l'onglet (au plus une fois par minute).
   // Si une version plus récente est en ligne, un bandeau propose de mettre à jour. La progression (pseudo, points…) est conservée.
-  const VERSION_APPLI = "2026-11-15 12:16:03"; // remplacée par la date d'assemblage (assembler.py)
+  const VERSION_APPLI = "2026-11-15 18:47:11"; // remplacée par la date d'assemblage (assembler.py)
   let derniereVerif = 0;
   function verifierMaj() {
     if (!/^https?:$/.test(location.protocol) || VERSION_APPLI.indexOf("__") === 0) return; // fichier ouvert sur l'ordinateur : rien à vérifier
