@@ -805,6 +805,10 @@ footer { text-align: center; font-size: .85rem; color: var(--muted); display: fl
 .c-carton { fill: #FFFFFF; stroke: var(--line); stroke-width: 1; }
 .c-tete { fill: #C8402F; } .c-tete.b { fill: #3A3330; }
 .c-flamme { fill: #F6A21B; stroke: #E0571B; stroke-width: 1; } .c-flamme-c { fill: #FFE6A0; }
+/* TP 3ème « La couleur des éléments » : bec à gaz, anse métallique (15/11/2026) */
+.c-bec-t { fill: #C3CBD0; stroke: #6B757B; stroke-width: 1; } .c-bec-v { fill: #8E989E; stroke: #5C666C; stroke-width: .8; }
+.c-anse-m { fill: #34424A; stroke: #1E282D; stroke-width: .8; } .c-fil { stroke: #8F999E; stroke-width: 1.5; } .c-fil.chaud { stroke: #FF7A2E; filter: drop-shadow(0 0 2px #FFB060); }
+.fl-pas { display: inline-block; width: .8em; height: .8em; border-radius: 50%; vertical-align: -.05em; margin-right: .3em; box-shadow: 0 0 0 1px rgba(0,0,0,.18); }
 .c-braise { fill: #E2471D; filter: drop-shadow(0 0 2px #F6A21B); }
 .c-etiq-p.mini { font-size: 6px; fill: var(--muted); font-weight: 700; }
 .c-plaque { fill: #FBFBF7; stroke: #8A9A96; stroke-width: 1.2; }
@@ -3488,6 +3492,7 @@ const ATOMES = (() => {
       g.insertAdjacentHTML("beforeend", `<g data-al transform="translate(190 60)"><path d="M0 0L-58 22" stroke="#B9874E" stroke-width="3"/><path d="M0-9c-5 6-5 12 0 12s5-6 0-12z" fill="#F5A623" stroke="none"/><path d="M0-4c-2.2 3-2.2 6 0 6s2.2-3 0-6z" fill="#FFE27A" stroke="none"/></g>`);
       const al = g.querySelector("[data-al]");
       await tween(800, (e) => al.setAttribute("transform", `translate(${lerp(190, X + 8, e).toFixed(1)} ${lerp(60, 36, e).toFixed(1)})`));
+      if (window.sonPop) window.sonPop(); // petite détonation : le son « pop » (12_confort.js)
       g.insertAdjacentHTML("beforeend", `<g data-pop><path d="M${X} 18l4 9 9-4-5 9 9 4-9 4 5 9-9-4-4 9-4-9-9 4 5-9-9-4 9-4-5-9 9 4z" fill="#FFD24A" stroke="#F08A24" stroke-width="1"/><text x="${X + 30}" y="22" class="sch-t sch-gr">Pop !</text></g>`);
       await pause(900); g.querySelector("[data-pop]").remove(); await tween(500, (e) => al.setAttribute("transform", `translate(${lerp(X + 8, 220, e).toFixed(1)} ${lerp(36, 60, e).toFixed(1)})`)); al.remove();
       B("gaz").textContent = "H₂"; fait.gaz = true; bloquer(false);
@@ -3607,7 +3612,7 @@ const ATOMES = (() => {
 
   // ===== fin ACIDES =====
 
-  return { LIQUIDES, NUANCES, couleurPH, figEchelle, figPapier, figIonsPH, figDilution, figCorrosif, figNeutralisation, animPH, animAcideMetal, qNature, qIonsPH, qPlus, qDilution, genPapier, figRouge, genRouge, figCourbe, Q_COURBE, genCourbe, genPH,
+  return { SGH05_PNG, LIQUIDES, NUANCES, couleurPH, figEchelle, figPapier, figIonsPH, figDilution, figCorrosif, figNeutralisation, animPH, animAcideMetal, qNature, qIonsPH, qPlus, qDilution, genPapier, figRouge, genRouge, figCourbe, Q_COURBE, genCourbe, genPH,
     IONS, TESTS, figAtomeIon, animIon, figBanque, figTest, qIonElectrons, qIonFormule, qIonProtons, qIonSigne, qTests, qNeutre, genIon, genTest, genNeutre, genEtiquette, figEtiquette, figModeleNumerote, qNeutrons, qNucleons, genNeutrons, EL, AB, du, grille, figTableau, svgCase, figCase, figAbondance, figStade, animAtome, animTableau, qProtons, qElectrons, qQuiEstZ, qSymboles, genCase, genTableau, genAbondance };
 })();
 </script>
@@ -6124,7 +6129,7 @@ const ATOMES = (() => {
 //  D'après le BO du cycle 4 : éléments sur Terre et dans l'Univers, ressources ; constituants de l'atome et du noyau ;
 //  symboles et classification périodique ; puissances de dix. Nombre de masse A ajouté le 15/11 (demande de l'enseignant) :
 //  nombre de neutrons = A − Z. Exercice type brevet adapté d'une annale (Métropole 2019) : règle valable pour tous les chapitres.
-//  Figures, animations et questions fabriquées : module ATOMES (03_matiere.html). Pas de TP pour l'instant.
+//  Figures, animations et questions fabriquées : module ATOMES (03_matiere.html). TP (15/11/2026, 3 objectifs) « La couleur des éléments » : moteur labo2, paillasses fla1 à fla3 (09_chimie.js, partie « 10. Troisième »).
 //  Chaque mauvaise réponse des QCM a son explication (pourquoi: […], dans l'ordre des propositions).
 // ==================================================================
 (CONTENU.chapitres["3e"] = CONTENU.chapitres["3e"] || []).push(
@@ -6350,6 +6355,117 @@ const ATOMES = (() => {
     ]
   },
 
+  // ======================== 3. TP ========================
+  // TP « La couleur des éléments » (15/11/2026) : paillasses fla1 à fla3 de 09_chimie.js (section « 10. Troisième »),
+  // protocoles, tableau des couleurs (qui se remplit au fil des essais) et questions dans 08_labo2.js. Poudres tirées au hasard.
+  tp: {
+    moteur: "labo2",
+    titre: "Laboratoire : la couleur des éléments",
+    intro: "Chaque élément chimique colore une flamme d'une couleur qui lui est propre : c'est l'origine des couleurs des feux d'artifice. En analysant de la même façon la lumière des étoiles, les astronomes savent de quels éléments elles sont faites. Sur la paillasse : réaliser un test de flamme, construire un tableau des couleurs, puis aider un artificier à identifier deux poudres. Chaque objectif réussi débloque le suivant.",
+    finTP: "TP terminé : l'entraînement est débloqué !",
+    enClasse: {
+      objectif: "Réaliser des tests de flamme ; construire un tableau des couleurs de flamme de quelques éléments ; l'utiliser pour identifier l'élément présent dans deux poudres.",
+      materiel: ["Un bec à gaz (allumage électrique) et une anse métallique (fil de nichrome ou de platine sur un manche)", "Solutions de chlorure de sodium, de lithium, de cuivre II, de potassium et de calcium", "Un bécher d'eau distillée pour nettoyer le fil", "Deux poudres sans étiquette dans des verres de montre"],
+      securite: ["Porter blouse et lunettes, attacher les cheveux, ne rien laisser de combustible près du bec.", "Le fil devient brûlant : ne jamais le toucher, le reposer sur son support.", "Ne jamais goûter ni sentir les solutions ; le chlorure de cuivre est nocif.", "Éteindre le bec dès la fin des essais."]
+    },
+    objectifs: [
+      {
+        id: "f1", competence: "Réaliser", titre: "Réaliser un test de flamme", banc: "fla1",
+        notion: "Cours : les éléments chimiques",
+        but: "Apprendre le geste avec une solution connue : le chlorure de sodium (l'eau salée).",
+        taches: [
+          { id: "protocole", texte: "Remettre le protocole d'un test de flamme dans l'ordre." },
+          { id: "allumer", texte: "Mettre les lunettes, puis allumer le bec (le toucher)." },
+          { id: "t-na", texte: "Prendre l'anse, tremper le fil dans le chlorure de sodium, puis le placer dans la flamme (toucher le bec)." },
+          { id: "propre", texte: "Nettoyer le fil : le tremper dans l'eau distillée, puis le chauffer dans la flamme jusqu'à ce qu'elle reste bleue." }
+        ],
+        questions: [
+          { type: "qcm", variantes: [
+            { question: "De quelle couleur le chlorure de sodium colore-t-il la flamme ?", reponses: ["Jaune", "Rouge", "Verte", "Bleue"], bonne: 0,
+              explication: "La flamme devient jaune : c'est la couleur de l'élément sodium.",
+              pourquoi: [null, "Le rouge est la couleur du lithium (objectif 2).", "Le vert est la couleur du cuivre (objectif 2).", "Bleue, c'est la flamme du bec seule, sans rien dedans."] }
+          ] },
+          { type: "qcm", variantes: [
+            { question: "Pourquoi nettoie-t-on le fil entre deux essais ?", reponses: ["Pour ne pas mélanger les couleurs de deux éléments", "Pour refroidir le fil", "Pour que la flamme soit plus chaude", "Pour économiser la solution"], bonne: 0,
+              explication: "Un reste de l'essai précédent colorerait encore la flamme : on verrait deux couleurs mélangées.",
+              pourquoi: [null, "On le chauffe justement dans la flamme pour le nettoyer.", "Le nettoyage ne change pas la température de la flamme.", "Une goutte suffit : ce n'est pas une question d'économie."] },
+            { question: "Comment sait-on que le fil est propre ?", reponses: ["La flamme reste bleue quand on y place le fil", "Le fil devient rouge", "Le fil est sec", "Le fil est froid"], bonne: 0,
+              explication: "Un fil propre ne colore plus la flamme : elle reste bleue.",
+              pourquoi: [null, "Le fil rougit dès qu'il est chaud, propre ou non.", "Un fil sec peut encore porter de la solution séchée.", "On ne touche jamais le fil : et un fil froid peut être sale."] }
+          ] }
+        ],
+        retenir: "Test de flamme : tremper le fil de l'anse dans la solution, le placer dans la flamme et observer sa couleur. Entre deux essais, nettoyer le fil (eau distillée, puis flamme jusqu'à ce qu'elle reste bleue). Le sodium colore la flamme en jaune."
+      },
+      {
+        id: "f2", competence: "Réaliser", titre: "Construire un tableau de couleurs", banc: "fla2",
+        notion: "Cours : les éléments chimiques",
+        but: "Faire le même test avec les ions lithium, cuivre, potassium et calcium. Le tableau des couleurs se remplit sous la paillasse.",
+        taches: [
+          { id: "t-li", texte: "Mettre les lunettes, allumer le bec, puis tester le chlorure de lithium." },
+          { id: "t-cu", texte: "Nettoyer le fil, puis tester le chlorure de cuivre II." },
+          { id: "t-k", texte: "Nettoyer le fil, puis tester le chlorure de potassium." },
+          { id: "t-ca", texte: "Nettoyer le fil, puis tester le chlorure de calcium." }
+        ],
+        questions: [
+          { type: "qcm", variantes: [
+            { question: "D'après ton tableau, quel élément colore la flamme en vert ?", reponses: ["Le cuivre", "Le sodium", "Le lithium", "Le calcium"], bonne: 0,
+              explication: "Le chlorure de cuivre II a donné une flamme verte : c'est l'élément cuivre.",
+              pourquoi: [null, "Le sodium donne une flamme jaune.", "Le lithium donne une flamme rouge.", "Le calcium donne une flamme orange-rouge."] },
+            { question: "D'après ton tableau, quel élément colore la flamme en rouge ?", reponses: ["Le lithium", "Le potassium", "Le cuivre", "Le sodium"], bonne: 0,
+              explication: "Le chlorure de lithium a donné une flamme rouge : c'est l'élément lithium.",
+              pourquoi: [null, "Le potassium donne une flamme violette.", "Le cuivre donne une flamme verte.", "Le sodium donne une flamme jaune."] }
+          ] },
+          { type: "qcm", variantes: [
+            { question: "Toutes les solutions testées contiennent des ions chlorure Cl⁻, et pourtant les flammes ont des couleurs différentes. Que peut-on en conclure ?", reponses: ["La couleur vient de l'autre élément de la solution (sodium, lithium, cuivre…)", "Le chlore colore toujours la flamme en jaune", "La couleur dépend de la quantité de solution sur le fil", "La couleur vient de l'eau de la solution"], bonne: 0,
+              explication: "Le chlore est dans toutes les solutions : ce n'est donc pas lui qui fait la différence. Chaque couleur est celle de l'autre élément.",
+              pourquoi: [null, "Si le chlore donnait du jaune, toutes les flammes seraient jaunes.", "Avec plus ou moins de solution, la couleur reste la même : seule son intensité change.", "L'eau seule (eau distillée) ne colore pas la flamme."] }
+          ] },
+          { type: "qcm", variantes: [
+            { question: "Les étincelles jaunes des feux d'artifice sont produites par un élément de ton tableau. Lequel ?", reponses: ["Le sodium", "Le potassium", "Le calcium", "Le lithium"], bonne: 0,
+              explication: "Le jaune est la couleur de flamme du sodium : l'artificier ajoute un composé du sodium.",
+              pourquoi: [null, "Le potassium colore la flamme en violet.", "Le calcium colore la flamme en orange-rouge.", "Le lithium colore la flamme en rouge."] }
+          ] }
+        ],
+        retenir: "Chaque élément colore la flamme d'une couleur qui lui est propre : sodium jaune, lithium rouge, cuivre vert, potassium violet, calcium orange-rouge. Le test de flamme permet donc de reconnaître un élément."
+      },
+      {
+        id: "f3", competence: "Analyser", titre: "L'enquête de l'artificier", banc: "fla3",
+        notion: "Cours : les éléments chimiques sur Terre et dans l'Univers",
+        but: "Un artificier a perdu les étiquettes de deux poudres. Les tester à la flamme, puis les identifier avec ton tableau des couleurs.",
+        taches: [
+          { id: "protocole", texte: "Remettre la démarche dans l'ordre." },
+          { id: "p1", texte: "Mouiller le fil dans l'eau distillée, toucher la poudre 1, puis placer le fil dans la flamme." },
+          { id: "p2", texte: "Nettoyer le fil, puis tester la poudre 2 de la même façon." }
+        ],
+        questions: [
+          { type: "labo", calc: "f3-p1" },
+          { type: "labo", calc: "f3-p2" },
+          { type: "qcm", variantes: [
+            { question: "En analysant la lumière du Soleil, les astronomes y retrouvent la « signature » de l'élément qui colore la flamme en jaune. Quel est cet élément ?", reponses: ["Le sodium", "Le lithium", "Le calcium", "Le cuivre"], bonne: 0,
+              explication: "La flamme jaune est celle du sodium : sa signature dans la lumière du Soleil montre que le Soleil contient du sodium. Les éléments chimiques sont les mêmes sur Terre et dans les étoiles. (La couleur jaune du Soleil, elle, vient surtout de sa température.)",
+              pourquoi: [null, "Le lithium colore la flamme en rouge.", "Le calcium colore la flamme en orange-rouge.", "Le cuivre colore la flamme en vert."] }
+          ] },
+          { type: "labo", calc: "redac", cle: "f3", consigne: "Rédige le bilan : explique comment tu as identifié l'élément contenu dans la poudre 1.", aide: "Débuts de phrases possibles : « Avec la poudre 1, la flamme est devenue… », « Dans mon tableau, … », « Donc la poudre 1 contient… ».",
+            criteres: ["Je décris le test : un peu de poudre sur le fil humide, placé dans la flamme.", "Je donne la couleur observée et je la compare avec mon tableau.", "Je conclus en nommant l'élément contenu dans la poudre."],
+            exemple: "J'ai mouillé le fil, je l'ai trempé dans la poudre 1 puis placé dans la flamme : la flamme est devenue rouge. Dans mon tableau, la flamme rouge est celle du lithium. La poudre 1 contient donc l'élément lithium." }
+        ],
+        retenir: "Pour identifier l'élément d'une poudre, on compare la couleur de sa flamme avec un tableau de couleurs fait avec des solutions connues. En analysant de la même façon la lumière des étoiles, on y retrouve les éléments présents sur Terre : les éléments chimiques sont les mêmes dans tout l'Univers."
+      }
+    ],
+    conclusion: {
+      programme: "Le programme (cycle 4)",
+      attendus: [
+        "Mettre en œuvre des tests caractéristiques d'espèces chimiques à partir d'une banque fournie.",
+        "Connaître et comprendre l'origine de la matière : les éléments chimiques sur Terre et dans l'Univers."
+      ],
+      textes: [
+        { obj: "f1", attendu: "Réaliser un test de flamme", texte: "Pour réaliser un test de flamme, on trempe le fil de l'[anse] dans la solution, puis on le place dans la [flamme] du bec. Entre deux essais, on [nettoie] le fil.", pieges: ["pipette", "lumière", "secoue"] },
+        { obj: "f2", attendu: "Associer un élément à une couleur", texte: "Chaque élément colore la flamme d'une couleur qui lui est propre : le sodium donne une flamme [jaune], le lithium une flamme [rouge] et le cuivre une flamme [verte].", pieges: ["bleue", "violette", "noire"] },
+        { obj: "f3", attendu: "Identifier un élément", texte: "Pour identifier l'élément d'une poudre, on compare la couleur de sa [flamme] avec le [tableau] des couleurs. La signature du [sodium] se retrouve dans la lumière du Soleil.", pieges: ["fumée", "lithium", "masse"] }
+      ]
+    }
+  },
+
   // ======================== 4. ENTRAÎNEMENT ========================
   // Dans l'ordre croissant de difficulté. Le dernier est un exercice type brevet.
   entrainement: [
@@ -6489,7 +6605,8 @@ const ATOMES = (() => {
 //  Les ions H⁺ et HO⁻ sont seulement nommés ici : leur lien avec l'acidité est l'objet du chapitre suivant (pH).
 //  Notation de l'ion hydroxyde : HO⁻ (comme dans les chapitres de lycée de l'appli) ; « parfois écrit OH⁻ » est signalé une fois.
 //  Exercice type brevet adapté d'une annale : brevet 2023, série professionnelle, sujet 23PROSCMEAG1 (absorbeur d'humidité).
-//  Figures, animation et questions fabriquées : module ATOMES, partie IONS (03_matiere.html). Pas de TP pour l'instant.
+//  Figures, animation et questions fabriquées : module ATOMES, partie IONS (03_matiere.html).
+//  TP « Les flacons sans étiquette » (15/11/2026) : moteur labo2, paillasses ions1 à ions3 (09_chimie.js), pages dans 08_labo2.js.
 //  Chaque mauvaise réponse des QCM a son explication (pourquoi: […], dans l'ordre des propositions).
 // ==================================================================
 (CONTENU.chapitres["3e"] = CONTENU.chapitres["3e"] || []).push(
@@ -6741,6 +6858,110 @@ const ATOMES = (() => {
     ]
   },
 
+  // ======================== 3. TP ========================
+  // TP « Les flacons sans étiquette » (15/11/2026) : paillasses ions1 à ions3 de 09_chimie.js (section « 9. Troisième »),
+  // protocoles, mesures et questions dans 08_labo2.js. La banque de tests est toujours affichée sous la paillasse.
+  tp: {
+    moteur: "labo2",
+    titre: "Laboratoire : les flacons sans étiquette",
+    intro: "Au laboratoire du collège, quatre flacons ont perdu leur étiquette. Sur la paillasse : apprendre à réaliser un test d'ion, tester les quatre flacons avec la soude et le nitrate d'argent, puis leur recoller la bonne étiquette. Chaque objectif réussi débloque le suivant.",
+    finTP: "TP terminé : l'entraînement est débloqué !",
+    enClasse: {
+      objectif: "Réaliser des tests caractéristiques d'ions à partir d'une banque fournie ; identifier les ions présents dans quatre solutions inconnues et en déduire leur nom.",
+      materiel: ["Solutions de sulfate de cuivre et de chlorure de sodium (eau salée), étiquetées", "Quatre flacons A, B, C, D sans étiquette : sulfate de cuivre, chlorure de fer III, chlorure de sodium, sulfate de fer II", "Flacons compte-gouttes de soude (hydroxyde de sodium) et de nitrate d'argent", "Une douzaine de tubes à essai propres et deux portoirs", "La banque de tests (fournie)"],
+      securite: ["Porter blouse, lunettes et gants pendant tout le TP : la soude et le nitrate d'argent sont corrosifs (le nitrate d'argent tache aussi la peau en noir).", "Ne jamais goûter ni sentir les solutions.", "Ne jamais verser un réactif dans un flacon : on teste toujours un petit échantillon dans un tube.", "Vider les tubes dans le bidon de récupération prévu par le professeur, jamais dans l'évier (sels d'argent et de cuivre)."]
+    },
+    objectifs: [
+      {
+        id: "i1", competence: "Réaliser", titre: "Réaliser un test d'ion", banc: "ions1",
+        notion: "Cours, partie 5 : reconnaître des ions",
+        but: "Tester deux solutions connues pour apprendre le geste : le sulfate de cuivre avec la soude, l'eau salée avec le nitrate d'argent, puis l'eau salée avec la soude.",
+        taches: [
+          { id: "protocole", texte: "Remettre le protocole d'un test dans l'ordre." },
+          { id: "t-cu", texte: "Mettre les lunettes. Prendre le flacon de sulfate de cuivre, toucher un tube ; prendre le compte-gouttes de soude, toucher le tube ; toucher le tube pour l'agiter, puis observer." },
+          { id: "t-cl", texte: "Tester l'eau salée avec le nitrate d'argent, dans un tube propre." },
+          { id: "t-neg", texte: "Tester l'eau salée avec la soude : que se passe-t-il ?" }
+        ],
+        questions: [
+          { type: "labo", calc: "i1-conclure" },
+          { type: "qcm", variantes: [
+            { question: "Avec la soude, l'eau salée ne donne aucun précipité. Que peut-on conclure ?", reponses: ["Elle ne contient ni ions Cu²⁺, ni Fe²⁺, ni Fe³⁺, ni Zn²⁺", "Elle ne contient aucun ion", "Elle contient des ions cuivre II", "Le test est raté : il faut ajouter plus de soude"], bonne: 0,
+              explication: "Le test est négatif : aucun des ions que la soude met en évidence n'est présent. L'eau salée contient d'autres ions (Na⁺ et Cl⁻).",
+              pourquoi: [null, "Elle contient des ions Na⁺ et Cl⁻, que la soude ne met pas en évidence.", "Avec des ions cuivre II, un précipité bleu se serait formé.", "Quelques gouttes suffisent : un test négatif est un vrai résultat."] },
+            { question: "Pourquoi teste-t-on un peu de solution dans un tube, et pas directement dans le flacon ?", reponses: ["Pour ne pas abîmer toute la solution du flacon", "Pour que le précipité soit plus coloré", "Parce que le réactif ne fonctionne que dans un tube", "Pour aller plus vite"], bonne: 0,
+              explication: "Le réactif transforme la solution : on ne teste qu'un petit échantillon, le flacon reste utilisable.",
+              pourquoi: [null, "La couleur du précipité ne dépend pas du récipient.", "Le réactif fonctionne partout ; c'est le flacon qu'on veut protéger.", "Ce n'est pas une question de temps."] }
+          ] },
+          { type: "qcm", variantes: [
+            { question: "Pourquoi utilise-t-on un tube propre pour chaque test ?", reponses: ["Pour ne pas mélanger deux réactifs ou deux solutions et fausser l'observation", "Pour que le tube refroidisse", "Parce qu'un tube ne sert qu'une fois dans sa vie", "Pour économiser la soude"], bonne: 0,
+              explication: "Un reste de solution ou de réactif pourrait donner un précipité qui ne vient pas de la solution testée.",
+              pourquoi: [null, "Un test d'ion ne chauffe pas le tube.", "On lave et on réutilise les tubes ; mais pour un test, il doit être propre.", "Ce n'est pas une question d'économie : c'est pour avoir un résultat juste."] }
+          ] }
+        ],
+        retenir: "Pour tester un ion : verser un peu de solution dans un tube propre, ajouter quelques gouttes de réactif, agiter, observer, puis comparer avec la banque. Soude + précipité bleu : ions cuivre II Cu²⁺ ; nitrate d'argent + précipité blanc : ions chlorure Cl⁻. Pas de précipité : le test est négatif."
+      },
+      {
+        id: "i2", competence: "Réaliser", titre: "Tester les quatre flacons", banc: "ions2",
+        notion: "Cours, partie 5 : reconnaître des ions",
+        but: "Tester chacun des flacons A, B, C et D avec la soude et avec le nitrate d'argent, et noter les observations.",
+        taches: [
+          { id: "protocole", texte: "Remettre la démarche dans l'ordre." },
+          { id: "fA", texte: "Mettre les lunettes. Flacon A : un tube avec la soude, un tube avec le nitrate d'argent ; agiter chaque tube et observer." },
+          { id: "fB", texte: "Flacon B : les deux tests." },
+          { id: "fC", texte: "Flacon C : les deux tests." },
+          { id: "fD", texte: "Flacon D : les deux tests." }
+        ],
+        questions: [
+          { type: "labo", calc: "i2-flacon" },
+          { type: "qcm", variantes: [
+            { question: "Un flacon ne donne aucun précipité avec le nitrate d'argent. Que peut-on dire ?", reponses: ["Il ne contient pas d'ions chlorure Cl⁻", "Il ne contient aucun ion", "Il contient des ions chlorure", "Il contient forcément de l'eau pure"], bonne: 0,
+              explication: "Le nitrate d'argent met en évidence les ions chlorure : sans précipité blanc, il n'y en a pas.",
+              pourquoi: [null, "Il peut contenir d'autres ions, que ce réactif ne met pas en évidence.", "Avec des ions chlorure, un précipité blanc se serait formé.", "Une solution sans ions chlorure peut contenir beaucoup d'autres ions."] },
+            { question: "Pourquoi teste-t-on chaque flacon avec deux réactifs différents ?", reponses: ["Chaque réactif met en évidence des ions différents : on cherche l'ion positif et l'ion négatif", "Pour vérifier que les deux réactifs donnent la même couleur", "Parce qu'un seul réactif ne fait jamais rien", "Pour diluer la solution"], bonne: 0,
+              explication: "La soude met en évidence des ions métalliques (Cu²⁺, Fe²⁺, Fe³⁺…), le nitrate d'argent les ions chlorure Cl⁻.",
+              pourquoi: [null, "Les deux réactifs ne cherchent pas les mêmes ions.", "Un seul réactif peut suffire à identifier un ion ; ici, on cherche plusieurs ions.", "Quelques gouttes de réactif ne servent pas à diluer."] }
+          ] }
+        ],
+        retenir: "Une solution contient des ions positifs et des ions négatifs : pour les trouver, on la teste avec plusieurs réactifs. La soude met en évidence les ions Cu²⁺ (bleu), Fe²⁺ (vert), Fe³⁺ (rouille) ; le nitrate d'argent les ions Cl⁻ (blanc)."
+      },
+      {
+        id: "i3", competence: "Analyser", titre: "Recoller les étiquettes", banc: "ions3",
+        notion: "Cours, parties 4 et 5 : solutions ioniques et tests",
+        but: "À l'aide de tes observations et de la banque de tests, coller la bonne étiquette sur chaque flacon.",
+        taches: [
+          { id: "etiq", texte: "Prendre une étiquette, puis toucher le flacon où la coller. Les 4 étiquettes doivent être sur le bon flacon." }
+        ],
+        questions: [
+          { type: "qcm", variantes: [
+            { question: "Avec la soude, les ions cuivre II donnent le précipité bleu d'hydroxyde de cuivre. L'équation est : Cu²⁺ + 2 HO⁻ → Cu(OH)₂. Quels ions de la soude réagissent avec les ions cuivre II ?", reponses: ["Les ions hydroxyde HO⁻", "Les ions sodium Na⁺", "Les ions sulfate SO₄²⁻", "Les ions chlorure Cl⁻"], bonne: 0,
+              explication: "Dans l'équation, ce sont les ions HO⁻ de la soude (Na⁺ + HO⁻) qui réagissent avec les ions Cu²⁺.",
+              pourquoi: [null, "Les ions sodium ne figurent pas dans l'équation : ils ne réagissent pas.", "Les ions sulfate viennent de la solution testée, pas de la soude, et ne réagissent pas.", "La soude ne contient pas d'ions chlorure."] },
+            { question: "Avec le nitrate d'argent, les ions chlorure donnent un précipité blanc. L'équation est : Ag⁺ + Cl⁻ → AgCl. Quel ion du nitrate d'argent réagit ?", reponses: ["L'ion argent Ag⁺", "L'ion nitrate NO₃⁻", "L'ion sodium Na⁺", "L'ion hydroxyde HO⁻"], bonne: 0,
+              explication: "Dans l'équation, l'ion argent Ag⁺ réagit avec l'ion chlorure Cl⁻ : il se forme le précipité blanc de chlorure d'argent AgCl.",
+              pourquoi: [null, "L'ion nitrate ne figure pas dans l'équation : il ne réagit pas.", "Le nitrate d'argent ne contient pas d'ions sodium.", "L'ion hydroxyde est dans la soude, pas dans le nitrate d'argent."] }
+          ] },
+          { type: "labo", calc: "redac", cle: "i3", consigne: "Rédige le bilan : explique comment tu as identifié la solution du flacon qui contient du chlorure de fer III.", aide: "Débuts de phrases possibles : « Avec la soude, il se forme… D'après la banque, … Avec le nitrate d'argent, … Donc le flacon contient… »",
+            criteres: ["Je cite les deux tests et leurs observations : précipité rouille avec la soude, précipité blanc avec le nitrate d'argent.", "J'utilise la banque pour nommer les ions : fer III Fe³⁺ et chlorure Cl⁻.", "Je conclus sur le nom de la solution : chlorure de fer III."],
+            exemple: "Avec la soude, il se forme un précipité rouille : d'après la banque, la solution contient des ions fer III Fe³⁺. Avec le nitrate d'argent, il se forme un précipité blanc : elle contient aussi des ions chlorure Cl⁻. Le flacon contient donc une solution de chlorure de fer III (Fe³⁺ + 3 Cl⁻)." }
+        ],
+        retenir: "Pour nommer une solution inconnue, on identifie son ion positif et son ion négatif grâce aux tests et à la banque. Le nom de la solution donne d'abord l'ion négatif, puis l'ion positif : (Fe³⁺ + 3 Cl⁻) est le chlorure de fer III."
+      }
+    ],
+    conclusion: {
+      programme: "Le programme (cycle 4)",
+      attendus: [
+        "Mettre en œuvre des tests caractéristiques d'espèces chimiques à partir d'une banque fournie.",
+        "Notions de molécules, atomes, ions ; interpréter une formule chimique en termes atomiques.",
+        "Utiliser une équation de réaction chimique fournie pour décrire une transformation chimique observée."
+      ],
+      textes: [
+        { obj: "i1", attendu: "Réaliser un test d'ion", texte: "Pour réaliser un test, on verse un peu de solution dans un [tube] propre, on ajoute quelques gouttes de [réactif], on agite et on observe la couleur du [précipité].", pieges: ["flacon", "bécher", "gaz"] },
+        { obj: "i2", attendu: "Identifier des ions", texte: "La soude met en évidence les ions [cuivre] II (précipité bleu) ; le [nitrate d'argent] met en évidence les ions chlorure (précipité [blanc]).", pieges: ["sodium", "rouille", "soude"] },
+        { obj: "i3", attendu: "Nommer une solution", texte: "Une solution ionique contient des ions [positifs] et des ions négatifs. La solution qui contient des ions Fe³⁺ et Cl⁻ s'appelle le [chlorure] de fer III.", pieges: ["sulfate", "neutres"] }
+      ]
+    }
+  },
+
   // ======================== 4. ENTRAÎNEMENT ========================
   // Dans l'ordre croissant de difficulté. Le dernier est un exercice type brevet.
   entrainement: [
@@ -6927,7 +7148,7 @@ const ATOMES = (() => {
 //  Notation de l'ion hydroxyde : HO⁻ (décision du 15/11). Équations toujours données, jamais à équilibrer.
 //  Exercice type brevet adapté d'une annale : brevet 2024, série générale, Métropole-Antilles-Guyane (sujet 24GENSCMEAG1),
 //  partie physique-chimie « le centre aquatique » (pH de l'eau, rouge de phénol, Fe + 2 H⁺ → Fe²⁺ + H₂, banque de tests).
-//  Figures, animations et questions fabriquées : module ATOMES, partie ACIDES (03_matiere.html). Pas de TP pour l'instant.
+//  Figures, animations et questions fabriquées : module ATOMES, partie ACIDES (03_matiere.html). TP (3 objectifs) : moteur labo2, paillasses ph3e, dilu3e, metaux (09_chimie.js, partie « 8. Troisième »).
 //  Chaque mauvaise réponse des QCM a son explication (pourquoi: […], dans l'ordre des propositions).
 // ==================================================================
 (CONTENU.chapitres["3e"] = CONTENU.chapitres["3e"] || []).push(
@@ -7168,6 +7389,120 @@ const ATOMES = (() => {
         ["Équation de réaction", "Écriture : réactifs → produits."]
       ] }
     ]
+  },
+
+  // ======================== 3. TP (moteur « labo2 » : pages dans 08_labo2.js, paillasses ph3e, dilu3e, metaux dans 09_chimie.js) ========================
+  // Plan validé le 15/11/2026, avec la modification de l'enseignant : l'objectif 3 teste cinq métaux (fer, aluminium, zinc, cuivre, or).
+  tp: {
+    moteur: "labo2",
+    titre: "Laboratoire : du pH à la réaction acide-métal",
+    intro: "Sur la paillasse : mesurer le pH de produits du quotidien, diluer un acide sans danger, puis découvrir quels métaux sont attaqués par l'acide chlorhydrique. Chaque objectif réussi débloque le suivant.",
+    finTP: "TP terminé : l'entraînement est débloqué !",
+    enClasse: {
+      objectif: "Mesurer le pH de solutions du quotidien (papier pH, pH-mètre) et les classer ; observer l'effet d'une dilution sur le pH ; tester l'action de l'acide chlorhydrique sur cinq métaux et identifier le gaz formé.",
+      materiel: ["Jus de citron, vinaigre blanc, eau minérale, eau savonneuse, eau de Javel diluée, dans des béchers étiquetés", "Papier pH et son nuancier, une soucoupe, un agitateur en verre, une pissette d'eau distillée, un bécher poubelle", "Un pH-mètre étalonné par le professeur", "Une éprouvette graduée de 25 mL, deux béchers contenant 90 mL d'eau", "Acide chlorhydrique dilué (environ 1 mol/L), 5 tubes à essai sur un portoir, des bouchons", "Petits morceaux de fer (poudre ou laine), d'aluminium, de zinc, de cuivre et une feuille d'or (ou laiton doré à défaut, à signaler)", "Des allumettes"],
+      securite: ["Porter blouse et lunettes pendant tout le TP ; gants pour l'eau de Javel et l'acide chlorhydrique.", "Ne jamais goûter ni sentir de près les solutions.", "Toujours verser l'acide dans l'eau, jamais l'inverse.", "Le test du dihydrogène se fait avec de petites quantités, tube tenu loin du visage ; éloigner les flacons de la flamme."]
+    },
+    objectifs: [
+      {
+        id: "a1", competence: "Réaliser", titre: "Classer des produits du quotidien", banc: "ph3e",
+        notion: "Cours, partie 1 : le pH et sa mesure",
+        but: "Mesurer le pH de cinq produits du quotidien avec le papier pH, puis avec le pH-mètre, et les classer du plus acide au plus basique.",
+        taches: [
+          { id: "protocole", texte: "Remettre le protocole du papier pH dans l'ordre." },
+          { id: "papier", texte: "Mettre les lunettes. Pour chaque solution : prendre l'agitateur en verre, toucher le bécher, puis toucher le papier pH (case de la solution) ; rincer l'agitateur avec la pissette entre deux solutions." },
+          { id: "phmetre", texte: "Mesurer le pH des 5 solutions avec la sonde du pH-mètre : prendre la sonde, toucher un bécher ; entre deux mesures, poser la sonde au-dessus du bécher poubelle et la rincer avec la pissette." }
+        ],
+        questions: [
+          { type: "labo", calc: "a1-classer" },
+          { type: "qcm", variantes: [
+            { question: "Pourquoi le pH-mètre est-il plus intéressant que le papier pH ?", reponses: ["Il donne une valeur plus précise, avec une décimale", "Il est le seul à indiquer si une solution est acide", "Il n'a pas besoin d'être rincé", "Il fonctionne sans plonger dans la solution"], bonne: 0,
+              explication: "Le papier pH donne une estimation (valeur entière) ; le pH-mètre donne une valeur plus précise.",
+              pourquoi: [null, "Le papier pH indique aussi si une solution est acide, neutre ou basique.", "On rince la sonde entre deux solutions.", "La sonde doit plonger dans la solution."] },
+            { question: "Pourquoi rince-t-on l'agitateur en verre entre deux solutions ?", reponses: ["Pour ne pas mélanger les solutions et fausser la mesure", "Pour refroidir l'agitateur", "Pour diluer la solution suivante", "Pour nettoyer le papier pH"], bonne: 0,
+              explication: "Une goutte de la solution précédente changerait le pH mesuré.",
+              pourquoi: [null, "L'agitateur ne chauffe pas.", "On ne veut pas diluer les solutions : on les mesure telles qu'elles sont.", "Le papier pH ne se nettoie pas : chaque solution a sa case."] }
+          ] },
+          { type: "qcm", variantes: [
+            { question: "L'eau de Javel (pH 11,6) porte le pictogramme « corrosif ». Quelle précaution prendre ?", reponses: ["Porter des lunettes et des gants", "La goûter avec précaution", "La chauffer avant la mesure", "Aucune : elle est basique, pas acide"], bonne: 0,
+              explication: "Les solutions très basiques sont corrosives, comme les solutions très acides.",
+              pourquoi: [null, "On ne goûte jamais un produit chimique.", "Chauffer ne sert à rien et augmente le danger.", "Une solution très basique est aussi dangereuse qu'une solution très acide."] }
+          ] }
+        ],
+        retenir: "Le papier pH donne une estimation du pH (valeur entière) ; le pH-mètre une valeur plus précise. pH < 7 : acide ; pH = 7 : neutre ; pH > 7 : basique. Plus le pH est petit, plus la solution est acide."
+      },
+      {
+        id: "a2", competence: "Réaliser", titre: "Diluer un acide", banc: "dilu3e",
+        notion: "Cours, partie 3 : dangers et dilution",
+        but: "Diluer 10 fois puis 100 fois du vinaigre, en versant l'acide dans l'eau, et mesurer à chaque fois le pH obtenu.",
+        taches: [
+          { id: "protocole", texte: "Remettre le protocole de la dilution dans l'ordre." },
+          { id: "dil1", texte: "Mettre les lunettes. Prendre l'éprouvette, toucher le bécher de vinaigre (10 mL), puis toucher un bécher d'eau. Mélanger avec l'agitateur en verre, puis mesurer le pH avec la sonde." },
+          { id: "dil2", texte: "Prendre l'éprouvette, toucher la solution diluée (10 mL), puis toucher l'autre bécher d'eau. Rincer l'agitateur, mélanger, rincer la sonde, puis mesurer le pH." }
+        ],
+        questions: [
+          { type: "labo", calc: "a2-evol" },
+          { type: "qcm", variantes: [
+            { question: "Pourquoi verse-t-on l'acide dans l'eau, et pas l'eau dans l'acide ?", reponses: ["Le mélange peut chauffer brutalement et projeter de l'acide", "Pour que la solution soit plus acide", "Parce que l'eau est plus lourde que l'acide", "Pour mesurer plus vite le pH"], bonne: 0,
+              explication: "En versant l'acide peu à peu dans beaucoup d'eau, l'échauffement reste faible : pas de projection.",
+              pourquoi: [null, "La dilution rend la solution moins acide, quel que soit l'ordre.", "Ce n'est pas une question de masse : c'est une règle de sécurité.", "L'ordre ne change pas la vitesse de la mesure."] },
+            { question: "Pourquoi mélange-t-on la solution avant de mesurer son pH ?", reponses: ["Pour qu'elle soit la même partout (homogène)", "Pour la réchauffer", "Pour la rendre plus acide", "Pour rincer l'agitateur"], bonne: 0,
+              explication: "Sans mélange, le pH ne serait pas le même partout dans le bécher.",
+              pourquoi: [null, "Mélanger ne chauffe pas la solution.", "Mélanger ne change pas son acidité.", "On rince l'agitateur avec la pissette, pas dans la solution."] }
+          ] }
+        ],
+        retenir: "Diluer un acide, c'est lui ajouter de l'eau (en versant toujours l'acide dans l'eau) : son pH augmente et se rapproche de 7, sans le dépasser. La solution est moins acide, donc moins dangereuse."
+      },
+      {
+        id: "a3", competence: "Analyser", titre: "L'acide attaque-t-il tous les métaux ?", banc: "metaux",
+        notion: "Cours, partie 4 : un acide et un métal",
+        but: "Mettre un morceau de chaque métal (fer, aluminium, zinc, cuivre, or) dans un tube d'acide chlorhydrique, boucher le tube, tester le gaz avec une allumette, puis comparer.",
+        taches: [
+          { id: "protocole", texte: "Remettre le protocole dans l'ordre." },
+          { id: "m-fe", texte: "Mettre les lunettes. Tester le fer : prendre l'échantillon, toucher un tube, boucher le tube (le toucher), attendre, puis approcher l'allumette enflammée (la toucher, puis toucher le tube)." },
+          { id: "m-al", texte: "Tester l'aluminium de la même façon." },
+          { id: "m-zn", texte: "Tester le zinc." },
+          { id: "m-cu", texte: "Tester le cuivre." },
+          { id: "m-au", texte: "Tester l'or." }
+        ],
+        questions: [
+          { type: "labo", calc: "a3-constat" },
+          { type: "qcm", variantes: [
+            { question: "Avec le zinc, l'équation de la réaction est Zn + 2 H⁺ → Zn²⁺ + H₂. Quel gaz a produit la détonation ?", reponses: ["Le dihydrogène H₂", "Le dioxygène O₂", "Le dioxyde de carbone CO₂", "Le chlore"], bonne: 0,
+              explication: "Le produit gazeux de l'équation est H₂ : il détone au contact d'une flamme.",
+              pourquoi: [null, "Il n'y a pas d'oxygène dans les réactifs Zn et H⁺.", "Il n'y a pas de carbone dans les réactifs.", "Les ions chlorure ne participent pas à la réaction."] },
+            { question: "Avec le fer, l'équation est Fe + 2 H⁺ → Fe²⁺ + H₂. Pourquoi la solution du tube devient-elle vert pâle ?", reponses: ["Des ions fer II Fe²⁺ se forment", "Le fer devient de l'or", "Le dihydrogène est vert", "Les ions chlorure disparaissent"], bonne: 0,
+              explication: "Les ions Fe²⁺ donnent une teinte vert pâle à la solution (et un précipité vert avec la soude).",
+              pourquoi: [null, "Un atome de fer reste du fer : il devient un ion Fe²⁺.", "Le dihydrogène est un gaz incolore.", "Les ions chlorure ne participent pas à la réaction : ils restent dans la solution."] }
+          ] },
+          { type: "qcm", variantes: [
+            { question: "Pourquoi un bijou en or garde-t-il son éclat même au contact d'acides ?", reponses: ["L'or n'est pas attaqué par l'acide chlorhydrique", "L'or est un acide", "L'or rend la solution basique", "L'or fond au contact de l'acide"], bonne: 0,
+              explication: "Comme le cuivre, l'or ne réagit pas avec l'acide chlorhydrique : aucun gaz, aucun changement.",
+              pourquoi: [null, "L'or est un métal, pas une solution acide.", "L'or ne réagit pas : il ne change pas le pH.", "L'or ne fond qu'à plus de 1 000 °C."] },
+            { question: "Peut-on conserver de l'acide chlorhydrique dans un bidon en aluminium ?", reponses: ["Non : l'acide attaquerait l'aluminium et produirait du dihydrogène", "Oui : l'aluminium ne réagit pas avec les acides", "Oui, si le bidon est fermé", "Non : l'aluminium rendrait l'acide plus concentré"], bonne: 0,
+              explication: "L'aluminium est attaqué par l'acide chlorhydrique : le bidon serait rongé et un gaz explosif se formerait.",
+              pourquoi: [null, "Le TP montre le contraire : des bulles apparaissent avec l'aluminium.", "Fermé, le bidon se remplirait de dihydrogène : c'est encore plus dangereux.", "La réaction consomme des ions H⁺ : l'acide devient moins concentré."] }
+          ] },
+          { type: "labo", calc: "redac", cle: "a3", consigne: "Rédige le bilan de l'objectif : quels métaux sont attaqués par l'acide chlorhydrique, et comment le prouves-tu ?", aide: "Débuts de phrases possibles : « Avec le fer, l'aluminium et le zinc, j'ai observé… », « Le test de l'allumette montre que… », « Avec le cuivre et l'or… »",
+            criteres: ["Je nomme les métaux attaqués et ceux qui ne le sont pas.", "Je cite les observations : bulles, petite détonation avec l'allumette.", "Je nomme le gaz formé : le dihydrogène H₂."],
+            exemple: "Avec le fer, l'aluminium et le zinc, des bulles se forment et l'allumette provoque une petite détonation : le gaz formé est du dihydrogène H₂, ces métaux sont attaqués par l'acide chlorhydrique. Avec le cuivre et l'or, il ne se passe rien : ils ne sont pas attaqués." }
+        ],
+        retenir: "L'acide chlorhydrique attaque le fer, l'aluminium et le zinc : il se forme du dihydrogène H₂ (petite détonation avec une flamme) et des ions métalliques (Fe + 2 H⁺ → Fe²⁺ + H₂). Le cuivre et l'or ne sont pas attaqués."
+      }
+    ],
+    conclusion: {
+      programme: "Le programme (cycle 4)",
+      attendus: [
+        "Identifier le caractère acide ou basique d'une solution par mesure de pH.",
+        "Associer le caractère acide ou basique à la présence d'ions H⁺ et HO⁻ ; connaître les dangers des solutions acides et basiques et l'effet d'une dilution.",
+        "Réactions entre solutions acides et métaux ; mettre en œuvre des tests caractéristiques d'espèces chimiques ; utiliser une équation de réaction fournie."
+      ],
+      textes: [
+        { obj: "a1", attendu: "Mesurer un pH", texte: "Le [papier pH] donne une estimation du pH ; le [pH-mètre] donne une valeur plus précise. Une solution de pH inférieur à 7 est [acide].", pieges: ["thermomètre", "basique", "neutre"] },
+        { obj: "a2", attendu: "Diluer un acide", texte: "On verse toujours l'[acide] dans l'eau. Quand on dilue une solution acide, son pH [augmente] et se rapproche de [7].", pieges: ["diminue", "eau", "14"] },
+        { obj: "a3", attendu: "L'action d'un acide sur les métaux", texte: "L'acide chlorhydrique attaque le fer, l'aluminium et le zinc : il se forme du [dihydrogène], qui produit une petite [détonation] avec une flamme. Le [cuivre] et l'or ne sont pas attaqués.", pieges: ["dioxygène", "fer", "trouble"] }
+      ]
+    }
   },
 
   // ======================== 4. ENTRAÎNEMENT ========================
@@ -16459,7 +16794,7 @@ const QUESTIONS = [
   // la garde aussi un moment en cache. On compare donc la version de cette page avec le petit fichier version.json
   // publié en même temps : à l'ouverture et à chaque retour sur l'onglet (au plus une fois par minute).
   // Si une version plus récente est en ligne, un bandeau propose de mettre à jour. La progression (pseudo, points…) est conservée.
-  const VERSION_APPLI = "2026-11-14 23:50:00"; // remplacée par la date d'assemblage (assembler.py)
+  const VERSION_APPLI = "2026-11-15 11:38:26"; // remplacée par la date d'assemblage (assembler.py)
   let derniereVerif = 0;
   function verifierMaj() {
     if (!/^https?:$/.test(location.protocol) || VERSION_APPLI.indexOf("__") === 0) return; // fichier ouvert sur l'ordinateur : rien à vérifier
@@ -18609,6 +18944,24 @@ const QUESTIONS = [
     const fr = MASSEVOL.fr;
     const d2 = (v) => (+v).toFixed(2).replace(".", ","), alea = (t) => t[Math.floor(Math.random() * t.length)];
     const DEP2 = ["S", "E102", "E124", "E131"], GAZ = { H2: "dihydrogène", O2: "dioxygène", CO2: "dioxyde de carbone" };
+    const f1 = (v) => (+v).toFixed(1).replace(".", ",");
+    const A1_PROD = [["citron", "Jus de citron"], ["vinaigre", "Vinaigre"], ["eau3", "Eau minérale"], ["savon", "Eau savonneuse"], ["javel", "Eau de Javel"]];
+    const A3_MET = [["fe", "Fer"], ["al", "Aluminium"], ["zn", "Zinc"], ["cu", "Cuivre"], ["au", "Or"]];
+    // 3ème · TP « Les flacons sans étiquette » (objectifs i1 à i3, paillasses ions1 à ions3 de 09_chimie.js)
+    const SOL_I = { cuso4: ["Sulfate de cuivre", "bleue", { soude: "bleu", nitrate: null }], fecl3: ["Chlorure de fer III", "jaune orangé", { soude: "rouille", nitrate: "blanc" }],
+      nacl: ["Chlorure de sodium (eau salée)", "incolore", { soude: null, nitrate: "blanc" }], feso4: ["Sulfate de fer II", "vert pâle", { soude: "vert", nitrate: null }] };
+    const ION_P = { bleu: "Cu²⁺", vert: "Fe²⁺", rouille: "Fe³⁺", blanc: "Cl⁻" };
+    const obsI = (v) => v === undefined ? "…" : v ? "précipité " + v : "aucun précipité";
+    // 3ème · TP « La couleur des éléments » (objectifs f1 à f3, paillasses fla1 à fla3 de 09_chimie.js, qui lit aussi ce tableau)
+    // coul : couleur de la flamme (accordée avec « la flamme ») ; n : la même couleur comme nom ; c, c2 : couleurs du dessin.
+    const FLAMMES = {
+      na: { el: "sodium", ion: "Na⁺", sol: "Chlorure de sodium", form: "(Na⁺ + Cl⁻)", coul: "jaune", n: "le jaune", c: "#FFC21A", c2: "#FFF0A8" },
+      li: { el: "lithium", ion: "Li⁺", sol: "Chlorure de lithium", form: "(Li⁺ + Cl⁻)", coul: "rouge", n: "le rouge", c: "#E4243B", c2: "#FF9A9A" },
+      cu: { el: "cuivre", ion: "Cu²⁺", sol: "Chlorure de cuivre II", form: "(Cu²⁺ + 2 Cl⁻)", coul: "verte", n: "le vert", c: "#1FBF5E", c2: "#A8F2C2" },
+      k: { el: "potassium", ion: "K⁺", sol: "Chlorure de potassium", form: "(K⁺ + Cl⁻)", coul: "violette", n: "le violet", c: "#A06AE8", c2: "#DCC2FF" },
+      ca: { el: "calcium", ion: "Ca²⁺", sol: "Chlorure de calcium", form: "(Ca²⁺ + 2 Cl⁻)", coul: "orange-rouge", n: "l'orange-rouge", c: "#FF5A24", c2: "#FFB594" }
+    };
+    const ORD_F = ["na", "li", "cu", "k", "ca"], pastille = (x) => `<span class="fl-pas" style="background:${x.c}"></span>`, majF = (t) => t[0].toUpperCase() + t.slice(1);
     const INSTR = { becher: "Bécher de 50 mL", eprouvette: "Éprouvette de 25 mL", pipette: "Pipette jaugée de 10 mL" };
 
     function saisie(el, o, onOk) {
@@ -18660,6 +19013,8 @@ const QUESTIONS = [
       if (R.cx == null || R.cx > 45) { R.cx = alea([7, 15, 18, 20, 35, 42]); neuf = true; }
       if (!R.liq) { R.liq = Math.random() < 0.5 ? ["ethanol", "cyclo"] : ["cyclo", "ethanol"]; neuf = true; }
       if (!R.gaz) { R.gaz = melanger(["H2", "O2", "CO2"]); neuf = true; }
+      if (!R.fla) { R.fla = melanger(["li", "k", "ca", "na"]).slice(0, 2); neuf = true; } // les deux poudres de l'artificier
+      if (!R.ions) { R.ions = melanger(["cuso4", "fecl3", "nacl", "feso4"]); neuf = true; }
       if (!R.sirop) { R.sirop = alea([["E102", "E131"], ["E124", "E131"], ["E102", "E124"], ["E102", "E124", "E131"]]); neuf = true; }
       if (neuf && C.sauver) C.sauver();
       return R;
@@ -18668,6 +19023,62 @@ const QUESTIONS = [
 
     // ======================= Protocoles à remettre dans l'ordre (avant la paillasse) =======================
     const PROTO = {
+      // 3ème · TP « La couleur des éléments » (objectifs f1 et f3, paillasses fla1 et fla3 de 09_chimie.js)
+      f1: [
+        { t: "Mettre ses lunettes de protection et attacher ses cheveux.", aide: "On travaille avec une flamme : on se protège avant tout." },
+        { t: "Allumer le bec avec le bouton d'allumage électrique.", aide: "Il faut une flamme avant de tester." },
+        { t: "Tremper le fil de l'anse dans la solution à tester.", aide: "Le fil emporte une goutte de solution." },
+        { t: "Placer le fil dans la flamme et observer sa couleur.", aide: "C'est la couleur de la flamme qui révèle l'élément." },
+        { t: "Nettoyer le fil : le tremper dans l'eau distillée, puis le chauffer jusqu'à ce que la flamme ne se colore plus.", aide: "On nettoie après chaque essai, sinon l'essai suivant est « mélangé »." }
+      ],
+      f3: [
+        { t: "Mettre ses lunettes et allumer le bec.", aide: "Protection d'abord, puis la flamme." },
+        { t: "Mouiller le fil propre dans l'eau distillée.", aide: "La poudre n'accroche que sur un fil humide." },
+        { t: "Toucher la poudre avec le fil humide.", aide: "Un peu de poudre suffit." },
+        { t: "Placer le fil dans la flamme et noter la couleur.", aide: "On observe la flamme." },
+        { t: "Nettoyer le fil avant de tester l'autre poudre.", aide: "Sinon, les deux couleurs se mélangent." },
+        { t: "Comparer les couleurs avec le tableau pour identifier les éléments.", aide: "C'est l'exploitation, à la fin." }
+      ],
+      // 3ème · TP « Les flacons sans étiquette » (objectifs i1 et i2, paillasses ions1 et ions2 de 09_chimie.js)
+      i1: [
+        { t: "Mettre ses lunettes de protection.", aide: "La soude et le nitrate d'argent sont corrosifs : on se protège avant tout." },
+        { t: "Verser un peu de la solution à tester (environ 3 cm) dans un tube à essai propre.", aide: "On teste un petit échantillon, jamais le flacon entier." },
+        { t: "Ajouter quelques gouttes de réactif avec le flacon compte-gouttes.", aide: "Un seul réactif par tube." },
+        { t: "Agiter doucement le tube.", aide: "Le réactif se mélange à toute la solution." },
+        { t: "Observer : un précipité se forme-t-il ? De quelle couleur ?", aide: "On observe après avoir agité." },
+        { t: "Comparer avec la banque de tests pour conclure.", aide: "C'est la dernière étape : la banque donne l'ion." }
+      ],
+      i2: [
+        { t: "Mettre ses lunettes de protection.", aide: "On manipule des réactifs corrosifs." },
+        { t: "Pour chaque flacon, verser un peu de solution dans deux tubes propres.", aide: "Deux tubes par flacon : un pour chaque réactif." },
+        { t: "Ajouter quelques gouttes de soude dans le premier tube, de nitrate d'argent dans le second.", aide: "Un seul réactif par tube." },
+        { t: "Agiter chaque tube, puis observer.", aide: "On observe une fois le tube agité." },
+        { t: "Noter chaque observation dans le tableau.", aide: "Le tableau sert ensuite à conclure." },
+        { t: "Utiliser la banque de tests pour trouver les ions de chaque flacon.", aide: "C'est l'exploitation, à la fin." }
+      ],
+      // 3ème · TP « Du pH à la réaction acide-métal » (objectifs a1 à a3, paillasses ph3e, dilu3e, metaux de 09_chimie.js)
+      a1: [
+        { t: "Mettre ses lunettes de protection.", aide: "Certaines solutions (l'eau de Javel) sont corrosives : on se protège avant tout." },
+        { t: "Plonger l'agitateur en verre propre dans la solution.", aide: "L'agitateur prend une goutte de la solution." },
+        { t: "Déposer la goutte sur le papier pH, sans tremper le papier.", aide: "On ne trempe jamais le papier pH dans la solution." },
+        { t: "Comparer la couleur de la tache avec le nuancier.", aide: "Le nuancier donne le pH (valeur entière)." },
+        { t: "Rincer l'agitateur à l'eau distillée avant la solution suivante.", aide: "Sinon, on mélange les solutions." }
+      ],
+      a2: [
+        { t: "Mettre ses lunettes de protection.", aide: "On manipule un acide : on se protège d'abord." },
+        { t: "Mesurer 10 mL de vinaigre avec l'éprouvette graduée.", aide: "On mesure d'abord le volume d'acide." },
+        { t: "Verser le vinaigre dans le bécher contenant 90 mL d'eau.", aide: "On verse toujours l'acide dans l'eau, jamais l'inverse." },
+        { t: "Mélanger avec l'agitateur en verre.", aide: "La solution doit être homogène avant la mesure." },
+        { t: "Mesurer le pH avec la sonde rincée du pH-mètre.", aide: "On mesure une fois la solution mélangée." },
+        { t: "Recommencer avec 10 mL de cette solution diluée et le deuxième bécher d'eau.", aide: "C'est la deuxième dilution, à la fin." }
+      ],
+      a3: [
+        { t: "Mettre ses lunettes de protection.", aide: "L'acide chlorhydrique est corrosif et on utilise une flamme." },
+        { t: "Mettre un morceau de métal dans un tube d'acide chlorhydrique.", aide: "Un seul métal par tube." },
+        { t: "Boucher aussitôt le tube et observer.", aide: "Le bouchon retient le gaz qui se forme éventuellement." },
+        { t: "Approcher une allumette enflammée de l'ouverture en retirant le bouchon.", aide: "C'est le test du dihydrogène : une petite détonation." },
+        { t: "Noter les observations, puis recommencer avec un autre métal.", aide: "On compare ensuite les cinq métaux." }
+      ],
       d2: [
         { t: "Poser la capsule sur la balance et faire la tare.", aide: "On commence par la pesée : la balance doit afficher 0,00 g avec la capsule vide." },
         { t: "Peser 0,90 g de sel avec la spatule.", aide: "Après la tare, on prélève le solide." },
@@ -18774,6 +19185,19 @@ const QUESTIONS = [
         L.push(d.m); c.sauver(); c.extra(); if (L.length === 3) c.cocher(d.instr); return;
       }
       if (d.obj === "d2") { D.m = d.m; c.sauver(); c.extra(); return; }
+      if (d.obj === "a1") {
+        D.papier = D.papier || {}; D.phm = D.phm || {};
+        if (d.papier != null) D.papier[d.prod] = d.papier; if (d.phm != null) D.phm[d.prod] = d.phm;
+        c.sauver(); c.extra();
+        if (Object.keys(D.papier).length >= 5) c.cocher("papier"); if (Object.keys(D.phm).length >= 5) c.cocher("phmetre"); return;
+      }
+      if (d.obj === "a2") { if (d.prod) D.vin = d.phm; if (d.n) D["n" + d.n] = d.phm; c.sauver(); c.extra(); return; }
+      if (d.obj === "f1" || d.obj === "f2") { (D.c = D.c || {})[d.el] = true; c.sauver(); c.extra(); return; }
+      if (d.obj === "f3") { (D.p = D.p || {})[d.p] = d.el; c.sauver(); c.extra(); return; }
+      if (d.obj === "i1") { (D.t = D.t || {})[d.sol + "-" + d.reac] = d.res || null; c.sauver(); c.extra(); return; }
+      if (d.obj === "i2") { ((D.f = D.f || {})[d.fl] = D.f[d.fl] || {})[d.reac] = d.res || null; c.sauver(); c.extra(); return; }
+      if (d.obj === "i3") { D.ok = true; c.sauver(); c.extra(); return; }
+      if (d.obj === "a3") { (D.m = D.m || {})[d.metal] = { bulles: d.bulles, pop: d.pop }; c.sauver(); c.extra(); return; }
       if (d.obj === "d4") { D.bornes = d.bornes; c.sauver(); return; }
       if (d.obj === "k1") { D[d.k] = d.pts; c.sauver(); c.extra(); return; }
       if (d.obj === "k2") { if (d.k) D[d.k] = d.m; if (d.froid) D.froid = true; c.sauver(); c.extra(); return; }
@@ -18794,6 +19218,42 @@ const QUESTIONS = [
         const L = (k) => D[k] || [], ec = (a) => a.length > 1 ? d2(Math.max(...a) - Math.min(...a)) + " g" : "…";
         box.innerHTML = tableau("Mes mesures (masse de 10 mL d'eau)", ["Verrerie", "1", "2", "3", "Écart"], ["becher", "eprouvette", "pipette"].map((k) => [INSTR[k], ...[0, 1, 2].map((i) => L(k)[i] != null ? d2(L(k)[i]) : "…"), ec(L(k))]),
           `<p class="small muted">Pour chaque mesure : TARE, mesurer 10 mL, verser dans le bécher de pesée, NOTER. Écart = plus grande masse − plus petite masse : plus il est petit, plus la verrerie est fiable.</p>`);
+        return;
+      }
+      if (o.id === "a1") {
+        const P = D.papier || {}, H = D.phm || {}, nat = (v) => v < 7 ? "acide" : v > 7 ? "basique" : "neutre";
+        box.innerHTML = tableau("Mes mesures", ["Solution", "Papier pH", "pH-mètre", "La solution est…"], A1_PROD.map(([k, n]) => [n, P[k] != null ? "pH ≈ " + P[k] : "…", H[k] != null ? f1(H[k]) : "…", H[k] != null ? nat(H[k]) : P[k] != null ? nat(P[k]) : "…"]),
+          `<p class="small muted">Papier pH : une valeur entière (estimation). pH-mètre : une valeur plus précise, avec une décimale.</p>`);
+        return;
+      }
+      if (o.id === "a2") {
+        const v = (x) => x != null ? f1(x) : "…";
+        box.innerHTML = tableau("Mes mesures", ["Solution", "Dilution", "pH mesuré"], [["Vinaigre", "aucune", D.vin != null ? v(D.vin) : "2,9 (mesuré à l'objectif 1)"], ["Solution diluée 1 (bécher d'eau + 10 mL de vinaigre)", "10 fois", v(D.n1)], ["Solution diluée 2 (bécher d'eau + 10 mL de solution 1)", "100 fois", v(D.n2)]]);
+        return;
+      }
+      if (o.id === "f1" || o.id === "f2" || o.id === "f3") { // le tableau des couleurs se remplit au fil des essais
+        const C = Object.assign({}, donnees(c, "f1").c, donnees(c, "f2").c), P = donnees(c, "f3").p || {};
+        let h = tableau(o.id === "f3" ? "Mon tableau des couleurs (objectifs 1 et 2)" : "Mon tableau des couleurs", ["Solution testée", "Élément", "Couleur de la flamme"],
+          (o.id === "f1" ? ["na"] : ORD_F).map((k) => { const x = FLAMMES[k]; return [`${x.sol} ${x.form}`, C[k] ? `${x.el} (ions ${x.ion})` : "…", C[k] ? pastille(x) + x.coul : "…"]; }),
+          o.id === "f3" ? "" : `<p class="small muted">Le tableau se remplit à chaque essai réussi. Un essai avec un fil mal nettoyé (flamme « mélangée ») n'est pas noté.</p>`);
+        if (o.id === "f3") h += tableau("Les poudres de l'artificier", ["Poudre", "Couleur de la flamme"], [1, 2].map((n) => { const k = P[n]; return ["Poudre " + n, k ? pastille(FLAMMES[k]) + FLAMMES[k].coul : "…"]; }),
+          `<p class="small muted">Compare chaque couleur avec ton tableau pour trouver l'élément (questions ci-dessous).</p>`);
+        box.innerHTML = h; return;
+      }
+      if (o.id === "i1") {
+        const T = D.t || {}, L = [["cuso4", "soude"], ["nacl", "nitrate"], ["nacl", "soude"], ["cuso4", "nitrate"]];
+        box.innerHTML = `<h3>La banque de tests</h3>${ATOMES.figBanque()}` + tableau("Mes observations", ["Solution", "Réactif", "Observation"], L.map(([sl, r]) => [SOL_I[sl][0], r === "soude" ? "Soude" : "Nitrate d'argent", obsI(T[sl + "-" + r])]));
+        return;
+      }
+      if (o.id === "i2" || o.id === "i3") {
+        const F = donnees(c, "i2").f || {}, ord = tirages(c).ions;
+        box.innerHTML = `<h3>La banque de tests</h3>${ATOMES.figBanque()}` + tableau(o.id === "i2" ? "Mes observations" : "Mes observations (objectif 2)", ["Flacon", "Couleur", "Soude", "Nitrate d'argent"], ["A", "B", "C", "D"].map((l, k) => { const x = F[l] || {}; return [l, SOL_I[ord[k]][1], obsI(x.soude), obsI(x.nitrate)]; }))
+          + (o.id === "i3" ? `<p class="small muted">Chaque étiquette donne le nom de la solution et ses ions. Colle-la sur le flacon dont les tests montrent ces ions.</p>` : "");
+        return;
+      }
+      if (o.id === "a3") {
+        const Mx = D.m || {};
+        box.innerHTML = tableau("Mes observations", ["Métal", "Bulles ?", "Allumette", "Attaqué par l'acide ?"], A3_MET.map(([k, n]) => { const x = Mx[k]; return [n, x ? (x.bulles ? "oui" : "non") : "…", x ? (x.pop ? "petite détonation" : "rien") : "…", x ? (x.pop ? "oui" : "non") : "…"]; }));
         return;
       }
       if (o.id === "d2") { box.innerHTML = tableau("Mes mesures", ["Grandeur", "Valeur"], [["Masse de sel pesée m", D.m != null ? d2(D.m) + " g" : "…"], ["Volume de la fiole V", "100,0 mL"]]); return; }
@@ -18825,6 +19285,47 @@ const QUESTIONS = [
     // ======================= Questions avec les mesures de l'élève =======================
     function question(el, q, c, onOk) {
       const R = tirages(c), D = (id) => R[id] || {};
+      if (q.calc === "f3-p1" || q.calc === "f3-p2") {
+        const n = +q.calc.slice(-1), k = R.fla[n - 1], x = FLAMMES[k], P = D("f3").p || {}, autres = melanger(ORD_F.filter((y) => y !== k)).slice(0, 3);
+        return choix(el, { question: `La poudre ${n} ${P[n] ? "a donné" : "donne"} une flamme ${x.coul}. D'après ton tableau, quel élément contient-elle ?`,
+          reponses: [majF(x.el)].concat(autres.map((y) => majF(FLAMMES[y].el))), bonne: 0,
+          explication: `Dans le tableau, la flamme ${x.coul} est celle du ${x.el} : la poudre ${n} contient l'élément ${x.el} (ions ${x.ion}).`,
+          pourquoi: [null].concat(autres.map((y) => `Le ${FLAMMES[y].el} donne une flamme ${FLAMMES[y].coul}, pas ${x.coul}.`)) }, onOk);
+      }
+      if (q.calc === "i1-conclure") {
+        return choix(el, { question: "Avec la soude, la solution de sulfate de cuivre a donné un précipité bleu. D'après la banque, quel ion contient-elle ?",
+          reponses: ["L'ion cuivre II Cu²⁺", "L'ion sulfate SO₄²⁻", "L'ion chlorure Cl⁻", "L'ion fer III Fe³⁺"], bonne: 0,
+          explication: "Dans la banque : soude + précipité bleu → ion cuivre II Cu²⁺.",
+          pourquoi: [null, "La soude ne met pas en évidence l'ion sulfate : le précipité bleu vient des ions cuivre II.", "L'ion chlorure se teste avec le nitrate d'argent.", "Avec les ions fer III, le précipité serait rouille."] }, onOk);
+      }
+      if (q.calc === "i2-flacon") {
+        const ord = tirages(c).ions, k = ord.indexOf("fecl3"), L = "ABCD"[k], autres = ["A", "B", "C", "D"].filter((x) => x !== L);
+        const F = donnees(c, "i2").f || {}, x = F[L] || {}, txt = x.soude !== undefined && x.nitrate !== undefined ? `précipité ${x.soude} avec la soude et précipité ${x.nitrate} avec le nitrate d'argent` : "un précipité avec les deux réactifs";
+        return choix(el, { question: "Quel flacon contient à la fois des ions fer III Fe³⁺ et des ions chlorure Cl⁻ ?", reponses: ["Le flacon " + L].concat(autres.map((y) => "Le flacon " + y)), bonne: 0,
+          explication: `Le flacon ${L} donne un ${txt} : d'après la banque, il contient des ions Fe³⁺ et des ions Cl⁻.`,
+          pourquoi: [null].concat(autres.map((y) => { const s0 = SOL_I[ord["ABCD".indexOf(y)]][2]; return `Le flacon ${y} donne ${s0.soude ? "un précipité " + s0.soude : "aucun précipité"} avec la soude et ${s0.nitrate ? "un précipité " + s0.nitrate : "aucun précipité"} avec le nitrate d'argent.`; })) }, onOk);
+      }
+      if (q.calc === "a1-classer") {
+        const H = D("a1").phm || {}, val = (k, def) => f1(H[k] != null ? H[k] : def);
+        return choix(el, { question: `Tes mesures au pH-mètre : citron ${val("citron", 2.4)} ; vinaigre ${val("vinaigre", 2.9)} ; eau ${val("eau3", 7)} ; eau savonneuse ${val("savon", 9.8)} ; eau de Javel ${val("javel", 11.6)}. Du plus acide au plus basique, l'ordre est…`,
+          reponses: ["citron, vinaigre, eau, eau savonneuse, eau de Javel", "eau de Javel, eau savonneuse, eau, vinaigre, citron", "eau, citron, vinaigre, eau savonneuse, eau de Javel", "vinaigre, citron, eau, eau de Javel, eau savonneuse"], bonne: 0,
+          explication: "Plus le pH est petit, plus la solution est acide : on range les valeurs dans l'ordre croissant.",
+          pourquoi: [null, "C'est l'ordre du plus basique au plus acide.", "L'eau (pH 7) est neutre : elle se place entre les acides et les bases.", "Compare les valeurs : le citron a un pH plus petit que le vinaigre, l'eau savonneuse plus petit que l'eau de Javel."] }, onOk);
+      }
+      if (q.calc === "a2-evol") {
+        const a = D("a2"), v1 = f1(a.n1 != null ? a.n1 : 3.4), v2 = f1(a.n2 != null ? a.n2 : 3.9);
+        return choix(el, { question: `Le vinaigre a un pH de 2,9. Dilué 10 fois : pH = ${v1}. Dilué 100 fois : pH = ${v2}. Que peut-on conclure ?`,
+          reponses: ["En diluant un acide, son pH augmente et se rapproche de 7 : il devient moins acide", "En diluant un acide, son pH diminue : il devient plus acide", "En diluant assez, le vinaigre devient basique", "La dilution ne change pas le pH"], bonne: 0,
+          explication: "Le pH passe de 2,9 à 3,9 : il augmente, mais reste inférieur à 7. La solution est moins acide, donc moins dangereuse.",
+          pourquoi: [null, "Les valeurs mesurées augmentent.", "Le pH se rapproche de 7 sans jamais le dépasser.", "Les trois valeurs mesurées sont différentes."] }, onOk);
+      }
+      if (q.calc === "a3-constat") {
+        const Mx = D("a3").m || {}, att = A3_MET.filter(([k]) => Mx[k] ? Mx[k].pop : ["fe", "al", "zn"].includes(k)).map(([, n]) => n.toLowerCase());
+        return choix(el, { question: `D'après ton tableau d'observations, quels métaux sont attaqués par l'acide chlorhydrique ?`,
+          reponses: ["Le fer, l'aluminium et le zinc", "Le cuivre et l'or", "Les cinq métaux", "Aucun des métaux"], bonne: 0,
+          explication: `Bulles et petite détonation (dihydrogène) avec ${att.join(", ")} : ces métaux sont attaqués. Rien avec le cuivre et l'or : ils ne sont pas attaqués par l'acide chlorhydrique.`,
+          pourquoi: [null, "C'est l'inverse : avec le cuivre et l'or, rien ne se passe.", "Avec le cuivre et l'or, il n'y a ni bulles ni détonation.", "Avec le fer, l'aluminium et le zinc, il y a des bulles et une détonation."] }, onOk);
+      }
       if (q.calc === "d1-plus") {
         const L = D("d1"), ec = (k) => (L[k] && L[k].length > 1) ? Math.max(...L[k]) - Math.min(...L[k]) : null;
         const e = { becher: ec("becher"), eprouvette: ec("eprouvette"), pipette: ec("pipette") };
@@ -18889,7 +19390,7 @@ const QUESTIONS = [
       }
     }
 
-    return { avant, verrou, evt, extra, question, tirages };
+    return { avant, verrou, evt, extra, question, tirages, FLAMMES };
   })();
   // ======================= TP de 4ème « La masse volumique » : la paillasse de pesée =======================
   // Version 2 (10/11/2026), refaite après les retours de l'enseignant :
@@ -21831,7 +22332,89 @@ const QUESTIONS = [
         { id: "pis", type: "pissette", x: 96, y: 214 },
         { id: "pou", type: "becher", role: "poubelle", V: 0, x: 14, y: 296 },
         { id: "pip", type: "pipette", vol: 5, x: 98, y: 30 }, { id: "pir", type: "pipeteur", x: 152, y: 220 },
-        { id: "fio", type: "fiole", Vf: 500, x: 196, y: 70 }] }
+        { id: "fio", type: "fiole", Vf: 500, x: 196, y: 70 }] },
+      // ======================= 3ème : TP « Du pH à la réaction acide-métal » (gestes dans « 8. Troisième ») =======================
+      ph3e: { h: 404, seconde: true, troisieme: true, objets: [
+        { id: "epi", type: "epi", lunettes: true, x: 12, y: 12 },
+        { id: "pis", type: "pissette", x: 80, y: 10 },
+        { id: "bag", type: "baguette", nom: "Agitateur en verre", tw: 8, th: 84, x: 136, y: 8 },
+        { id: "cap", type: "capteur", x: 168, y: 14 }, { id: "son", type: "sonde", x: 302, y: 100 },
+        { id: "pap", type: "papierph", nom: "Papier pH", tw: 150, th: 44, x: 14, y: 150 },
+        { id: "pou", type: "becher", role: "poubelle", tw: 52, th: 50, Vmax: 100, V: 0, x: 222, y: 150 },
+        { id: "pC", type: "becher", role: "produit", contenu: "citron", nom: "1. Citron", ph3: 2.4, tw: 50, th: 52, Vmax: 60, V: 40, x: 12, y: 300 },
+        { id: "pV", type: "becher", role: "produit", contenu: "vinaigre", nom: "2. Vinaigre", ph3: 2.9, tw: 50, th: 52, Vmax: 60, V: 40, x: 76, y: 300 },
+        { id: "pE", type: "becher", role: "produit", contenu: "eau3", nom: "3. Eau", ph3: 7.0, tw: 50, th: 52, Vmax: 60, V: 40, x: 140, y: 300 },
+        { id: "pS", type: "becher", role: "produit", contenu: "savon", nom: "4. Savon", ph3: 9.8, tw: 50, th: 52, Vmax: 60, V: 40, x: 204, y: 300 },
+        { id: "pJ", type: "becher", role: "produit", contenu: "javel", nom: "5. Javel", ph3: 11.6, corrosif: true, tw: 50, th: 52, Vmax: 60, V: 40, x: 268, y: 300 }] },
+      dilu3e: { h: 392, seconde: true, troisieme: true, objets: [
+        { id: "epi", type: "epi", lunettes: true, x: 12, y: 12 },
+        { id: "pis", type: "pissette", x: 80, y: 10 },
+        { id: "bag", type: "baguette", nom: "Agitateur en verre", tw: 8, th: 84, x: 136, y: 8 },
+        { id: "cap", type: "capteur", x: 168, y: 14 }, { id: "son", type: "sonde", x: 302, y: 100 },
+        { id: "vin", type: "becher", role: "produit", contenu: "vinaigre", nom: "Vinaigre", ph3: 2.9, tw: 50, th: 52, Vmax: 60, V: 40, x: 12, y: 196 },
+        { id: "epr", type: "eprouvette", Vmax: 25, tw: 18, th: 112, x: 92, y: 136 },
+        { id: "b1", type: "becher", role: "dilu", contenu: "eau", nom: "Bécher 1", tw: 64, th: 62, Vmax: 150, V: 90, x: 136, y: 186 },
+        { id: "b2", type: "becher", role: "dilu", contenu: "eau", nom: "Bécher 2", tw: 64, th: 62, Vmax: 150, V: 90, x: 226, y: 186 },
+        { id: "pou", type: "becher", role: "poubelle", tw: 52, th: 50, Vmax: 100, V: 0, x: 12, y: 300 }] },
+      // ======================= 3ème : TP « Les flacons sans étiquette » (chapitre « ions » ; gestes dans « 9. Troisième ») =======================
+      ions1: { h: 296, seconde: true, troisieme: true, objets: [
+        { id: "epi", type: "epi", lunettes: true, x: 12, y: 12 },
+        { id: "fS", type: "flacon", contenu: "cuso4", l1: "Sulfate de cuivre", l2: "(Cu²⁺ + SO₄²⁻)", sansNom: true, x: 84, y: 12 },
+        { id: "fN", type: "flacon", contenu: "nacl", l1: "Eau salée", l2: "(Na⁺ + Cl⁻)", sansNom: true, x: 140, y: 12 },
+        { id: "cgS", type: "cgoutte", reac: "soude", l1: "Soude", nom: "Soude", tw: 32, th: 60, x: 214, y: 14 },
+        { id: "cgA", type: "cgoutte", reac: "nitrate", l1: "Nitrate d'argent", nom: "Nitrate d'argent", tw: 32, th: 60, x: 274, y: 14 },
+        { id: "por", type: "portoir", pw: 236, places: 4, x: 47, y: 226 },
+        { id: "T1", type: "tube", sur: "por", place: 0 }, { id: "T2", type: "tube", sur: "por", place: 1 },
+        { id: "T3", type: "tube", sur: "por", place: 2 }, { id: "T4", type: "tube", sur: "por", place: 3 }] },
+      ions2: { h: 404, seconde: true, troisieme: true, objets: [
+        { id: "epi", type: "epi", lunettes: true, x: 12, y: 12 },
+        { id: "cgS", type: "cgoutte", reac: "soude", l1: "Soude", nom: "Soude", tw: 32, th: 60, x: 214, y: 10 },
+        { id: "cgA", type: "cgoutte", reac: "nitrate", l1: "Nitrate d'argent", nom: "Nitrate d'argent", tw: 32, th: 60, x: 274, y: 10 },
+        { id: "fA", type: "flacon", lettre: "A", sansNom: true, x: 12, y: 74 }, { id: "fB", type: "flacon", lettre: "B", sansNom: true, x: 66, y: 74 },
+        { id: "fC", type: "flacon", lettre: "C", sansNom: true, x: 120, y: 74 }, { id: "fD", type: "flacon", lettre: "D", sansNom: true, x: 174, y: 74 },
+        { id: "por", type: "portoir", pw: 236, places: 4, x: 47, y: 218 }, { id: "por2", type: "portoir", pw: 236, places: 4, x: 47, y: 350 },
+        { id: "T1", type: "tube", sur: "por", place: 0 }, { id: "T2", type: "tube", sur: "por", place: 1 }, { id: "T3", type: "tube", sur: "por", place: 2 }, { id: "T4", type: "tube", sur: "por", place: 3 },
+        { id: "T5", type: "tube", sur: "por2", place: 0 }, { id: "T6", type: "tube", sur: "por2", place: 1 }, { id: "T7", type: "tube", sur: "por2", place: 2 }, { id: "T8", type: "tube", sur: "por2", place: 3 }] },
+      ions3: { h: 238, seconde: true, troisieme: true, objets: [
+        { id: "fA", type: "flacon", lettre: "A", sansNom: true, x: 30, y: 16 }, { id: "fB", type: "flacon", lettre: "B", sansNom: true, x: 104, y: 16 },
+        { id: "fC", type: "flacon", lettre: "C", sansNom: true, x: 178, y: 16 }, { id: "fD", type: "flacon", lettre: "D", sansNom: true, x: 252, y: 16 },
+        { id: "e1", type: "etiq", sol: "nacl", l1: "Chlorure de sodium", l2: "(Na⁺ + Cl⁻)", sansNom: true, tw: 138, th: 30, x: 18, y: 126 },
+        { id: "e2", type: "etiq", sol: "feso4", l1: "Sulfate de fer II", l2: "(Fe²⁺ + SO₄²⁻)", sansNom: true, tw: 138, th: 30, x: 174, y: 126 },
+        { id: "e3", type: "etiq", sol: "cuso4", l1: "Sulfate de cuivre", l2: "(Cu²⁺ + SO₄²⁻)", sansNom: true, tw: 138, th: 30, x: 18, y: 176 },
+        { id: "e4", type: "etiq", sol: "fecl3", l1: "Chlorure de fer III", l2: "(Fe³⁺ + 3 Cl⁻)", sansNom: true, tw: 138, th: 30, x: 174, y: 176 }] },
+      metaux: { h: 330, seconde: true, troisieme: true, objets: [
+        { id: "epi", type: "epi", lunettes: true, x: 12, y: 12 },
+        { id: "all", type: "allumette", x: 296, y: 20 },
+        { id: "mfe", type: "metal", metal: "fe", nom: "Fer", tw: 50, th: 34, x: 14, y: 100 }, { id: "mal", type: "metal", metal: "al", nom: "Aluminium", tw: 50, th: 34, x: 76, y: 100 },
+        { id: "mzn", type: "metal", metal: "zn", nom: "Zinc", tw: 50, th: 34, x: 138, y: 100 }, { id: "mcu", type: "metal", metal: "cu", nom: "Cuivre", tw: 50, th: 34, x: 200, y: 100 },
+        { id: "mau", type: "metal", metal: "au", nom: "Or", tw: 50, th: 34, x: 262, y: 100 },
+        { id: "por", type: "portoir", pw: 236, places: 5, x: 47, y: 262 },
+        { id: "T1", type: "tube", nom: "1", contenu: "hcl", V: 8, sur: "por", place: 0 }, { id: "T2", type: "tube", nom: "2", contenu: "hcl", V: 8, sur: "por", place: 1 },
+        { id: "T3", type: "tube", nom: "3", contenu: "hcl", V: 8, sur: "por", place: 2 }, { id: "T4", type: "tube", nom: "4", contenu: "hcl", V: 8, sur: "por", place: 3 },
+        { id: "T5", type: "tube", nom: "5", contenu: "hcl", V: 8, sur: "por", place: 4 }] },
+      // ======================= 3ème : TP « La couleur des éléments » (chapitre « éléments » ; gestes dans « 10. Troisième ») =======================
+      fla1: { h: 316, seconde: true, troisieme: true, objets: [
+        { id: "epi", type: "epi", lunettes: true, x: 12, y: 12 },
+        { id: "fNa", type: "flacon", contenu: "fna", el: "na", l1: "Chlorure de sodium", l2: "(Na⁺ + Cl⁻)", sansNom: true, x: 18, y: 150 },
+        { id: "rin", type: "becher", role: "rince", contenu: "eau", nom: "Eau distillée", tw: 56, th: 54, Vmax: 100, V: 60, x: 80, y: 160 },
+        { id: "bec", type: "bec", nom: "Bec", tw: 54, th: 96, x: 170, y: 190 },
+        { id: "ans", type: "anse", nom: "Anse", tw: 12, th: 86, x: 296, y: 194 }] },
+      fla2: { h: 340, seconde: true, troisieme: true, objets: [
+        { id: "epi", type: "epi", lunettes: true, x: 12, y: 12 },
+        { id: "fLi", type: "flacon", contenu: "fli", el: "li", l1: "Chlorure de lithium", l2: "(Li⁺ + Cl⁻)", sansNom: true, x: 16, y: 70 },
+        { id: "fCu", type: "flacon", contenu: "fcu", el: "cu", l1: "Chlorure de cuivre II", l2: "(Cu²⁺ + 2 Cl⁻)", sansNom: true, x: 70, y: 70 },
+        { id: "fK", type: "flacon", contenu: "fk", el: "k", l1: "Chlorure de potassium", l2: "(K⁺ + Cl⁻)", sansNom: true, x: 124, y: 70 },
+        { id: "fCa", type: "flacon", contenu: "fca", el: "ca", l1: "Chlorure de calcium", l2: "(Ca²⁺ + 2 Cl⁻)", sansNom: true, x: 178, y: 70 },
+        { id: "rin", type: "becher", role: "rince", contenu: "eau", nom: "Eau distillée", tw: 56, th: 54, Vmax: 100, V: 60, x: 254, y: 80 },
+        { id: "bec", type: "bec", nom: "Bec", tw: 54, th: 96, x: 120, y: 226 },
+        { id: "ans", type: "anse", nom: "Anse", tw: 12, th: 86, x: 296, y: 230 }] },
+      fla3: { h: 340, seconde: true, troisieme: true, objets: [
+        { id: "epi", type: "epi", lunettes: true, x: 12, y: 12 },
+        { id: "P1", type: "poudre", num: 1, nom: "Poudre 1", tw: 52, th: 30, x: 24, y: 120 },
+        { id: "P2", type: "poudre", num: 2, nom: "Poudre 2", tw: 52, th: 30, x: 100, y: 120 },
+        { id: "rin", type: "becher", role: "rince", contenu: "eau", nom: "Eau distillée", tw: 56, th: 54, Vmax: 100, V: 60, x: 254, y: 80 },
+        { id: "bec", type: "bec", nom: "Bec", tw: 54, th: 96, x: 120, y: 226 },
+        { id: "ans", type: "anse", nom: "Anse", tw: 12, th: 86, x: 296, y: 230 }] }
     };
 
     // ---------- 4. La paillasse de chimie ----------
@@ -21916,7 +22499,7 @@ const QUESTIONS = [
         if (genre === "err") { S.refus = true; signalPaillasse(el.querySelector(".bench"), "ko"); const id = S.main || S.dernier; if (id && O(id)) S.hoche = { id, t0: performance.now() }; }
         else if (genre === "ok") signalPaillasse(el.querySelector(".bench"), "ok");
       }
-      const nomObjet = (o) => (M.seconde && nom2(o)) || ({ flacon: "le flacon de " + (o.l1 || "").toLowerCase(), pissette: "la pissette d'eau distillée", pipette: `la pipette jaugée de ${fx(o.vol || 0, 1)} mL`, pipeteur: "le pipeteur",
+      const nomObjet = (o) => (M.troisieme && nom3(o)) || (M.seconde && nom2(o)) || ({ flacon: "le flacon de " + (o.l1 || "").toLowerCase(), pissette: "la pissette d'eau distillée", pipette: `la pipette jaugée de ${fx(o.vol || 0, 1)} mL`, pipeteur: "le pipeteur",
         becher: o.role === "titrage" ? "le bécher de titrage" : o.role === "poubelle" ? "le bécher poubelle" : o.role === "prelev" ? "le bécher de prélèvement" : "le bécher de " + NOMS[o.contenu],
         barreau: "le barreau aimanté", sonde: kind === "cond" ? "la cellule du conductimètre" : "la sonde du pH-mètre", eprouvette: "l'éprouvette graduée de 250 mL", bidon: "le bidon d'eau distillée",
         fiole: `la fiole jaugée de ${fx(o.Vf || 0, 1)} mL`, burette: "la burette", agitateur: "l'agitateur magnétique", potence: "la potence", capteur: kind === "cond" ? "le conductimètre" : "le pH-mètre", epi: "les gants et les lunettes" })[o.type];
@@ -22019,12 +22602,13 @@ const QUESTIONS = [
         return (polyFioleCache[k] = pts.map(([x, y]) => [x * k, y * k]));
       }
       function coulFiole(o) {
+        if (o.coulV) return o.coulV;
         if (o.contenu === "jus" || o.contenu === "jusD") return COUL.jusD;
         if (o.contenu === "acide") return "#E9EFC4";
         if (o.contenu === "cuivre") return coulCuivre(o.V > 0 ? (o.masse || 0) / (o.V / 1000) : 0);
         return COUL.eau;
       }
-      function couleurBecher(o) { if (o.contenu === "cuivre") return coulCuivre(o.cm == null ? 50 : o.cm); if (o.contenu) return COUL[o.contenu]; if (o.echant && kind === "ph") return COUL.jusD; return COUL.eau; }
+      function couleurBecher(o) { if (o.coulV) return o.coulV; if (o.contenu === "cuivre") return coulCuivre(o.cm == null ? 50 : o.cm); if (o.contenu) return COUL[o.contenu]; if (o.echant && kind === "ph") return COUL.jusD; return COUL.eau; }
       function pipGeo(o) { const L = o.h, bh = o.vol >= 20 ? 26 : o.vol >= 10 ? 22 : 16, by = L * 0.48; return { L, bh, by, yT: L * 0.13, yBt: by - bh / 2, yBb: by + bh / 2 }; }
       function pipY(o, f) { // niveau du liquide (fraction du volume nominal) → ordonnée locale
         const g = pipGeo(o);
@@ -22038,8 +22622,17 @@ const QUESTIONS = [
       const pas = (por) => (por.pw - 24 - 18) / Math.max(1, (por.places || 1) - 1);
       function coulTube(o) {
         if (o.trouble) return "#EEF1EE";
+        if (o.coulV) return o.coulV;
         if (o.contenu === "cuivre") return coulCuivre(o.cm == null ? 50 : o.cm);
         return COUL[o.contenu] || COUL.eau;
+      }
+      // Pendant un versement (15/11/2026), le liquide reçu prend tout de suite la couleur de ce qu'on verse, mélangée à ce qu'il
+      // contenait déjà, au fur et à mesure ; quand toutes les animations sont finies, coulV est effacée (boucle) et la couleur réelle reprend.
+      const hexMel = (a, b, q) => { const h = (c) => /^#[0-9a-f]{6}$/i.test(c || "") ? [1, 3, 5].map((i) => parseInt(c.slice(i, i + 2), 16)) : null, A = h(a), B = h(b); if (!A || !B) return q > 0.5 ? b : a; return "#" + A.map((v, i) => Math.round(v + (B[i] - v) * q).toString(16).padStart(2, "0")).join(""); };
+      function teinter(o, coul, vAvant, vVerse) {
+        if (!coul || !o) return;
+        if (!("_c0" in o)) o._c0 = vAvant > 0.05 ? (o.type === "tube" ? coulTube(o) : o.type === "fiole" ? coulFiole(o) : couleurBecher(o)) : null;
+        const tot = vAvant + vVerse; o.coulV = o._c0 ? hexMel(o._c0, coul, tot > 0 ? vVerse / tot : 1) : coul;
       }
       const dessin2 = {
         balance: (o) => {
@@ -22117,7 +22710,7 @@ const QUESTIONS = [
       function dessin(o) {
         const t = o.type; let g = "";
         if (t === "flacon") {
-          g = `<rect x="15" y="0" width="14" height="8" rx="2" class="c-bouchon"/><rect x="13" y="7" width="18" height="10" class="c-verre"/>
+          g = `${o.ouvert ? "" : `<rect x="15" y="0" width="14" height="8" rx="2" class="c-bouchon"/>`}<rect x="13" y="7" width="18" height="10" class="c-verre"/>
             <path d="M4 22q0-6 9-6h18q9 0 9 6v38a4 4 0 01-4 4H8a4 4 0 01-4-4z" class="c-verre"/>${o.solide ? solideFlacon() : liquidePenche(o, 5, 17, 39, 63, 30, o.contenu === "cuivre" ? coulCuivre(50) : COUL[o.contenu], 0.75, `<path d="M5 22q0-5 8-5h1v-9h16v9h1q8 0 8 5v38a3 3 0 01-3 3H8a3 3 0 01-3-3z"/>`)}
             <rect x="5" y="23" width="34" height="26" rx="2" class="c-etiq"/>${texteAjuste([{ t: o.l1, fs: 7.5, cls: "c-etiq-t" }, { t: o.l2, fs: 5.8, cls: "c-etiq-p" }], 6.5, 24, 31, 24)}
             ${o.danger ? `<g transform="translate(30 50)"><path d="M6 0l6 6-6 6-6-6z" class="c-danger"/><text x="6" y="9" text-anchor="middle" class="c-danger-t">!</text></g>` : ""}`;
@@ -22173,7 +22766,7 @@ const QUESTIONS = [
               `<g data-act="etal" class="c-btn"><rect x="8" y="46" width="44" height="18" rx="4"/><text x="30" y="58" text-anchor="middle">ÉTAL</text></g><text x="72" y="58" class="c-boitier-t" text-anchor="middle">${S.cap.etal === 2 ? "étalonné" : S.cap.etal === 1 ? "pH 7 ok" : ""}</text>`}`;
         } else if (t === "eprouvette") {
           const Vm = o.Vmax || 250, ew = o.w, gx = ew - 6;
-          g = `${liquidePenche(o, 3, 0, ew - 3, o.h - 6, (o.V / Vm) * (o.h - 12), COUL.eau)}<path d="M2 0v${o.h - 6}h${ew - 4}V0" class="c-verre-o"/><rect x="-4" y="${o.h - 6}" width="${ew + 8}" height="6" rx="2" class="c-verre"/><rect x="-4" y="0" width="${ew + 8}" height="${o.h}" fill="transparent"/>
+          g = `${liquidePenche(o, 3, 0, ew - 3, o.h - 6, (o.V / Vm) * (o.h - 12), o.coulV || COUL[o.contenu] || COUL.eau)}<path d="M2 0v${o.h - 6}h${ew - 4}V0" class="c-verre-o"/><rect x="-4" y="${o.h - 6}" width="${ew + 8}" height="6" rx="2" class="c-verre"/><rect x="-4" y="0" width="${ew + 8}" height="${o.h}" fill="transparent"/>
             ${Array.from({ length: 25 }, (_, i) => (i + 1) * Vm / 25).map((v, i) => `<line x1="${gx - ((i + 1) % 5 ? 0 : 4)}" x2="${ew - 2}" y1="${(o.h - 6 - (v / Vm) * (o.h - 12)).toFixed(1)}" y2="${(o.h - 6 - (v / Vm) * (o.h - 12)).toFixed(1)}" class="c-grad${(i + 1) % 5 ? " fin" : ""}"/>`).join("")}`;
         } else if (t === "bidon") {
           g = `<path d="M6 10h24v-6h10v6h4a4 4 0 014 4v40a4 4 0 01-4 4H6a4 4 0 01-4-4V14a4 4 0 014-4z" class="c-verre"/>${liquidePenche(o, 3, 11, 47, 56, 36, COUL.eau, 0.75, `<path d="M6 11h25v-6h8v6h5a3 3 0 013 3v40a3 3 0 01-3 3H6a3 3 0 01-3-3V14a3 3 0 013-3z"/>`)}<text x="25" y="40" class="c-etiq-p" text-anchor="middle">EAU DIST.</text>`;
@@ -22500,9 +23093,9 @@ const QUESTIONS = [
       function viderPipette(p, cible, fin) {
         const cx = cible.x + cible.w / 2 - 9, ty = cible.type === "fiole" ? cible.y + 4 - p.h * 0.5 : cible.y + 16 - p.h;
         const vol = p.vol; let fait = 0;
-        const coul = COUL[p.contenu] || COUL.eau;
+        const coul = COUL[p.contenu] || COUL.eau, V0 = cible.V || 0;
         suite([vers(p, cx, ty, 0.45), [1.1, (q) => {
-          p.niv = 1 - q; const dv = vol * q - fait; fait = vol * q; cible.V += dv;
+          p.niv = 1 - q; const dv = vol * q - fait; fait = vol * q; cible.V += dv; teinter(cible, coul, V0, vol * q);
           // filet entre la pointe de la pipette et la surface du liquide du bécher
           if (cible.type === "becher") { const px = p.x + p.ax + 9, py = p.y + p.ay + p.h, sy = surface(cible); if (sy > py + 1) jet(px, py, px, sy, coul, 1.6); }
         }], pause(0.25), retour(p, 0.35)], () => {
@@ -22598,12 +23191,13 @@ const QUESTIONS = [
       const PREN2 = ["spatule", "capsule", "entonnoir", "pince", "sondeT", "allumette", "buchette", "crayon", "feutre", "echant", "couvercle", "plaque", "tube"];
       function glissable2(o) {
         if (!prenable(o)) return false;
-        if (o.type === "tube" && ((o.chaud && !o.pince) || o.fixe || MID === "gamme" || MID === "gaz" || (S.acq && S.acq.tube === o.id))) return false;
+        if (o.type === "tube" && ((o.chaud && !o.pince) || o.fixe || MID === "gamme" || MID === "gaz" || MID === "metaux" || ION || (S.acq && S.acq.tube === o.id))) return false;
         if (o.type === "capsule" && !S.peseeOk) return false;
         return true;
       }
       function prenable(o) {
-        if (PRENABLES.includes(o.type)) return true;
+        if (PRENABLES.includes(o.type)) return !(FLA && o.type === "flacon"); // TP flammes : on ne prend pas le flacon, on y trempe le fil
+        if (M.troisieme && (o.type === "anse" || o.type === "cgoutte" || o.type === "etiq" && !o.sur || o.type === "baguette" || o.type === "metal" && !o.utilise || (o.type === "becher" && o.role === "dilu"))) return true;
         if (!M.seconde) return false;
         return PREN2.includes(o.type) || (o.type === "becher" && (o.role === "mesure" || (o.role === "pesee" && MID === "liquides"))) || (o.type === "fiole" && !!o.F && o.homog);
       }
@@ -22627,6 +23221,7 @@ const QUESTIONS = [
           if (x.type === "verre") x.V = 0;
         });
         if (MID === "gaz") S.epi = false;
+        if (M.troisieme) init3();
       }
       // Positions des objets posés sur un autre (balance, portoir, bain, fiole, cuve)
       function recaler2() {
@@ -22736,6 +23331,7 @@ const QUESTIONS = [
         if (S.loupe) s2 += loupeCCM();
         const th = O("th"), st = O("st");
         if (th && st) s2 = `<path d="M${th.x + th.ax + 80} ${th.y + th.ay + 58}C${th.x + 90} ${th.y + 110} ${st.x + st.ax + 5} ${st.y + st.ay - 60} ${st.x + st.ax + 5} ${st.y + st.ay}" class="c-cable"/>` + s2;
+        if (M.troisieme) s2 += avantPlan3();
         const e = S.effet;
         if (e && S.t - e.t0 < e.d) {
           const q = (S.t - e.t0) / e.d;
@@ -22784,6 +23380,7 @@ const QUESTIONS = [
       // ----- Toucher un objet, main vide -----
       function toucherVide2(o) {
         const t = o.type;
+        if (M.troisieme && toucherVide3(o)) return true;
         if (t === "tube") {
           if (MID === "gaz" && o.nom[0] === "G") { identifierGaz(o); return true; }
           if (o.fixe || MID === "gamme" || MID === "gaz") { message(MID === "gamme" ? `Tube de l'échelle « ${o.nom} » : on y verse la solution de cette concentration.` : `Tube ${o.nom}.`, "info"); return true; }
@@ -22820,6 +23417,7 @@ const QUESTIONS = [
       // ----- Utiliser l'objet en main sur un autre -----
       function utiliser2(m, o) {
         const t = m.type, c = o.type;
+        if (M.troisieme && utiliser3(m, o)) return true;
         // bécher de 50 mL et éprouvette : mesurer 10 mL au bidon, puis verser dans le bécher de pesée
         if ((t === "becher" && m.role === "mesure") || (t === "eprouvette" && MID === "verrerie")) {
           if (c === "bidon") {
@@ -23138,7 +23736,7 @@ const QUESTIONS = [
       function verserTube(m, tb, v, fin) {
         const rot = m.type === "fiole" ? 112 : 105, [tx, ty, r] = posPour(m, rot, tb.x + 9, tb.y - 4, tb.y, true), v0 = tb.V || 0, coul = m.type === "fiole" ? coulFiole(m) : m.contenu === "cuivre" ? coulCuivre(50) : COUL[m.contenu];
         if (m.type === "fiole") m.bouche = false;
-        suite([vers(m, tx, ty, 0.45), tourner(m, r, 0.35), [0.8, (q) => { tb.V = v0 + v * q; filet(m, tb.x + 9, surfTube(tb), coul, 2); }], tourner(m, 0, 0.3), retour(m, 0.4)], () => {
+        suite([vers(m, tx, ty, 0.45), tourner(m, r, 0.35), [0.8, (q) => { tb.V = v0 + v * q; teinter(tb, coul, v0, v * q); filet(m, tb.x + 9, surfTube(tb), coul, 2); }], tourner(m, 0, 0.3), retour(m, 0.4)], () => {
           tb.V = v0 + v; S.main = null; fin(); dessinerTout(); majMain();
         });
       }
@@ -23149,7 +23747,7 @@ const QUESTIONS = [
         suite([[0.25, () => { tb.bouche = false; }], vers(m, X + 4, Y - (m.type === "allumette" ? 12 : 6), 0.4), pause(0.25)], () => {
           let txt;
           if (m.type === "allumette") {
-            if (g === "H2") { S.effet = { type: "pop", x: X, y: Y, t0: S.t, d: 0.9 }; txt = "petite détonation (« pop »)"; }
+            if (g === "H2") { S.effet = { type: "pop", x: X, y: Y, t0: S.t, d: 0.9 }; if (window.sonPop) window.sonPop(); txt = "petite détonation (« pop »)"; }
             else if (g === "O2") { S.effet = { type: "vive", x: X, y: Y - 4, t0: S.t, d: 1.2 }; txt = "la flamme devient plus vive"; }
             else { m.allumee = false; m.brulee = true; S.effet = { type: "fumee", x: X, y: Y - 8, t0: S.t, d: 1.2 }; txt = "la flamme s'éteint"; }
           } else {
@@ -23200,8 +23798,636 @@ const QUESTIONS = [
         for (let i = 1; i < P.length; i++) if (t <= P[i][0]) { const [a, va] = P[i - 1], [b, vb] = P[i]; return va + (vb - va) * (t - a) / (b - a); }
         return 38;
       }
+      // ======================= 8. Troisième : TP « Du pH à la réaction acide-métal » (thème matière, 15/11/2026) =======================
+      // Même moteur, même matériel (pissette, bécher poubelle, pH-mètre déjà étalonné, éprouvette, tubes, portoir, allumette, lunettes).
+      // Matériel ajouté, dans le même style : agitateur en verre (« baguette »), papier pH sur sa soucoupe, échantillons de métaux.
+      // pH : valeurs fixées (ph3) cohérentes avec le cours (ATOMES.LIQUIDES) ; papier pH = valeur entière, pH-mètre = une décimale.
+      // Gestes réalistes : on dépose une goutte avec l'agitateur (on ne trempe pas le papier) ; on rince l'agitateur et la sonde
+      // entre deux solutions ; on verse l'acide dans l'eau (jamais l'inverse) ; on mélange avant de mesurer ; le tube est bouché
+      // dès que le métal y est, puis on approche une allumette enflammée en retirant le bouchon.
+      const PROD3 = ["citron", "vinaigre", "eau3", "savon", "javel"];
+      const METAUX3 = { fe: { nom: "fer", le: "le fer", taux: 0.7, dep: 0.4, ion: "Fe²⁺" }, al: { nom: "aluminium", le: "l'aluminium", taux: 0.9, dep: 2.6, ion: "Al³⁺" },
+        zn: { nom: "zinc", le: "le zinc", taux: 1, dep: 0.3, ion: "Zn²⁺" }, cu: { nom: "cuivre", le: "le cuivre", taux: 0 }, au: { nom: "or", le: "l'or", taux: 0 } };
+      const COUL_M = { fe: "#5E676B", al: "#C9CED2", zn: "#8E9BA4", cu: "#C46A3A", au: "#D9B23A" };
+      function pieceMetal(mt, cx, cy, k) { // dessin d'un morceau de métal centré en (cx, cy), échelle k
+        const c = COUL_M[mt], st = `stroke="#3D4448" stroke-width="${(0.6 / k).toFixed(2)}"`;
+        const g = mt === "fe" ? [[-6, 1, 1.6], [-3, -1, 1.5], [0, 1.4, 1.7], [3, -0.6, 1.5], [6, 1, 1.6], [-1.5, -2.4, 1.4], [2, -2.6, 1.4]].map(([x, y, r]) => `<circle cx="${x}" cy="${y}" r="${r}" fill="${c}" ${st}/>`).join("")
+          : mt === "al" ? `<path d="M-7 2L-5-3L-1-1L2-4L6-1L7 3L1 2L-3 4Z" fill="${c}" ${st}/><path d="M-4-1L0 1L4-1" fill="none" stroke="#fff" stroke-width=".8"/>`
+          : mt === "zn" ? `<path d="M-6 2q-1-4 3-4t3 3q-1 3-4 3t-2-2zM1 2q0-4 3-4t3 3-3 3-3-2z" fill="${c}" ${st}/>`
+          : mt === "cu" ? `<path d="M-7 1q2-5 5-1t5-1 4 2" fill="none" stroke="${c}" stroke-width="2.6" stroke-linecap="round"/>`
+          : `<path d="M-4 2q-2-3 1-5t5 0 1 4-4 2-3-1z" fill="${c}" ${st}/><path d="M-1-2l2 1" stroke="#FFF3B0" stroke-width=".9"/>`;
+        return `<g transform="translate(${cx.toFixed(1)} ${cy.toFixed(1)}) scale(${k})">${g}</g>`;
+      }
+      Object.assign(dessin2, {
+        baguette: (o) => `<rect x="2" y="0" width="4" height="${o.h}" rx="2" class="c-verre"/>${o.goutte ? `<ellipse cx="4" cy="${o.h + 1.5}" rx="2.4" ry="3" fill="${COUL[o.goutte] || COUL.eau}" stroke="#7FA2B4" stroke-width=".6"/>` : ""}<rect x="-6" y="-4" width="20" height="${o.h + 10}" fill="transparent"/>`,
+        papierph: (o) => {
+          const n = PROD3.length, x0 = 12, pas3 = (o.w - 24) / n;
+          return `<ellipse cx="${o.w / 2}" cy="${o.h - 8}" rx="${o.w / 2 - 1}" ry="7" class="c-verre"/><rect x="${x0 - 4}" y="${o.h - 22}" width="${o.w - 16}" height="11" rx="1.5" fill="#EBC66A" stroke="#B9944A" stroke-width=".6"/>`
+            + PROD3.map((p, k) => { const v = o.taches[p]; const cx = x0 + pas3 * (k + 0.5) - 4; return (v != null ? `<circle cx="${cx.toFixed(1)}" cy="${o.h - 16.5}" r="4.2" fill="${ATOMES.couleurPH(v)}"/>` : "")
+              + `<text x="${cx.toFixed(1)}" y="${o.h - 26}" class="c-etiq-p" text-anchor="middle">${k + 1}</text>`; }).join("")
+            + `<rect x="0" y="0" width="${o.w}" height="${o.h}" fill="transparent"/>`;
+        },
+        metal: (o) => `<path d="M2 ${o.h - 10}Q${o.w / 2} ${o.h + 2} ${o.w - 2} ${o.h - 10}" class="c-verre-o"/>${o.utilise ? "" : pieceMetal(o.metal, o.w / 2, o.h - 9, 1.15)}<rect x="0" y="0" width="${o.w}" height="${o.h}" fill="transparent"/>`
+      });
+      Object.assign(COUL, { citron: "#F7F0B0", vinaigre: "#EEF3F6", eau3: "#DCEBF3", savon: "#EEF0F2", javel: "#F1F2D2", dil: "#E9F1F5", hcl: "#E8F0F4", hclfe: "#DCEDD0" });
+      Object.assign(NOMS, { citron: "le jus de citron", vinaigre: "le vinaigre", eau3: "l'eau minérale", savon: "l'eau savonneuse", javel: "l'eau de Javel", dil: "la solution diluée", hcl: "l'acide chlorhydrique", hclfe: "l'acide chlorhydrique" });
+      function init3() {
+        if (ION) { initIon(); return; }
+        if (FLA) { initFla(); return; }
+        S.cap.etal = 2; // pH-mètre déjà étalonné par le professeur (collège)
+        S.ordre.map(O).forEach((x) => {
+          if (x.type === "papierph") x.taches = {};
+          if (x.type === "baguette") { x.goutte = null; x.sale = null; }
+          if (x.type === "becher" && x.role === "dilu") { x.n = 0; x.homog = true; x.ph3 = 7.0; }
+          if (x.type === "tube" && x.contenu === "hcl") { x.metal = null; x.gaz = 0; x.bul = []; x.reste = 1; x.vu = false; }
+          if (x.type === "metal") x.utilise = false;
+          if (x.type === "eprouvette") { x.V = 0; x.contenu = null; }
+        });
+        S.chute = null;
+      }
+      const part3 = (n) => n.replace(/^(le |la )/, "de ").replace(/^l'/, "d'"); // « le vinaigre » → « de vinaigre », « l'eau » → « d'eau »
+      const nom3 = (o) => nomIon(o) || nomFla(o) || (o.type === "baguette" ? "l'agitateur en verre" : o.type === "papierph" ? "le papier pH" : o.type === "metal" ? `l'échantillon de ${METAUX3[o.metal].nom}`
+        : o.type === "becher" && o.role === "dilu" ? `le bécher ${o.nom.slice(-1)}` : o.type === "becher" && o.role === "produit" ? "le bécher " + part3(NOMS[o.contenu]) : o.type === "eprouvette" ? "l'éprouvette graduée de 25 mL" : null);
+      const lunettes3 = () => { if (S.epi) return true; message("Mets d'abord tes lunettes de protection (touche les lunettes) : certaines solutions sont corrosives.", "err"); return false; };
+      // ----- l'agitateur en verre : plonger, déposer, mélanger, rincer -----
+      const pointeBag = (b) => [b.x + b.ax + b.w / 2, b.y + b.ay + b.h];
+      const versPointe = (b, X, Y, d) => vers(b, X - b.w / 2, Y - b.h, d);
+      function plongerBag(bg, b, fin) {
+        const X = b.x + b.w / 2, top = b.y - 6;
+        suite([versPointe(bg, X, top, 0.4), versPointe(bg, X, b.y + b.h - 8, 0.35), pause(0.2), versPointe(bg, X, top, 0.3)], fin);
+      }
+      function deposerPapier(bg, pap) {
+        const k = PROD3.indexOf(bg.goutte), pas3 = (pap.w - 24) / PROD3.length, X = pap.x + 12 + pas3 * (k + 0.5) - 4, Y = pap.y + pap.h - 21;
+        const v = ATOMES.LIQUIDES.find((l) => l.id === { eau3: "pure", savon: "savon", citron: "citron", vinaigre: "vinaigre", javel: "javel" }[bg.goutte]).pH;
+        suite([versPointe(bg, X, Y - 14, 0.45), versPointe(bg, X, Y, 0.25), [0.4, () => { pap.taches[bg.goutte] = v; }], pause(0.2), versPointe(bg, X, Y - 20, 0.2), retour(bg, 0.4)], () => {
+          const prod = bg.goutte; bg.sale = prod; bg.goutte = null; S.main = null;
+          message(`Goutte déposée en case ${k + 1} : la tache a la couleur de la case ${v} du nuancier, pH ≈ ${v}. Rince l'agitateur avant de l'utiliser dans une autre solution.`, "ok");
+          donnee({ obj: "a1", prod, papier: v }); dessinerTout(); majMain();
+        });
+      }
+      function melangerBag(bg, b) {
+        const X = b.x + b.w / 2;
+        suite([versPointe(bg, X, b.y - 6, 0.4), versPointe(bg, X, b.y + b.h - 8, 0.3), versPointe(bg, X - 7, b.y + b.h - 10, 0.15), versPointe(bg, X + 7, b.y + b.h - 10, 0.2), versPointe(bg, X - 7, b.y + b.h - 10, 0.2), versPointe(bg, X + 7, b.y + b.h - 10, 0.2), versPointe(bg, X, b.y - 6, 0.25), retour(bg, 0.4)], () => {
+          b.homog = true; bg.sale = b.id; S.main = null; message(`Solution ${nom3(b).replace(/^le /, "du ")} mélangée avec l'agitateur en verre : elle est homogène. Rince l'agitateur avant de t'en resservir.`, "ok"); dessinerTout(); majMain();
+        });
+      }
+      function rincerBag(p, bg) {
+        const pou = O("pou"), X = pou.x + pou.w / 2;
+        suite([versPointe(bg, X, pou.y - 2, 0.45)], () => {
+          const [x, y] = pointeBag(bg);
+          pissetteVers(p, x, y - 30, 0.9, () => { if (Math.random() < 0.3) goutte(x, y, surface(pou), COUL.eau); }, () => {
+            pou.V += 3; bg.sale = null; bg.goutte = null;
+            suite([retour(bg, 0.4)], () => { message("Agitateur en verre rincé à l'eau distillée, au-dessus du bécher poubelle.", "ok"); dessinerTout(); majMain(); });
+          });
+        });
+      }
+      // ----- l'éprouvette : mesurer 10 mL, verser dans l'eau -----
+      function remplirEpr(epr, src, contenu) {
+        if (S.sonde && S.sonde.lieu === src.id) { message("Retire d'abord la sonde de ce bécher (prends-la), puis rince-la au-dessus du bécher poubelle.", "err"); return; }
+        const [tx, ty, r] = posPour(src, 100, epr.x + epr.ax + epr.w / 2, epr.y + epr.ay - 4, epr.y + epr.ay);
+        suite([vers(src, tx, ty, 0.45), tourner(src, r, 0.35), [0.9, (q) => { epr.V = 10 * q; teinter(epr, COUL[src.contenu] || COUL.eau, 0, 10 * q); filet(src, epr.x + epr.w / 2, epr.y + epr.h - 6 - (epr.V / 25) * (epr.h - 12), COUL[src.contenu] || COUL.eau, 2); }], tourner(src, 0, 0.3), retour(src, 0.4)], () => {
+          epr.V = 10; epr.contenu = contenu; src.V -= 10; S.main = null;
+          message(`10 mL ${contenu === "vinaigre" ? "de vinaigre" : "de solution diluée"} mesurés : le bas du ménisque est sur la graduation 10. Verse-les maintenant dans un bécher qui ne contient que de l'eau.`, "ok"); dessinerTout(); majMain();
+        });
+      }
+      function verserEpr(epr, b) {
+        const [tx, ty, r] = posPour(epr, 105, b.x + b.w / 2, b.y - 4, b.y);
+        const n = epr.contenu === "vinaigre" ? 1 : 2;
+        suite([vers(epr, tx, ty, 0.45), tourner(epr, r, 0.35), [0.9, (q) => { epr.V = 10 * (1 - q); b.V = 90 + 10 * q; filet(epr, b.x + b.w / 2, surface(b), COUL.eau, 2); }], tourner(epr, 0, 0.3), retour(epr, 0.4)], () => {
+          epr.V = 0; epr.contenu = null; b.V = 100; b.n = n; b.contenu = "dil"; b.ph3 = n === 1 ? 3.4 : 3.9; b.homog = false; S.main = null;
+          message(`Acide versé dans l'eau : ${nom3(b)} contient maintenant 100 mL. Mélange-le avec l'agitateur en verre avant de mesurer son pH.`, "ok"); dessinerTout(); majMain();
+        });
+      }
+      // ----- les métaux : un morceau dans un tube d'acide, boucher, tester le gaz -----
+      function deposerMetal(m, tb) {
+        const X = tb.x + tb.w / 2;
+        suite([vers(m, X - m.w / 2, tb.y - m.h - 10, 0.45), [0.5, (q) => { m.utilise = true; S.chute = { mt: m.metal, x: X, y: tb.y - 14 + (tb.y + tb.h - 12 - tb.y + 14) * q * q }; }], retour(m, 0.4)], () => {
+          S.chute = null; tb.metal = m.metal; tb.t0 = S.t; tb.vu = false; S.main = null;
+          message(`Morceau de ${METAUX3[m.metal].nom} dans le tube ${tb.nom}. Bouche vite le tube (touche-le), puis observe.`, "info"); dessinerTout(); majMain();
+        });
+      }
+      function testMetal(al, tb) {
+        const mt = METAUX3[tb.metal], X = tb.x + tb.w / 2, Y = tb.y, pop = tb.gaz >= 1;
+        suite([[0.25, () => { tb.bouche = false; }], vers(al, X + 4, Y - 12, 0.4), pause(0.25)], () => {
+          if (pop) { S.effet = { type: "pop", x: X, y: Y, t0: S.t, d: 0.9 }; if (window.sonPop) window.sonPop(); }
+          tb.gaz = 0; tb.teste = true;
+          const bulles = mt.taux > 0;
+          donnee({ obj: "a3", metal: tb.metal, bulles, pop });
+          message(pop ? `Tube ${tb.nom} (${mt.nom}) : petite détonation (« pop ») ! Le gaz formé est du dihydrogène H₂ : ${mt.le} est attaqué par l'acide.` : `Tube ${tb.nom} (${mt.nom}) : aucune détonation, aucune bulle : ${mt.le} n'est pas attaqué par l'acide chlorhydrique.`, "ok");
+          tache("m-" + tb.metal);
+          suite([pause(0.9), retour(al, 0.4)], () => { if (al.allumee) { al.allumee = false; al.brulee = true; } dessinerTout(); majMain(); });
+          dessinerTout();
+        });
+      }
+      function boucle3(dt) {
+        if (ION) return boucleIon(dt);
+        if (FLA) return boucleFla(dt);
+        if (MID !== "metaux") return false;
+        let r = !!S.chute;
+        S.ordre.map(O).forEach((tb) => {
+          if (tb.type !== "tube" || !tb.metal) return;
+          const mt = METAUX3[tb.metal], age = S.t - tb.t0, actif = mt.taux > 0 && age > mt.dep;
+          if (!tb.vu && age > 3.5) {
+            tb.vu = true; r = true;
+            if (!S.anims.length) message(mt.taux > 0 ? `Tube ${tb.nom} : ${tb.metal === "al" ? "rien au début, puis des bulles apparaissent autour de l'aluminium" : `des bulles de gaz se forment autour du morceau de ${mt.nom}`}. ${tb.bouche ? "Le gaz s'accumule dans le tube bouché : approche une allumette enflammée." : "Bouche le tube pour recueillir le gaz."}` : `Tube ${tb.nom} : rien ne se passe autour du morceau de ${mt.nom}.${tb.bouche ? " Approche quand même une allumette pour vérifier." : ""}`, "info");
+          }
+          if (actif) {
+            const f = Math.min(1, (age - mt.dep) / 1.5) * mt.taux;
+            tb.reste = Math.max(0.55, tb.reste - dt * 0.012 * mt.taux);
+            if (tb.bouche) tb.gaz = Math.min(3, tb.gaz + dt * 0.6 * f);
+            if (Math.random() < f * dt * 14) tb.bul.push({ x: 4 + Math.random() * 10, y: tb.h - 8, r: 0.9 + Math.random() * 1.2, v: 22 + Math.random() * 14 });
+            if (tb.metal === "fe" && age > 6 && tb.contenu === "hcl") tb.contenu = "hclfe";
+            r = true;
+          }
+          if (tb.bul.length) {
+            const haut = tb.h - 2 - Math.min(tb.h - 6, ((tb.V || 0) / 20) * (tb.h - 4));
+            tb.bul.forEach((b) => { b.y -= b.v * dt; b.x += Math.sin(b.y / 5) * 0.15; }); tb.bul = tb.bul.filter((b) => b.y > haut + 1.5); r = true;
+          }
+        });
+        return r;
+      }
+      function avantPlan3() {
+        let s3 = ION ? avantIon() : FLA ? avantFla() : "";
+        S.ordre.map(O).forEach((x) => {
+          if (x.type === "tube" && x.metal) {
+            const X = x.x + x.ax, Y = x.y + x.ay;
+            s3 += `<g pointer-events="none">${pieceMetal(x.metal, X + x.w / 2, Y + x.h - 7, 0.62 * x.reste)}${x.bul.map((b) => `<circle cx="${(X + b.x).toFixed(1)}" cy="${(Y + b.y).toFixed(1)}" r="${b.r.toFixed(1)}" fill="none" stroke="#6F98AC" stroke-width=".7"/>`).join("")}</g>`;
+          }
+          if (x.type === "becher" && x.corrosif) s3 += `<image href="${ATOMES.SGH05_PNG}" x="${x.x + x.ax + 2}" y="${x.y + x.ay + 3}" width="17" height="17" pointer-events="none"/>`;
+        });
+        if (S.chute) s3 += `<g pointer-events="none">${pieceMetal(S.chute.mt, S.chute.x, S.chute.y, 0.62)}</g>`;
+        return s3;
+      }
+      // ----- toucher (main vide) -----
+      function toucherVide3(o) {
+        if (ION) return toucherVideIon(o);
+        if (FLA) return toucherVideFla(o);
+        const t = o.type;
+        if (t === "papierph") { const n = Object.keys(o.taches).length; message(`Papier pH : ${n} tache${n > 1 ? "s" : ""} sur 5. Pour chaque solution : plonger l'agitateur, déposer la goutte dans la case de la solution, puis rincer l'agitateur.`, "info"); return true; }
+        if (t === "becher" && o.role === "produit") { message(`Bécher ${part3(NOMS[o.contenu])}. Mesure son pH avec l'agitateur en verre et le papier pH${O("son") ? ", ou avec la sonde du pH-mètre" : ""}.`, "info"); return true; }
+        if (t === "tube" && MID === "metaux") {
+          if (!o.metal) { message(`Tube ${o.nom} : acide chlorhydrique (H⁺ + Cl⁻). Prends un échantillon de métal et touche ce tube pour l'y mettre.`, "info"); return true; }
+          if (!o.bouche) { o.bouche = true; message(`Tube ${o.nom} bouché : le gaz qui se forme éventuellement s'accumule. Attends quelques secondes, puis approche une allumette enflammée.`, "ok"); return true; }
+          message(`Tube ${o.nom} bouché. Prends l'allumette, puis touche le tube.`, "info"); return true;
+        }
+        return false;
+      }
+      // ----- utiliser l'objet en main sur un autre -----
+      function utiliser3(m, o) {
+        const t = m.type;
+        if (o.type === "sonde" && S.sonde && S.sonde.lieu && t !== "pissette" && t !== "sonde") o = O(S.sonde.lieu); // toucher la sonde plongée = toucher son bécher
+        const c = o.type;
+        if (c === "epi") { if (!S.epi) { S.epi = true; message("Lunettes de protection portées.", "ok"); } else message("Lunettes déjà portées.", "info"); S.refus = true; return true; } // la main garde son objet
+        if (ION) return utiliserIon(m, o);
+        if (FLA) return utiliserFla(m, o);
+        if (t === "baguette" && c === "pissette") { if (!m.goutte && !m.sale) { message("L'agitateur est déjà propre.", "info"); return true; } rincerBag(o, m); return true; }
+        if (t === "baguette") {
+          if (!lunettes3()) return true;
+          if (c === "becher" && (o.role === "produit" || o.role === "dilu")) {
+            if (m.goutte || (m.sale && m.sale !== o.id && m.sale !== o.contenu)) { message("Rince d'abord l'agitateur en verre (prends la pissette, puis touche l'agitateur) : sinon tu mélanges les solutions.", "err"); return true; }
+            if (o.role === "dilu") { if (!o.n) { message("Ce bécher ne contient que de l'eau : verse d'abord dedans les 10 mL d'acide mesurés à l'éprouvette.", "err"); return true; } if (o.homog) { message("Cette solution est déjà mélangée.", "info"); return true; } return melangerBag(m, o), true; }
+            if (MID !== "ph3e") { message("Ici, l'agitateur en verre sert à mélanger la solution diluée.", "err"); return true; }
+            plongerBag(m, o, () => { m.goutte = o.contenu; S.main = m.id; message(`Une goutte ${part3(NOMS[o.contenu])} est au bout de l'agitateur : touche le papier pH.`, "info"); dessinerTout(); majMain(); });
+            return true;
+          }
+          if (c === "papierph") {
+            if (!m.goutte) { message(m.sale ? "L'agitateur est sale : rince-le, puis plonge-le dans une solution avant de toucher le papier." : "Plonge d'abord l'agitateur dans une solution pour prendre une goutte.", "err"); return true; }
+            if (o.taches[m.goutte] != null) { message("Cette solution a déjà sa tache sur le papier pH.", "info"); return true; }
+            deposerPapier(m, o); return true;
+          }
+          if (c === "becher" && o.role === "poubelle") { message("Pour rincer l'agitateur : prends la pissette, puis touche l'agitateur.", "info"); return true; }
+          return false;
+        }
+        if (t === "pissette" && c === "baguette") { if (!m.goutte && !o.goutte && !o.sale) { message("L'agitateur est déjà propre.", "info"); return true; } rincerBag(m, o); return true; }
+        if (t === "sonde" && c === "becher" && (o.role === "produit" || o.role === "dilu")) {
+          if (!lunettes3()) return true;
+          if (o.role === "dilu" && !o.n) { message("Ce bécher ne contient que de l'eau : verse d'abord dedans les 10 mL d'acide.", "err"); return true; }
+          if (o.role === "dilu" && !o.homog) { message("Mélange d'abord la solution avec l'agitateur en verre : sinon le pH mesuré dépend de l'endroit où plonge la sonde.", "err"); return true; }
+          placerSonde(o);
+          if (S.sonde.lieu === o.id) {
+            const v = o.ph3, k = o.role === "produit" ? o.contenu : o.id;
+            message(`Le pH-mètre affiche pH = ${fx(v, 1)} pour ${o.role === "produit" ? NOMS[o.contenu] : "la solution diluée " + o.n}. Avant une autre mesure, rince la sonde au-dessus du bécher poubelle.`, "ok");
+            if (o.role === "produit") donnee({ obj: MID === "ph3e" ? "a1" : "a2", prod: o.contenu, phm: v });
+            else { donnee({ obj: "a2", n: o.n, phm: v }); tache("dil" + o.n); }
+          }
+          return true;
+        }
+        if (t === "eprouvette" && MID === "dilu3e") {
+          if (!lunettes3()) return true;
+          const n1 = S.ordre.map(O).find((x) => x.role === "dilu" && x.n === 1);
+          if (c === "becher" && o.role === "produit") {
+            if (m.V > 0) { message("On ne remet jamais un liquide dans le récipient d'où il vient. Verse le contenu de l'éprouvette dans un bécher d'eau.", "err"); return true; }
+            if (n1) { message(`Première dilution faite. Pour la deuxième, prélève 10 mL de la solution diluée (${nom3(n1)}).`, "err"); return true; }
+            remplirEpr(m, o, "vinaigre"); return true;
+          }
+          if (c === "becher" && o.role === "dilu") {
+            if (m.V > 0) {
+              if (o.n) { message("Ce bécher contient déjà une solution diluée : verse l'acide dans le bécher qui ne contient que de l'eau.", "err"); return true; }
+              verserEpr(m, o); return true;
+            }
+            if (o.n === 1) { if (!o.homog) { message("Mélange d'abord cette solution avec l'agitateur en verre.", "err"); return true; } if (S.ordre.map(O).some((x) => x.role === "dilu" && x.n === 2)) { message("Les deux dilutions sont faites.", "info"); return true; } remplirEpr(m, o, "dil"); return true; }
+            message(o.n === 2 ? "Les deux dilutions sont faites." : "Remplis d'abord l'éprouvette avec 10 mL d'acide (vinaigre ou solution diluée).", "info"); return true;
+          }
+          return false;
+        }
+        if (t === "becher" && o && m.role === "dilu") {
+          if ((c === "becher" && o.role === "produit") || c === "eprouvette") { message("Jamais l'eau dans l'acide ! On verse toujours l'acide dans l'eau : sinon le mélange peut chauffer brutalement et projeter de l'acide.", "err"); return true; }
+          message("Laisse le bécher d'eau sur la paillasse : c'est l'acide qu'on verse dedans, avec l'éprouvette.", "err"); return true;
+        }
+        if (t === "metal") {
+          if (!lunettes3()) return true;
+          if (c !== "tube") { message("Mets le morceau de métal dans un tube d'acide chlorhydrique (touche un tube).", "err"); return true; }
+          if (o.metal) { message(`Le tube ${o.nom} contient déjà un métal : un seul métal par tube.`, "err"); return true; }
+          deposerMetal(m, o); return true;
+        }
+        if (t === "allumette" && c === "tube" && MID === "metaux") {
+          if (!o.metal) { message(`Le tube ${o.nom} ne contient pas encore de métal.`, "err"); return true; }
+          if (o.teste) { message(`Le test du tube ${o.nom} est déjà fait.`, "info"); return true; }
+          if (!o.bouche) { message("Bouche d'abord le tube quelques secondes (touche-le) pour recueillir le gaz qui pourrait se former.", "err"); return true; }
+          if (S.t - o.t0 < 4) { message("Laisse agir l'acide quelques secondes avant de faire le test.", "err"); return true; }
+          if (METAUX3[o.metal].taux > 0 && o.gaz < 1) { message("Le gaz n'a pas encore eu le temps de s'accumuler dans le tube bouché : attends encore quelques secondes.", "err"); return true; }
+          testMetal(m, o); return true;
+        }
+        return false;
+      }
+
+      // ======================= 9. Troisième : TP « Les flacons sans étiquette » (chapitre « ions », 15/11/2026) =======================
+      // Même moteur, même matériel (flacons, tubes, portoir, lunettes). Matériel ajouté dans le même style : flacons compte-gouttes
+      // (soude, nitrate d'argent), étiquettes à coller. Gestes réalistes : verser un peu de solution (environ 3 cm) dans un tube propre,
+      // retourner le flacon compte-gouttes au-dessus du tube (4 gouttes), agiter le tube, observer. Un seul réactif par tube ;
+      // on ne verse jamais un réactif dans un flacon. Le précipité apparaît là où tombent les gouttes, se répartit quand on agite,
+      // puis se dépose au fond ; celui du chlorure d'argent grisit peu à peu à la lumière (comme dans la banque du cours).
+      // Résultats cohérents avec la banque du cours (ATOMES.TESTS) : soude → Cu²⁺ bleu, Fe²⁺ vert, Fe³⁺ rouille ; nitrate d'argent → Cl⁻ blanc.
+      const ION = ["ions1", "ions2", "ions3"].includes(MID);
+      const SOLI = {
+        cuso4: { nom: "Sulfate de cuivre", court: "sulfate Cu", ions: "Cu²⁺ + SO₄²⁻", soude: "bleu", nitrate: null },
+        fecl3: { nom: "Chlorure de fer III", court: "fer III", ions: "Fe³⁺ + 3 Cl⁻", soude: "rouille", nitrate: "blanc" },
+        nacl: { nom: "Eau salée", court: "eau salée", ions: "Na⁺ + Cl⁻", soude: null, nitrate: "blanc", nom2: "Chlorure de sodium" },
+        feso4: { nom: "Sulfate de fer II", court: "fer II", ions: "Fe²⁺ + SO₄²⁻", soude: "vert", nitrate: null }
+      };
+      const REACI = { soude: { nom: "soude", de: "de soude", court: "+ soude" }, nitrate: { nom: "nitrate d'argent", de: "de nitrate d'argent", court: "+ nitrate" } };
+      const PREC = { bleu: "#2F74D0", vert: "#4E7D3C", rouille: "#B4541E", blanc: "#F4F3EC" };
+      const PREC_ION = { bleu: "ions cuivre II Cu²⁺", vert: "ions fer II Fe²⁺", rouille: "ions fer III Fe³⁺", blanc: "ions chlorure Cl⁻" };
+      Object.assign(COUL, { cuso4: "#BFE0F5", fecl3: "#F2DFA8", nacl: "#E4EEF4", feso4: "#DDEFD3", soude: "#EEF2F4", nitrate: "#F2F2F2" });
+      Object.assign(NOMS, { cuso4: "la solution de sulfate de cuivre", fecl3: "la solution de chlorure de fer III", nacl: "l'eau salée", feso4: "la solution de sulfate de fer II", soude: "la soude", nitrate: "le nitrate d'argent" });
+      Object.assign(BEC, { cgoutte: [16, 0] });
+      const melIon = (a, b, q) => { const h = (c) => [1, 3, 5].map((i) => parseInt(c.slice(i, i + 2), 16)); const A = h(a), B = h(b); return "#" + A.map((v, i) => Math.round(v + (B[i] - v) * q).toString(16).padStart(2, "0")).join(""); };
+      const coulPrec = (tb) => tb.res === "blanc" && tb.reac === "nitrate" ? melIon(PREC.blanc, "#A39EAF", Math.min(1, Math.max(0, (S.t - tb.tPrec) / 30))) : PREC[tb.res];
+      function nomIon(o) {
+        if (!ION) return null;
+        if (o.type === "cgoutte") return "le flacon compte-gouttes " + REACI[o.reac].de;
+        if (o.type === "etiq") return `l'étiquette « ${o.l1} »`;
+        if (o.type === "flacon") return o.lettre ? "le flacon " + o.lettre : "le flacon " + part3(NOMS[o.contenu]).replace(/^de la solution /, "de ");
+        if (o.type === "tube") return o.sol ? `le tube ${o.nom}` : "ce tube propre";
+        return null;
+      }
+      // ----- Dessins : flacon compte-gouttes, étiquette, tube avec son précipité -----
+      Object.assign(dessin2, {
+        cgoutte: (o) => `<path d="M14 0h4l1.2 9h-6.4z" fill="#F4F6F6" stroke="#8C9A9A" stroke-width=".6"/><rect x="9" y="8" width="14" height="13" rx="3" fill="#3E4A4F"/><path d="M11 12h10M11 16h10" stroke="#5D6A70" stroke-width="1"/>
+          <path d="M4 26q0-5 6-5h12q6 0 6 5v30a4 4 0 01-4 4H8a4 4 0 01-4-4z" fill="#B97A3E" fill-opacity=".85" stroke="#6E4520" stroke-width="1"/><path d="M8 27v26" class="c-reflet"/>
+          <rect x="6" y="31" width="20" height="21" rx="1.5" class="c-etiq"/>${texteAjuste([{ t: o.l1, fs: 6.4, cls: "c-etiq-t" }], 7, 32, 18, 12)}<image href="${ATOMES.SGH05_PNG}" x="11.5" y="43" width="9" height="9"/>
+          <rect x="-4" y="-4" width="40" height="68" fill="transparent"/>`,
+        etiq: (o) => `<rect x="0.5" y="0.5" width="${o.w - 1}" height="${o.h - 1}" rx="3" class="c-etiq"/><path d="M4 ${o.h - 4}H${o.w - 4}" stroke="#B7C4C0" stroke-width=".6"/>${texteAjuste([{ t: o.l1, fs: 8.6, cls: "c-etiq-t" }, { t: o.l2, fs: 7, cls: "c-etiq-p" }], 5, 2, o.w - 10, o.h - 5)}<rect x="-4" y="-4" width="${o.w + 8}" height="${o.h + 8}" fill="transparent"/>`
+      });
+      if (ION) {
+        const tube0 = dessin2.tube;
+        dessin2.tube = (o) => {
+          let s = tube0(o);
+          if (!o.res || !o.V) return s;
+          const h = o.h, hl = Math.min(h - 6, (o.V / 20) * (h - 4)), y0 = h - 2 - hl, c = coulPrec(o), cid = "clpi-" + o.id;
+          s += `<clipPath id="${cid}"><path d="M2.2 ${y0.toFixed(1)}V${h - 9}a6.8 6.8 0 0013.6 0V${y0.toFixed(1)}z"/></clipPath><g clip-path="url(#${cid})">`;
+          if (o.voile > 0.01) s += `<rect x="0" y="${y0.toFixed(1)}" width="18" height="${hl.toFixed(1)}" fill="${c}" opacity="${((o.res === "blanc" ? 0.9 : 0.55) * o.voile).toFixed(2)}"/>`;
+          if (o.dep > 0.01) s += `<rect x="0" y="${(h - 2 - 9 * o.dep).toFixed(1)}" width="18" height="${(9 * o.dep + 1).toFixed(1)}" fill="${c}"/><path d="M3 ${(h - 2 - 9 * o.dep).toFixed(1)}q3-1.2 6 0t6 0" fill="none" stroke="${o.res === "blanc" ? "#8F9AA0" : c}" stroke-width="${o.res === "blanc" ? 0.7 : 1.6}"/>`;
+          o.flocs.forEach((f) => { s += `<circle cx="${f.x.toFixed(1)}" cy="${f.y.toFixed(1)}" r="${f.r.toFixed(1)}" fill="${c}"${o.res === "blanc" ? ` stroke="#8F9AA0" stroke-width=".5"` : ""}/>`; });
+          return s + "</g>";
+        };
+      }
+      function initIon() {
+        const ordreSol = (ctx.tirage && ctx.tirage.ions) || ["cuso4", "fecl3", "nacl", "feso4"];
+        S.epi = false; S.etiqFaites = false;
+        S.ordre.map(O).forEach((x) => {
+          if (x.type === "flacon" && x.lettre) { x.contenu = ordreSol["ABCD".indexOf(x.lettre)]; x.l1 = "Flacon " + x.lettre; x.l2 = "sans étiquette"; x.etiq = null; }
+          if (x.type === "tube") Object.assign(x, { V: 0, nom: "", sol: null, lettre: null, reac: null, res: null, ng: 0, agite: false, flocs: [], voile: 0, dep: 0, tPrec: 0, contenu: null });
+          if (x.type === "etiq") { x.sur = null; x.cache = false; }
+        });
+      }
+      const lunettesI = () => { if (S.epi) return true; message("Mets d'abord tes lunettes de protection (touche les lunettes) : la soude et le nitrate d'argent sont corrosifs.", "err"); return false; };
+      const tubesI = () => S.ordre.map(O).filter((x) => x.type === "tube");
+      const cleSol = (tb) => tb.lettre || tb.sol;
+      const fait = (sol, reac) => tubesI().some((x) => cleSol(x) === sol && x.reac === reac);
+      // ----- Verser un peu de solution (environ 3 cm) dans un tube propre -----
+      function verserSolution(fl, tb) {
+        if (!lunettesI()) return;
+        if (tb.V > 0) { message(`Ce tube contient déjà ${tb.lettre ? "la solution du flacon " + tb.lettre : NOMS[tb.sol]} : prends un tube propre.`, "err"); return; }
+        const cle = fl.lettre || fl.contenu, enAttente = tubesI().filter((x) => cleSol(x) === cle && !x.reac).length, faits = ["soude", "nitrate"].filter((r) => fait(cle, r)).length;
+        if (enAttente + faits >= 2) { message(fl.lettre ? `Tu as déjà assez de tubes du flacon ${fl.lettre} : un pour la soude, un pour le nitrate d'argent.` : `Tu as déjà assez de tubes de cette solution : un pour la soude, un pour le nitrate d'argent.`, "err"); return; }
+        verserTube(fl, tb, 8, () => {
+          tb.sol = fl.contenu; tb.contenu = fl.contenu; tb.lettre = fl.lettre || null; tb.nom = fl.lettre || SOLI[fl.contenu].court;
+          message(`Un peu ${fl.lettre ? "de la solution du flacon " + fl.lettre : part3(NOMS[fl.contenu])} dans le tube. Ajoute maintenant quelques gouttes d'un réactif (prends un flacon compte-gouttes, puis touche ce tube).`, "ok");
+        });
+      }
+      // ----- Le flacon compte-gouttes : retourné au-dessus du tube, 4 gouttes -----
+      function ajouterGouttes(cg, tb) {
+        if (!lunettesI()) return;
+        if (!tb.V) { message("Ce tube est vide : verse d'abord un peu de la solution à tester (prends un flacon, puis touche le tube).", "err"); return; }
+        if (tb.reac) { message(`Ce tube contient déjà ${REACI[tb.reac].nom === "soude" ? "de la soude" : "du nitrate d'argent"} : un seul réactif par tube. Verse la solution dans un tube propre.`, "err"); return; }
+        if (fait(cleSol(tb), cg.reac)) { message(`Tu as déjà testé ${tb.lettre ? "le flacon " + tb.lettre : NOMS[tb.sol]} avec ${REACI[cg.reac].nom === "soude" ? "la soude" : "le nitrate d'argent"} : utilise l'autre réactif dans ce tube.`, "err"); return; }
+        const X = tb.x + 9, res = SOLI[tb.sol][cg.reac];
+        const [tx, ty, r] = posPour(cg, 165, X, tb.y - 10, tb.y - 6);
+        tb.reac = cg.reac; // le tube est réservé dès le début du geste (environ 3 cm de solution)
+        const etapes = [vers(cg, tx, ty, 0.45), tourner(cg, r, 0.4)];
+        for (let k = 0; k < 4; k++) {
+          let go = false, arr = false;
+          etapes.push([0.42, (q) => {
+            if (!go) { go = true; const [bx, by] = bec(cg); goutte(bx, by, surfTube(tb), COUL[cg.reac]); }
+            if (!arr && q > 0.55) { arr = true; tb.ng++; tb.V += 0.25; if (res) { tb.res = res; tb.tPrec = tb.tPrec || S.t; const yS = surfTube(tb) - tb.y - tb.ay; for (let i = 0; i < 5; i++) tb.flocs.push({ x: 6 + Math.random() * 6, y: yS + 1 + Math.random() * 4, r: 0.7 + Math.random() * 0.8, v: 0.8 + Math.random() * 1.2 }); } }
+          }]);
+        }
+        etapes.push(tourner(cg, 0, 0.35), retour(cg, 0.4));
+        suite(etapes, () => {
+          S.main = null; cg.miroir = false; S.loupe = { id: tb.id, t0: S.t };
+          message(res ? `4 gouttes ${REACI[cg.reac].de} : un précipité ${res} apparaît là où tombent les gouttes. Agite le tube (touche-le) pour bien mélanger, puis observe.` : `4 gouttes ${REACI[cg.reac].de} : rien n'apparaît pour l'instant. Agite le tube (touche-le) pour bien mélanger, puis observe.`, "info");
+          dessinerTout(); majMain();
+        });
+      }
+      // ----- Agiter le tube, observer -----
+      function agiterTube(tb) {
+        const res = tb.res, z = () => { const h = tb.h, hl = Math.min(h - 6, (tb.V / 20) * (h - 4)); return [h - 2 - hl, h - 4]; };
+        suite([tourner(tb, 20, 0.15), [0.2, (q) => { tb.rot = 20 - 40 * lisse(q); }], [0.2, (q) => { tb.rot = -20 + 40 * lisse(q); }], [0.2, (q) => { tb.rot = 20 - 40 * lisse(q); }], tourner(tb, 0, 0.15)], () => {
+          tb.agite = true; S.loupe = { id: tb.id, t0: S.t };
+          if (res) {
+            const [ya, yb] = z(); tb.voile = 1; tb.flocs = [];
+            for (let i = 0; i < 26; i++) tb.flocs.push({ x: 4 + Math.random() * 10, y: ya + 1 + Math.random() * (yb - ya - 2), r: 0.6 + Math.random() * 0.9, v: 1.2 + Math.random() * 1.6 });
+          }
+          const ou = tb.lettre ? `flacon ${tb.lettre}` : SOLI[tb.sol].nom.toLowerCase(), rc = REACI[tb.reac].nom;
+          const obs = res ? `précipité ${res}` : "aucun précipité";
+          if (MID === "ions1") {
+            message(res ? `Tube agité (${ou} + ${rc}) : ${obs}${res === "blanc" ? " (il va noircir peu à peu à la lumière)" : ""}. D'après la banque, la solution contient des ${PREC_ION[res]}.` : `Tube agité (${ou} + ${rc}) : aucun précipité. Le test est négatif : la solution ne contient aucun des ions que ${rc === "soude" ? "la soude" : "le nitrate d'argent"} met en évidence.`, res ? "ok" : "info");
+            donnee({ obj: "i1", sol: tb.sol, reac: tb.reac, res });
+            const T = { "cuso4-soude": "t-cu", "nacl-nitrate": "t-cl", "nacl-soude": "t-neg" }[tb.sol + "-" + tb.reac]; if (T) tache(T);
+          } else {
+            message(`Tube agité (${ou} + ${rc}) : ${obs}${res === "blanc" ? " (il noircit peu à peu à la lumière)" : ""}. Ton observation est notée dans le tableau, sous la paillasse.`, res ? "ok" : "info");
+            donnee({ obj: "i2", fl: tb.lettre, reac: tb.reac, res });
+            if (["soude", "nitrate"].every((r) => tubesI().some((x) => x.lettre === tb.lettre && x.reac === r && x.agite))) tache("f" + tb.lettre);
+          }
+          dessinerTout();
+        });
+      }
+      // ----- Étiquettes : coller chaque étiquette sur le bon flacon -----
+      function collerEtiquette(et, fl) {
+        const ancien = fl.etiq && O(fl.etiq);
+        suite([vers(et, fl.x + fl.w / 2 - et.w / 2, fl.y + 26, 0.45)], () => {
+          if (ancien) { ancien.cache = false; ancien.sur = null; ancien.ax = 0; ancien.ay = 0; }
+          S.ordre.map(O).forEach((f) => { if (f.type === "flacon" && f.etiq === et.id) { f.etiq = null; f.l1 = "Flacon " + f.lettre; f.l2 = "sans étiquette"; } });
+          et.cache = true; et.sur = fl.id; et.ax = 0; et.ay = 0; fl.etiq = et.id; fl.l1 = et.l1; fl.l2 = "flacon " + fl.lettre; S.main = null;
+          const poses = S.ordre.map(O).filter((f) => f.type === "flacon" && f.etiq);
+          if (poses.length < 4) { message(`Étiquette « ${et.l1} » collée sur le flacon ${fl.lettre}${ancien ? ` (l'étiquette « ${ancien.l1} » est revenue sur la paillasse)` : ""}.`, "ok"); dessinerTout(); majMain(); return; }
+          const faux = poses.filter((f) => O(f.etiq).sol !== f.contenu);
+          if (!faux.length) { S.etiqFaites = true; message("Les 4 étiquettes sont sur les bons flacons : chaque nom est cohérent avec tes tests et la banque.", "ok"); donnee({ obj: "i3", ok: true }); tache("etiq"); dessinerTout(); majMain(); return; }
+          const f0 = faux[0], soli = SOLI[f0.contenu], R = (r) => soli[r] ? `un précipité ${soli[r]}` : "aucun précipité";
+          faux.forEach((f) => { const e = O(f.etiq); e.cache = false; e.sur = null; f.etiq = null; f.l1 = "Flacon " + f.lettre; f.l2 = "sans étiquette"; });
+          message(`${faux.length === 1 ? "Une étiquette n'est pas" : faux.length + " étiquettes ne sont pas"} sur le bon flacon : ${faux.length === 1 ? "elle est revenue" : "elles sont revenues"} sur la paillasse. Indice : le flacon ${f0.lettre} donne ${R("soude")} avec la soude et ${R("nitrate")} avec le nitrate d'argent. Relis la banque.`, "err");
+          dessinerTout(); majMain();
+        });
+      }
+      // ----- Dessins au premier plan : nom du réactif sous chaque tube utilisé -----
+      function avantIon() {
+        let s = "";
+        const L = S.loupe && O(S.loupe.id);
+        if (L && S.t - S.loupe.t0 < 8 && !occupe()) { // loupe au-dessus du tube observé (le tube, vu de plus près)
+          const k = 2.3, R0 = 34, cx = L.x + 9, cy = L.y - R0 - 8, hl = Math.min(L.h - 6, (L.V / 20) * (L.h - 4)), yc = L.h - 2 - hl / 2 - 3;
+          const a = Math.min(1, (S.t - S.loupe.t0) * 4, (8 - (S.t - S.loupe.t0)) * 2);
+          s += `<g pointer-events="none" opacity="${a.toFixed(2)}"><clipPath id="clp-loupe"><circle cx="${cx}" cy="${cy}" r="${R0}"/></clipPath><circle cx="${cx}" cy="${cy}" r="${R0}" class="b-zone"/>
+            <g clip-path="url(#clp-loupe)"><g transform="translate(${(cx - 9 * k).toFixed(1)} ${(cy - yc * k).toFixed(1)}) scale(${k})">${dessin2.tube(L)}</g></g>
+            <circle cx="${cx}" cy="${cy}" r="${R0}" fill="none" stroke="var(--ink)" stroke-width="2.4"/><path d="M${cx} ${cy + R0}V${L.y - 3}" stroke="var(--ink)" stroke-width="1" stroke-dasharray="2 2"/></g>`;
+        }
+        tubesI().forEach((tb) => { if (tb.reac) s += `<text x="${tb.x + 9}" y="${tb.y + tb.h + 21}" class="b-nom" text-anchor="middle" pointer-events="none">${REACI[tb.reac].court}</text>`; });
+        return s;
+      }
+      function boucleIon(dt) {
+        let r = !!(S.loupe && S.t - S.loupe.t0 < 8.2);
+        tubesI().forEach((tb) => {
+          if (!tb.flocs.length && !(tb.voile > 0) ) { if (tb.res === "blanc" && tb.reac === "nitrate" && S.t - tb.tPrec < 31) r = true; return; }
+          const fond = tb.h - 4 - 9 * tb.dep;
+          tb.flocs.forEach((f) => { f.y += f.v * dt * (tb.agite ? 1 : 0.5); f.x += Math.sin(f.y * 0.9 + f.r * 7) * 0.04; if (f.y >= fond) { f.fin = true; tb.dep = Math.min(1, tb.dep + 0.012); } });
+          tb.flocs = tb.flocs.filter((f) => !f.fin);
+          if (tb.agite && tb.voile > 0) tb.voile = Math.max(0, tb.voile - dt * 0.035);
+          if (!tb.agite && tb.res) tb.voile = Math.min(0.35, tb.ng * 0.08);
+          r = true;
+        });
+        return r;
+      }
+      function toucherVideIon(o) {
+        const t = o.type;
+        if (t === "tube") {
+          if (!o.V) { message("Tube propre. Verse d'abord un peu de la solution à tester (prends un flacon, puis touche ce tube).", "info"); return true; }
+          if (!o.reac) { message(`${o.lettre ? "Tube " + o.lettre + " : solution du flacon " + o.lettre : "Ce tube contient " + NOMS[o.sol]}. Ajoute quelques gouttes d'un réactif (prends un flacon compte-gouttes, puis touche ce tube).`, "info"); return true; }
+          if (!o.agite) { if (!occupe()) agiterTube(o); return true; }
+          message(`${o.lettre ? "Tube " + o.lettre : "Tube " + SOLI[o.sol].nom.toLowerCase()} ${REACI[o.reac].court} : ${o.res ? "précipité " + o.res : "aucun précipité"}.`, "info"); return true;
+        }
+        if (t === "flacon" && MID === "ions3") { message(o.etiq ? `Flacon ${o.lettre} : étiquette « ${o.l1} ». Pour la changer, colle une autre étiquette dessus.` : `Flacon ${o.lettre} sans étiquette. Prends une étiquette, puis touche ce flacon pour la coller.`, "info"); return true; }
+        if (t === "portoir") { message("Le portoir tient les tubes à essai.", "info"); return true; }
+        return false;
+      }
+      function utiliserIon(m, o) {
+        const t = m.type, c = o.type;
+        if (t === "flacon" && MID !== "ions3") {
+          if (c === "tube") { verserSolution(m, o); return true; }
+          if (c === "flacon" || c === "cgoutte") { message("On ne mélange jamais le contenu de deux flacons : on verse un peu de solution dans un tube à essai.", "err"); return true; }
+          return false;
+        }
+        if (t === "cgoutte") {
+          if (c === "tube") { ajouterGouttes(m, o); return true; }
+          if (c === "flacon") { message("On ne verse jamais un réactif dans un flacon : on teste toujours un petit échantillon, dans un tube à essai.", "err"); return true; }
+          if (c === "cgoutte") { message("On ne mélange jamais deux réactifs.", "err"); return true; }
+          return false;
+        }
+        if (t === "etiq") {
+          if (c === "flacon") { collerEtiquette(m, o); return true; }
+          message("Colle l'étiquette sur un flacon (touche un flacon).", "err"); return true;
+        }
+        return false;
+      }
+
+      // ======================= 10. Troisième : TP « La couleur des éléments » (chapitre « éléments », 15/11/2026) =======================
+      // Même moteur, même matériel (flacons, bécher, lunettes). Matériel ajouté dans le même style : bec à gaz à allumage électrique
+      // (flamme bleue animée), anse métallique (fil sur un manche), verres de montre de poudre.
+      // Gestes : lunettes ; allumer le bec ; tremper le fil dans la solution ; le placer dans la flamme (flamme colorée animée) ;
+      // nettoyer le fil entre deux essais (le tremper dans l'eau distillée, puis le chauffer jusqu'à ce que la flamme ne se colore plus).
+      // Fil pas nettoyé : flamme « mélangée », l'essai est refusé. Poudres : on mouille le fil pour que la poudre accroche.
+      // Couleurs (LABO2.FLAMMES, 08_labo2.js) : sodium jaune, lithium rouge, cuivre vert, potassium violet, calcium orange-rouge.
+      // L'anse reste en main d'un geste à l'autre (on la repose en la touchant).
+      const FLA = ["fla1", "fla2", "fla3"].includes(MID);
+      const ELF = LABO2.FLAMMES, LOOP = [6, 81];
+      const minF = (t) => t[0].toLowerCase() + t.slice(1); // « Chlorure de cuivre II » → « chlorure de cuivre II »
+      if (FLA) {
+        Object.keys(ELF).forEach((k) => { COUL["f" + k] = k === "cu" ? "#BFE6DA" : "#E6EEF2"; NOMS["f" + k] = "la solution de " + minF(ELF[k].sol); });
+        Object.assign(dessin2, {
+          bec: (o) => `<path d="M14 92H-6" stroke="#D9773A" stroke-width="5" stroke-linecap="round" fill="none"/><path d="M3 96L9 82H45L51 96Z" class="c-boitier"/>
+            <rect x="21" y="8" width="12" height="76" rx="1.5" class="c-bec-t"/><rect x="19" y="4" width="16" height="6" rx="1.5" class="c-bec-t"/>
+            <rect x="18.5" y="56" width="17" height="10" rx="2" class="c-bec-v"/><rect x="24" y="58.5" width="6" height="5" rx="1" fill="#2D3438"/><path d="M24.5 12V54" class="c-reflet"/>
+            <circle cx="40" cy="89" r="3.8" class="c-bouton"/><path d="M40.6 86.4l-1.8 2.8h2.4l-1.6 2.6" stroke="#FFD24A" stroke-width="1" fill="none"/><circle cx="14" cy="89" r="2.2" class="c-led${o.on ? " on" : ""}"/>
+            <rect x="-8" y="-4" width="66" height="104" fill="transparent"/>`,
+          anse: (o) => {
+            const ch = o.chaud ? " chaud" : "", [lx, ly] = LOOP;
+            const goutte = o.charge ? `<circle cx="${lx}" cy="${ly}" r="2.5" fill="${o.poudre ? "#F4F2EA" : COUL["f" + o.charge]}" stroke="${o.poudre ? "#C8C2B2" : "#8FB4C6"}" stroke-width=".5"/>` : o.mouille ? `<circle cx="${lx}" cy="${ly}" r="2.4" fill="#CFE8F5" opacity=".8"/>` : "";
+            return `<rect x="2" y="0" width="8" height="34" rx="3" class="c-anse-m"/><rect x="3.5" y="32" width="5" height="7" rx="1" class="c-bec-v"/>
+              <path d="M6 39V${ly - 3.4}" class="c-fil${ch}"/>${goutte}<circle cx="${lx}" cy="${ly}" r="3.4" fill="none" class="c-fil${ch}"/><rect x="-6" y="-4" width="24" height="94" fill="transparent"/>`;
+          },
+          poudre: (o) => `<path d="M14 15Q26 3 38 15Q26 19 14 15Z" fill="#F5F3EC" stroke="#C8C2B2" stroke-width=".7"/>${[[19, 12.5], [24, 9.5], [30, 11], [33, 14], [22, 15], [28, 15.5]].map(([x, y]) => `<circle cx="${x}" cy="${y}" r=".8" fill="#D6D0BF"/>`).join("")}
+            <path d="M2 12Q26 30 50 12" class="c-verre-o"/><rect x="-4" y="-4" width="60" height="38" fill="transparent"/>`
+        });
+      }
+      function nomFla(o) {
+        if (!FLA) return null;
+        if (o.type === "bec") return "le bec";
+        if (o.type === "anse") return "l'anse métallique";
+        if (o.type === "poudre") return "la poudre " + o.num;
+        if (o.type === "flacon") return "le flacon de " + minF(ELF[o.el].sol);
+        if (o.type === "becher" && o.role === "rince") return "le bécher d'eau distillée";
+        return null;
+      }
+      function initFla() {
+        const P = (ctx.tirage && ctx.tirage.fla) || ["li", "ca"];
+        S.epi = false; S.flam = null; S.vusF = [];
+        S.ordre.map(O).forEach((x) => {
+          if (x.type === "bec") x.on = false;
+          if (x.type === "flacon") { x.ouvert = false; x.bch = null; }
+          if (x.type === "anse") Object.assign(x, { charge: null, poudre: false, mouille: false, rince: false, sale: [], src: 0, chaud: false, dans: false, tChaud: -9, rot: 0 });
+          if (x.type === "poudre") x.el = P[x.num - 1];
+        });
+      }
+      const lunettesF = () => { if (S.epi) return true; message("Mets d'abord tes lunettes de protection (touche les lunettes) et attache tes cheveux : on travaille avec une flamme.", "err"); return false; };
+      const becF = () => S.ordre.map(O).find((x) => x.type === "bec");
+      const flammePt = () => { const b = becF(); return [b.x + b.ax + 27, b.y + b.ay + 4]; }; // haut du tube du bec
+      const instant = (f) => { let fait = false; return [0.01, () => { if (!fait) { fait = true; f(); } }]; };
+      function bouge(a, X, Y, r, d) { // le fil (boucle) de l'anse arrive en (X, Y), l'anse penchée de r degrés
+        const [px, py] = rotPt(a, LOOP[0], LOOP[1], r), v = vers(a, X - px, Y - py, d), t = tourner(a, r, d);
+        return [d, (p) => { v[1](p); t[1](p); }];
+      }
+      function rentrer(a, d) { const v = retour(a, d), t = tourner(a, 0, d); return [d, (p) => { v[1](p); t[1](p); }]; }
+      const derriere = (a, c) => { const L = S.ordre; L.splice(L.indexOf(a.id), 1); L.splice(L.indexOf(c.id), 0, a.id); };
+      const devant = (a) => { const L = S.ordre; L.splice(L.indexOf(a.id), 1); L.push(a.id); };
+      // ----- Plonger le fil dans un flacon, dans l'eau distillée ou sur une poudre, puis le ressortir -----
+      function tremper(a, c, fin) {
+        const [X, Y] = c.type === "flacon" ? [c.x + 22, c.y + 52] : c.type === "becher" ? [c.x + c.w / 2, c.y + c.h - 12] : [c.x + 26, c.y + 11];
+        const dedans = c.type !== "poudre", fl = c.type === "flacon"; // dans un récipient, le fil passe derrière le verre
+        // Flacon : on retire d'abord le bouchon (soulevé, tenu de côté, retourné), on le remet après avoir ressorti le fil.
+        const B = (q) => { c.bch = { dx: -18 * q, dy: -24 * q, r: -160 * q }; };
+        const ouvrir = fl ? [instant(() => { c.ouvert = true; B(0); }), [0.4, (q) => B(lisse(q))]] : [];
+        const fermer = fl ? [[0.4, (q) => B(1 - lisse(q))], instant(() => { c.ouvert = false; c.bch = null; })] : [];
+        suite([...ouvrir, bouge(a, X, Y - 34, 0, 0.4), instant(() => { if (dedans) derriere(a, c); }), bouge(a, X, Y, 0, 0.3), pause(0.3), bouge(a, X, Y - 34, 0, 0.3), instant(() => devant(a)), ...fermer, rentrer(a, 0.35)],
+          () => { fin(); dessinerTout(); majMain(); });
+      }
+      // ----- Le fil dans la flamme -----
+      function chauffer(a) {
+        const b = becF();
+        if (!b.on) { b.on = true; message("Bec allumé avec le bouton d'allumage électrique : la flamme est bleue et très chaude. Touche à nouveau le bec pour placer le fil dans la flamme.", "ok"); tache("allumer"); return; }
+        const [fx, fy] = flammePt(), sale = a.sale.slice(), ch = a.charge, autres = ch ? sale.filter((k) => k !== ch) : [];
+        const cas = ch ? (autres.length ? "mel" : "ok") : a.rince ? "propre" : sale.length ? "reste" : "vide";
+        const els = ch ? [ch].concat(autres) : sale, d = ch ? 3 : els.length ? 1.8 : 1.2;
+        suite([bouge(a, fx, fy - 24, 60, 0.55), instant(() => { a.chaud = true; a.dans = true; S.flam = els.length ? { els, t0: S.t, d, faible: !ch } : null; }), pause(d),
+          instant(() => { S.flam = null; a.dans = false; a.tChaud = S.t; }), rentrer(a, 0.5)], () => {
+          const E = (k) => ELF[k], adj = (k) => E(k).n.replace(/^(le |l')/, "");
+          a.mouille = false; a.rince = false; a.poudre = false; a.charge = null;
+          const V = S.vusF = S.vusF || []; if (cas === "ok") V.push(MID === "fla3" ? "p" + a.src : ch); if (cas === "propre" && sale.length) V.push("propre");
+          if (cas === "ok") {
+            a.sale = [ch];
+            if (MID === "fla3") { message(`Poudre ${a.src} : la flamme devient ${E(ch).coul}. Compare avec ton tableau des couleurs (sous la paillasse), puis nettoie le fil.${eteindre()}`, "ok"); donnee({ obj: "f3", p: a.src, el: ch }); tache("p" + a.src); }
+            else { message(`La flamme devient ${E(ch).coul} : c'est la couleur de l'élément ${E(ch).el} (ions ${E(ch).ion} de la solution). Résultat noté dans le tableau. Nettoie le fil avant l'essai suivant.${eteindre()}`, "ok"); donnee({ obj: MID === "fla1" ? "f1" : "f2", el: ch }); tache("t-" + ch); }
+          } else if (cas === "mel") {
+            a.sale = [ch].concat(autres);
+            message(`Flamme « mélangée » : on voit à la fois ${els.map((k) => E(k).n + " du " + E(k).el).join(" et ")}. Le fil n'avait pas été nettoyé après l'essai précédent : cet essai ne compte pas. Nettoie le fil (trempe-le dans l'eau distillée, puis chauffe-le dans la flamme) et recommence.`, "err");
+          } else if (cas === "propre") {
+            a.sale = [];
+            message(sale.length ? `Les dernières traces de ${sale.map((k) => E(k).el).join(" et de ")} brûlent, puis la flamme redevient bleue : le fil est propre.${eteindre() || " Tu peux faire un nouvel essai."}` : "La flamme reste bleue : le fil est propre.", "ok");
+            if (sale.length) tache("propre");
+          } else if (cas === "reste") message(`La flamme se colore encore en ${sale.map(adj).join(" et en ")} : il reste de l'essai précédent sur le fil. Pour le nettoyer : trempe-le dans l'eau distillée, puis chauffe-le dans la flamme.`, "err");
+          else message(`La flamme reste bleue : le fil est propre. ${MID === "fla3" ? "Mouille-le dans l'eau distillée, puis touche une poudre." : "Trempe-le dans une solution à tester."}`, "info");
+          dessinerTout(); majMain();
+        });
+      }
+      // Manipulation finie (toutes les tâches de la paillasse faites) : on invite à éteindre le bec, sans en faire une étape du protocole.
+      function finiFla() { const V = S.vusF || []; return MID === "fla1" ? V.includes("na") && V.includes("propre") : MID === "fla2" ? ["li", "cu", "k", "ca"].every((k) => V.includes(k)) : V.includes("p1") && V.includes("p2"); }
+      const eteindre = () => finiFla() && becF().on ? " Manipulation terminée : éteins le bec (touche-le, main vide)." : "";
+      function toucherVideFla(o) {
+        const t = o.type;
+        if (t === "bec") {
+          if (!lunettesF()) return true;
+          if (!o.on) { o.on = true; message("Bec allumé avec le bouton d'allumage électrique : la flamme est bleue, presque invisible, et très chaude. Prends maintenant l'anse.", "ok"); tache("allumer"); return true; }
+          if (occupe()) return true;
+          o.on = false; message(finiFla() ? "Bec éteint : la manipulation est terminée. Bravo !" : "Bec éteint. Pour continuer, touche-le à nouveau pour le rallumer.", finiFla() ? "ok" : "info"); return true;
+        }
+        if (t === "flacon") { message(`Flacon de ${minF(ELF[o.el].sol)} ${ELF[o.el].form}. Prends l'anse, puis touche ce flacon pour y tremper le fil.`, "info"); return true; }
+        if (t === "becher" && o.role === "rince") { message("Bécher d'eau distillée : on y trempe le fil pour le nettoyer (puis on le chauffe dans la flamme).", "info"); return true; }
+        if (t === "poudre") { message(`Poudre ${o.num}, sans étiquette. Prends l'anse, mouille le fil dans l'eau distillée, puis touche la poudre.`, "info"); return true; }
+        return false;
+      }
+      function utiliserFla(m, o) {
+        if (m.type !== "anse") return false;
+        S.refus = true; // l'anse reste en main
+        if (occupe()) return true;
+        if (!lunettesF()) return true;
+        const c = o.type, deja = () => message(`Le fil porte déjà ${m.poudre ? "de la poudre" : "une goutte de solution"} : place-le d'abord dans la flamme du bec.`, "err");
+        if (c === "bec") { chauffer(m); return true; }
+        if (c === "flacon") {
+          if (m.charge) { deja(); return true; }
+          tremper(m, o, () => { m.charge = o.el; m.poudre = false; m.mouille = true; m.rince = false; message(`Le fil porte une goutte de ${minF(ELF[o.el].sol)}. Place-le maintenant dans la flamme (touche le bec).`, "info"); });
+          return true;
+        }
+        if (c === "becher" && o.role === "rince") {
+          tremper(m, o, () => {
+            const avait = m.charge; if (avait && m.sale.indexOf(avait) < 0) m.sale.push(avait);
+            m.charge = null; m.poudre = false; m.mouille = true; m.rince = true;
+            message(`Fil trempé dans l'eau distillée${avait ? " (l'échantillon qu'il portait n'a pas été testé)" : ""}. ${MID === "fla3" && !m.sale.length ? "Le fil est humide : touche maintenant une poudre." : "Chauffe-le maintenant dans la flamme : quand elle ne se colore plus, le fil est propre."}`, "info");
+          });
+          return true;
+        }
+        if (c === "poudre") {
+          if (m.charge) { deja(); return true; }
+          if (!m.mouille) { message("Le fil est sec : la poudre n'y accroche pas. Trempe-le d'abord dans l'eau distillée.", "err"); return true; }
+          tremper(m, o, () => { m.charge = o.el; m.poudre = true; m.src = o.num; m.rince = false; message(`Un peu de poudre ${o.num} est collée au fil humide. Place-le dans la flamme (touche le bec).`, "info"); });
+          return true;
+        }
+        message("Avec l'anse : touche une solution (ou une poudre) pour en prélever un peu, le bécher d'eau distillée pour nettoyer le fil, ou le bec pour placer le fil dans la flamme.", "err"); return true;
+      }
+      function boucleFla() {
+        let r = false;
+        S.ordre.map(O).forEach((x) => {
+          if (x.type === "bec" && x.on) r = true;
+          if (x.type === "anse" && x.chaud && !x.dans && S.t - x.tChaud > 2.2) { x.chaud = false; r = true; }
+        });
+        return r;
+      }
+      // ----- La flamme, au premier plan : bleue au repos ; colorée (ou « mélangée ») quand le fil y est -----
+      function avantFla() {
+        let bo = "";
+        S.ordre.map(O).forEach((x) => { if (x.type === "flacon" && x.ouvert && x.bch) { const q = x.bch; bo += `<g pointer-events="none" transform="translate(${(x.x + x.ax + 15 + q.dx).toFixed(1)} ${(x.y + x.ay + q.dy).toFixed(1)}) rotate(${q.r.toFixed(1)} 7 4)"><rect width="14" height="8" rx="2" class="c-bouchon"/></g>`; } });
+        return bo + flammeFla();
+      }
+      function flammeFla() {
+        const b = becF(); if (!b || !b.on) return "";
+        const [fx, fy] = flammePt(), t = S.t, F = S.flam;
+        const lang = (h, w, ph, dx) => { const x = fx + (dx || 0), s = Math.sin(t * 9 + ph) * 1.8; return `M${(x - w).toFixed(1)} ${fy}Q${(x - w * 1.3).toFixed(1)} ${(fy - h * 0.45).toFixed(1)} ${(x + s).toFixed(1)} ${(fy - h).toFixed(1)}Q${(x + w * 1.3).toFixed(1)} ${(fy - h * 0.45).toFixed(1)} ${(x + w).toFixed(1)} ${fy}Z`; };
+        const hB = 52 + Math.sin(t * 7) * 2.5;
+        let e = 0, s = `<g pointer-events="none">`;
+        if (F) { const u = (t - F.t0) / F.d; e = Math.max(0, Math.min(1, u * 5, (1 - u) * 3)) * (F.faible ? 0.5 : 1); }
+        if (e > 0.01) {
+          const cs = F.els.map((k) => ELF[k]), n = cs.length;
+          s += `<ellipse cx="${fx}" cy="${fy - 32}" rx="26" ry="40" fill="${cs[0].c}" opacity="${(0.1 * e).toFixed(2)}"/>`;
+          cs.forEach((c, i) => {
+            const ph = i * 2.3, alt = n > 1 ? 0.5 + 0.5 * Math.sin(t * 7 + i * Math.PI) : 1;
+            s += `<path d="${lang(hB + 16 + 4 * Math.sin(t * 11 + ph), n > 1 ? 9 : 11, ph, n > 1 ? (i % 2 ? 3 : -3) : 0)}" fill="${c.c}" opacity="${(e * (n > 1 ? 0.35 + 0.55 * alt : 0.85)).toFixed(2)}"/>`;
+          });
+          s += `<path d="${lang(hB * 0.6, 6, 1.3)}" fill="${cs[0].c2}" opacity="${(0.6 * e).toFixed(2)}"/>`;
+        }
+        s += `<path d="${lang(hB, 9, 0)}" fill="#8DB8FF" opacity="${(0.5 * (1 - 0.6 * e)).toFixed(2)}"/><path d="${lang(hB * 0.42, 5, 0.7)}" fill="#2F5BEA" opacity=".85"/>`;
+        return s + "</g>";
+      }
+
       function boucle2(dt) {
         let r = false;
+        if (M.troisieme && boucle3(dt)) r = true;
         if (S.acq) {
           const A = S.acq, tb = O(A.tube), pur = tb.nom === "A";
           A.t = Math.min(10, A.t + dt * 10 / 9); r = true;
@@ -23413,6 +24639,7 @@ const QUESTIONS = [
         const s = S.sonde; if (!s) return null;
         const l = s.lieu && O(s.lieu);
         if (!l) return null;
+        if (l.ph3 != null) return l.V >= 30 ? affichePH(l.ph3) : null; // 3ème : pH fixés des solutions du TP
         if (l.role === "tampon") return affichePH(l.contenu === "t7" ? 7 : 4);
         if (l.role === "titrage") {
           if (l.V < (kind === "cond" ? 40 : 30)) return null;
@@ -23434,7 +24661,7 @@ const QUESTIONS = [
           const encore = [], finis = [];
           S.anims.forEach((a) => { const p = Math.min(1, (S.t - a.t0) / a.d); a.f(p); (p < 1 ? encore : finis).push(a); });
           S.anims = encore; finis.forEach((a) => a.fin && a.fin());
-          if (!S.anims.length) S.fx = [];
+          if (!S.anims.length) { S.fx = []; S.ordre.forEach((id) => { const x = O(id); if (x && "_c0" in x) { delete x.coulV; delete x._c0; } }); }
           if (!S.anims.length && S.rentrer) {
             const r = O(S.rentrer); S.rentrer = null;
             if (r && !r.cache && (r.ax || r.ay) && !(S.ajust && S.ajust.pip === r.id)) suite([retour(r, 0.3)]);
@@ -23453,7 +24680,7 @@ const QUESTIONS = [
           const old = S.cap.aff;
           if (S.cap.vrai == null) S.cap.aff = null;
           else if (kind === "cond") S.cap.aff = fx(S.cap.vrai * (1 + (Math.random() - 0.5) * 0.004), 3);
-          else S.cap.aff = fx(S.cap.vrai + (Math.random() - 0.5) * 0.02, 2);
+          else S.cap.aff = M.troisieme ? fx(S.cap.vrai, 1) : fx(S.cap.vrai + (Math.random() - 0.5) * 0.02, 2); // 3ème : une décimale
           if (old !== S.cap.aff || ag || (b && b.libre > 0)) redessiner = true;
         }
         const at = S.attente;
@@ -24836,7 +26063,7 @@ const QUESTIONS = [
 
   // ---------- 2. Sons et vibration ----------
   let audio = null, dernierGeste = 0, dernierSon = 0;
-  ["pointerdown", "keydown"].forEach((ev) => document.addEventListener(ev, () => { dernierGeste = Date.now(); }, true));
+  ["pointerdown", "keydown"].forEach((ev) => document.addEventListener(ev, () => { dernierGeste = Date.now(); if (sonActif()) ctxAudio(); }, true)); // l'iPhone n'autorise le son qu'après un geste
   function ctxAudio() {
     if (!audio) { try { const A = window.AudioContext || window.webkitAudioContext; if (A) audio = new A(); } catch (e) { audio = null; } }
     if (audio && audio.state === "suspended") audio.resume().catch(() => {});
@@ -24860,6 +26087,25 @@ const QUESTIONS = [
       else if (type === "badge") { [523, 659, 784, 1047].forEach((f, i) => note(a, f, i * 0.08, 0.22, "sine", 0.1)); }
     } catch (e) {}
   }
+  // « Pop » du test du dihydrogène (15/11/2026) : bruit bref filtré (la détonation) + coup sourd qui descend. Appelé par les paillasses
+  // (09_chimie.js : test des gaz de 2nde, réaction acide-métal de 3ème) et par l'animation du cours (03_matiere.html), via window.sonPop.
+  function sonPop() {
+    if (!sonActif()) return;
+    try { if (navigator.vibrate) navigator.vibrate(35); } catch (e) {}
+    const a = ctxAudio(); if (!a) return;
+    try {
+      const t = a.currentTime + 0.01, n = Math.floor(a.sampleRate * 0.2), buf = a.createBuffer(1, n, a.sampleRate), d = buf.getChannelData(0);
+      for (let i = 0; i < n; i++) d[i] = (Math.random() * 2 - 1) * Math.exp(-i / (a.sampleRate * 0.022));
+      const src = a.createBufferSource(), f = a.createBiquadFilter(), g = a.createGain();
+      src.buffer = buf; f.type = "bandpass"; f.frequency.value = 1300; f.Q.value = 0.7; g.gain.value = 0.8;
+      src.connect(f); f.connect(g); g.connect(a.destination); src.start(t);
+      const o = a.createOscillator(), g2 = a.createGain();
+      o.type = "sine"; o.frequency.setValueAtTime(200, t); o.frequency.exponentialRampToValueAtTime(55, t + 0.13);
+      g2.gain.setValueAtTime(0.0001, t); g2.gain.exponentialRampToValueAtTime(0.45, t + 0.006); g2.gain.exponentialRampToValueAtTime(0.0001, t + 0.17);
+      o.connect(g2); g2.connect(a.destination); o.start(t); o.stop(t + 0.22);
+    } catch (e) {}
+  }
+  window.sonPop = sonPop;
   // On écoute l'écran : une correction qui apparaît juste après un geste de l'élève déclenche le son.
   // (La page « Revoir mes réponses » affiche plusieurs corrections d'un coup : pas de son dans ce cas.)
   function ecouterCorrections() {
