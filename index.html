@@ -967,10 +967,15 @@ footer .pied a:hover, footer .pied a:focus-visible { color: var(--accent); text-
 ::view-transition-old(vue), ::view-transition-new(vue) { animation-duration: .28s; animation-timing-function: cubic-bezier(.2,.7,.2,1); }
 html[data-sens="av"]::view-transition-old(vue) { animation-name: vt-sort-g; } html[data-sens="av"]::view-transition-new(vue) { animation-name: vt-entre-d; }
 html[data-sens="ar"]::view-transition-old(vue) { animation-name: vt-sort-d; } html[data-sens="ar"]::view-transition-new(vue) { animation-name: vt-entre-g; }
-::view-transition-group(vt-chap) { animation-duration: .32s; animation-timing-function: cubic-bezier(.2,.7,.2,1); }
-::view-transition-old(vt-chap), ::view-transition-new(vt-chap) { height: 100%; object-fit: none; object-position: left center; }
 @keyframes vt-entre-d { from { opacity: 0; transform: translateX(32px); } } @keyframes vt-sort-g { to { opacity: 0; transform: translateX(-32px); } }
 @keyframes vt-entre-g { from { opacity: 0; transform: translateX(-32px); } } @keyframes vt-sort-d { to { opacity: 0; transform: translateX(32px); } }
+/* astuce « glisser pour continuer » (19/11) : seulement sur écran tactile, quand le bouton Suivant est affiché */
+.glisse-astuce { margin: .45rem 0 0; text-align: center; font-size: .8rem; color: var(--muted); animation: astuce-in .4s .3s both; }
+.glisse-astuce span { display: inline-block; animation: astuce-main 1.8s ease-in-out infinite; }
+#btn-next[hidden] + .glisse-astuce { display: none; }
+@media (hover: hover) and (pointer: fine) { .glisse-astuce { display: none !important; } }
+@keyframes astuce-in { from { opacity: 0; } }
+@keyframes astuce-main { 0%, 100% { transform: translateX(6px); } 50% { transform: translateX(-6px); } }
 .vt-fondu { animation: vt-fondu .2s ease-out; } @keyframes vt-fondu { from { opacity: 0; } }
 .t-chap { display: grid; grid-template-columns: 2.3rem 1fr auto; align-items: center; gap: .65rem; padding: .4rem .75rem .4rem .4rem; border-radius: 14px;
   background: var(--bg); border: 2px solid var(--line); color: var(--ink); text-decoration: none; min-height: 3rem; }
@@ -24693,9 +24698,55 @@ const QUESTIONS = [
     return "";
   }
   $("btn-back").addEventListener("click", () => aller(parent(routeActuelle)));
-  // transitions entre les pages (18/11/2026) : le chapitre touché « devient » l'en-tête de sa page ; on avance vers la droite, on revient vers la gauche
+  // transitions entre les pages (18/11/2026) : on avance vers la droite, on revient vers la gauche
   const memScroll = {}; let hashPrec = location.hash.slice(1);
-  function nomPartage(el) { view.querySelectorAll(".vt-partage").forEach((x) => { x.style.viewTransitionName = ""; x.classList.remove("vt-partage"); }); if (el) { el.style.viewTransitionName = "vt-chap"; el.classList.add("vt-partage"); } }
+  // ======================= Glisser pour passer à la suite (19/11/2026, idée des élèves) =======================
+  // Doigt vers la gauche = suite (comme on tourne une page) ; doigt vers la droite = retour (seulement dans un TP).
+  // Exercices : possible seulement quand le bouton « Suivant » est affiché (donc après avoir répondu) ; le bouton reste.
+  // TP : SWIPE.tp = { peut(sens), aller(sens) }, fourni par la page du TP (08_tp.js). Jamais sur la paillasse ni sur une zone qui défile.
+  const ASTUCE_GLISSER = `<p class="glisse-astuce"><span aria-hidden="true">👆</span> Astuce : tu peux aussi glisser ton doigt vers la gauche pour passer à la suite.</p>`;
+  const SWIPE = { tp: null };
+  (function () {
+    let x0 = 0, y0 = 0, t0 = 0, actif = false, suit = 0, dejaDit = false;
+    const btnSuite = () => { const b = $("btn-next"); return b && !b.hidden && !b.disabled && b.offsetParent ? b : null; };
+    const possible = (sens) => sens > 0 ? !!(btnSuite() || (SWIPE.tp && SWIPE.tp.peut(1))) : !!(SWIPE.tp && SWIPE.tp.peut(-1));
+    const interdit = (el) => {
+      for (let e = el; e && e !== view; e = e.parentElement) {
+        if (e.matches("#o-banc, canvas, input, textarea, select, [data-noswipe]")) return true;
+        const ox = getComputedStyle(e).overflowX; if ((ox === "auto" || ox === "scroll") && e.scrollWidth > e.clientWidth + 2) return true;
+      }
+      return !view.contains(el);
+    };
+    const remettre = () => { view.style.transition = "transform .25s cubic-bezier(.2,.7,.2,1), opacity .25s"; view.style.transform = ""; view.style.opacity = ""; setTimeout(() => { view.style.transition = ""; }, 260); };
+    function glisser(sens) {
+      view.style.transition = "transform .16s ease-in, opacity .16s"; view.style.transform = `translateX(${-sens * 70}px)`; view.style.opacity = "0";
+      setTimeout(() => {
+        const b = btnSuite();
+        if (sens > 0 && b) b.click(); else if (SWIPE.tp) SWIPE.tp.aller(sens);
+        view.style.transition = "none"; view.style.transform = `translateX(${sens * 70}px)`; view.style.opacity = "0"; void view.offsetWidth; remettre();
+        if (navigator.vibrate) try { navigator.vibrate(8); } catch (e) {}
+      }, 160);
+    }
+    document.addEventListener("touchstart", (e) => {
+      actif = false; suit = 0; if (e.touches.length !== 1) return;
+      const t = e.touches[0]; if (t.clientX < 24 || t.clientX > innerWidth - 24 || interdit(e.target)) return; // bords de l'écran : gestes du téléphone
+      x0 = t.clientX; y0 = t.clientY; t0 = Date.now(); actif = true;
+    }, { passive: true });
+    document.addEventListener("touchmove", (e) => {
+      if (!actif) return; const t = e.touches[0], dx = t.clientX - x0, dy = t.clientY - y0;
+      if (!suit) { if (Math.abs(dy) > 12 && Math.abs(dy) > Math.abs(dx)) { actif = false; return; } if (Math.abs(dx) > 12) suit = possible(dx < 0 ? 1 : -1) ? 1 : -1; }
+      if (suit) { view.style.transition = "none"; view.style.transform = `translateX(${dx * (suit > 0 ? .45 : .08)}px)`; if (suit > 0) view.style.opacity = String(1 - Math.min(.5, Math.abs(dx) / 500)); }
+    }, { passive: true });
+    document.addEventListener("touchend", (e) => {
+      if (!actif) return; actif = false;
+      const t = e.changedTouches[0], dx = t.clientX - x0, dy = t.clientY - y0, sens = dx < 0 ? 1 : -1;
+      const geste = Math.abs(dx) > 60 && Math.abs(dx) > 1.6 * Math.abs(dy) && Date.now() - t0 < 900;
+      if (geste && possible(sens)) glisser(sens);
+      else { if (suit) remettre(); if (geste && sens > 0 && !dejaDit && (view.querySelector("#btn-next[hidden]") || (SWIPE.tp && SWIPE.tp.peut(0)))) { dejaDit = true; toast("Réponds d'abord, puis glisse pour continuer"); } }
+      suit = 0;
+    }, { passive: true });
+    document.addEventListener("touchcancel", () => { if (suit) remettre(); actif = false; suit = 0; }, { passive: true });
+  })();
   window.addEventListener("hashchange", () => {
     const avant = hashPrec, apres = location.hash.slice(1); hashPrec = apres; memScroll[avant] = window.scrollY;
     const prof = (x) => (x ? x.split("-").length : 0), retour = prof(apres) < prof(avant);
@@ -24704,8 +24755,7 @@ const QUESTIONS = [
       rendre(); finir(); view.classList.remove("vt-fondu"); view.offsetWidth; view.classList.add("vt-fondu"); return;
     }
     document.documentElement.dataset.sens = retour ? "ar" : "av";
-    nomPartage(retour ? view.querySelector(".head") : view.querySelector(`a[href="#${apres}"]`));
-    document.startViewTransition(() => { rendre(); finir(); nomPartage(retour ? view.querySelector(`a[href="#${avant}"]`) : view.querySelector(".head")); });
+    document.startViewTransition(() => { rendre(); finir(); }); // effet « ligne → titre » retiré le 19/11 (à refaire plus tard)
   });
 
   // ======================= Mise à jour de l'appli sur les téléphones =======================
@@ -24713,7 +24763,7 @@ const QUESTIONS = [
   // la garde aussi un moment en cache. On compare donc la version de cette page avec le petit fichier version.json
   // publié en même temps : à l'ouverture et à chaque retour sur l'onglet (au plus une fois par minute).
   // Si une version plus récente est en ligne, un bandeau propose de mettre à jour. La progression (pseudo, points…) est conservée.
-  const VERSION_APPLI = "2026-11-18 23:03:22"; // remplacée par la date d'assemblage (assembler.py)
+  const VERSION_APPLI = "2026-11-18 23:20:21"; // remplacée par la date d'assemblage (assembler.py)
   let derniereVerif = 0;
   function verifierMaj() {
     if (!/^https?:$/.test(location.protocol) || VERSION_APPLI.indexOf("__") === 0) return; // fichier ouvert sur l'ordinateur : rien à vérifier
@@ -24740,6 +24790,7 @@ const QUESTIONS = [
     const hh = location.hash.slice(1);
     const parts = hh ? hh.split("-") : [];
     routeActuelle = parts;
+    SWIPE.tp = null;
     setTimeout(() => majConfort(parts), 0); // calculatrice, menu ordinateur (12_confort.js)
     if (hh.indexOf("prof-") === 0) { activerProf(hh.slice(5)); return; }
     $("btn-back").hidden = parts.length === 0;
@@ -24912,7 +24963,7 @@ const QUESTIONS = [
       fin.after(t); el.classList.add("ouverte"); el.querySelector(".t-tete").setAttribute("aria-expanded", "true");
       if (vite || !ANIM) { t.classList.add("pose"); return t; }
       const h = t.scrollHeight; t.style.height = (h0 || 0) + "px"; t.offsetHeight; t.style.height = h + "px";
-      setTimeout(() => { if (!t.isConnected) return; t.style.height = ""; t.classList.add("pose"); const r = t.getBoundingClientRect(); if (r.bottom > innerHeight) window.scrollBy({ top: Math.min(r.bottom - innerHeight + 16, r.top - 70), behavior: "smooth" }); }, 330);
+      setTimeout(() => { if (!t.isConnected) return; t.style.height = ""; t.classList.add("pose"); }, 330); // pas de défilement automatique (demande du 19/11)
       return t;
     }
     view.querySelectorAll(".tuile[data-th]").forEach((el) => {
@@ -25386,7 +25437,7 @@ const QUESTIONS = [
   function suiteSimple(liste, titre, ctx, monter, revoirDe) {
     let i = 0, justes = 0; const rates = [], photos = [];
     function etape() {
-      view.innerHTML = enTete(titre, i, liste.length) + `<div class="panel" id="w"></div><button class="btn btn-primary" id="btn-next" hidden>${i === liste.length - 1 ? "Voir mon résultat" : "Suivant"}</button>`;
+      view.innerHTML = enTete(titre, i, liste.length) + `<div class="panel" id="w"></div><button class="btn btn-primary" id="btn-next" hidden>${i === liste.length - 1 ? "Voir mon résultat" : "Suivant"}</button>${ASTUCE_GLISSER}`;
       monter($("w"), liste[i], (ok) => { if (ok) justes++; else rates.push(liste[i]); photos.push(photo($("w"), ok)); const n = $("btn-next"); n.hidden = false; n.focus(); });
       $("btn-next").onclick = () => { if (i < liste.length - 1) { i++; lacher(); etape(); window.scrollTo(0, 0); } else resultat({ titre, score: justes, total: liste.length, revoir: rates.map(revoirDe), photos, ctx }); };
     }
@@ -25450,7 +25501,7 @@ const QUESTIONS = [
     const liste = tirer(act.chaines, act.n || 3);
     let i = 0, justes = 0, total = 0; const photos = [];
     function etape() {
-      view.innerHTML = enTete(act.titre, i, liste.length) + `<div class="panel" id="w"></div><button class="btn btn-primary" id="btn-next" hidden>${i === liste.length - 1 ? "Voir mon résultat" : "Chaîne suivante"}</button>`;
+      view.innerHTML = enTete(act.titre, i, liste.length) + `<div class="panel" id="w"></div><button class="btn btn-primary" id="btn-next" hidden>${i === liste.length - 1 ? "Voir mon résultat" : "Chaîne suivante"}</button>${ASTUCE_GLISSER}`;
       widgetChaine($("w"), liste[i], { mode: "note", distracteurs: act.distracteurs, nbDistracteurs: 2 }, (j, t) => { justes += j; total += t; photos.push(photo($("w"), j === t, "Chaîne " + (i + 1), j + " / " + t)); $("btn-next").hidden = false; });
       $("btn-next").onclick = () => { if (i < liste.length - 1) { i++; lacher(); etape(); window.scrollTo(0, 0); } else resultat({ titre: act.titre + " · cases justes", score: justes, total, points: justes * 2, photos, ctx }); };
     }
@@ -25461,7 +25512,7 @@ const QUESTIONS = [
     let i = 0, justes = 0; const rates = [], photos = [];
     function etape() {
       view.innerHTML = enTete(act.titre, i, liste.length) + `${act.rappel === null ? "" : `<div class="methode"><strong class="lbl">Rappel</strong><span>${act.rappel || "Énergie reçue = énergie utile + énergie dissipée"}</span></div>`}
-        <div class="panel" id="w"></div><button class="btn btn-primary" id="btn-next" hidden>${i === liste.length - 1 ? "Voir mon résultat" : "Calcul suivant"}</button>`;
+        <div class="panel" id="w"></div><button class="btn btn-primary" id="btn-next" hidden>${i === liste.length - 1 ? "Voir mon résultat" : "Calcul suivant"}</button>${ASTUCE_GLISSER}`;
       widgetCalcul($("w"), liste[i], null, (ok, q) => { if (ok) justes++; else rates.push({ q: q.texte, a: (q.repTxt || nombre(q.rep)) + " " + q.u, e: q.corr }); photos.push(photo($("w"), ok, "Calcul " + (i + 1))); const n = $("btn-next"); n.hidden = false; n.focus(); });
       $("btn-next").onclick = () => { if (i < liste.length - 1) { i++; lacher(); etape(); window.scrollTo(0, 0); } else resultat({ titre: act.titre, score: justes, total: liste.length, points: justes * 15, revoir: rates, photos, ctx }); };
     }
@@ -31544,12 +31595,20 @@ const QUESTIONS = [
         <div class="safety"><strong>Sécurité</strong><ul>${tp.enClasse.securite.map((m) => `<li>${esc(m)}</li>`).join("")}</ul></div></div></details>
       <div class="otabs" id="otabs" role="tablist"></div>
       <div class="stack" id="tp-zone"></div>
+      <p class="glisse-astuce" id="tp-astuce" hidden></p>
       <div id="tp-nav"></div>`;
     const majNav = () => { $("tp-nav").innerHTML = navFin(niv, ch, "tp", !!fait(cle)); };
 
+    // glisser le doigt (19/11) : vers la gauche = objectif suivant (une fois l'objectif terminé), vers la droite = objectif précédent
+    const peutSuite = () => actif < NC && ongletOuvert(actif + 1) && (modeProf() || objFait(O[actif]));
+    SWIPE.tp = { peut: (sens) => sens > 0 ? peutSuite() : sens < 0 ? actif > 0 : actif < NC && !peutSuite(),
+      aller: (sens) => { actif += sens > 0 ? 1 : -1; afficher(); const o = $("otabs"); if (o) window.scrollTo(0, o.getBoundingClientRect().top + window.scrollY - 80); } };
     function onglets() {
       $("otabs").innerHTML = htmlOnglets(O, actif, objFait, ongletOuvert, !!fait(cle));
       brancherOnglets(NC, ongletOuvert, (i) => { actif = i; afficher(); });
+      const a = $("tp-astuce"), suite = peutSuite(), retour = actif > 0;
+      a.hidden = !suite && !retour;
+      a.innerHTML = `<span aria-hidden="true">👆</span> Astuce : ${suite ? `glisse ton doigt vers la gauche pour passer ${actif + 1 >= NC ? "à la conclusion" : "à l'objectif suivant"}` : ""}${suite && retour ? ", vers la droite pour revenir en arrière" : retour ? "glisse ton doigt vers la droite pour revenir à l'objectif précédent" : ""}.`;
     }
 
     // ---------- Un objectif ----------
@@ -35913,7 +35972,7 @@ const QUESTIONS = [
       $("o-go").onclick = demarrer;
 
       function demarrer() {
-        let score = 0, vies = 3, fini = false, t0 = performance.now(), limite = 0, Q = null, attente = false;
+        let score = 0, vies = 3, fini = false, t0 = performance.now(), limite = 0, Q = null, attente = false, pause = 0;
         const rates = [], vus = new Set(), photos = [];
         view.innerHTML = `<div class="o-jeu" id="o-jeu"><div class="o-haut"><span class="chip" id="o-info"></span><span class="chip sun">Score <b id="o-s">0</b></span></div>
           <div class="o-barre"><i id="o-b"></i></div><div class="panel o-carte" id="o-q"></div><button class="btn btn-ghost btn-sm" id="o-stop">Arrêter</button></div>`;
@@ -35952,7 +36011,14 @@ const QUESTIONS = [
           photos.push(photo($("o-q"), ok)); // pour « Revoir mes réponses et la correction »
           root.classList.remove("flash-ok", "flash-ko"); void root.offsetWidth; root.classList.add(ok ? "flash-ok" : "flash-ko");
           majInfo();
-          setTimeout(() => { if (fini || !document.body.contains(root)) return; if (vies <= 0) terminer(); else nouvelle(); }, ok ? 450 : 1600);
+          const suite = () => { if (fini || !document.body.contains(root)) return; if (vies <= 0) terminer(); else nouvelle(); };
+          if (ok) { setTimeout(suite, 450); return; }
+          // erreur : le temps s'arrête, l'élève lit la correction puis touche « Suivant » (ou glisse) (19/11/2026)
+          pause = performance.now();
+          const fb = $("o-q").querySelector(".fbz");
+          fb.insertAdjacentHTML("beforeend", `<button class="btn btn-primary" id="btn-next" style="margin-top:.6rem;width:100%">${vies <= 0 ? "Voir mon résultat" : "Suivant"}</button>${ASTUCE_GLISSER}`);
+          $("btn-next").onclick = () => { if (mode === "chrono") t0 += performance.now() - pause; pause = 0; suite(); };
+          $("btn-next").focus({ preventScroll: true });
         }
         function majInfo() {
           $("o-info").innerHTML = mode === "chrono" ? `Temps <b>${Math.max(0, Math.ceil(DUREE - (performance.now() - t0) / 1000))}</b> s`
@@ -35962,6 +36028,7 @@ const QUESTIONS = [
         const horloge = setInterval(() => {
           if (fini || !document.body.contains(root)) { clearInterval(horloge); return; }
           const now = performance.now();
+          if (pause) return; // correction en cours de lecture : le temps est arrêté
           if (mode === "chrono") {
             const r = 1 - (now - t0) / (DUREE * 1000); $("o-b").style.width = Math.max(0, 100 * r) + "%"; majInfo();
             if (r <= 0) terminer();
