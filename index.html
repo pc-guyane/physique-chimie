@@ -376,6 +376,19 @@ svg.spectre { display: block; width: 100%; max-width: 420px; height: auto; color
 .ex-comp { display: inline-block; margin-left: .5rem; font-family: var(--f-body); font-size: .74rem; font-weight: 700; color: var(--muted); background: var(--bg); border-radius: 999px; padding: .1rem .5rem; vertical-align: middle; }
 .cours .ex.flash { animation: ex-flash 1.8s ease-out; }
 @keyframes ex-flash { 0%, 40% { box-shadow: inset 0 0 0 3px var(--sous); } 100% { box-shadow: inset 0 0 0 1px var(--line); } }
+/* Exemples repliés quand le cours est terminé (19/11) */
+.pli-bar { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: .3rem .8rem; }
+.cours .ex-pli { display: none; }
+.cours.compact .ex-pli { display: inline-block; margin-left: .3rem; color: var(--muted); font-size: .95rem; transition: transform .2s; }
+.cours.compact .replie .ex-pli { transform: rotate(-90deg); }
+.cours.compact .ex-head, .cours.compact .methode.exr > .lbl { cursor: pointer; -webkit-tap-highlight-color: transparent; }
+.cours.compact .ex-head:focus-visible, .cours.compact .methode.exr > .lbl:focus-visible { outline: 2px solid var(--sous); outline-offset: 3px; border-radius: 6px; }
+.cours .ex.replie > :not(.ex-head), .cours .methode.exr.replie > :not(.lbl) { display: none; }
+.cours .ex.replie, .cours .methode.exr.replie { padding-top: .45rem; padding-bottom: .45rem; gap: 0; }
+.cours .replie::after, .cours .replie::before { display: none; }
+.cours .replie .ex-head strong, .cours .methode.exr.replie > .lbl { font-size: .95rem; }
+.cours.compact .ex:not(.replie), .cours.compact .methode.exr:not(.replie) { animation: ex-ouvre .25s ease-out; }
+@keyframes ex-ouvre { from { opacity: .4; transform: translateY(-4px); } to { opacity: 1; transform: none; } }
 
 /* TP et simulation */
 .safety { background: var(--bad-soft); border-radius: 12px; padding: .8rem 1rem; display: flex; flex-direction: column; gap: .3rem; }
@@ -642,6 +655,31 @@ details.panel summary { cursor: pointer; }
 .mp-ligne { display: flex; flex-wrap: wrap; justify-content: space-between; gap: .3rem .8rem; font-size: .92rem; font-variant-numeric: tabular-nums; }
 .mp-dj { display: inline-flex; align-items: center; gap: .35rem; }
 .mp-led { width: .7rem; height: .7rem; border-radius: 50%; background: var(--good); display: inline-block; } .mp-led.off { background: var(--bad); }
+.mp-tab { display: flex; align-items: center; gap: .8rem; }
+.mp-info { display: flex; flex-direction: column; gap: .25rem; font-size: .92rem; font-variant-numeric: tabular-nums; min-width: 0; }
+.mp-etat { font-weight: 700; color: var(--good); } .mp-etat.off { color: var(--bad); }
+.mp-dj { flex: none; display: flex; flex-direction: column; align-items: center; gap: .15rem; background: none; border: 0; padding: 0; color: var(--ink); cursor: pointer; touch-action: manipulation; -webkit-tap-highlight-color: transparent; }
+.mp-dj svg { display: block; filter: drop-shadow(0 2px 3px rgba(0,0,0,.25)); }
+.mp-dj-corps { fill: #f4f4f1; stroke: #9a9a94; stroke-width: 1.2; }
+.mp-dj-bande { fill: #e2e2dd; }
+.mp-dj-fente { fill: #3b3b3b; }
+.mp-dj-man { fill: #2f6fd6; stroke: #1d4a94; stroke-width: 1; }
+.mp-dj-stries { stroke: rgba(255,255,255,.55); stroke-width: 1.4; stroke-linecap: round; fill: none; }
+.mp-dj-levier { transition: transform .12s cubic-bezier(.5,1.6,.6,1); }
+.mp-dj.coupe .mp-dj-levier { transform: translateY(24px); }
+.mp-dj-voyant { fill: #2e9e4f; transition: fill .15s; } .mp-dj.coupe .mp-dj-voyant { fill: #d23b2e; }
+.mp-dj-t { font: 700 10px var(--f-body, sans-serif); fill: #333; text-anchor: middle; }
+.mp-dj-t2 { font: 600 7.5px var(--f-body, sans-serif); fill: #666; text-anchor: middle; }
+.mp-dj-v { font: 800 9px var(--f-body, sans-serif); fill: #fff; text-anchor: middle; }
+.mp-dj .mp-dj-off { display: none; } .mp-dj.coupe .mp-dj-on { display: none; } .mp-dj.coupe .mp-dj-off { display: inline; }
+.mp-dj-msg { visibility: hidden; font-size: .8rem; font-weight: 800; color: #fff; background: var(--bad); border-radius: 999px; padding: .1rem .55rem; white-space: nowrap; }
+.mp-dj.coupe .mp-dj-msg { visibility: visible; animation: mp-pouls 1.1s ease-in-out infinite; }
+.mp-dj.coupe svg { animation: mp-halo 1.1s ease-in-out infinite; }
+.mp-dj.clac svg { animation: mp-clac .35s ease-out; }
+.mp-dj:active svg { transform: scale(.97); }
+@keyframes mp-pouls { 50% { transform: scale(1.08); } }
+@keyframes mp-halo { 50% { filter: drop-shadow(0 0 6px var(--bad)); } }
+@keyframes mp-clac { 0%, 100% { transform: none; } 25% { transform: translateX(-3px) rotate(-2deg); } 50% { transform: translateX(3px) rotate(2deg); } 75% { transform: translateX(-2px); } }
 /* TP 4ème masse volumique : liste des matériaux (14/11) */
 .mat-ref { border: 1px solid var(--line); border-radius: 12px; padding: .5rem .8rem; background: var(--surface); }
 .mat-ref summary { cursor: pointer; font-weight: 700; color: var(--sous); }
@@ -894,16 +932,15 @@ footer .pied a:hover, footer .pied a:focus-visible { color: var(--accent); text-
 .card.ch0 { border: 2px solid var(--sun); }
 .card.ch0 .ico { background: var(--sun-soft); color: var(--sun-ink); font-family: var(--f-display); font-size: 1.6rem; font-weight: 700; }
 .card.ch0.off { border-color: var(--line); }
-.tuiles { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .7rem; }
+.tuiles { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: .7rem; margin-bottom: -.7rem; } .tuiles > .tuile { margin-bottom: .7rem; } /* espace porté par les tuiles : le tiroir n'ajoute aucun saut */
 .tuile { min-width: 0; border-radius: var(--r); background: var(--surface); border: 1px solid var(--line); border-top: 5px solid var(--c); overflow: hidden; }
-.tuile.ouverte { grid-column: 1 / -1; box-shadow: 0 6px 18px rgba(0, 0, 0, .08); }
+.tuile { transition: box-shadow .25s, border-color .25s, transform .15s; } .tuile:not(.vide):active { transform: scale(.98); }
+.tuile.ouverte { border-color: var(--c); box-shadow: 0 6px 18px rgba(0, 0, 0, .08); }
 .t-tete, .tuile.vide { width: 100%; display: flex; flex-direction: column; align-items: flex-start; gap: .4rem; padding: .85rem .8rem .8rem; text-align: left; color: var(--ink); position: relative; min-height: 8.2rem; }
 .t-tete { background: none; border: 0; font: inherit; cursor: pointer; padding-right: 2.2rem; }
-.tuile.ouverte .t-tete { min-height: 0; flex-direction: row; align-items: center; flex-wrap: wrap; column-gap: .7rem; }
 .t-ico { width: 2.6rem; height: 2.6rem; border-radius: 12px; display: grid; place-items: center; background: var(--c); color: #fff; flex: none; }
 .t-ico svg { width: 1.45rem; height: 1.45rem; }
 .t-nom { font-family: var(--f-display); font-size: 1.02rem; line-height: 1.2; font-weight: 600; }
-.tuile.ouverte .t-nom { flex: 1; min-width: 8rem; font-size: 1.12rem; }
 .t-info { font-size: .82rem; color: var(--muted); }
 /* pourcentages d'avancement (thèmes et chapitres, 09/11/2026) */
 .barre-pct { display: block; height: 5px; border-radius: 99px; background: var(--line); overflow: hidden; margin-top: .3rem; }
@@ -911,15 +948,30 @@ footer .pied a:hover, footer .pied a:focus-visible { color: var(--accent); text-
 .t-prog { display: flex; align-items: center; gap: .45rem; width: 100%; margin-top: auto; }
 .t-prog .barre-pct { flex: 1; margin-top: 0; }
 .t-pct { font-size: .85rem; color: var(--ink); font-variant-numeric: tabular-nums; }
-.tuile.ouverte .t-prog { padding-left: 3.3rem; margin-top: 0; }
 .m-avance { margin-top: .5rem; } .m-avance b { color: var(--ink); font-variant-numeric: tabular-nums; }
-.tuile.ouverte .t-info { width: 100%; padding-left: 3.3rem; margin-top: -.3rem; }
-.t-fl { position: absolute; right: .7rem; top: .8rem; color: var(--c); font-size: 1.5rem; line-height: 1; transition: transform .2s; }
+.t-fl { position: absolute; right: .7rem; top: .8rem; color: var(--c); font-size: 1.5rem; line-height: 1; transition: transform .3s cubic-bezier(.2,.7,.2,1); }
 .tuile.ouverte .t-fl { transform: rotate(90deg); }
 .tuile.vide { cursor: default; opacity: .65; background: transparent; border-style: dashed; border-top: 5px dashed var(--line); } .tuile.vide .t-ico { background: var(--line); color: var(--muted); }
 .tuile.fermee .t-ico { opacity: .55; }
-.t-liste { display: flex; flex-direction: column; gap: .45rem; padding: 0 .8rem .85rem; animation: t-ouvre .25s ease-out; }
-@keyframes t-ouvre { from { opacity: 0; transform: translateY(-6px); } }
+.t-liste { display: none !important; }
+/* tiroir sous la rangée de tuiles (18/11/2026) */
+.tiroir { grid-column: 1 / -1; position: relative; overflow: hidden; margin-top: -.7rem; transition: height .3s cubic-bezier(.2,.7,.2,1), opacity .3s; } /* marge négative = annule l'espace de la grille : rien ne saute quand le tiroir apparaît ou disparaît */
+.tiroir.ferme-t { opacity: 0; }
+.tiroir-in { display: flex; flex-direction: column; gap: .45rem; margin: 11px 0 .7rem; padding: .75rem; border-radius: var(--r); background: var(--surface); border: 2px solid var(--c); position: relative; }
+.tiroir-in::before { content: ""; position: absolute; top: -9px; left: calc(var(--x) - 8px); width: 14px; height: 14px; background: var(--surface); border-left: 2px solid var(--c); border-top: 2px solid var(--c); transform: rotate(45deg); border-radius: 3px 0 0 0; }
+.tiroir .t-chap { animation: t-chap-in .32s cubic-bezier(.2,.7,.2,1) both; animation-delay: calc(var(--i, 0) * 45ms + 60ms); }
+.tiroir.pose .t-chap { animation: none; }
+@keyframes t-chap-in { from { opacity: 0; transform: translateY(-8px); } }
+/* transitions entre les pages */
+#view { view-transition-name: vue; }
+::view-transition-old(vue), ::view-transition-new(vue) { animation-duration: .28s; animation-timing-function: cubic-bezier(.2,.7,.2,1); }
+html[data-sens="av"]::view-transition-old(vue) { animation-name: vt-sort-g; } html[data-sens="av"]::view-transition-new(vue) { animation-name: vt-entre-d; }
+html[data-sens="ar"]::view-transition-old(vue) { animation-name: vt-sort-d; } html[data-sens="ar"]::view-transition-new(vue) { animation-name: vt-entre-g; }
+::view-transition-group(vt-chap) { animation-duration: .32s; animation-timing-function: cubic-bezier(.2,.7,.2,1); }
+::view-transition-old(vt-chap), ::view-transition-new(vt-chap) { height: 100%; object-fit: none; object-position: left center; }
+@keyframes vt-entre-d { from { opacity: 0; transform: translateX(32px); } } @keyframes vt-sort-g { to { opacity: 0; transform: translateX(-32px); } }
+@keyframes vt-entre-g { from { opacity: 0; transform: translateX(-32px); } } @keyframes vt-sort-d { to { opacity: 0; transform: translateX(32px); } }
+.vt-fondu { animation: vt-fondu .2s ease-out; } @keyframes vt-fondu { from { opacity: 0; } }
 .t-chap { display: grid; grid-template-columns: 2.3rem 1fr auto; align-items: center; gap: .65rem; padding: .4rem .75rem .4rem .4rem; border-radius: 14px;
   background: var(--bg); border: 2px solid var(--line); color: var(--ink); text-decoration: none; min-height: 3rem; }
 @media (hover: hover) and (pointer: fine) { a.t-chap:hover { border-color: var(--c); } }
@@ -1240,6 +1292,23 @@ footer .pied a:hover, footer .pied a:focus-visible { color: var(--accent); text-
 @keyframes pl-pop { from { transform: scale(.85); opacity: 0; } to { transform: none; opacity: 1; } }
 .pl2 .c-confirm { right: .4rem; margin-top: .3rem; }
 .bench.pl svg .pl-obj.leve { filter: drop-shadow(0 4px 4px rgba(0,0,0,.28)); }
+.bench.pl svg .c-btn { transition: filter .12s; } .bench.pl svg .c-btn.pl-presse { transform: translateY(1px); filter: brightness(.8); }
+/* Habillage charte v2 des anciennes paillasses (PAILLASSE.habiller, 18/11) */
+.bench.plh .mv-scene { position: relative; border: 1px solid var(--line); border-radius: 14px; overflow: hidden; background: var(--surface); padding-top: 1.75rem; transition: box-shadow .2s; }
+.bench.plh .pl-reset { height: 1.75rem; }
+.bench.plh svg .b-reset, .bench.plh .c-barre { display: none !important; }
+.bench.plh.sig-ko .mv-scene { box-shadow: 0 0 0 3px var(--bad); }
+.bench.plh.sig-ok .mv-scene { box-shadow: 0 0 0 2px var(--good); }
+.bench.plh .c-confirm { top: 2rem; }
+.pl-pied { display: flex; flex-direction: column; gap: .45rem; padding: .5rem; border-top: 2px solid var(--line); background: var(--surface); }
+.pl-pied:empty { display: none; }
+.pl-pied .c-msg { border-radius: 8px; }
+.bench.plh .pl-presse { transform: translateY(1px); filter: brightness(.82); }
+.pl-note-h { position: absolute; z-index: 8; transform: translateX(-50%); font: 700 .8rem var(--f-body); color: var(--good); pointer-events: none; animation: pl-note-h 1.2s ease-out forwards; }
+@keyframes pl-note-h { from { opacity: 1; margin-top: 0; } to { opacity: 0; margin-top: -26px; } }
+.c-btn.c-choix rect { fill: var(--surface); stroke: var(--accent); stroke-width: 1.2px; } .c-btn.c-choix text { fill: var(--accent); }
+.c-btn.c-choix.on rect { fill: var(--accent); } .c-btn.c-choix.on text { fill: var(--accent-ink); }
+.pl-note { font: 700 8px var(--f-body); fill: var(--good); paint-order: stroke; stroke: var(--surface); stroke-width: 2.5px; pointer-events: none; }
 .pl-bac { fill: var(--surface); fill-opacity: .6; stroke: var(--line); stroke-width: 1; }
 .pl-proto-l { list-style: none; padding: 0; margin: .5rem 0; display: flex; flex-direction: column; gap: .35rem; }
 .pl-et { display: flex; gap: .5rem; align-items: center; padding: .5rem .6rem; border: 1.5px solid var(--line); border-radius: 10px; background: var(--surface); touch-action: none; user-select: none; -webkit-user-select: none; cursor: grab; transition: background .2s, border-color .2s; font-size: .92rem; }
@@ -2725,15 +2794,28 @@ const SCHEMAS = (() => {
   function animMultiprise(el) {
     const APP = [["bouilloire", "Bouilloire", 2000], ["fer", "Fer à repasser", 1800], ["radiateur", "Radiateur", 1500], ["clim", "Climatiseur", 1000], ["tele", "Télévision", 100], ["ventilo", "Ventilateur", 50], ["chargeur", "Chargeur", 10]];
     const MAX = 16, U = 230, on = {}; let coupe = false;
+    const son = (f, d, t, v) => { try { if (window.sonTon) window.sonTon(f, d, t, v); } catch (e) {} };
+    // Disjoncteur modulaire dessiné (19/11) : manette bleue en haut = enclenché, en bas = déclenché ; on le touche pour le réarmer.
+    const svgDJ = `<svg viewBox="0 0 80 132" width="74" height="122" aria-hidden="true">
+        <rect x="6" y="2" width="68" height="128" rx="6" class="mp-dj-corps"/><rect x="6" y="12" width="68" height="14" class="mp-dj-bande"/>
+        <text x="40" y="23" class="mp-dj-t">C16</text>
+        <rect x="24" y="34" width="32" height="56" rx="5" class="mp-dj-fente"/>
+        <g class="mp-dj-levier"><rect x="27" y="37" width="26" height="26" rx="4" class="mp-dj-man"/><path d="M32 45H48M32 50H48M32 55H48" class="mp-dj-stries"/></g>
+        <rect x="27" y="97" width="26" height="14" rx="2" class="mp-dj-voyant"/>
+        <text x="40" y="107.5" class="mp-dj-v"><tspan class="mp-dj-on">I ON</tspan><tspan class="mp-dj-off">O OFF</tspan></text>
+        <text x="40" y="123" class="mp-dj-t2">16 A · 230 V~</text></svg>`;
     el.innerHTML = `<span class="a-titre">Expérience : la multiprise et le disjoncteur de 16 A</span>
-      <p class="small">Toucher un appareil pour le brancher ou le débrancher. Le circuit des prises est protégé par un disjoncteur de <strong>16 A</strong>.</p>
+      <p class="small">Toucher un appareil pour le brancher ou le débrancher. Le circuit des prises est protégé par un disjoncteur de <strong>16 A</strong>. S'il saute, on le réarme en touchant sa manette.</p>
       <div class="mp-apps"></div>
       <div class="mp-jauge" aria-hidden="true"><div class="mp-barre"></div><div class="mp-max"><span>16 A</span></div></div>
-      <div class="mp-ligne"><span class="mp-calc" aria-live="polite"></span><span class="mp-dj"></span></div>
-      <div class="a-bts"><button type="button" class="btn btn-ghost btn-sm mp-rearm" hidden>Réarmer le disjoncteur</button></div>
+      <div class="mp-tab">
+        <button type="button" class="mp-dj" aria-label="Disjoncteur 16 A">${svgDJ}<span class="mp-dj-msg">↑ Réarmer</span></button>
+        <div class="mp-info"><span class="mp-calc" aria-live="polite"></span><span class="mp-etat"></span></div>
+      </div>
       <div class="a-res" aria-live="polite">Touche un appareil.</div>`;
-    const apps = el.querySelector(".mp-apps"), barre = el.querySelector(".mp-barre"), calc = el.querySelector(".mp-calc"), dj = el.querySelector(".mp-dj"), res = el.querySelector(".a-res"), rearm = el.querySelector(".mp-rearm");
+    const apps = el.querySelector(".mp-apps"), barre = el.querySelector(".mp-barre"), calc = el.querySelector(".mp-calc"), dj = el.querySelector(".mp-dj"), etat = el.querySelector(".mp-etat"), res = el.querySelector(".a-res");
     const P = () => APP.reduce((s, a) => s + (on[a[0]] ? a[2] : 0), 0);
+    const secoue = () => { dj.classList.remove("clac"); void dj.offsetWidth; dj.classList.add("clac"); if (navigator.vibrate) try { navigator.vibrate(60); } catch (e) {} };
     function maj() {
       const p = P(), I = p / U, alim = !coupe;
       apps.innerHTML = APP.map(([id, nom, w]) => `<button type="button" class="mp-app${on[id] ? " on" : ""}${on[id] && !alim ? " noir" : ""}" data-a="${id}" aria-pressed="${!!on[id]}"><b>${nom}</b><span>${w.toLocaleString("fr-FR")} W</span></button>`).join("");
@@ -2741,22 +2823,30 @@ const SCHEMAS = (() => {
       barre.style.width = Math.min(100, I / 20 * 100) + "%"; barre.classList.toggle("trop", I > MAX);
       el.querySelector(".mp-max").style.left = (MAX / 20 * 100) + "%";
       calc.innerHTML = `P = ${p.toLocaleString("fr-FR")} W · I = P ÷ U = ${p.toLocaleString("fr-FR")} ÷ 230 ≈ <strong>${fr(I)} A</strong>`;
-      dj.innerHTML = coupe ? `<i class="mp-led off"></i>Disjoncteur : <strong>coupé</strong>` : `<i class="mp-led"></i>Disjoncteur : enclenché`;
-      rearm.hidden = !coupe;
+      etat.textContent = coupe ? "Disjoncteur déclenché : plus de courant" : "Disjoncteur enclenché";
+      etat.classList.toggle("off", coupe);
+      dj.classList.toggle("coupe", coupe);
+      dj.setAttribute("aria-label", coupe ? "Disjoncteur déclenché : toucher pour le réarmer" : "Disjoncteur 16 A enclenché");
     }
     function basculer(id) {
       on[id] = !on[id];
       if (!coupe && P() / U > MAX) {
-        coupe = true;
-        res.innerHTML = `<strong>Clac !</strong> I ≈ ${fr(P() / U)} A dépasse 16 A : le disjoncteur a <strong>coupé le courant</strong> avant que les fils ne chauffent. Débranche un appareil, puis réarme le disjoncteur.`;
+        coupe = true; son(140, 0.09, "square", 0.14); setTimeout(secoue, 0);
+        res.innerHTML = `<strong>Clac !</strong> I ≈ ${fr(P() / U)} A dépasse 16 A : le disjoncteur a <strong>coupé le courant</strong> avant que les fils ne chauffent. Débranche un appareil, puis réarme le disjoncteur en touchant sa manette.`;
       } else if (!coupe) {
         const I = P() / U;
         res.innerHTML = I === 0 ? "Rien n'est branché : I = 0 A." : I > 12 ? `I ≈ ${fr(I)} A : c'est encore permis, mais on s'approche de 16 A.` : `I ≈ ${fr(I)} A : moins de 16 A, pas de surintensité.`;
-      } else res.innerHTML = `Le courant est coupé. Avec ces appareils, I ≈ ${fr(P() / U)} A${P() / U > MAX ? " : c'est encore trop. Débranche un autre appareil." : " : tu peux réarmer."}`;
+      } else res.innerHTML = `Le courant est coupé. Avec ces appareils, I ≈ ${fr(P() / U)} A${P() / U > MAX ? " : c'est encore trop. Débranche un autre appareil." : " : tu peux réarmer le disjoncteur."}`;
       maj();
     }
-    rearm.onclick = () => {
-      if (P() / U > MAX) { res.innerHTML = `Le disjoncteur recoupe aussitôt : I ≈ ${fr(P() / U)} A, toujours plus que 16 A. Débranche d'abord un appareil.`; return; }
+    dj.onclick = () => {
+      if (!coupe) { res.innerHTML = `Le disjoncteur est enclenché (manette en haut). Il coupera tout seul si l'intensité dépasse 16 A.`; son(1150, 0.035, "triangle", 0.07); return; }
+      son(600, 0.05, "triangle", 0.1);
+      if (P() / U > MAX) { // la manette monte… et retombe aussitôt
+        dj.classList.remove("coupe");
+        setTimeout(() => { dj.classList.add("coupe"); son(140, 0.09, "square", 0.14); secoue(); }, 260);
+        res.innerHTML = `<strong>Clac !</strong> Le disjoncteur recoupe aussitôt : I ≈ ${fr(P() / U)} A, toujours plus que 16 A. Débranche d'abord un appareil.`; return;
+      }
       coupe = false; res.innerHTML = `Disjoncteur réarmé : I ≈ ${fr(P() / U)} A, moins de 16 A. Tout fonctionne.`; maj();
     };
     maj();
@@ -7397,7 +7487,7 @@ const SON = (function () {
         but: "Écouter des sons de plus en plus aigus, trouver sa limite, puis montrer qu'un ultrason existe même si on ne l'entend pas.",
         taches: [
           { id: "ecoute", texte: "Brancher le haut-parleur et le micro, allumer le GBF, puis écouter au moins 3 fréquences (♪ Écouter), dont une de 10 000 Hz ou plus." },
-          { id: "limite", texte: "Toucher « Je n'entends plus ce son » à la première fréquence que tu n'entends plus (ou à 15 000 Hz si tu entends tout)." },
+          { id: "limite", texte: "Toucher JE N’ENTENDS PLUS (à côté du haut-parleur) à la première fréquence que tu n'entends plus (ou à 15 000 Hz si tu entends tout)." },
           { id: "ultrason", texte: "Remplacer le haut-parleur par l'émetteur d'ultrasons et le micro par le récepteur, mesurer la période avec les curseurs, puis toucher NOTER." }
         ],
         questions: [
@@ -7451,7 +7541,19 @@ const SON = (function () {
         ],
         retenir: "Pour un écho, les ultrasons font l'aller et le retour : d = v × Δt ÷ 2. C'est le principe du sondeur d'une pirogue ou d'un bateau de pêche."
       }
-    ]
+    ],
+    conclusion: {
+      attendus: [
+        "Notion de fréquence : sons audibles, infrasons et ultrasons.",
+        "Vitesse de propagation ; relation d = v × t.",
+        "Mesurer une période et une fréquence ; mesurer la vitesse du son dans l'air."
+      ],
+      textes: [
+        { obj: "a1", attendu: "Période et fréquence", texte: "La [période] T est la durée d'un motif de l'oscillogramme ; la fréquence vaut f = 1 ÷ T, en [hertz]. Plus f est grande, plus le son est [aigu].", pieges: ["masse", "grave"] },
+        { obj: "a2", attendu: "Ce que l'oreille entend", texte: "L'oreille humaine entend les sons de [20] Hz à 20 000 Hz. Au-dessus de 20 000 Hz, ce sont des [ultrasons] : ils existent, mais on ne les entend pas.", pieges: ["infrasons", "2 000"] },
+        { obj: "a3", attendu: "La vitesse du son", texte: "On calcule la vitesse du son avec v = d ÷ [Δt]. Dans l'air, le son va à environ [340] m/s.", pieges: ["300 000", "T"] }
+      ]
+    }
   },
 
   // ======================== 4. ENTRAÎNEMENT ========================
@@ -8002,7 +8104,7 @@ const LUM = (function () {
         notion: "Cours, partie 1 : la propagation de la lumière",
         but: "Aligner trois trous entre une lampe et l'œil pour voir la lampe, puis décaler un trou.",
         taches: [
-          { id: "aligner", texte: "Allumer la lampe, poser les trois écrans percés sur le banc, puis régler la hauteur de chaque trou (▲ ▼) jusqu'à ce que l'œil voie la lampe." },
+          { id: "aligner", texte: "Allumer la lampe, poser les trois écrans percés sur le banc, puis régler la hauteur de chaque trou avec ▲ ▼ (sous chaque écran) jusqu'à ce que l'œil voie la lampe." },
           { id: "decaler", texte: "Décaler le trou d'un des écrans : l'œil voit-il encore la lampe ?" }
         ],
         questions: [
@@ -8047,7 +8149,7 @@ const LUM = (function () {
         but: "Réaliser un émetteur de lumière (pile, bouton-poussoir, DEL) et envoyer un mot en morse à travers une fibre optique.",
         taches: [
           { id: "circuit", texte: "Poser la pile, le bouton-poussoir et la DEL à leur place sur la plaquette." },
-          { id: "envoyer", texte: "Envoyer en morse le mot indiqué sous la paillasse : appui court = point, appui long = trait." }
+          { id: "envoyer", texte: "Envoyer en morse le mot indiqué dans le bandeau : appui court = point, appui long = trait." }
         ],
         questions: [
           { type: "qcm", variantes: [
@@ -8064,7 +8166,19 @@ const LUM = (function () {
         ],
         retenir: "Pour transmettre une information avec la lumière : un émetteur (la DEL) code le message, un canal (l'air, une fibre optique) le transporte, un récepteur le reçoit et le décode."
       }
-    ]
+    ],
+    conclusion: {
+      attendus: [
+        "Propagation rectiligne de la lumière ; modèle du rayon lumineux.",
+        "La lumière peut être guidée (fibre optique).",
+        "Utiliser la lumière pour transmettre une information : émetteur, canal, récepteur."
+      ],
+      textes: [
+        { obj: "f1", attendu: "La lumière va en ligne droite", texte: "Dans un milieu transparent et homogène, la lumière se propage en [ligne droite] : on représente son trajet par un [rayon lumineux].", pieges: ["courbe", "son"] },
+        { obj: "f2", attendu: "Guider la lumière", texte: "Dans un jet d'eau ou une [fibre optique], la lumière se réfléchit sur les bords : elle est [guidée] et suit les courbes.", pieges: ["arrêtée", "miroir plan"] },
+        { obj: "f3", attendu: "Transmettre un message", texte: "Pour transmettre un message, un [émetteur] (la DEL) code l'information, un canal la transporte et un [récepteur] la décode.", pieges: ["générateur", "fusible"] }
+      ]
+    }
   },
 
   // ======================== 4. ENTRAÎNEMENT ========================
@@ -12354,7 +12468,7 @@ const GRAV = (function () {
         but: "Calculer la force exercée par la Terre sur l'ISS, vérifier le résultat avec la simulation, puis faire faire un tour de Terre à l'ISS.",
         taches: [
           { id: "calcul", texte: "Calculer la force exercée par la Terre sur l'ISS (au-dessus de la simulation)." },
-          { id: "verifier", texte: "Dans la simulation, choisir la masse et la distance de l'ISS, puis toucher NOTER." },
+          { id: "verifier", texte: "Dans la simulation, toucher NOTER pour lire la force exercée par la Terre sur l’ISS." },
           { id: "tour", texte: "Lancer l'ISS à 7,7 km/s et la regarder faire un tour complet de la Terre." }
         ],
         questions: [
@@ -24579,14 +24693,27 @@ const QUESTIONS = [
     return "";
   }
   $("btn-back").addEventListener("click", () => aller(parent(routeActuelle)));
-  window.addEventListener("hashchange", rendre);
+  // transitions entre les pages (18/11/2026) : le chapitre touché « devient » l'en-tête de sa page ; on avance vers la droite, on revient vers la gauche
+  const memScroll = {}; let hashPrec = location.hash.slice(1);
+  function nomPartage(el) { view.querySelectorAll(".vt-partage").forEach((x) => { x.style.viewTransitionName = ""; x.classList.remove("vt-partage"); }); if (el) { el.style.viewTransitionName = "vt-chap"; el.classList.add("vt-partage"); } }
+  window.addEventListener("hashchange", () => {
+    const avant = hashPrec, apres = location.hash.slice(1); hashPrec = apres; memScroll[avant] = window.scrollY;
+    const prof = (x) => (x ? x.split("-").length : 0), retour = prof(apres) < prof(avant);
+    const finir = () => { if (retour && memScroll[apres]) window.scrollTo(0, memScroll[apres]); };
+    if (!document.startViewTransition || matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      rendre(); finir(); view.classList.remove("vt-fondu"); view.offsetWidth; view.classList.add("vt-fondu"); return;
+    }
+    document.documentElement.dataset.sens = retour ? "ar" : "av";
+    nomPartage(retour ? view.querySelector(".head") : view.querySelector(`a[href="#${apres}"]`));
+    document.startViewTransition(() => { rendre(); finir(); nomPartage(retour ? view.querySelector(`a[href="#${avant}"]`) : view.querySelector(".head")); });
+  });
 
   // ======================= Mise à jour de l'appli sur les téléphones =======================
   // Le téléphone garde la page déjà chargée (onglet resté ouvert, appli posée sur l'écran d'accueil) et le navigateur
   // la garde aussi un moment en cache. On compare donc la version de cette page avec le petit fichier version.json
   // publié en même temps : à l'ouverture et à chaque retour sur l'onglet (au plus une fois par minute).
   // Si une version plus récente est en ligne, un bandeau propose de mettre à jour. La progression (pseudo, points…) est conservée.
-  const VERSION_APPLI = "2026-11-18 17:13:47"; // remplacée par la date d'assemblage (assembler.py)
+  const VERSION_APPLI = "2026-11-18 23:03:22"; // remplacée par la date d'assemblage (assembler.py)
   let derniereVerif = 0;
   function verifierMaj() {
     if (!/^https?:$/.test(location.protocol) || VERSION_APPLI.indexOf("__") === 0) return; // fichier ouvert sur l'ordinateur : rien à vérifier
@@ -24765,22 +24892,41 @@ const QUESTIONS = [
     const html = groupes.map((G) => `<div class="stack">${G.g ? `<span class="group-title">${esc(G.g)}</span>` : ""}<div class="tuiles">${G.l.map((t) => tuile(t, chapitresDu(niv, t.id))).join("")}</div></div>`).join("")
       + (orphelins.length ? `<div class="tuiles">${tuile({ id: "autres", titre: "Autres chapitres" }, orphelins)}</div>` : "");
     view.innerHTML = `<div class="head"><span class="kicker">${esc(n.nom)}</span><h2>Bonjour ${esc(etat.pseudo)}</h2><p class="muted">Choisis un thème pour voir ses chapitres.</p></div>
-      ${carte0 ? `<div class="cards">${carte0}</div>` : ""}${themes(niv).length && !groupes[0].g ? `<span class="group-title">Les thèmes du programme</span>` : ""}${html}`;
-    // accordéon : une seule tuile ouverte à la fois
-    function ouvrir(el, oui) {
-      el.classList.toggle("ouverte", oui); el.querySelector(".t-liste").hidden = !oui; el.querySelector(".t-tete").setAttribute("aria-expanded", oui);
+      ${themes(niv).length && !groupes[0].g ? `<span class="group-title">Les thèmes du programme</span>` : ""}${html}${carte0 ? `<span class="group-title">La boîte à outils</span><div class="cards">${carte0}</div>` : ""}`;
+    // tiroir sous la rangée (18/11/2026) : les tuiles ne bougent pas ; la liste des chapitres glisse sous la rangée de la tuile touchée
+    const ANIM = !matchMedia("(prefers-reduced-motion: reduce)").matches;
+    function fermerTiroir(t, vite) {
+      if (!t) return; const tu = t._tuile; tu.classList.remove("ouverte"); tu.querySelector(".t-tete").setAttribute("aria-expanded", "false");
+      if (vite || !ANIM) { t.remove(); return; }
+      t.style.height = t.offsetHeight + "px"; t.offsetHeight; t.classList.add("ferme-t"); t.style.height = "0px";
+      setTimeout(() => t.remove(), 300);
+    }
+    function ouvrirTiroir(el, vite, h0) {
+      const grille = el.parentElement, items = [...grille.children].filter((x) => !x.classList.contains("tiroir"));
+      let fin = el; items.forEach((x) => { if (x.offsetTop === el.offsetTop) fin = x; }); // dernière tuile de la rangée
+      const t = document.createElement("div"); t.className = "tiroir"; t._tuile = el;
+      t.style.setProperty("--c", el.style.getPropertyValue("--c"));
+      t.style.setProperty("--x", (el.offsetLeft - grille.offsetLeft + el.offsetWidth / 2) + "px");
+      t.innerHTML = `<div class="tiroir-in">${el.querySelector(".t-liste").innerHTML}</div>`;
+      t.querySelectorAll(".t-chap").forEach((c, i) => c.style.setProperty("--i", i));
+      fin.after(t); el.classList.add("ouverte"); el.querySelector(".t-tete").setAttribute("aria-expanded", "true");
+      if (vite || !ANIM) { t.classList.add("pose"); return t; }
+      const h = t.scrollHeight; t.style.height = (h0 || 0) + "px"; t.offsetHeight; t.style.height = h + "px";
+      setTimeout(() => { if (!t.isConnected) return; t.style.height = ""; t.classList.add("pose"); const r = t.getBoundingClientRect(); if (r.bottom > innerHeight) window.scrollBy({ top: Math.min(r.bottom - innerHeight + 16, r.top - 70), behavior: "smooth" }); }, 330);
+      return t;
     }
     view.querySelectorAll(".tuile[data-th]").forEach((el) => {
       el.querySelector(".t-tete").onclick = () => {
-        const oui = !el.classList.contains("ouverte");
-        view.querySelectorAll(".tuile.ouverte").forEach((x) => ouvrir(x, false));
-        ouvrir(el, oui); tuileOuverte[niv] = oui ? el.dataset.th : null;
-        if (oui) setTimeout(() => { const r = el.getBoundingClientRect(); if (r.bottom > innerHeight) el.scrollIntoView({ behavior: "smooth", block: "nearest" }); }, 60);
+        const actuel = view.querySelector(".tiroir:not(.ferme-t)"), oui = !(actuel && actuel._tuile === el);
+        const voisin = actuel && oui && actuel._tuile.offsetTop === el.offsetTop, h0 = voisin ? actuel.offsetHeight : 0;
+        fermerTiroir(actuel, voisin); // même rangée : le tiroir change de contenu et de hauteur sans se refermer
+        if (oui) ouvrirTiroir(el, false, h0);
+        tuileOuverte[niv] = oui ? el.dataset.th : null;
       };
     });
     view.querySelectorAll(".tuile.vide").forEach((el) => { el.onclick = () => toast("Les chapitres de ce thème sont en préparation"); });
     const deja = tuileOuverte[niv] && view.querySelector(`.tuile[data-th="${tuileOuverte[niv]}"]`);
-    if (deja) ouvrir(deja, true);
+    if (deja) ouvrirTiroir(deja, true);
   }
   function vueFerme(niv, ch) {
     view.innerHTML = `<div class="panel"><h2>${esc(ch.titre)}</h2><p>Ce chapitre n'est pas encore ouvert. Ton professeur l'ouvrira quand vous le commencerez en classe.</p><a class="btn btn-primary" href="#n-${niv}">Voir les chapitres ouverts</a></div>`;
@@ -25559,6 +25705,8 @@ const QUESTIONS = [
     // un paragraphe qui commence par « <strong>Titre.</strong> » ou « <strong>Question ?</strong> » affiche ce titre en vert (sous-titre).
     const sousTitre = (t) => t.replace(/^<strong>([^<]{2,70}[.?:])<\/strong>\s*/, '<strong class="st">$1</strong> ');
     const typeMethode = (t) => /^exemple/i.test(t || "") ? "exr" : /^(la formule|la relation|le facteur|conditions d'interf|l'angle caract)/i.test(t || "") ? "rel" : "";
+    // Cours terminé (19/11) : les exemples (« À toi ! » et exemples résolus) sont repliés en une ligne ; la toucher les rouvre.
+    const PLI = `<span class="ex-pli" aria-hidden="true">▾</span>`;
     const html = C.blocs.map((b, k) => {
       if (b.t === "h") return `<h3 id="cb${k}">${esc(b.texte)}</h3>`;
       if (b.t === "sh") return `<h4 class="st">${esc(b.texte)}</h4>`;
@@ -25567,11 +25715,11 @@ const QUESTIONS = [
       if (b.t === "p") return `<p>${sousTitre(b.texte)}</p>`;
       if (b.t === "liste") return `<ul>${b.items.map((i) => `<li>${i}</li>`).join("")}</ul>`;
       if (b.t === "tableau") return `<div class="table-wrap"><table${b.compact ? ' class="mes-table"' : ""}><thead><tr>${b.entetes.map((e) => `<th>${esc(e)}</th>`).join("")}</tr></thead><tbody>${b.lignes.map((l) => `<tr>${l.map((c) => `<td>${esc(c)}</td>`).join("")}</tr>`).join("")}</tbody></table></div>`;
-      if (b.t === "methode") { const ty = typeMethode(b.titre); return `<div class="methode${ty ? " " + ty : ""}"><strong class="lbl lbl-l">${ty === "rel" ? COEUR : ""}${esc(b.titre || "Méthode")}</strong><ul>${b.items.map((i) => `<li>${i}</li>`).join("")}</ul></div>`; }
+      if (b.t === "methode") { const ty = typeMethode(b.titre); return `<div class="methode${ty ? " " + ty : ""}"><strong class="lbl lbl-l">${ty === "rel" ? COEUR : ""}${esc(b.titre || "Méthode")}${ty === "exr" ? PLI : ""}</strong><ul>${b.items.map((i) => `<li>${i}</li>`).join("")}</ul></div>`; }
       if (b.t === "chaine") return `<div class="stack">${b.legende ? `<p class="small muted">${esc(b.legende)}</p>` : ""}${legendeChaine}${chaineHTML(b.elements, { perte: b.perte })}</div>`;
       if (b.t === "retenir") return `<div class="retenir"><strong class="lbl lbl-l">${COEUR}À retenir</strong><ul>${b.items.map((i) => `<li>${i}</li>`).join("")}</ul></div>`;
       if (b.t === "anim") return `<div class="anim" id="anim${k}"></div>`;
-      if (b.t === "exemple") return `<div class="ex${ok(k) ? " reussi" : ""}" id="ex${k}"><div class="ex-head"><strong>À toi !${b.competence ? `<span class="ex-comp">Compétence ${b.competence}${exComp(b.competence - 1).length > 1 ? ` · exemple ${exComp(b.competence - 1).indexOf(k) + 1} sur ${exComp(b.competence - 1).length}` : ""}</span>` : ""}</strong><span class="badge${ok(k) ? " ok" : ""}">${ok(k) ? "Réussi" : "Exemple " + (exemples.indexOf(k) + 1) + "/" + exemples.length}</span></div><div class="stack" id="exw${k}"></div></div>`;
+      if (b.t === "exemple") return `<div class="ex${ok(k) ? " reussi" : ""}" id="ex${k}"><div class="ex-head"><strong>À toi !${b.competence ? `<span class="ex-comp">Compétence ${b.competence}${exComp(b.competence - 1).length > 1 ? ` · exemple ${exComp(b.competence - 1).indexOf(k) + 1} sur ${exComp(b.competence - 1).length}` : ""}</span>` : ""}</strong><span class="badge${ok(k) ? " ok" : ""}">${ok(k) ? "Réussi" : "Exemple " + (exemples.indexOf(k) + 1) + "/" + exemples.length}</span>${PLI}</div><div class="stack" id="exw${k}"></div></div>`;
       return "";
     }).join("");
     // Toucher une compétence : la page descend jusqu'à la partie du cours où se trouve son premier exemple.
@@ -25580,6 +25728,7 @@ const QUESTIONS = [
       ${comps.length ? "" : "<!--"}<div class="skills"><strong>Compétences travaillées</strong><span class="aller">Touche une compétence pour aller à sa partie du cours et à ses exemples.</span><ul>${comps.map((c, i) => { const fini = compFaite(i); return `<li id="comp${i}"${fini ? ' class="fait"' : ""}><span class="ck">${fini ? SVG.check : ""}</span><span class="cnum">${i + 1}</span>${partieDe(i) >= 0 ? `<button class="ct" data-comp="${i}">${esc(c)}</button>` : `<span class="ct">${esc(c)}</span>`}${exComp(i).length > 1 ? `<span class="cav" id="cav${i}">${exComp(i).filter((k) => ok(k)).length}/${exComp(i).length}</span>` : ""}</li>`; }).join("")}</ul></div>${comps.length ? "" : "-->"}
       ${C.blocs.some((b) => b.t === "retenir" || b.rel || b.def) ? `<p class="legende-coeur">${COEUR}= à apprendre par cœur</p>` : ""}
       <div class="level-line" id="cours-prog"></div>
+      <div class="pli-bar" id="pli-bar" hidden><span class="small muted">Cours terminé : les exemples sont repliés. Touche un exemple pour le revoir.</span><button type="button" class="btn btn-ghost btn-sm" id="btn-pli">Tout déplier</button></div>
       <article class="cours">${html}</article>
       <button class="btn btn-primary" id="btn-fin-cours"></button>
       <div id="cours-nav"></div>`;
@@ -25608,6 +25757,15 @@ const QUESTIONS = [
       const ex = $("ex" + k); ex.classList.add("reussi"); const bd = ex.querySelector(".badge"); bd.textContent = "Réussi"; bd.classList.add("ok"); maj();
     };
     exemples.forEach((k) => monterExemple($("exw" + k), C.blocs[k], () => reussir(k)));
+    const art = view.querySelector("article.cours"), plis = () => [...art.querySelectorAll(".ex, .methode.exr")];
+    const majPli = () => { const tout = plis().every((x) => !x.classList.contains("replie")); $("btn-pli").textContent = tout ? "Tout replier" : "Tout déplier"; };
+    const replier = () => { if (!plis().length) return; art.classList.add("compact"); plis().forEach((x) => x.classList.add("replie")); $("pli-bar").hidden = false; majPli(); };
+    plis().forEach((x) => { const hd = x.querySelector(".ex-head, .lbl"); if (!hd) return;
+      const bascule = () => { if (!art.classList.contains("compact")) return; x.classList.toggle("replie"); hd.setAttribute("aria-expanded", !x.classList.contains("replie")); majPli(); };
+      hd.addEventListener("click", bascule); hd.addEventListener("keydown", (e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); bascule(); } });
+      hd.setAttribute("tabindex", "0"); hd.setAttribute("role", "button"); });
+    $("btn-pli").onclick = () => { const ouvrir = $("btn-pli").textContent === "Tout déplier"; plis().forEach((x) => x.classList.toggle("replie", !ouvrir)); majPli(); };
+    if (fait(cle)) replier();
     view.querySelectorAll("[data-comp]").forEach((bt) => bt.onclick = () => {
       const i = +bt.dataset.comp, k = partieDe(i), cible = $("cb" + k) || $("ex" + k);
       if (!cible) return;
@@ -25615,7 +25773,7 @@ const QUESTIONS = [
       [cible].concat(exComp(i).map((e) => $("ex" + e))).forEach((x) => { if (!x) return; x.classList.remove("flash"); void x.offsetWidth; x.classList.add("flash"); });
     });
     C.blocs.forEach((b, k) => { if (b.t === "anim") { try { b.monter($("anim" + k)); } catch (e) { console.error(e); } } });
-    $("btn-fin-cours").onclick = () => { enregistrer(cle, 20, true, true); maj(); const RR = rubriquesDe(ch), nx = RR.slice(RR.indexOf(R) + 1).find((r) => rubriqueDispo(ch, r.id));
+    $("btn-fin-cours").onclick = () => { enregistrer(cle, 20, true, true); maj(); replier(); const RR = rubriquesDe(ch), nx = RR.slice(RR.indexOf(R) + 1).find((r) => rubriqueDispo(ch, r.id));
       toast(rub !== "cours" ? (nx ? "Étape débloquée : " + nx.nom : "Étape terminée") : ch.tp ? "Cours terminé : le TP est débloqué" : "Cours terminé : l'entraînement est débloqué"); };
     maj(); marquerDefilement();
   }
@@ -26842,60 +27000,38 @@ const QUESTIONS = [
     }
 
     // ======================= Simulation d'orbite (k1, k2, k3) =======================
+    // Charte v2 (18/11) : construite sur le kit ; tous les réglages (vitesse, masse, distance), LANCER et NOTER sont dessinés
+    // sur l'écran de la simulation, dans la paillasse. Plus rien sous la paillasse.
     function bancOrbite(el, surEvt) {
-      el.innerHTML = `<div class="bench mv gt">
-          <div class="c-barre"><button type="button" class="btn btn-ghost btn-xs c-reset" aria-label="Recommencer la manipulation depuis le début">↺ Recommencer</button></div>
-          <div class="c-confirm" hidden><strong>Tu es sûr de vouloir recommencer ?</strong><span>Tout revient comme au départ (les étapes réussies et les mesures notées restent validées).</span><div class="c-btns"><button type="button" class="btn btn-primary btn-sm" data-oui>Oui, recommencer</button><button type="button" class="btn btn-ghost btn-sm" data-non>Non</button></div></div>
-          <div class="mv-guide" aria-live="polite"><span class="mv-g-ico"></span><span class="mv-g-txt"></span></div>
-          <div class="mv-scene"><svg class="bench-svg" viewBox="0 0 ${W} 340" role="group"><g class="gt-dessin"></g></svg><div class="mv-verrou" hidden></div></div>
-          <div class="gt-cmd"></div><p class="bench-hint"></p></div>`;
-      const bench = el.querySelector(".bench"), svg = el.querySelector("svg"), gD = el.querySelector(".gt-dessin"), zCmd = el.querySelector(".gt-cmd");
-      const zGuide = el.querySelector(".mv-guide"), zVer = el.querySelector(".mv-verrou"), zConf = el.querySelector(".c-confirm"), zHint = el.querySelector(".bench-hint");
-      let S = null, mode = null, msg = null;
-      function guide(txt, genre, duree) {
-        if (txt) msg = { txt, genre, fin: performance.now() + (duree || 4000) };
-        const g = msg && performance.now() < msg.fin ? msg : null, e = surEvt("guide", {}) || {};
-        zVer.hidden = !e.verrou; if (e.verrou) zVer.innerHTML = `<div><span aria-hidden="true">🔒</span><p>${esc(e.verrou)}</p></div>`;
-        const ico = g ? (g.genre === "ko" ? "!" : g.genre === "ok" ? "✓" : "i") : e.fini ? "★" : e.i ? `${e.i}/${e.n}` : "i";
-        const cls = g ? (g.genre === "ko" ? "g-ko" : g.genre === "ok" ? "g-ok" : "g-info") : e.fini ? "g-fin" : "", t = g ? g.txt : (e.texte || "");
-        if (zGuide.dataset.t !== t + cls) { zGuide.dataset.t = t + cls; zGuide.className = "mv-guide " + cls + " neuf"; zGuide.querySelector(".mv-g-ico").textContent = ico; zGuide.querySelector(".mv-g-txt").innerHTML = esc(t); setTimeout(() => zGuide.classList.remove("neuf"), 400); }
-      }
-      function refus(txt) { bench.classList.remove("gt-ko"); void bench.offsetWidth; bench.classList.add("gt-ko"); setTimeout(() => bench.classList.remove("gt-ko"), 1300); if (navigator.vibrate) try { navigator.vibrate(60); } catch (e) {} guide(txt, "ko", 4500); }
-      const retour = (r) => { if (!r) return; if (r.ok === false) refus(r.txt); else guide(r.txt, "ok", 4500); };
-      const permis = (action, d) => { const r = surEvt("permis", Object.assign({ action }, d || {})); if (r && r.txt) { refus(r.txt); return false; } return true; };
-      const C0 = { x: 165, y: 178 }, PX = 80 / 1.1e7, VIT = { k1: [4, 5, 6, 6.5, 7, 9], k3: [7.7] };
+      let S = null, K = null;
+      const permis = (action, d) => { const r = surEvt("permis", Object.assign({ action }, d || {})); if (r && r.txt) { K.refus(r.txt); return false; } return true; };
+      const C0 = { x: 165, y: 170 }, PX = 80 / 1.1e7, VIT = { k1: [4, 5, 6, 6.5, 7, 9], k3: [7.7] };
+      const MS = [{ v: 500, t: "500 kg" }, { v: 1000, t: "1 000 kg" }, { v: 2000, t: "2 000 kg" }], DS = [{ v: 7e6, t: "7 000 km" }, { v: 1.4e7, t: "14 000 km" }, { v: 2.1e7, t: "21 000 km" }];
       function init(id) {
         S = { id, v: id === "k3" ? 7.7 : 6, m: id === "k3" ? 420000 : 1000, d: id === "k3" ? 6.77e6 : 1.4e7, sat: null, traces: [], t: 0, res: null };
-        const ms = id === "k3" ? [{ v: 420000, t: "420 000 kg (ISS)" }] : [{ v: 500, t: "500 kg" }, { v: 1000, t: "1 000 kg" }, { v: 2000, t: "2 000 kg" }];
-        const ds = id === "k3" ? [{ v: 6.77e6, t: "6 770 km (ISS)" }] : [{ v: 7e6, t: "7 000 km" }, { v: 1.4e7, t: "14 000 km" }, { v: 2.1e7, t: "21 000 km" }];
-        const lancer = id !== "k2", noter = id !== "k1";
-        zCmd.innerHTML = `<div class="gt-ecran"><span class="gt-logo">Simulation</span>
-          ${lancer ? `<div class="gt-l"><span>Vitesse de lancement</span><div class="c-btns">${(VIT[id] || []).map((v) => `<button type="button" class="btn btn-ghost btn-sm" data-v="${v}">${vg(v, v % 1 ? 1 : 0)} km/s</button>`).join("")}</div></div>` : ""}
-          ${noter ? `<div class="gt-l"><span>Masse du satellite</span><div class="c-btns">${ms.map((x) => `<button type="button" class="btn btn-ghost btn-sm" data-m="${x.v}">${x.t}</button>`).join("")}</div></div>
-          <div class="gt-l"><span>Distance au centre de la Terre</span><div class="c-btns">${ds.map((x) => `<button type="button" class="btn btn-ghost btn-sm" data-d="${x.v}">${x.t}</button>`).join("")}</div></div>` : ""}
-          <div class="c-btns gt-act">${lancer ? `<button type="button" class="btn btn-primary btn-sm" data-go>🚀 Lancer</button>` : ""}${noter ? `<button type="button" class="btn btn-primary btn-sm" data-noter>NOTER la force</button>` : ""}</div></div>`;
-        zCmd.querySelectorAll("[data-v]").forEach((b) => b.onclick = () => { if (S.sat && !S.res) return refus("Attends la fin du lancement en cours (ou touche ↺ Recommencer)."); S.v = +b.dataset.v; S.sat = null; S.traces = []; S.res = null; majCmd(); });
-        zCmd.querySelectorAll("[data-m]").forEach((b) => b.onclick = () => { S.m = +b.dataset.m; majCmd(); });
-        zCmd.querySelectorAll("[data-d]").forEach((b) => b.onclick = () => { if (S.sat && !S.res) return refus("Attends la fin du lancement en cours."); S.d = +b.dataset.d; S.sat = null; S.traces = []; majCmd(); });
-        const go = zCmd.querySelector("[data-go]"); if (go) go.onclick = () => {
-          if (S.sat && !S.res) return refus("Un satellite est déjà en vol : attends la fin, ou touche ↺ Recommencer.");
-          if (!permis("lancer", { v: S.v })) return;
-          const r0 = id === "k3" ? S.d : 1.1e7;
-          S.sat = { x: 0, y: r0, vx: S.v * 1000, vy: 0, ang: 0, a0: Math.atan2(r0, 0), rmin: r0, rmax: r0 }; S.traces = []; S.res = null; S.t = 0; S.acc = 0;
-          guide("Lancement…", "info", 1500);
-        };
-        const no = zCmd.querySelector("[data-noter]"); if (no) no.onclick = () => {
-          if (S.sat && !S.res) return refus("Attends la fin du lancement avant de noter la force.");
-          if (!permis("noter")) return;
-          retour(surEvt("noterF", { m: S.m, d: S.d, F: MU * S.m / (S.d * S.d) }));
-        };
-        zHint.textContent = id === "k2" ? "Choisir une masse et une distance : la flèche rouge montre la force exercée par la Terre. Toucher NOTER pour garder la valeur." : "Choisir une vitesse, puis toucher « Lancer ». La simulation va environ 2 000 fois plus vite que la réalité.";
-        majCmd();
+        K.zCmd.innerHTML = "";
+        K.zHint.textContent = id === "k2" ? "Choisir une masse et une distance sur l'écran : la flèche rouge montre la force exercée par la Terre. Toucher NOTER pour garder la valeur."
+          : "Choisir une vitesse sur l'écran, puis toucher LANCER. La simulation va environ 2 000 fois plus vite que la réalité.";
       }
-      function majCmd() {
-        zCmd.querySelectorAll("[data-v]").forEach((b) => b.classList.toggle("on", +b.dataset.v === S.v));
-        zCmd.querySelectorAll("[data-m]").forEach((b) => b.classList.toggle("on", +b.dataset.m === S.m));
-        zCmd.querySelectorAll("[data-d]").forEach((b) => b.classList.toggle("on", +b.dataset.d === S.d));
+      function bouton(b, phase) {
+        if (phase !== "down") return;
+        const enVol = S.sat && !S.res;
+        if (b[0] === "v") { if (enVol) return K.refus("Attends la fin du lancement en cours (ou touche ↺ Recommencer)."); S.v = +b.slice(1); S.sat = null; S.traces = []; S.res = null; return; }
+        if (b[0] === "m") { S.m = +b.slice(1); return K.info(`Masse du satellite : ${nb(S.m)} kg.`, 1800); }
+        if (b[0] === "d") { if (enVol) return K.refus("Attends la fin du lancement en cours."); S.d = +b.slice(1); S.sat = null; S.traces = []; return K.info(`Distance au centre de la Terre : ${nb(S.d / 1000)} km.`, 1800); }
+        if (b === "go") {
+          if (enVol) return K.refus("Un satellite est déjà en vol : attends la fin, ou touche ↺ Recommencer.");
+          if (!permis("lancer", { v: S.v })) return;
+          const r0 = S.id === "k3" ? S.d : 1.1e7;
+          S.sat = { x: 0, y: r0, vx: S.v * 1000, vy: 0, ang: 0, a0: Math.atan2(r0, 0), rmin: r0, rmax: r0 }; S.traces = []; S.res = null; S.t = 0; S.acc = 0;
+          if (window.sonTon) window.sonTon(220, 0.4, "sawtooth", 0.05);
+          return K.info("Lancement…", 1500);
+        }
+        if (b === "noter") {
+          if (enVol) return K.refus("Attends la fin du lancement avant de noter la force.");
+          if (!permis("noter")) return;
+          K.retour(surEvt("noterF", { m: S.m, d: S.d, F: MU * S.m / (S.d * S.d) }));
+        }
       }
       function pas(dtR) {
         const s = S.sat, n = 40, h = dtR / n;
@@ -26910,22 +27046,26 @@ const QUESTIONS = [
           if (r > 2.6e7 && (s.vx * s.vx + s.vy * s.vy) / 2 - MU / r >= 0) { fin("fuite"); return; }
         }
       }
-      function fin(res) { S.res = res; retour(surEvt("lancer", { res, v: S.v, id: S.id })); }
+      function fin(res) { S.res = res; K.retour(surEvt("lancer", { res, v: S.v, id: S.id })); }
       const ecran = (x, y) => ({ x: C0.x + x * PX, y: C0.y - y * PX });
       const duree = (t) => { const mn = Math.round(t / 60); return mn < 60 ? mn + " min" : Math.floor(mn / 60) + " h " + String(mn % 60).padStart(2, "0"); };
       const sat = (x, y, m) => { const k = m >= 2000 ? 1.25 : m <= 500 ? 0.8 : 1; return `<g transform="translate(${x.toFixed(1)} ${y.toFixed(1)}) scale(${k})"><rect x="-4" y="-4" width="8" height="8" rx="1.5" fill="#E8EDF2" stroke="#59636A" stroke-width=".8"/><rect x="-15" y="-2.5" width="9" height="5" fill="#2F6FD1" stroke="#1D4F9C" stroke-width=".6"/><rect x="6" y="-2.5" width="9" height="5" fill="#2F6FD1" stroke="#1D4F9C" stroke-width=".6"/></g>`; };
       function dessin() {
+        if (!S) return "";
         let s = `<rect x="3" y="4" width="${W - 6}" height="332" rx="14" class="b-table"/><rect x="9" y="10" width="${W - 18}" height="320" rx="10" class="gt-ciel"/>`;
         for (let i = 0; i < 40; i++) s += `<circle cx="${(17 + (i * 73) % 300)}" cy="${(18 + (i * 131) % 305)}" r="${i % 5 ? 0.7 : 1.2}" fill="#fff" opacity=".7"/>`;
         const Rp = RE * PX;
         s += `<circle cx="${C0.x}" cy="${C0.y}" r="${(Rp + 3).toFixed(1)}" fill="#6FB6F2" opacity=".25"/><circle cx="${C0.x}" cy="${C0.y}" r="${Rp.toFixed(1)}" class="gr-terre"/>`;
         s += `<path d="M${C0.x - 30} ${C0.y - 20}q14 -18 34 -14q10 12 -6 22q-20 8 -28 -8z" class="gr-cont"/><path d="M${C0.x + 4} ${C0.y + 14}q18 -8 26 6q-6 16 -24 12z" class="gr-cont"/>`;
         const kx = C0.x - 4, ky = C0.y - Rp + 4; s += `<circle cx="${kx}" cy="${ky}" r="2.2" fill="#F4C430"/><text x="${kx + 5}" y="${ky + 9}" class="gt-tc">Kourou</text>`;
+        const lcdF = (x, y) => { const F = MU * S.m / (S.d * S.d); return `<rect x="${x}" y="${y}" width="140" height="34" rx="6" class="b-lcd"/><text x="${x + 7}" y="${y + 12}" class="b-lcd-m">FORCE EXERCÉE PAR LA TERRE</text><text x="${x + 133}" y="${y + 28}" class="b-lcd-t" text-anchor="end">F = ${nb(F)} N</text>`; };
         if (S.id === "k2") {
           const p = { x: C0.x + S.d * PX * 0.7071, y: C0.y - S.d * PX * 0.7071 }, F = MU * S.m / (S.d * S.d), L = Math.max(5, 70 * F / 16250);
           s += `<path d="M${C0.x} ${C0.y}L${p.x.toFixed(1)} ${p.y.toFixed(1)}" class="gt-pt"/>` + sat(p.x, p.y, S.m) + fleche(p.x, p.y, p.x - L * 0.7071, p.y + L * 0.7071, "gr-f");
           s += `<text x="${((C0.x + p.x) / 2 + 8).toFixed(1)}" y="${((C0.y + p.y) / 2 + 12).toFixed(1)}" class="gt-tc">d</text>`;
-          return s + `<rect x="16" y="282" width="150" height="40" rx="6" class="b-lcd"/><text x="24" y="296" class="b-lcd-m">FORCE EXERCÉE PAR LA TERRE</text><text x="158" y="315" class="b-lcd-t" text-anchor="end">F = ${nb(F)} N</text>`;
+          s += `<text x="16" y="24" class="gt-tc">Masse du satellite</text>` + MS.map((x, i) => K.choix("m" + x.v, 14 + i * 56, 28, 52, 22, x.t, S.m === x.v, 7.5)).join("");
+          s += `<text x="318" y="250" class="gt-tc" text-anchor="end">Distance au centre</text>` + DS.map((x, i) => K.choix("d" + x.v, 236, 254 + i * 26, 82, 22, x.t, S.d === x.v, 7.5)).join("");
+          return s + lcdF(14, 292) + K.btn("noter", 160, 298, 62, 24, "NOTER", 9);
         }
         const r0 = S.id === "k3" ? S.d : 1.1e7, st = S.sat || { x: 0, y: r0, vx: S.v * 1000, vy: 0 };
         S.traces.forEach((q, i) => { const e = ecran(q.x, q.y); s += `<circle cx="${e.x.toFixed(1)}" cy="${e.y.toFixed(1)}" r="1.8" class="gt-trace" opacity="${(0.25 + 0.6 * i / Math.max(1, S.traces.length)).toFixed(2)}"/>`; });
@@ -26935,26 +27075,18 @@ const QUESTIONS = [
           s += sat(p.x, p.y, S.m) + fleche(p.x, p.y, p.x + ux * Math.min(34, 10 + 3 * F), p.y + uy * Math.min(34, 10 + 3 * F), "gr-f") + fleche(p.x, p.y, p.x + st.vx / vn * 26, p.y - st.vy / vn * 26, "gr-v");
         }
         if (S.res === "chute") { const e = ecran(st.x, st.y); s += `<circle cx="${e.x.toFixed(1)}" cy="${e.y.toFixed(1)}" r="6" fill="#F4C430" opacity=".8"/>`; }
-        return s + `<text x="20" y="324" class="gt-tc">v = ${vg(S.v, S.v % 1 ? 1 : 0)} km/s${S.sat ? " · temps simulé : " + duree(S.t) : ""}</text>`;
+        s += `<text x="16" y="24" class="gt-tc">${S.sat ? "Temps simulé : " + duree(S.t) : S.id === "k3" ? "ISS : 420 000 kg, à 6 770 km du centre" : "Satellite à 11 000 km du centre"}</text>`;
+        s += K.btn("go", 248, 16, 70, 26, "🚀 LANCER", 8.5);
+        if (S.id === "k1") s += `<text x="16" y="290" class="gt-tc">Vitesse de lancement</text>` + VIT.k1.map((v, i) => K.choix("v" + v, 14 + i * 51, 294, 47, 26, vg(v, v % 1 ? 1 : 0) + " km/s", S.v === v, 7.5)).join("");
+        else s += `<text x="16" y="290" class="gt-tc">Vitesse de lancement : 7,7 km/s</text>` + lcdF(14, 294) + K.btn("noter", 160, 300, 62, 24, "NOTER", 9);
+        return s;
       }
-      let avant = null;
-      function boucle(ts) {
-        if (!svg.isConnected) return;
-        const dt = avant == null ? 0 : Math.min(0.05, (ts - avant) / 1000); avant = ts;
-        if (S) {
-          if (S.sat && !S.res) { const dtR = dt * (S.id === "k3" ? 1800 : 2000); S.t += dtR; pas(dtR); S.acc = (S.acc || 0) + dt; if (S.acc > 0.12) { S.acc = 0; S.traces.push({ x: S.sat.x, y: S.sat.y }); if (S.traces.length > 60) S.traces.shift(); } }
-          gD.innerHTML = dessin();
-        }
-        if (msg && performance.now() > msg.fin) { msg = null; guide(); }
-        requestAnimationFrame(boucle);
-      }
-      requestAnimationFrame(boucle);
-      setInterval(() => { if (svg.isConnected) guide(); }, 1200);
-      el.querySelector(".c-reset").onclick = () => { zConf.hidden = false; };
-      zConf.querySelector("[data-non]").onclick = () => { zConf.hidden = true; };
-      zConf.querySelector("[data-oui]").onclick = () => { zConf.hidden = true; charger(mode); guide("La simulation est revenue comme au départ.", "info", 2500); };
-      function charger(id) { mode = id; init(id); gD.innerHTML = dessin(); guide(); }
-      return { charger, _etat: () => S };
+      K = PAILLASSE.creer(el, { W, H: 340, cls: "gt", titre: "Simulation de mise en orbite", repos: "Choisis tes réglages sur l'écran de la simulation.",
+        surEvt: (t, d) => S ? surEvt(t, d) : null, place: () => ({ x: 0, y: 0 }), cible: () => null, poser: () => false, objets: () => [], bouton, dessin,
+        maj: (dt) => { if (S && S.sat && !S.res) { const dtR = dt * (S.id === "k3" ? 1800 : 2000); S.t += dtR; pas(dtR); S.acc = (S.acc || 0) + dt; if (S.acc > 0.12) { S.acc = 0; S.traces.push({ x: S.sat.x, y: S.sat.y }); if (S.traces.length > 60) S.traces.shift(); } } },
+        reset: () => init(S.id) });
+      function charger(id) { init(id); K.guide(); }
+      return { charger, _etat: () => S, _bouton: bouton };
     }
 
     // ======================= Paillasses du chapitre « Poids et masse » (kit v2) =======================
@@ -27222,7 +27354,7 @@ const QUESTIONS = [
         if (id === "d2") S.data = (surEvt("points", {}) || []).slice(0, 3).map((d, i) => Object.assign({ k: "ABC"[i] }, d));
         if (K) { K.pos = {}; K.sel = null; K.drag = null; K.zHint.textContent = HINT[id]; K.guide(); }
       }
-      K = PAILLASSE.creer(el, { W, H, cls: "gt", titre: "Paillasse",
+      K = PAILLASSE.creer(el, { W, H, cls: "gt", titre: "Paillasse", noteAuto: false,
         surEvt: (t, d) => S ? surEvt(t, d) : null, place, cible, poser, bouton: boutonPresse, nom: (k) => NOM[k], role: (k) => ROLE[k],
         haut: (k) => HAUT[k], large: (k) => LARGE[k], objets: () => S ? objetsDe().filter((k) => !(S.chute && S.chute.ks.indexOf(k) >= 0)) : [],
         repos: "Touche un objet pour savoir à quoi il sert.",
@@ -27405,14 +27537,17 @@ const QUESTIONS = [
   // Le TP fournit : o.dessin(K) → SVG (coordonnées 0..W × 0..H) ; o.cible(p, k) → nom de la cible sous le point p (ou null) ;
   // o.poser(k, cible) ; o.bouton(nom, "down"|"up") ; o.nom(k) et o.role(k) → bulle ; o.haut(k) → hauteur de l'objet (bulle) ;
   // o.large(k) → largeur de l'objet (cadre) ; o.place(k) → {x, y} où l'objet doit être (PAILLASSE.rangee pour le matériel rangé) ; o.objets() → objets mobiles ;
-  // o.scene(p) → true si un toucher de la scène est utilisé ; o.maj(dt) ; o.reset() (objectif en cours) ;
-  // o.surEvt("guide") → { i, n, texte, fini, verrou }. Aides : K.btn(id, x, y, w, h, texte, taille) = bouton accroché à un objet.
+  // o.scene(p) → true si un toucher de la scène est utilisé ("glisse" : le doigt continue ensuite à commander, o.scene(p, true)) ; o.maj(dt) ; o.reset() (objectif en cours) ;
+  // o.clic === false : pas de « tic » à l'appui ; o.noteAuto === false : pas de « ✓ Noté » automatique ;
+  // o.surEvt("guide") → { i, n, texte, fini, verrou }. Aides : K.btn(id, x, y, w, h, texte, taille) = bouton accroché à un objet ;
+  // K.choix(id, x, y, w, h, texte, choisi, taille) = bouton de réglage (une valeur parmi plusieurs, pleine quand elle est choisie).
   // PAILLASSE.protocole(box, cfg) : protocole à remettre dans l'ordre (étiquettes à glisser), puis suivi des étapes.
   const PAILLASSE = (() => {
     const calme = () => !!(window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches);
     const TOP = 22, BOT = 46, maint = () => performance.now();
     let PAILLASSE_N = 0;
     const borne = (v, a, b) => Math.max(a, Math.min(b, v));
+    const son = (f, d, forme, vol) => { try { if (window.sonTon) window.sonTon(f, d, forme, vol); } catch (e) {} };
     function creer(el, o) {
       const W = o.W || 330, H = o.H || 340, HT = H + TOP + BOT, pc = (v) => (v / HT * 100).toFixed(3) + "%";
       el.innerHTML = `<div class="bench mv pl pl2 ${o.cls || ""}">
@@ -27430,7 +27565,7 @@ const QUESTIONS = [
       const zGuide = el.querySelector(".mv-guide"), zVer = el.querySelector(".mv-verrou"), zConf = el.querySelector(".c-confirm");
       const zMsg = el.querySelector(".pl-msg"), zBul = el.querySelector(".pl-bulle");
       const K = { svg, bench, W, H, zCmd: el.querySelector(".pl-cmd"), zHint: el.querySelector(".bench-hint"), sel: null, drag: null, pos: {}, hocheDe: {}, calme, t: 0 };
-      let msg = null, glisse = null, appui = null, bulleFin = 0;
+      let msg = null, glisse = null, appui = null, bulleFin = 0, suivi = false;
       // ---------- Bandeau de message (en bas, DANS la paillasse) : jusqu'au geste suivant ----------
       function afficherMsg() {
         const g = msg, cls = g ? (g.genre === "ko" ? "g-ko" : g.genre === "ok" ? "g-ok" : "g-info") : "";
@@ -27441,6 +27576,7 @@ const QUESTIONS = [
       }
       // ---------- Bandeau des étapes (au-dessus) ----------
       K.guide = function (txt, genre, duree) {
+        if (txt && genre === "ok" && o.noteAuto !== false && K.presse && /noter/i.test(K.presse.id) && maint() - K.presse.t < 800) { K.flash = { id: K.presse.id, t: maint(), txt: "✓ Noté" }; son(880, 0.09); }
         if (txt) { const t = maint(); msg = { txt, genre, t0: t, fin: genre === "ko" ? Infinity : t + Math.max(duree || 4000, 3500) }; afficherMsg(); }
         const e = (o.surEvt && o.surEvt("guide", {})) || {};
         zVer.hidden = !e.verrou; if (e.verrou) zVer.innerHTML = `<div><span aria-hidden="true">🔒</span><p>${esc(e.verrou)}</p></div>`;
@@ -27474,6 +27610,8 @@ const QUESTIONS = [
       K.hoche = (k) => { const t0 = K.hocheDe[k]; if (!t0) return 0; const d = maint() - t0; if (d > 700) { delete K.hocheDe[k]; return 0; } return Math.sin(d / 40) * 3 * (1 - d / 700); };
       K.objet = (k, inner, w, h) => { const p = K.p(k), x = p.x + K.hoche(k); return `<g data-o="${k}" class="pl-obj${K.sel === k ? " sel" : ""}${K.drag && K.drag.k === k ? " leve" : ""}" transform="translate(${x.toFixed(1)} ${p.y.toFixed(1)})">${K.sel === k ? `<rect x="${-w / 2 - 5}" y="${-h - 5}" width="${w + 10}" height="${h + 10}" rx="9" class="c-sel"/>` : ""}${inner}<rect x="${-w / 2 - 4}" y="${-h - 4}" width="${w + 8}" height="${h + 8}" fill="transparent"/></g>`; };
       K.btn = (id, x, y, w, h, txt, fs) => `<g class="c-btn" data-b="${id}"><rect x="${x}" y="${y}" width="${w}" height="${h}" rx="4"/><text x="${x + w / 2}" y="${(y + h / 2 + (fs || 7) * 0.36).toFixed(1)}" text-anchor="middle" style="font-size:${fs || 7}px">${txt}</text></g>`;
+      // bouton de choix (réglage parmi plusieurs valeurs) : contour seul, plein quand il est choisi
+      K.choix = (id, x, y, w, h, txt, on, fs) => K.btn(id, x, y, w, h, txt, fs).replace('class="c-btn"', `class="c-btn c-choix${on ? " on" : ""}"`);
       K.pt = (ev) => { const pt = svg.createSVGPoint(); pt.x = ev.clientX; pt.y = ev.clientY; return pt.matrixTransform(svg.getScreenCTM().inverse()); };
       // aimantation : si rien sous le doigt, on cherche une cible tout près (anneaux de 7, 14 et 21 unités)
       function viser(p, k) {
@@ -27486,7 +27624,7 @@ const QUESTIONS = [
         if (msg && maint() - msg.t0 > 500) { msg = null; afficherMsg(); }
         cacherBulle();
         const b = ev.target.closest("[data-b]");
-        if (b) { appui = b.dataset.b; o.bouton && o.bouton(appui, "down"); svg.setPointerCapture(ev.pointerId); ev.preventDefault(); return; }
+        if (b) { appui = b.dataset.b; K.presse = { id: appui, t: maint() }; if (o.clic !== false) son(1150, 0.035, "triangle", 0.07); o.bouton && o.bouton(appui, "down"); svg.setPointerCapture(ev.pointerId); ev.preventDefault(); return; }
         const ob = ev.target.closest("[data-o]");
         if (ob) {
           const k = ob.dataset.o;
@@ -27495,14 +27633,17 @@ const QUESTIONS = [
         }
         const p = K.pt(ev);
         if (K.sel) { const c = viser(p, K.sel); if (c) return poser(K.sel, c); K.sel = null; if (o.scene && o.scene(p)) return; K.info("Objet relâché. Pour le poser, glisse-le sur sa place, ou touche-le puis touche sa place.", 3000); return; }
-        if (o.scene) o.scene(p);
+        // o.scene(p) peut répondre "glisse" : le doigt continue de commander la scène tant qu'il reste appuyé (curseur d'une courbe…)
+        if (o.scene && o.scene(p) === "glisse") { suivi = true; svg.setPointerCapture(ev.pointerId); ev.preventDefault(); }
       });
       svg.addEventListener("pointermove", (ev) => {
+        if (suivi) { const p = K.pt(ev); o.scene({ x: borne(p.x, 0, W), y: borne(p.y, 0, H) }, true); return; }
         if (!glisse) return;
         if (Math.hypot(ev.clientX - glisse.x0, ev.clientY - glisse.y0) > 8) glisse.bouge = true;
         if (glisse.bouge) { const p = K.pt(ev); const hk = o.haut ? o.haut(glisse.k) : 44, lk = o.large ? o.large(glisse.k) / 2 : 16; K.drag = { k: glisse.k, x: borne(p.x, lk + 2, W - lk - 2), y: borne(p.y + 12, hk + 4, H - 2) }; K.sel = glisse.k; if (o.lever) o.lever(glisse.k); }
       });
       const fin = (ev) => {
+        if (suivi) { suivi = false; return; }
         if (appui) { const a = appui; appui = null; o.bouton && o.bouton(a, "up"); return; }
         if (!glisse) return; const g = glisse; glisse = null; K.drag = null;
         if (!g.bouge) { // simple toucher : l'objet est pris et sa bulle « nom + rôle » s'affiche
@@ -27515,8 +27656,8 @@ const QUESTIONS = [
       svg.addEventListener("pointerup", fin); svg.addEventListener("pointercancel", fin);
       // Téléphone (18/11) : un geste commencé sur un objet ou un bouton ne fait jamais défiler la page. « touch-action: none »
       // ne suffit pas sur iPhone (ignoré sur les éléments d'un SVG) : on bloque le défilement à la main, seulement pendant ces gestes.
-      svg.addEventListener("touchstart", (ev) => { const t = ev.target; if (t && t.closest && t.closest("[data-o], [data-b]")) ev.preventDefault(); }, { passive: false });
-      svg.addEventListener("touchmove", (ev) => { if (glisse || appui) ev.preventDefault(); }, { passive: false });
+      svg.addEventListener("touchstart", (ev) => { const t = ev.target; if (t && t.closest && t.closest("[data-o], [data-b], [data-g]")) ev.preventDefault(); }, { passive: false });
+      svg.addEventListener("touchmove", (ev) => { if (glisse || appui || suivi) ev.preventDefault(); }, { passive: false });
       // ---------- Recommencer (dans la paillasse, en haut à droite, toujours avec confirmation) ----------
       el.querySelector(".pl-reset").onclick = () => { cacherBulle(); zConf.hidden = false; };
       zConf.querySelector("[data-non]").onclick = () => { zConf.hidden = true; };
@@ -27529,6 +27670,9 @@ const QUESTIONS = [
         if (o.maj) o.maj(dt);
         (o.objets ? o.objets() : []).forEach((k) => { const p = K.p(k), c = K.drag && K.drag.k === k ? K.drag : o.place(k), f = calme() ? 1 : 0.28; p.x += (c.x - p.x) * f; p.y += (c.y - p.y) * f; });
         gD.innerHTML = o.dessin(K);
+        const tb = maint();
+        if (K.presse && tb - K.presse.t < 220) { const e = gD.querySelector(`[data-b="${K.presse.id}"]`); if (e) e.classList.add("pl-presse"); }
+        if (K.flash) { const f = (tb - K.flash.t) / 1200, e = gD.querySelector(`[data-b="${K.flash.id}"]`); if (f >= 1 || !e) K.flash = null; else { const bb = e.getBBox(); gD.insertAdjacentHTML("beforeend", `<text x="${(bb.x + bb.width / 2).toFixed(1)}" y="${Math.max(10, bb.y - 4 - 18 * f).toFixed(1)}" class="pl-note" text-anchor="middle" opacity="${(1 - f * f).toFixed(2)}">${K.flash.txt}</text>`); } }
         const t = maint();
         if (msg && t > msg.fin) { msg = null; afficherMsg(); }
         if (bulleFin && t > bulleFin) cacherBulle();
@@ -27593,7 +27737,70 @@ const QUESTIONS = [
       };
       el.querySelector("[data-v]").onclick = valider; inp.addEventListener("keydown", (e) => { if (e.key === "Enter") valider(); });
     }
-    return { creer, protocole, saisie, calme, rangee };
+    // ---------- Habillage charte v2 des paillasses construites AVANT le kit (07 électricité, 08 masse, 08 mouvement, 09 chimie) ----------
+    // Sans toucher à leur moteur : bandeau des étapes au-dessus (cfg.guide → { i, n, texte, fini } si le moteur n'a pas le sien),
+    // « ↺ Recommencer » au coin haut droit DE la paillasse avec confirmation (cfg.reset, ou l'ancien bouton du moteur),
+    // messages et commandes rangés DANS le cadre de la paillasse (pied), bord rouge + vibration à chaque refus,
+    // bouton enfoncé + « tic » à chaque appui, « ✓ Noté » après un NOTER réussi.
+    function habiller(zone, cfg) {
+      cfg = cfg || {};
+      const bench = zone && zone.querySelector(".bench"); if (!bench || bench.dataset.v2) return null;
+      const svg = bench.querySelector("svg.bench-svg"); if (!svg) return null;
+      bench.dataset.v2 = "1"; bench.classList.add("plh");
+      let sc = bench.querySelector(".mv-scene");
+      if (!sc) { sc = document.createElement("div"); sc.className = "mv-scene"; svg.parentNode.insertBefore(sc, svg); sc.appendChild(svg); }
+      let g = bench.querySelector(".mv-guide"); const propre = !!g;
+      if (!g) { g = document.createElement("div"); g.className = "mv-guide"; g.setAttribute("aria-live", "polite"); g.innerHTML = `<span class="mv-g-ico"></span><span class="mv-g-txt"></span>`; }
+      bench.insertBefore(g, bench.firstChild); bench.insertBefore(sc, g.nextSibling);
+      // Recommencer
+      const bar = bench.querySelector(".c-barre"), ancien = bar && bar.querySelector(".c-reset");
+      let conf = bench.querySelector(".c-confirm");
+      const rs = document.createElement("button"); rs.type = "button"; rs.className = "pl-reset"; rs.textContent = "↺ Recommencer"; rs.setAttribute("aria-label", "Recommencer cet objectif depuis le début");
+      sc.appendChild(rs);
+      if (ancien && conf) { rs.onclick = () => ancien.click(); sc.appendChild(conf); }
+      else {
+        conf = document.createElement("div"); conf.className = "c-confirm"; conf.hidden = true;
+        conf.innerHTML = `<strong>Tu es sûr de vouloir recommencer ?</strong><span>Cet objectif repart du début. Tes mesures notées et les étapes réussies restent validées.</span><div class="c-btns"><button type="button" class="btn btn-primary btn-sm" data-oui>Oui, recommencer</button><button type="button" class="btn btn-ghost btn-sm" data-non>Non</button></div>`;
+        sc.appendChild(conf);
+        rs.onclick = () => { conf.hidden = false; };
+        conf.querySelector("[data-non]").onclick = () => { conf.hidden = true; };
+        conf.querySelector("[data-oui]").onclick = () => { conf.hidden = true; if (cfg.reset) cfg.reset(); };
+      }
+      // pied de la paillasse : messages d'abord, puis commandes
+      const pied = document.createElement("div"); pied.className = "pl-pied";
+      const reste = [...bench.children].filter((c) => c !== g && c !== sc && c !== bar && !c.classList.contains("bench-hint"));
+      reste.sort((x, y) => (/c-msg|c-main/.test(y.className) ? 1 : 0) - (/c-msg|c-main/.test(x.className) ? 1 : 0)).forEach((c) => pied.appendChild(c));
+      sc.appendChild(pied);
+      const hint = bench.querySelector(".bench-hint"); if (hint) bench.appendChild(hint);
+      // bandeau des étapes (si le moteur n'a pas le sien)
+      if (!propre && cfg.guide) {
+        const maj = () => {
+          if (!g.isConnected) return clearInterval(tm);
+          const e = cfg.guide() || {}, ico = e.fini ? "★" : e.i ? `${e.i}/${e.n}` : "i", cls = e.fini ? "g-fin" : "", t = e.texte || "";
+          if (g.dataset.t === t + cls) return;
+          g.dataset.t = t + cls; g.className = "mv-guide " + cls + " neuf"; g.querySelector(".mv-g-ico").textContent = ico; g.querySelector(".mv-g-txt").textContent = t; setTimeout(() => g.classList.remove("neuf"), 400);
+        };
+        const tm = setInterval(maj, 600); maj();
+      }
+      // refus : bord rouge (classe sig-ko posée par l'ancien moteur) + vibration
+      new MutationObserver(() => { if (bench.classList.contains("sig-ko") && !bench._vib) { bench._vib = true; if (navigator.vibrate) try { navigator.vibrate(60); } catch (e) {} } if (!bench.classList.contains("sig-ko")) bench._vib = false; }).observe(bench, { attributes: true, attributeFilter: ["class"] });
+      // chaque appui se voit et s'entend ; « ✓ Noté » après un NOTER réussi
+      bench.addEventListener("pointerdown", (ev) => {
+        const b = ev.target.closest && ev.target.closest(".c-btn, .o-btn, .b-btn, .b-noter, .mv-btn, button, .btn, g[data-act]"); if (!b || !bench.contains(b) || b === rs) return;
+        b.classList.add("pl-presse"); setTimeout(() => b.classList.remove("pl-presse"), 200);
+        son(1150, 0.035, "triangle", 0.07);
+        if (!/NOTER/i.test(b.textContent || "")) return;
+        const r = b.getBoundingClientRect(), msg0 = (pied.querySelector(".c-msg") || {}).textContent || "";
+        setTimeout(() => {
+          const m = pied.querySelector(".c-msg"), ok = bench.classList.contains("sig-ok") || g.classList.contains("g-ok") || (m && m.classList.contains("ok") && m.textContent !== msg0);
+          if (!ok || !sc.isConnected) return;
+          const R = sc.getBoundingClientRect(), n = document.createElement("div"); n.className = "pl-note-h"; n.textContent = "✓ Noté";
+          n.style.left = (r.left + r.width / 2 - R.left) + "px"; n.style.top = Math.max(2, r.top - R.top - 16) + "px"; sc.appendChild(n); setTimeout(() => n.remove(), 1300); son(880, 0.09);
+        }, 380);
+      }, true);
+      return { bench, scene: sc, pied };
+    }
+    return { creer, protocole, saisie, calme, rangee, habiller };
   })();
 
   // ======================= Catalogue du matériel (chaque objet dessiné UNE fois, origine = milieu du bas de l'objet) =======================
@@ -30297,11 +30504,14 @@ const QUESTIONS = [
     return { vue, _test: { FENTES, FILS, lamCuve } };
   })();
   // ======================= TP d'optique (2nde) : banc d'optique et spectromètre =======================
+  // CHARTE V2 (18/11/2026) : construite sur le kit PAILLASSE (08_kit_paillasse.js) : bandeau des étapes, Recommencer, bulle,
+  // deux gestes (glisser ou toucher puis toucher), refus expliqués ; tout est DANS la paillasse.
   // Deux paillasses « dans le noir » (on fait le noir dans la salle pour observer les spectres) :
-  //  - mode "prisme" : lampe de lumière blanche, banc gradué (fente, lentille), prisme sur un plateau tournant, écran.
-  //    Sous la paillasse : l'écran vu de face (spectre net, flou ou décalé selon le montage).
-  //  - mode "spectro" : une source (lampe à incandescence + générateur réglable, ou lampe spectrale / laser + alimentation)
-  //    et la fibre optique d'un spectromètre. Sous la paillasse : l'ordinateur (intensité en fonction de λ, curseur, NOTER).
+  //  - mode "prisme" : lampe (bouton ALLUMER), banc gradué (fente, lentille), prisme sur un plateau tournant (↺ ↻), écran ;
+  //    sous le montage, toujours dans la paillasse : l'écran vu de face (spectre net, flou ou décalé). Matériel rangé en bas.
+  //  - mode "spectro" : une source (lampe à incandescence + générateur − +, ou lampe spectrale / laser + alimentation ON/OFF)
+  //    et la fibre optique d'un spectromètre (à glisser devant la fenêtre de sortie) ; l'ordinateur est sur la paillasse :
+  //    courbe (toucher ou glisser le doigt pour placer le curseur), ◀◀ ◀ ▶ ▶▶ et NOTER sur l'ordinateur.
   // Les raies viennent des données du cours (SPECTRES_ELEMENTS, 03_contenu.html) ; le filament suit la loi de Planck.
   // Gestes : glisser un objet ; toucher un objet pour lire son rôle ; toucher un bouton pour le commander.
   // Événements envoyés au TP (08_tp.js) : "etat" (4 fois par seconde) et "noter" (bouton NOTER de l'ordinateur ;
@@ -30385,258 +30595,186 @@ const QUESTIONS = [
     const xNm = (x) => LMIN + (x - 36) * 400 / 272;
     let grad = ""; for (let l = LMIN; l <= LMAX; l += 10) grad += `<stop offset="${((l - LMIN) / 400).toFixed(3)}" stop-color="${couleurLambda(l)}"/>`;
 
-    // ======================= La paillasse =======================
+    // ======================= La paillasse (kit v2) =======================
+    const HP = 372, HS = 392; // hauteurs des scènes : prisme, spectromètre
+    const PANNEAU = { y: 220, h: 50 }, BAC_P = 348;
+    const ORDI = { x: 6, y: 208, w: 318, h: 178 }, PLOT = { x: 12, y: 226, w: 306, h: 126 }, BAC_S = 186;
     function banc(el, surEvt) {
-      el.innerHTML = `<div class="bench optique">
-          <svg class="bench-svg" viewBox="0 0 ${W} ${H}" role="group" aria-label="Paillasse d'optique : glisse les objets, touche les boutons pour les commander">
-            <defs><clipPath id="O-clip"><rect x="${X0}" y="${Y0}" width="${X1 - X0}" height="${Y1 - Y0}" rx="9"/></clipPath>
-</defs>
-            <rect x="3" y="4" width="${W - 6}" height="${H - 8}" rx="14" class="b-table"/>
-            <rect x="${X0 - 3}" y="${Y0 - 3}" width="${X1 - X0 + 6}" height="${Y1 - Y0 + 6}" rx="10" class="o-noir"/>
-            <g class="o-dessin"></g><g class="o-bulles" pointer-events="none"></g>
-          </svg>
-          <p class="bench-hint">La salle est dans le noir. Glisser les objets ; toucher un objet pour lire son rôle ; toucher les boutons pour les commander.</p>
-          <div class="o-vue"></div>
-        </div>`;
-      const bench = el.querySelector(".bench"), svg = el.querySelector("svg"), gD = el.querySelector(".o-dessin"), gB = el.querySelector(".o-bulles"), vue = el.querySelector(".o-vue");
-      let S = null, M = null, opts = {}, geste = null;
-
+      let S = null, M = null, opts = {}, K = null, acc = 0;
+      const ev = (t, d) => surEvt(t, d || {});
+      const dim = (k) => OBJ[k];
+      const surSupport = () => S.objets.find((k) => S.at[k] === "sup");
       function charger(montage, o) {
         M = montage; opts = o || {};
-        S = { mode: M.mode, t: 0, objets: [], lampe: false, rot: ROT0, U: 0, alim: false, chauffe: 0, chaudJusqua: -1, fibre: { x: 206, y: 196 }, lambda: 589, bulle: null, hoche: null, msg: null, tPlot: 0 };
-        if (M.mode === "prisme") {
-          [["fente", 34, 262], ["lentille", 96, 258], ["prisme", 150, 266], ["ecran", 236, 256]].forEach(([t, x, y]) => S.objets.push({ id: t, type: t, x, y, place: null }));
-        } else if (M.plateau) {
-          M.plateau.forEach((t, k) => { const D = OBJ[t]; S.objets.push({ id: t, type: t, x: 30 + k * 70 + (t === "laser" ? -6 : 0), y: t === "laser" ? 284 : 258, place: null, w: D.w, h: D.h }); });
+        S = { mode: M.mode, t: 0, objets: [], at: {}, lampe: false, rot: ROT0, U: 0, alim: false, chauffe: 0, chaudJusqua: -1, fibre: { x: 150, y: 104 }, lambda: 589 };
+        if (M.mode === "prisme") S.objets = ["fente", "lentille", "prisme", "ecran"];
+        else if (M.plateau) S.objets = M.plateau.slice();
+        S.objets.forEach((k) => S.at[k] = "bac");
+        if (!K) creer();
+        K.pos = {}; K.sel = null; K.guide();
+      }
+      // ---------- Places des objets (origine = milieu du bas de l'objet) ----------
+      function place(k) {
+        if (k === "fibre") return { x: S.fibre.x, y: S.fibre.y };
+        const a = S.at[k], D = dim(k);
+        if (a === "r1" || a === "r2") return { x: SLOTS[a], y: AXE + D.h / 2 };
+        if (a === "pl") return { x: P.x, y: P.y + D.h / 2 };
+        if (a === "se") return { x: E.x, y: E.y + D.h / 2 };
+        if (a === "sup") return { x: SUP.x + (k === "laser" ? 8 : 0), y: SUP.y + D.h / 2 };
+        const L = S.objets, i = L.indexOf(k);
+        if (S.mode === "prisme") return PAILLASSE.rangee(L, BAC_P, 50, 280)[k];
+        return PAILLASSE.rangee(L, BAC_S, L.length > 1 ? 150 : 220, 270)[k];
+      }
+      const fibreP = () => K && K.drag && K.drag.k === "fibre" ? { x: K.drag.x, y: K.drag.y - 12 } : S.fibre;
+      // ---------- Cibles ----------
+      function cible(p, k) {
+        if (k === "fibre") return "f:" + p.x.toFixed(1) + ":" + p.y.toFixed(1);
+        if (S.mode === "prisme") {
+          if (p.y > 300) return "bac";
+          if (Math.hypot(p.x - P.x, p.y - P.y) < 38) return "pl";
+          if (Math.hypot(p.x - E.x, p.y - E.y) < 40) return "se";
+          if (Math.abs(p.y - AXE) < 34 && p.x > RAIL.x - 16 && p.x < RAIL.x2 + 14) return Math.abs(p.x - SLOTS.r1) < Math.abs(p.x - SLOTS.r2) ? "r1" : "r2";
+          return null;
         }
-        vue.innerHTML = M.mode === "prisme"
-          ? `<div class="o-ecranvue"><strong class="small">L'écran, vu de face</strong><div class="o-fv"></div><p class="small o-statut" aria-live="polite"></p></div>`
-          : `<div class="o-ordi"><div class="o-ordi-t"><strong class="small">Ordinateur : logiciel du spectromètre</strong><span class="o-signal small"></span></div>
-              <svg class="o-plot" viewBox="0 0 320 176" role="img" aria-label="Intensité de la lumière reçue en fonction de la longueur d'onde"></svg>
-              <p class="small o-lect" aria-live="polite"></p>
-              <div class="o-ctrl"><button class="btn btn-ghost btn-sm" data-c="-5" aria-label="Curseur : 5 nm à gauche">◀◀</button><button class="btn btn-ghost btn-sm" data-c="-1" aria-label="Curseur : 1 nm à gauche">◀</button><button class="btn btn-ghost btn-sm" data-c="1" aria-label="Curseur : 1 nm à droite">▶</button><button class="btn btn-ghost btn-sm" data-c="5" aria-label="Curseur : 5 nm à droite">▶▶</button><button class="btn btn-primary btn-sm" data-c="noter">NOTER</button></div>
-              <p class="small o-statut" aria-live="polite"></p>
-              ${M.source === "incand" ? `<p class="small muted">Le logiciel ramène toujours le haut de la courbe à 100 %. Glisser le doigt sur la courbe pour déplacer le curseur.</p>` : `<p class="small muted">Glisser le doigt sur la courbe pour déplacer le curseur, puis le placer au sommet d'un pic.</p>`}</div>`;
-        if (M.mode !== "prisme") brancherOrdi();
-        dessiner(); statut();
+        if (Math.hypot(p.x - SUP.x, p.y - SUP.y) < 48) return "sup";
+        if (p.x > 120 && p.y > 110 && p.y < 206) return "bac";
+        return null;
       }
-      const parId = (id) => S.objets.find((o) => o.id === id);
-      const surSupport = () => S.objets.find((o) => o.place === "sup");
-      const dim = (o) => OBJ[o.type];
-
-      // ---------- Bulles et signaux ----------
-      function bulle(texte, o, duree, genre) {
-        S.bulle = { texte, o: o ? o.id : null, fin: S.t + (duree || 3.2) };
-        if (genre) signalPaillasse(bench, genre);
-        if (genre === "ko" && o) S.hoche = { id: o.id, t0: performance.now() };
-        dessinerBulle();
+      function poser(k, c) {
+        if (k === "fibre") { const [, x, y] = c.split(":"); S.fibre = { x: Math.max(18, Math.min(312, +x)), y: Math.max(24, Math.min(196, +y + 12)) }; return; }
+        const D = dim(k), avant = S.at[k];
+        if (avant === "sup" && c !== "sup") {
+          if (S.alim) return K.refus("Éteins d'abord l'alimentation (OFF) avant de retirer la source.", k);
+          if (S.chaudJusqua > S.t) return K.refus("La lampe est brûlante : attends quelques secondes qu'elle refroidisse avant de la retirer.", k);
+        }
+        if (c === "bac") { S.at[k] = "bac"; return; }
+        if (S.mode === "prisme") {
+          if (k === "fente" || k === "lentille") {
+            if (c === "pl") return K.refus("Sur le plateau tournant, on pose seulement le prisme.", k);
+            if (c === "se") return K.refus("Ce support est celui de l'écran.", k);
+            if (S.objets.some((x) => x !== k && S.at[x] === c)) return K.refus("Il y a déjà un objet à cet endroit du banc.", k);
+            S.at[k] = c; return K.guide(D.nom + " posée sur le banc.", "ok", 2000);
+          }
+          if (k === "prisme") {
+            if (c === "pl") { S.at[k] = "pl"; return K.guide("Le prisme est sur le plateau. Tourne-le avec ↺ et ↻.", "ok", 3000); }
+            return K.refus(c === "se" ? "Ce support est celui de l'écran." : "Le prisme se pose sur le plateau tournant, au bout du banc.", k);
+          }
+          if (k === "ecran") {
+            if (c === "se") { S.at[k] = "se"; return K.guide("L'écran est sur son support.", "ok", 2000); }
+            return K.refus("L'écran se place sur son support, là où arrive la lumière qui sort du prisme.", k);
+          }
+        }
+        if (c === "sup") {
+          const occ = surSupport();
+          if (occ && occ !== k) return K.refus("Il y a déjà une source sur le support : remets-la d'abord dans le bac.", k);
+          S.at[k] = "sup"; return K.guide(D.nom + " posé" + (k === "laser" ? "" : "e") + " sur le support. Allume l'alimentation (ON).", "ok", 3000);
+        }
+        return false;
       }
-      function dessinerBulle() {
-        const b = S.bulle;
-        if (!b || S.t > b.fin) { gB.innerHTML = ""; return; }
-        const mots = b.texte.split(" "), lignes = [""];
-        mots.forEach((m) => { if ((lignes[lignes.length - 1] + " " + m).length > 36) lignes.push(m); else lignes[lignes.length - 1] = (lignes[lignes.length - 1] + " " + m).trim(); });
-        const w = 206, h = 12 + lignes.length * 13, o = b.o ? parId(b.o) : null;
-        const ox = o ? (o.vx != null ? o.vx : o.x) : 0, oy = o ? (o.vy != null ? o.vy : o.y) : 0;
-        let x = o ? ox + dim(o).w / 2 - w / 2 : W / 2 - w / 2, y = o ? oy - h - 8 : Y0 + 8;
-        if (y < Y0) y = Math.min(Y1 - h, (o ? oy + dim(o).h : 0) + 10);
-        x = Math.max(X0, Math.min(X1 - w, x));
-        gB.innerHTML = `<g transform="translate(${f1(x)} ${f1(y)})"><rect width="${w}" height="${h}" rx="8" class="b-bulle"/>${lignes.map((l, i) => `<text x="9" y="${16 + i * 13}" class="b-bulle-t">${esc(l)}</text>`).join("")}</g>`;
-      }
-
       // ---------- Optique du banc (mode prisme) ----------
-      // Qualité du faisceau selon ce qui est posé sur le banc : "net" (fente puis lentille), "flou" (fente seule ou mal placée), "large" (pas de fente)
-      function surBanc() { return S.objets.filter((o) => o.place === "r1" || o.place === "r2").sort((a, b) => SLOTS[a.place] - SLOTS[b.place]); }
-      function qualite() {
-        const b = surBanc().map((o) => o.type);
-        if (b[0] === "fente" && b[1] === "lentille") return "net";
-        return b.indexOf("fente") >= 0 ? "flou" : "large";
+      function surBanc() { return S.objets.filter((k) => S.at[k] === "r1" || S.at[k] === "r2").sort((a, b) => SLOTS[S.at[a]] - SLOTS[S.at[b]]); }
+      function qualite() { const b = surBanc(); if (b[0] === "fente" && b[1] === "lentille") return "net"; return b.indexOf("fente") >= 0 ? "flou" : "large"; }
+      const prismeOk = () => S.at.prisme === "pl", ecranOk = () => S.at.ecran === "se";
+      const decalage = () => (S.rot - ROT_OK) * 1.0;
+      function cibleLum() { if (!S.lampe || !prismeOk()) return "aucun"; const d = Math.abs(decalage()); return d <= 5 ? "plein" : d <= 14.5 ? "partiel" : "rate"; }
+      const thetaL = (l) => BETA + decalage() + 4.5 - 9 * (l - 400) / 300;
+      // ---------- Boutons dessinés ----------
+      function bouton(b, phase) {
+        if (phase !== "down") return;
+        if (b === "lampe") { S.lampe = !S.lampe; return K.info(S.lampe ? "Lampe allumée : suis le trajet de la lumière." : "Lampe éteinte.", 2000); }
+        if (b === "rotg" || b === "rotd") {
+          if (!prismeOk()) return K.refus("Pose d'abord le prisme sur le plateau tournant.", "prisme");
+          const r = Math.max(-45, Math.min(45, S.rot + (b === "rotd" ? PAS_ROT : -PAS_ROT)));
+          if (r === S.rot) return K.info("Le plateau est en butée de ce côté.", 2000);
+          S.rot = r; return;
+        }
+        if (b === "moins" || b === "plus") {
+          const U = Math.max(0, Math.min(12, S.U + (b === "plus" ? 1 : -1)));
+          if (U === S.U) return K.info(U === 12 ? "12 V : c'est la tension maximale de cette lampe." : "Le générateur est déjà à 0 V.", 2200);
+          S.U = U; if (U === 12) K.info("12 V : c'est la tension maximale de cette lampe.", 2200); return;
+        }
+        if (b === "alim") {
+          const o = surSupport();
+          if (!S.alim && !o) return K.refus("Pose d'abord une source sur le support.");
+          S.alim = !S.alim;
+          if (S.alim) {
+            S.chauffe = o === "laser" ? 1 : 0;
+            if (o === "laser") K.info("Laser allumé : ne regarde jamais le faisceau et ne le dirige vers personne.", 4000);
+            else if (dim(o).uv) K.info("La lampe au mercure émet des ultraviolets : ne la regarde pas directement.", 4000);
+            else K.info("Alimentation allumée : la lampe chauffe quelques secondes.", 2600);
+          } else { if (o && o !== "laser") S.chaudJusqua = S.t + 3; S.chauffe = 0; K.info("Alimentation éteinte.", 1800); }
+          return;
+        }
+        if (b === "noter") return noter();
+        const d = { cg2: -5, cg: -1, cd: 1, cd2: 5 }[b];
+        if (d) { const l = Math.max(LMIN, Math.min(LMAX, S.lambda + d)); if (l === S.lambda) return K.info("Le curseur est au bout de l'axe.", 1800); S.lambda = l; }
       }
-      const prismeOk = () => { const p = parId("prisme"); return !!p && p.place === "pl"; };
-      const ecranOk = () => { const e = parId("ecran"); return !!e && e.place === "se"; };
-      const decalage = () => (S.rot - ROT_OK) * 1.0; // écart (en degrés) entre la lumière déviée et l'écran
-      function cible() {
-        if (!S.lampe || !prismeOk()) return "aucun";
-        const d = Math.abs(decalage());
-        return d <= 5 ? "plein" : d <= 14.5 ? "partiel" : "rate";
+      // toucher ou glisser le doigt sur la courbe de l'ordinateur : le curseur suit
+      function scene(p) {
+        if (S.mode !== "spectro") return false;
+        if (p.x < PLOT.x || p.x > PLOT.x + PLOT.w || p.y < PLOT.y || p.y > PLOT.y + PLOT.h) return false;
+        const xp = (p.x - PLOT.x) * 320 / PLOT.w; S.lambda = Math.max(LMIN, Math.min(LMAX, Math.round(xNm(xp)))); return "glisse";
       }
-      const thetaL = (l) => BETA + decalage() + 4.5 - 9 * (l - 400) / 300; // le violet est plus dévié que le rouge
-
       // ---------- Dessin ----------
-      function dessiner() {
-        let s = "";
-        if (S.mode === "prisme") s = dessinPrisme(); else s = dessinSpectro();
-        s += `<g class="b-reset" data-act="reset" transform="translate(${X1 - 22} ${Y0 + 4})" role="button" aria-label="Remettre la paillasse comme au départ"><rect width="18" height="18" rx="5"/><path d="M5 9a4 4 0 104-4H6M6 3v2.5h2.5"/></g>`;
-        gD.innerHTML = s;
-        dessinerBulle();
+      const B = (id, x, y, w, h, t, fs) => K.btn(id, x, y, w, h, t, fs);
+      function lignes(t, n) { const L = [""]; t.split(" ").forEach((m) => { if ((L[L.length - 1] + " " + m).length > n) L.push(m); else L[L.length - 1] = (L[L.length - 1] + " " + m).trim(); }); return L; }
+      function dessin(K) {
+        if (!S) return "";
+        let s = `<rect x="3" y="4" width="${W - 6}" height="${K.H - 8}" rx="14" class="b-table"/><rect x="7" y="9" width="${W - 14}" height="${K.H - 18}" rx="10" class="o-noir"/>`;
+        return s + (S.mode === "prisme" ? dessinPrisme(K) : dessinSpectro(K));
       }
-      const decalH = (o) => decalHoche(S.hoche, o.id);
-      function plateauMateriel(titre) {
-        return `<rect x="16" y="${PLATEAU_Y}" width="298" height="90" rx="9" class="o-plateau-m"/><text x="24" y="${PLATEAU_Y + 14}" class="o-nom">${titre}</text>`;
+      function objetP(k) {
+        const D = dim(k), w = D.w, h = D.h; let corps = "";
+        if (k === "fente") corps = `<rect x="3" y="0" width="8" height="19" rx="1.5" class="o-plaque"/><rect x="3" y="25" width="8" height="19" rx="1.5" class="o-plaque"/><rect x="5.5" y="19" width="3" height="6" class="o-trou"/>`;
+        if (k === "lentille") corps = `<path d="M8 0C17 12 17 36 8 48C-1 36 -1 12 8 0Z" class="o-verre"/>`;
+        if (k === "prisme") corps = `<path d="M20 2L38 34H2Z" class="o-verre"/>`;
+        if (k === "ecran") corps = `<rect x="1" y="0" width="8" height="50" rx="2" class="o-ecran"/>`;
+        const enMain = K.drag && K.drag.k === k, a = enMain ? "bac" : S.at[k];
+        const rot = a === "pl" ? ` rotate(${S.rot} ${w / 2} ${h / 2})` : a === "se" ? ` rotate(${BETA} ${w / 2} ${h / 2})` : "";
+        return K.objet(k, `<g transform="translate(${-w / 2} ${-h})${rot}">${corps}</g>` + (a === "bac" ? `<text x="0" y="12" text-anchor="middle" class="o-nom">${D.nom}</text>` : ""), w, h);
       }
-      function dessinPrisme() {
-        let s = plateauMateriel("Matériel : glisse-le sur le banc");
-        // banc gradué
+      function dessinPrisme(K) {
+        let s = `<rect x="16" y="${BAC_P - 62}" width="298" height="72" rx="9" class="o-plateau-m"/><text x="24" y="${BAC_P - 50}" class="o-nom">Matériel</text>`;
         s += `<rect x="${RAIL.x - 6}" y="${AXE + 14}" width="${RAIL.x2 - RAIL.x + 12}" height="9" rx="2" class="o-rail"/>`;
         for (let x = RAIL.x; x <= RAIL.x2; x += 10) s += `<line x1="${x}" x2="${x}" y1="${AXE + 14}" y2="${AXE + ((x - RAIL.x) % 50 === 0 ? 20 : 17)}" class="o-grad"/>`;
         s += `<text x="${(RAIL.x + RAIL.x2) / 2}" y="${AXE + 34}" text-anchor="middle" class="o-nom">Banc d'optique</text>`;
-        Object.entries(SLOTS).forEach(([k, x]) => { if (!S.objets.some((o) => o.place === k)) s += `<rect x="${x - 10}" y="${AXE - 24}" width="20" height="48" rx="4" class="o-emplacement"/>`; });
-        // plateau tournant et support de l'écran
+        Object.entries(SLOTS).forEach(([k, x]) => { if (!S.objets.some((o) => S.at[o] === k)) s += `<rect x="${x - 10}" y="${AXE - 24}" width="20" height="48" rx="4" class="o-emplacement"/>`; });
         s += `<circle cx="${P.x}" cy="${P.y}" r="23" class="o-plateau"/>`;
         for (let a = 0; a < 360; a += 30) s += `<line x1="${f1(P.x + 19 * Math.cos(rad(a)))}" y1="${f1(P.y + 19 * Math.sin(rad(a)))}" x2="${f1(P.x + 23 * Math.cos(rad(a)))}" y2="${f1(P.y + 23 * Math.sin(rad(a)))}" class="o-grad"/>`;
         s += `<text x="${P.x}" y="${P.y - 28}" text-anchor="middle" class="o-nom">Plateau tournant</text>`;
-        [[BT_G, "↺", "rotg", "Tourner le prisme vers la gauche"], [BT_D, "↻", "rotd", "Tourner le prisme vers la droite"]].forEach(([b, t, a, l]) => {
-          s += `<g class="o-btn" data-act="${a}" role="button" aria-label="${l}"><rect x="${b.x}" y="${b.y}" width="${b.w}" height="${b.h}" rx="6"/><text x="${b.x + b.w / 2}" y="${b.y + 16}" text-anchor="middle">${t}</text></g>`;
-        });
+        s += B("rotg", BT_G.x, BT_G.y, BT_G.w, BT_G.h, "↺", 13) + B("rotd", BT_D.x, BT_D.y, BT_D.w, BT_D.h, "↻", 13);
         s += `<g transform="rotate(${BETA} ${f1(E.x)} ${f1(E.y)})"><rect x="${f1(E.x - 6)}" y="${f1(E.y - 30)}" width="12" height="60" rx="3" class="o-support"/></g>`;
-        if (!ecranOk()) s += `<text x="${X1 - 4}" y="${f1(E.y + 44)}" text-anchor="end" class="o-nom">Support de l'écran</text>`;
-        // lampe
-        s += `<g class="o-obj" data-act="lampe" role="button" aria-label="Allumer ou éteindre la lampe"><rect x="14" y="${AXE - 22}" width="42" height="44" rx="7" class="o-boitier"/>
-          <circle cx="32" cy="${AXE}" r="9" class="o-ampoule${S.lampe ? " on" : ""}"/><rect x="51" y="${AXE - 6}" width="6" height="12" rx="1" class="o-fenetre"/>
-          <text x="14" y="${AXE + 36}" class="o-nom">Lampe ${S.lampe ? "allumée" : "éteinte"}</text></g>`;
-        // lumière
-        s += `<g clip-path="url(#O-clip)" pointer-events="none">${faisceau()}</g>`;
-        // objets
-        S.objets.forEach((o) => { s += dessinObjetP(o); });
+        if (!ecranOk()) s += `<text x="${X1 - 4}" y="${f1(E.y - 36)}" text-anchor="end" class="o-nom">Support de l'écran</text>`;
+        s += `<rect x="14" y="${AXE - 22}" width="42" height="44" rx="7" class="o-boitier"/><circle cx="32" cy="${AXE}" r="9" class="o-ampoule${S.lampe ? " on" : ""}"/><rect x="51" y="${AXE - 6}" width="6" height="12" rx="1" class="o-fenetre"/>`;
+        s += B("lampe", 10, AXE + 26, 50, 18, S.lampe ? "ÉTEINDRE" : "ALLUMER", 7) + `<text x="35" y="${AXE - 28}" text-anchor="middle" class="o-nom">Lampe</text>`;
+        s += `<g pointer-events="none">${faisceau()}</g>`;
+        s += panneauEcran();
+        S.objets.forEach((k) => { s += objetP(k); });
         return s;
       }
-      // Le faisceau, de la lampe au prisme, puis la lumière dispersée
       function faisceau() {
         if (!S.lampe) return "";
-        const xs = [], pts = [];
-        let x = SORTIE, hw = 8, g = 0.1, avant = null;
-        const elems = surBanc().map((o) => ({ x: SLOTS[o.place], t: o.type }));
-        const xFin = prismeOk() ? P.x : X1 + 10;
+        const pts = []; let x = SORTIE, hw = 8, g = 0.1, avant = null;
+        const elems = surBanc().map((k) => ({ x: SLOTS[S.at[k]], t: k })), xFin = prismeOk() ? P.x : X1 + 10;
         const seg = (x2) => { pts.push([x, hw]); hw = Math.max(0.8, hw + g * (x2 - x)); x = x2; pts.push([x, hw]); };
-        elems.forEach((e) => {
-          if (e.x > xFin) return;
-          seg(e.x);
-          if (e.t === "fente") { hw = Math.min(hw, 1.6); g = 0.07; }
-          if (e.t === "lentille") { g = avant === "fente" ? -(hw - 1.2) / Math.max(20, P.x - e.x) : -0.03; }
-          avant = e.t;
-        });
+        elems.forEach((e) => { if (e.x > xFin) return; seg(e.x); if (e.t === "fente") { hw = Math.min(hw, 1.6); g = 0.07; } if (e.t === "lentille") g = avant === "fente" ? -(hw - 1.2) / Math.max(20, P.x - e.x) : -0.03; avant = e.t; });
         seg(xFin);
         const haut = pts.map(([px, w]) => `${f1(px)},${f1(AXE - w)}`), bas = pts.slice().reverse().map(([px, w]) => `${f1(px)},${f1(AXE + w)}`);
         let s = `<polygon points="${haut.concat(bas).join(" ")}" class="o-faisceau"/>`;
         if (!prismeOk()) return s;
-        // lumière dispersée par le prisme
-        const q = qualite(), demi = q === "net" ? 0.7 : q === "flou" ? 2.2 : 5.5, op = q === "net" ? 0.85 : q === "flou" ? 0.5 : 0.32;
-        const ecr = ecranOk();
+        const q = qualite(), demi = q === "net" ? 0.7 : q === "flou" ? 2.2 : 5.5, op = q === "net" ? 0.85 : q === "flou" ? 0.5 : 0.32, ecr = ecranOk();
         [405, 430, 455, 480, 505, 530, 555, 580, 605, 630, 660, 690].forEach((l) => {
-          const t = thetaL(l), Lr = ecr && Math.abs(t - BETA) <= 10.5 ? DIST_E / Math.cos(rad(t - BETA)) : 260;
+          const t = thetaL(l), Lr = ecr && Math.abs(t - BETA) <= 10.5 ? DIST_E / Math.cos(rad(t - BETA)) : 130;
           const a1 = rad(t - demi), a2 = rad(t + demi);
           s += `<polygon points="${P.x},${P.y} ${f1(P.x + Lr * Math.cos(a1))},${f1(P.y + Lr * Math.sin(a1))} ${f1(P.x + Lr * Math.cos(a2))},${f1(P.y + Lr * Math.sin(a2))}" fill="${couleurLambda(l, "raie")}" opacity="${op}" class="o-ray"/>`;
         });
         return s;
       }
-      function dessinObjetP(o) {
-        const D = dim(o), hx = decalH(o);
-        let x = o.x, y = o.y, tr = "";
-        if (o.place === "r1" || o.place === "r2") { x = SLOTS[o.place] - D.w / 2; y = AXE - D.h / 2; }
-        if (o.place === "pl") { x = P.x - 20; y = P.y - 23; tr = ` rotate(${S.rot} 20 23)`; }
-        if (o.place === "se") { x = E.x - D.w / 2; y = E.y - D.h / 2; tr = ` rotate(${BETA} ${D.w / 2} ${D.h / 2})`; }
-        o.vx = x; o.vy = y;
-        const tenu = geste && geste.o === o;
-        let corps = "";
-        if (o.type === "fente") corps = `<rect x="3" y="0" width="8" height="19" rx="1.5" class="o-plaque"/><rect x="3" y="25" width="8" height="19" rx="1.5" class="o-plaque"/><rect x="5.5" y="19" width="3" height="6" class="o-trou"/>`;
-        if (o.type === "lentille") corps = `<path d="M8 0C17 12 17 36 8 48C-1 36 -1 12 8 0Z" class="o-verre"/>`;
-        if (o.type === "prisme") corps = `<path d="M20 2L38 34H2Z" class="o-verre"/>`;
-        if (o.type === "ecran") corps = `<rect x="1" y="0" width="8" height="50" rx="2" class="o-ecran"/>`;
-        const nom = o.place ? "" : `<text x="${D.w / 2}" y="${D.h + 13}" text-anchor="middle" class="o-nom">${D.nom}</text>`;
-        return `<g class="o-obj${tenu ? " tenu" : ""}" data-obj="${o.id}" transform="translate(${f1(x + hx)} ${f1(y)})${tr}"><rect x="-8" y="-8" width="${D.w + 16}" height="${D.h + 16}" fill="transparent"/>${corps}${nom}</g>`;
-      }
-
-      // ---------- Mode spectromètre ----------
-      function sourceActive() {
-        if (M.source === "incand") return S.U >= 1.5 ? { kind: "incand", U: S.U } : null;
-        const o = surSupport();
-        if (!o || !S.alim) return null;
-        if (o.type === "laser") return { kind: "laser" };
-        return { kind: "raies", gaz: o.type === "mystere" ? (opts.mystere || ["Néon"]) : dim(o).gaz };
-      }
-      const intensiteSource = () => { const src = sourceActive(); if (!src) return 0; return src.kind === "raies" ? S.chauffe : 1; };
-      // Lumière reçue par la fibre : 1 tout près de la fenêtre de sortie, puis de moins en moins quand on s'éloigne
-      function captage() {
-        const src = sourceActive(); if (!src) return 0;
-        const F = S.fibre;
-        if (F.x < A.x - 4) return 0;
-        if (src.kind === "laser") return Math.abs(F.y - A.y) < 11 ? 1 : 0;
-        const d = Math.hypot(F.x - A.x, F.y - A.y);
-        return d <= 24 ? 1 : Math.max(0, 1 - (d - 24) / 110);
-      }
-      function dessinSpectro() {
-        const src = sourceActive(), I = intensiteSource(), coul = src ? couleurSource(src) : "#000";
-        let s = `<defs><radialGradient id="O-lueur"><stop offset="0" stop-color="${coul}" stop-opacity=".95"/><stop offset=".45" stop-color="${coul}" stop-opacity=".35"/><stop offset="1" stop-color="${coul}" stop-opacity="0"/></radialGradient></defs>`;
-        s += M.plateau ? plateauMateriel("Matériel : glisse une source sur le support") : "";
-        // spectromètre et fibre
-        const F = S.fibre;
-        s += `<rect x="${SPEC.x}" y="${SPEC.y}" width="${SPEC.w}" height="${SPEC.h}" rx="7" class="o-boitier"/><rect x="${SPEC.x + 8}" y="${SPEC.y + 8}" width="34" height="14" rx="2" class="o-fenetre"/>
-          <text x="${SPEC.x + 50}" y="${SPEC.y + 19}" class="o-nom-c">Spectro-</text><text x="${SPEC.x + 50}" y="${SPEC.y + 31}" class="o-nom-c">mètre</text><text x="${SPEC.x + SPEC.w - 6}" y="${SPEC.y + 41}" text-anchor="end" class="o-petit">USB → ordi</text>`;
-        // boîtier de la source / support
-        if (M.source === "incand") {
-          const U = S.U, on = U >= 1.5;
-          s += `<rect x="24" y="${SUP.y - 36}" width="80" height="72" rx="9" class="o-boitier"/><rect x="99" y="${SUP.y - 7}" width="7" height="14" rx="1" class="o-fenetre"/>
-            <circle cx="${SUP.x}" cy="${SUP.y - 4}" r="16" class="o-bulbe"/><path d="M${SUP.x - 7} ${SUP.y + 8}v-12l3-5 2 5 2-5 2 5 2-5 2 5v12" class="o-filament" style="${on ? `stroke:${coul}` : ""}"/>
-            ${on ? `<circle cx="${SUP.x}" cy="${SUP.y - 4}" r="${f1(10 + U)}" fill="url(#O-lueur)" style="color:${coul}" opacity="${f1(Math.min(1, 0.25 + U / 12))}"/>` : ""}
-            <rect x="${SUP.x - 8}" y="${SUP.y + 12}" width="16" height="10" rx="2" class="b-metal"/>
-            <text x="${SUP.x + 2}" y="${SUP.y + 50}" text-anchor="middle" class="o-nom">Lampe à filament</text>`;
-          s += `<path d="M48 ${SUP.y + 36}V${ALIM.y}M76 ${SUP.y + 36}V${ALIM.y}" class="o-cable"/>`;
-          s += `<rect x="${ALIM.x}" y="${ALIM.y + 8}" width="${ALIM.w}" height="${ALIM.h}" rx="8" class="o-alim"/><rect x="${ALIM.x + 10}" y="${ALIM.y + 15}" width="${ALIM.w - 20}" height="18" rx="3" class="b-lcd"/>
-            <text x="${ALIM.x + ALIM.w - 14}" y="${ALIM.y + 29}" text-anchor="end" class="o-lcd">${U} V</text>
-            <g class="o-btn" data-act="moins" role="button" aria-label="Diminuer la tension"><rect x="${ALIM.x + 8}" y="${ALIM.y + 38}" width="30" height="20" rx="6"/><text x="${ALIM.x + 23}" y="${ALIM.y + 53}" text-anchor="middle">−</text></g>
-            <g class="o-btn" data-act="plus" role="button" aria-label="Augmenter la tension"><rect x="${ALIM.x + ALIM.w - 38}" y="${ALIM.y + 38}" width="30" height="20" rx="6"/><text x="${ALIM.x + ALIM.w - 23}" y="${ALIM.y + 53}" text-anchor="middle">+</text></g>
-            <text x="${ALIM.x + ALIM.w / 2}" y="${ALIM.y + ALIM.h + 22}" text-anchor="middle" class="o-nom">Générateur 0 – 12 V</text>`;
-        } else {
-          const o = surSupport();
-          s += `<rect x="24" y="${SUP.y - 40}" width="80" height="80" rx="9" class="o-boitier support"/><rect x="99" y="${SUP.y - 7}" width="7" height="14" rx="1" class="o-fenetre"/>`;
-          if (!o) s += `<text x="${SUP.x}" y="${SUP.y + 4}" text-anchor="middle" class="o-nom-c">support</text>`;
-          s += `<path d="M62 ${SUP.y + 40}V${ALIM.y + 8}" class="o-cable"/>`;
-          const chaud = S.chaudJusqua > S.t;
-          s += `<g class="o-btn alim" data-act="alim" role="button" aria-label="Allumer ou éteindre l'alimentation"><rect x="${ALIM.x}" y="${ALIM.y + 8}" width="${ALIM.w}" height="${ALIM.h}" rx="8" class="o-alim"/>
-              <circle cx="${ALIM.x + 18}" cy="${ALIM.y + 36}" r="5" class="o-led${S.alim ? " on" : ""}"/><text x="${ALIM.x + 30}" y="${ALIM.y + 32}" class="o-nom-c">Alimentation</text>
-              <text x="${ALIM.x + 30}" y="${ALIM.y + 46}" class="o-nom-c fort">${S.alim ? "ON" : "OFF"}${chaud ? " · chaud !" : ""}</text></g>`;
-        }
-        // lueur, faisceau du laser
-        if (src && I > 0) {
-          if (src.kind === "laser") {
-            const xf = Math.abs(F.y - A.y) < 11 && F.x > A.x ? F.x - 8 : X1;
-            s += `<line x1="${A.x - 18}" y1="${A.y}" x2="${f1(xf)}" y2="${A.y}" class="o-laser"/>`;
-          } else s += `<ellipse cx="${A.x + 6}" cy="${A.y}" rx="${f1(30 + 40 * I)}" ry="${f1(22 + 26 * I)}" fill="url(#O-lueur)" style="color:${coul}" opacity="${f1(0.35 + 0.5 * I)}" pointer-events="none"/>`;
-        }
-        // objets du plateau (lampes, laser)
-        S.objets.forEach((o) => { s += dessinSource(o, src, I); });
-        // fibre optique
-        const mx = (ANCRE.x + F.x) / 2;
-        s += `<path d="M${ANCRE.x} ${ANCRE.y}C${ANCRE.x} ${ANCRE.y + 70} ${f1(mx + 50)} ${f1(F.y + 4)} ${f1(F.x + 14)} ${f1(F.y)}" class="o-fibre"/>
-          <g class="o-obj" data-fibre="1" transform="translate(${f1(F.x)} ${f1(F.y)})"><circle r="17" fill="transparent"/><rect x="-6" y="-5" width="22" height="10" rx="3" class="o-embout"/><circle cx="-6" cy="0" r="3" class="o-capteur"/>
-          <text x="5" y="20" text-anchor="middle" class="o-nom">fibre</text></g>`;
-        return s;
-      }
-      function dessinSource(o, src, I) {
-        const D = dim(o), hx = decalH(o);
-        let x = o.x, y = o.y;
-        if (o.place === "sup") { x = SUP.x - D.w / 2 + (o.type === "laser" ? 8 : 0); y = SUP.y - D.h / 2; }
-        o.vx = x; o.vy = y; o.w = D.w; o.h = D.h;
-        const allume = o.place === "sup" && src && I > 0, coul = allume ? couleurSource(src) : null;
-        let corps;
-        if (o.type === "laser") corps = `<rect x="0" y="3" width="${D.w}" height="20" rx="4" class="o-laser-b"/><circle cx="${D.w - 3}" cy="13" r="3" class="o-trou"/><text x="18" y="17" text-anchor="middle" class="o-petit c">laser</text>`;
-        else corps = `<rect x="9" y="2" width="12" height="46" rx="6" class="o-tube"${allume ? ` style="fill:${coul};opacity:${f1(0.35 + 0.65 * I)}"` : ""}/><rect x="5" y="48" width="20" height="14" rx="2" class="b-metal"/>
-            <text x="15" y="59" text-anchor="middle" class="o-petit">${esc(D.court)}</text>`;
-        const nom = o.place ? "" : `<text x="${D.w / 2}" y="${D.h + 12}" text-anchor="middle" class="o-nom">${D.etiq || D.nom}</text>`;
-        return `<g class="o-obj${geste && geste.o === o ? " tenu" : ""}" data-obj="${o.id}" transform="translate(${f1(x + hx)} ${f1(y)})"><rect x="-8" y="-6" width="${D.w + 16}" height="${D.h + 12}" fill="transparent"/>${corps}${nom}</g>`;
-      }
-
-      // ---------- L'écran vu de face (mode prisme) et l'ordinateur (mode spectro) ----------
-      function statut() {
-        if (S.mode === "prisme") return vueEcran();
-        majPlot(true);
-      }
-      function vueEcran() {
-        const fv = vue.querySelector(".o-fv"), st = vue.querySelector(".o-statut");
-        if (!fv) return;
-        const c = cible(), q = qualite(), ecr = ecranOk();
+      // L'écran vu de face, dans la paillasse (sous le montage)
+      function panneauEcran() {
+        const c = cibleLum(), q = qualite(), ecr = ecranOk();
         let msg = "", bande = "";
-        if (!S.lampe) msg = "La lampe est éteinte : touche-la pour l'allumer.";
+        if (!S.lampe) msg = "La lampe est éteinte : touche ALLUMER.";
         else if (!ecr) msg = "L'écran n'est pas sur son support : il n'y a rien à observer.";
         else if (!prismeOk()) msg = "Rien sur l'écran : sans prisme, la lumière part tout droit.";
         else if (c === "rate") msg = "La lumière n'arrive pas sur l'écran : tourne le prisme avec ↺ et ↻.";
@@ -30650,30 +30788,74 @@ const QUESTIONS = [
           else msg = "Les couleurs se superposent (blanc au centre) : il manque la fente pour avoir un faisceau fin.";
           if (c === "plein" && q === "net") bande += `<text x="${f1(x0 + 4)}" y="60" class="o-fv-l">rouge</text><text x="${f1(x1 - 4)}" y="60" text-anchor="end" class="o-fv-l">violet</text>`;
         }
-        fv.innerHTML = `<svg viewBox="0 0 320 66" class="o-fv-svg" role="img" aria-label="${esc(msg)}"><defs><linearGradient id="O-grad" x1="1" x2="0">${grad}</linearGradient>
+        const L = lignes(msg, 66);
+        return `<text x="14" y="${PANNEAU.y - 4}" class="o-nom">L'écran, vu de face</text><svg x="12" y="${PANNEAU.y}" width="306" height="${PANNEAU.h}" viewBox="8 2 304 62" preserveAspectRatio="none"><defs><linearGradient id="O-grad" x1="1" x2="0">${grad}</linearGradient>
             <filter id="O-flou" x="-30%" y="-60%" width="160%" height="220%"><feGaussianBlur stdDeviation="4"/></filter><filter id="O-flou2" x="-30%" y="-60%" width="160%" height="220%"><feGaussianBlur stdDeviation="8"/></filter>
-            <clipPath id="O-ecr"><rect x="10" y="3" width="300" height="60" rx="4"/></clipPath></defs>
-            <rect x="10" y="3" width="300" height="60" rx="4" class="o-fv-fond"/>${bande}</svg>`;
-        st.textContent = msg;
+            <clipPath id="O-ecr"><rect x="10" y="3" width="300" height="60" rx="4"/></clipPath></defs><rect x="10" y="3" width="300" height="60" rx="4" class="o-fv-fond"/>${bande}</svg>`
+          + L.map((l, i) => `<text x="14" y="${PANNEAU.y + PANNEAU.h + 12 + i * 11}" class="o-nom" style="font-size:8px">${esc(l)}</text>`).join("");
       }
-      function brancherOrdi() {
-        const pl = vue.querySelector(".o-plot");
-        let tire = false;
-        const pose = (e) => { const p = versPaillasse(pl, e.clientX, e.clientY); S.lambda = Math.max(LMIN, Math.min(LMAX, Math.round(xNm(p.x)))); majPlot(true); };
-        pl.addEventListener("pointerdown", (e) => { tire = true; try { pl.setPointerCapture(e.pointerId); } catch (er) {} pose(e); });
-        pl.addEventListener("pointermove", (e) => { if (tire) pose(e); });
-        pl.addEventListener("pointerup", () => { tire = false; });
-        pl.addEventListener("pointercancel", () => { tire = false; });
-        vue.querySelectorAll("[data-c]").forEach((b) => b.onclick = () => {
-          if (b.dataset.c === "noter") return noter();
-          S.lambda = Math.max(LMIN, Math.min(LMAX, S.lambda + +b.dataset.c)); majPlot(true);
-        });
+      // ---------- Mode spectromètre ----------
+      function sourceActive() {
+        if (M.source === "incand") return S.U >= 1.5 ? { kind: "incand", U: S.U } : null;
+        const o = surSupport(); if (!o || !S.alim) return null;
+        if (o === "laser") return { kind: "laser" };
+        return { kind: "raies", gaz: o === "mystere" ? (opts.mystere || ["Néon"]) : dim(o).gaz };
       }
-      function majPlot(force) {
-        const pl = vue.querySelector(".o-plot"); if (!pl) return;
-        if (!force && S.t - S.tPlot < 0.12) return;
-        S.tPlot = S.t;
-        const src = sourceActive(), f = captage(), amp = src ? f * intensiteSource() : 0, d = src ? donnees(src) : null;
+      const intensiteSource = () => { const src = sourceActive(); if (!src) return 0; return src.kind === "raies" ? S.chauffe : 1; };
+      function captage() {
+        const src = sourceActive(); if (!src) return 0;
+        const F = fibreP(); if (F.x < A.x - 4) return 0;
+        if (src.kind === "laser") return Math.abs(F.y - A.y) < 11 ? 1 : 0;
+        const d = Math.hypot(F.x - A.x, F.y - A.y);
+        return d <= 24 ? 1 : Math.max(0, 1 - (d - 24) / 110);
+      }
+      function sourceObj(k, src, I) {
+        const D = dim(k), allume = S.at[k] === "sup" && src && I > 0 && !(K.drag && K.drag.k === k), coul = allume ? couleurSource(src) : null;
+        let corps;
+        if (k === "laser") corps = `<rect x="0" y="3" width="${D.w}" height="20" rx="4" class="o-laser-b"/><circle cx="${D.w - 3}" cy="13" r="3" class="o-trou"/><text x="18" y="17" text-anchor="middle" class="o-petit c">laser</text>`;
+        else corps = `<rect x="9" y="2" width="12" height="46" rx="6" class="o-tube"${allume ? ` style="fill:${coul};opacity:${f1(0.35 + 0.65 * I)}"` : ""}/><rect x="5" y="48" width="20" height="14" rx="2" class="b-metal"/><text x="15" y="59" text-anchor="middle" class="o-petit">${esc(D.court)}</text>`;
+        return K.objet(k, `<g transform="translate(${-D.w / 2} ${-D.h})">${corps}</g>` + (S.at[k] === "bac" ? `<text x="0" y="10" text-anchor="middle" class="o-nom" style="font-size:7.5px">${esc(D.etiq || D.nom)}</text>` : ""), D.w, D.h);
+      }
+      function dessinSpectro(K) {
+        const src = sourceActive(), I = intensiteSource(), coul = src ? couleurSource(src) : "#000", F = fibreP();
+        let s = `<defs><radialGradient id="O-lueur"><stop offset="0" stop-color="${coul}" stop-opacity=".95"/><stop offset=".45" stop-color="${coul}" stop-opacity=".35"/><stop offset="1" stop-color="${coul}" stop-opacity="0"/></radialGradient></defs>`;
+        if (M.plateau) s += `<rect x="124" y="${BAC_S - 74}" width="176" height="92" rx="9" class="o-plateau-m"/><text x="296" y="${BAC_S - 63}" text-anchor="end" class="o-nom" style="font-size:8px">Sources</text>`;
+        s += `<rect x="${SPEC.x}" y="${SPEC.y}" width="${SPEC.w}" height="${SPEC.h}" rx="7" class="o-boitier"/><rect x="${SPEC.x + 8}" y="${SPEC.y + 8}" width="34" height="14" rx="2" class="o-fenetre"/>
+          <text x="${SPEC.x + 50}" y="${SPEC.y + 19}" class="o-nom-c">Spectro-</text><text x="${SPEC.x + 50}" y="${SPEC.y + 31}" class="o-nom-c">mètre</text><text x="${SPEC.x + SPEC.w - 6}" y="${SPEC.y + 41}" text-anchor="end" class="o-petit">USB → ordi</text>`;
+        s += `<path d="M${SPEC.x + SPEC.w} ${SPEC.y + 30}C314 ${SPEC.y + 30} 314 ${SPEC.y + 60} 314 ${ORDI.y}" class="o-cable"/>`;
+        if (M.source === "incand") {
+          const U = S.U, on = U >= 1.5;
+          s += `<rect x="24" y="${SUP.y - 36}" width="80" height="72" rx="9" class="o-boitier"/><rect x="99" y="${SUP.y - 7}" width="7" height="14" rx="1" class="o-fenetre"/>
+            <circle cx="${SUP.x}" cy="${SUP.y - 4}" r="16" class="o-bulbe"/><path d="M${SUP.x - 7} ${SUP.y + 8}v-12l3-5 2 5 2-5 2 5 2-5 2 5v12" class="o-filament" style="${on ? `stroke:${coul}` : ""}"/>
+            ${on ? `<circle cx="${SUP.x}" cy="${SUP.y - 4}" r="${f1(10 + U)}" fill="url(#O-lueur)" opacity="${f1(Math.min(1, 0.25 + U / 12))}"/>` : ""}
+            <rect x="${SUP.x - 8}" y="${SUP.y + 12}" width="16" height="10" rx="2" class="b-metal"/><text x="${SUP.x + 2}" y="${SUP.y - 42}" text-anchor="middle" class="o-nom">Lampe à filament</text>`;
+          s += `<path d="M48 ${SUP.y + 36}V${ALIM.y + 8}M76 ${SUP.y + 36}V${ALIM.y + 8}" class="o-cable"/>`;
+          s += `<rect x="${ALIM.x}" y="${ALIM.y + 8}" width="${ALIM.w}" height="${ALIM.h}" rx="8" class="o-alim"/><rect x="${ALIM.x + 10}" y="${ALIM.y + 14}" width="${ALIM.w - 20}" height="18" rx="3" class="b-lcd"/>
+            <text x="${ALIM.x + ALIM.w - 14}" y="${ALIM.y + 28}" text-anchor="end" class="b-lcd-t" style="font-size:11px">${U} V</text>`
+            + B("moins", ALIM.x + 8, ALIM.y + 37, 32, 22, "−", 13) + B("plus", ALIM.x + ALIM.w - 40, ALIM.y + 37, 32, 22, "+", 13)
+            + `<text x="${ALIM.x + ALIM.w / 2}" y="${ALIM.y + 4}" text-anchor="middle" class="o-nom" style="font-size:8px">Générateur 0 – 12 V</text>`;
+        } else {
+          const o = surSupport(), chaud = S.chaudJusqua > S.t;
+          s += `<rect x="24" y="${SUP.y - 40}" width="80" height="80" rx="9" class="o-boitier support"/><rect x="99" y="${SUP.y - 7}" width="7" height="14" rx="1" class="o-fenetre"/>`;
+          if (!o) s += `<text x="${SUP.x}" y="${SUP.y + 4}" text-anchor="middle" class="o-nom-c">support</text>`;
+          s += `<path d="M62 ${SUP.y + 40}V${ALIM.y + 8}" class="o-cable"/>`;
+          s += `<rect x="${ALIM.x}" y="${ALIM.y + 8}" width="${ALIM.w}" height="${ALIM.h}" rx="8" class="o-alim"/><circle cx="${ALIM.x + 14}" cy="${ALIM.y + 22}" r="5" class="o-led${S.alim ? " on" : ""}"/><text x="${ALIM.x + 24}" y="${ALIM.y + 26}" class="o-nom-c" style="font-size:8.5px">Alimentation</text>`
+            + B("alim", ALIM.x + 14, ALIM.y + 36, 64, 22, S.alim ? "OFF" : "ON", 9) + (chaud ? `<text x="${ALIM.x + ALIM.w / 2}" y="${ALIM.y + ALIM.h + 20}" text-anchor="middle" class="o-nom" style="font-size:8px">lampe chaude !</text>` : "");
+        }
+        if (src && I > 0) {
+          if (src.kind === "laser") { const xf = Math.abs(F.y - A.y) < 11 && F.x > A.x ? F.x - 8 : X1; s += `<line x1="${A.x - 18}" y1="${A.y}" x2="${f1(xf)}" y2="${A.y}" class="o-laser"/>`; }
+          else s += `<ellipse cx="${A.x + 6}" cy="${A.y}" rx="${f1(30 + 40 * I)}" ry="${f1(22 + 26 * I)}" fill="url(#O-lueur)" opacity="${f1(0.35 + 0.5 * I)}" pointer-events="none"/>`;
+        }
+        s += ordinateur(src);
+        S.objets.forEach((k) => { s += sourceObj(k, src, I); });
+        const mx = (ANCRE.x + F.x) / 2;
+        s += `<path d="M${ANCRE.x} ${ANCRE.y}C${ANCRE.x} ${ANCRE.y + 50} ${f1(mx + 40)} ${f1(F.y - 2)} ${f1(F.x + 14)} ${f1(F.y - 5)}" class="o-fibre"/>`;
+        s += K.objet("fibre", `<rect x="-6" y="-10" width="22" height="10" rx="3" class="o-embout"/><circle cx="-6" cy="-5" r="3" class="o-capteur"/><text x="5" y="10" text-anchor="middle" class="o-nom" style="font-size:8px">fibre</text>`, 26, 12);
+        return s;
+      }
+      // L'ordinateur, posé sur la paillasse : courbe, curseur, réglage du curseur et NOTER
+      function ordinateur(src) {
+        const f = captage(), amp = src ? f * intensiteSource() : 0, d = src ? donnees(src) : null;
         const bruit = (l) => 0.012 * (Math.sin(l * 1.7 + S.t * 9) + Math.sin(l * 0.53 - S.t * 5)) + 0.014;
         const Y = (v) => 132 - 120 * Math.max(0, Math.min(1.04, v));
         let pts = [], bande = "";
@@ -30686,173 +30868,60 @@ const QUESTIONS = [
         for (let l = 400; l <= 750; l += 50) axes += `<line x1="${f1(nmX(l))}" x2="${f1(nmX(l))}" y1="132" y2="136" class="o-ax"/>` + (l % 100 === 0 ? `<text x="${f1(nmX(l))}" y="146" text-anchor="middle" class="o-axt">${l}</text>` : "");
         [0, 50, 100].forEach((p) => { axes += `<line x1="36" x2="308" y1="${Y(p / 100)}" y2="${Y(p / 100)}" class="o-grille"/><text x="31" y="${Y(p / 100) + 3}" text-anchor="end" class="o-axt">${p}</text>`; });
         const xc = nmX(S.lambda), vc = d ? val(d, S.lambda) * amp : 0;
-        pl.innerHTML = `<defs><linearGradient id="O-pgrad">${grad}</linearGradient><clipPath id="O-sous"><polygon points="36,132 ${pts.join(" ")} 308,132"/></clipPath></defs>
-          <rect x="0" y="0" width="320" height="176" rx="8" class="o-ordi-fond"/>${axes}
+        let st = "";
+        if (!src) st = M.source === "incand" ? "Lampe éteinte : monte la tension (+)." : surSupport() ? "Alimentation éteinte." : "Aucune source sur le support.";
+        else if (src.kind === "raies" && S.chauffe < 0.98) st = "La lampe chauffe…";
+        else if (f <= 0.02) st = "Aucune lumière dans la fibre.";
+        else if (f < 0.5) st = "Signal faible : rapproche la fibre.";
+        else st = "Signal bon.";
+        const O = ORDI;
+        return `<rect x="${O.x}" y="${O.y}" width="${O.w}" height="${O.h}" rx="8" class="o-boitier"/><text x="${O.x + 8}" y="${O.y + 13}" class="o-nom-c" style="font-size:8px">Ordinateur · spectromètre</text><text x="${O.x + O.w - 8}" y="${O.y + 13}" text-anchor="end" class="o-nom-c" style="font-size:8px${st === "Signal bon." ? ";fill:var(--good)" : ""}">${esc(st)}</text>
+          <svg x="${PLOT.x}" y="${PLOT.y}" width="${PLOT.w}" height="${PLOT.h}" viewBox="0 0 320 168" preserveAspectRatio="none" data-g="1"><defs><linearGradient id="O-pgrad">${grad}</linearGradient><clipPath id="O-sous"><polygon points="36,132 ${pts.join(" ")} 308,132"/></clipPath></defs>
+          <rect x="0" y="0" width="320" height="168" rx="6" class="o-ordi-fond"/>${axes}
           <text x="6" y="10" class="o-axt">I (%)</text><text x="312" y="146" text-anchor="end" class="o-axt">λ (nm)</text>
           <rect x="36" y="10" width="272" height="122" fill="url(#O-pgrad)" opacity=".55" clip-path="url(#O-sous)"/>
-          <polyline points="${pts.join(" ")}" class="o-courbe"/>
-          <rect x="36" y="150" width="272" height="14" fill="#000"/>${bande}
+          <polyline points="${pts.join(" ")}" class="o-courbe"/><rect x="36" y="150" width="272" height="14" fill="#000"/>${bande}
           <line x1="${f1(xc)}" x2="${f1(xc)}" y1="10" y2="164" class="o-curseur"/><path d="M${f1(xc)} 132l-5 -8h10z" class="o-curseur-p"/>
-          <rect x="${f1(Math.max(36, Math.min(262, xc - 23)))}" y="1" width="46" height="13" rx="3" class="o-curseur-e"/><text x="${f1(Math.max(59, Math.min(285, xc)))}" y="11" text-anchor="middle" class="o-curseur-t">${S.lambda} nm</text>`;
-        const lect = vue.querySelector(".o-lect"), sig = vue.querySelector(".o-signal");
-        lect.innerHTML = `Curseur : <strong>λ = ${S.lambda} nm</strong> · intensité ${Math.round(100 * Math.max(0, vc))} %`;
-        let st = "";
-        if (!src) st = M.source === "incand" ? "Lampe éteinte : augmente la tension du générateur." : surSupport() ? "Alimentation éteinte." : "Aucune source sur le support.";
-        else if (src.kind === "raies" && S.chauffe < 0.98) st = "La lampe chauffe…";
-        else if (f <= 0.02) st = "Aucune lumière dans la fibre : approche-la de la source.";
-        else if (f < 0.5) st = "Signal faible : rapproche la fibre de la source.";
-        else st = "Signal bon.";
-        sig.textContent = st; sig.className = "o-signal small" + (st === "Signal bon." ? " bon" : "");
-        if (force) { const z = vue.querySelector(".o-statut"); if (z && S.msg) { z.textContent = S.msg.txt; z.className = "small o-statut " + (S.msg.ok ? "ok" : "ko"); } else if (z) z.textContent = ""; }
+          <rect x="${f1(Math.max(36, Math.min(262, xc - 23)))}" y="1" width="46" height="13" rx="3" class="o-curseur-e"/><text x="${f1(Math.max(59, Math.min(285, xc)))}" y="11" text-anchor="middle" class="o-curseur-t">${S.lambda} nm</text></svg>
+          ${B("cg2", 12, O.y + O.h - 28, 30, 22, "◀◀", 8)}${B("cg", 46, O.y + O.h - 28, 30, 22, "◀", 9)}${B("cd", 80, O.y + O.h - 28, 30, 22, "▶", 9)}${B("cd2", 114, O.y + O.h - 28, 30, 22, "▶▶", 8)}
+          <text x="200" y="${O.y + O.h - 13}" text-anchor="middle" class="o-nom-c" style="font-size:8.5px">I = ${Math.round(100 * Math.max(0, vc))} %</text>${B("noter", 246, O.y + O.h - 30, 70, 25, "NOTER", 9)}`;
       }
       function noter() {
         const src = sourceActive(), f = captage(), amp = src ? f * intensiteSource() : 0;
-        const dire = (ok, txt) => { S.msg = { ok, txt }; signalPaillasse(bench, ok ? "ok" : "ko"); majPlot(true); };
-        if (!src || amp < 0.4) return dire(false, src && src.kind === "raies" && S.chauffe < 0.98 ? "Attends que la lampe ait fini de chauffer." : "Le signal est trop faible : allume la source et approche la fibre de la fenêtre de sortie.");
+        if (!src || amp < 0.4) return K.refus(src && src.kind === "raies" && S.chauffe < 0.98 ? "Attends que la lampe ait fini de chauffer." : "Le signal est trop faible : allume la source et approche la fibre de la fenêtre de sortie.", "fibre");
         const info = { lambda: S.lambda };
         if (src.kind === "incand") Object.assign(info, { kind: "incand", U: S.U, debut: debutSpectre(S.U) });
         else {
           const o = surSupport(), P0 = pics(src);
           let best = null; P0.forEach((c) => { if (Math.abs(c - S.lambda) <= 4 && (best == null || Math.abs(c - S.lambda) < Math.abs(best - S.lambda))) best = c; });
-          if (best == null) return dire(false, "Le curseur n'est pas sur un pic : place-le au sommet d'une raie, puis touche NOTER.");
-          Object.assign(info, { kind: src.kind, source: o.type, raie: best });
+          if (best == null) return K.refus("Le curseur n'est pas sur un pic : place-le au sommet d'une raie, puis touche NOTER.");
+          Object.assign(info, { kind: src.kind, source: o, raie: best });
         }
-        const r = surEvt("noter", info) || { ok: true, txt: "Mesure notée : λ = " + S.lambda + " nm." };
-        dire(r.ok, r.txt);
-      }
-
-      // ---------- Gestes ----------
-      const pt = (e) => { const p = versPaillasse(svg, e.clientX, e.clientY); return [p.x, p.y]; };
-      function quoiSous(cible) {
-        const g = cible && cible.closest ? cible.closest("[data-act],[data-obj],[data-fibre]") : null;
-        if (!g || !svg.contains(g)) return null;
-        if (g.dataset.act) return { type: "act", act: g.dataset.act };
-        if (g.dataset.fibre) return { type: "fibre" };
-        return { type: "obj", o: parId(g.dataset.obj) };
-      }
-      svg.addEventListener("pointerdown", (e) => {
-        const q = quoiSous(e.target); if (!q) { geste = null; return; }
-        const [x, y] = pt(e);
-        if (q.type === "obj") {
-          const o = q.o;
-          if (o.place === "sup" && (S.alim || S.chaudJusqua > S.t)) { geste = { type: "bloque", o, x, y }; }
-          else geste = { type: "obj", o, dx: x - (o.vx != null ? o.vx : o.x), dy: y - (o.vy != null ? o.vy : o.y), x, y, bouge: false };
-        } else if (q.type === "fibre") geste = { type: "fibre", dx: x - S.fibre.x, dy: y - S.fibre.y, x, y, bouge: false };
-        else geste = { type: "act", act: q.act, x, y, bouge: false };
-        e.preventDefault();
-        try { svg.setPointerCapture(e.pointerId); } catch (er) {}
-      });
-      svg.addEventListener("pointermove", (e) => {
-        if (!geste) return;
-        const [x, y] = pt(e);
-        if (Math.abs(x - geste.x) + Math.abs(y - geste.y) > 6) geste.bouge = true;
-        if (!geste.bouge) return;
-        if (geste.type === "obj") {
-          const o = geste.o, D = dim(o);
-          if (o.place) { o.place = null; }
-          o.x = Math.max(X0, Math.min(X1 - D.w, x - geste.dx)); o.y = Math.max(Y0, Math.min(Y1 - D.h, y - geste.dy));
-          o.vx = o.x; o.vy = o.y; dessiner(); statut();
-        }
-        if (geste.type === "fibre") { S.fibre.x = Math.max(X0 + 8, Math.min(X1 - 16, x - geste.dx)); S.fibre.y = Math.max(Y0 + 6, Math.min(Y1 - 20, y - geste.dy)); dessiner(); }
-      });
-      svg.addEventListener("pointerup", (e) => {
-        const g = geste; geste = null; if (!g) return;
-        if (g.type === "bloque") {
-          if (S.alim) bulle("Éteins d'abord l'alimentation avant de retirer la source.", g.o, 2.6, "ko");
-          else bulle("La lampe est brûlante : attends quelques secondes qu'elle refroidisse avant de la retirer.", g.o, 2.8, "ko");
-          dessiner(); return;
-        }
-        if (g.type === "act") { if (!g.bouge) action(g.act); return; }
-        if (g.type === "fibre") { if (!g.bouge) bulle("L'extrémité de la fibre optique : place-la devant la fenêtre de sortie de la source pour capter sa lumière.", null, 3); dessiner(); return; }
-        const o = g.o;
-        if (!g.bouge) { bulle(dim(o).role, o, 3.6); dessiner(); return; }
-        if (S.mode === "prisme") poserP(o); else poserS(o);
-        dessiner(); statut();
-      });
-      svg.addEventListener("pointercancel", () => { geste = null; dessiner(); });
-      gererDefilement(svg, (x, y, cible) => !!quoiSous(cible), () => !!geste);
-
-      function refuser(o, txt) { bulle(txt, o, 2.8, "ko"); }
-      function poserP(o) {
-        const D = dim(o), cx = o.x + D.w / 2, cy = o.y + D.h / 2;
-        const surRail = Math.abs(cy - AXE) < 32 && cx > RAIL.x - 16 && cx < RAIL.x2 + 14;
-        const surPlateau = Math.hypot(cx - P.x, cy - P.y) < 38, surSupportE = Math.hypot(cx - E.x, cy - E.y) < 40;
-        if (o.type === "fente" || o.type === "lentille") {
-          if (surPlateau) return refuser(o, "Sur le plateau tournant, on pose seulement le prisme.");
-          if (surSupportE) return refuser(o, "Ce support est celui de l'écran.");
-          if (!surRail) return;
-          const k = Math.abs(cx - SLOTS.r1) < Math.abs(cx - SLOTS.r2) ? "r1" : "r2";
-          if (S.objets.some((x) => x !== o && x.place === k)) return refuser(o, "Il y a déjà un objet à cet endroit du banc.");
-          o.place = k; bulle(D.nom + " posée sur le banc.", null, 1.4, "ok"); return;
-        }
-        if (o.type === "prisme") {
-          if (surPlateau) { o.place = "pl"; bulle("Le prisme est sur le plateau. Tourne-le avec ↺ et ↻.", null, 2.4, "ok"); return; }
-          if (surRail) return refuser(o, "Le prisme se pose sur le plateau tournant, au bout du banc.");
-          if (surSupportE) return refuser(o, "Ce support est celui de l'écran.");
-          return;
-        }
-        if (o.type === "ecran") {
-          if (surSupportE) { o.place = "se"; bulle("L'écran est sur son support.", null, 1.6, "ok"); return; }
-          if (surRail || surPlateau) return refuser(o, "L'écran se place sur son support, là où arrive la lumière qui sort du prisme.");
-        }
-      }
-      function poserS(o) {
-        const D = dim(o), cx = o.x + D.w / 2, cy = o.y + D.h / 2;
-        if (Math.hypot(cx - SUP.x, cy - SUP.y) < 48) {
-          const occ = surSupport();
-          if (occ && occ !== o) return refuser(o, "Il y a déjà une source sur le support : retire-la d'abord.");
-          o.place = "sup";
-          bulle(D.nom + " posé" + (o.type === "laser" ? "" : "e") + " sur le support. Allume l'alimentation.", null, 2.2, "ok");
-        }
-      }
-      function action(a) {
-        if (a === "reset") { charger(M, opts); bulle("La paillasse est remise comme au départ.", null, 1.8); surEvt("reset", {}); return; }
-        if (a === "lampe") { S.lampe = !S.lampe; bulle(S.lampe ? "Lampe allumée : suis le trajet de la lumière." : "Lampe éteinte.", null, 1.6); }
-        if (a === "rotg" || a === "rotd") {
-          if (!prismeOk()) { bulle("Pose d'abord le prisme sur le plateau tournant.", null, 2.2, "ko"); return; }
-          S.rot = Math.max(-45, Math.min(45, S.rot + (a === "rotd" ? PAS_ROT : -PAS_ROT)));
-        }
-        if (a === "moins" || a === "plus") {
-          S.U = Math.max(0, Math.min(12, S.U + (a === "plus" ? 1 : -1)));
-          if (S.U === 12 && a === "plus") bulle("12 V : c'est la tension maximale de cette lampe.", null, 1.8);
-        }
-        if (a === "alim") {
-          const o = surSupport();
-          if (!S.alim && !o) { bulle("Pose d'abord une source sur le support.", null, 2.2, "ko"); return; }
-          S.alim = !S.alim;
-          if (S.alim) {
-            S.chauffe = o.type === "laser" ? 1 : 0;
-            if (o.type === "laser") bulle("Laser allumé : ne regarde jamais le faisceau et ne le dirige vers personne.", null, 3.4);
-            else if (dim(o).uv) bulle("La lampe au mercure émet des ultraviolets : ne la regarde pas directement.", null, 3.4);
-            else bulle("Alimentation allumée : la lampe chauffe quelques secondes.", null, 2.2);
-          } else { if (o && o.type !== "laser") S.chaudJusqua = S.t + 3; S.chauffe = 0; }
-        }
-        S.msg = null; dessiner(); statut();
-      }
-
-      // ---------- Boucle ----------
-      let dernier = performance.now(), acc = 0;
-      function boucle(now) {
-        if (!document.body.contains(svg)) return;
-        const dt = Math.min(0.05, (now - dernier) / 1000); dernier = now; S.t += dt;
-        let redessin = !!S.hoche || (S.bulle && S.t > S.bulle.fin);
-        if (S.bulle && S.t > S.bulle.fin) S.bulle = null;
-        if (S.hoche && performance.now() - S.hoche.t0 > DUREE_HOCHE) S.hoche = null;
-        if (S.alim && S.chauffe < 1) { S.chauffe = Math.min(1, S.chauffe + dt / 2.5); redessin = true; }
-        if (S.chaudJusqua > 0 && S.t > S.chaudJusqua) { S.chaudJusqua = -1; redessin = true; }
-        if (redessin) dessiner();
-        if (S.mode === "spectro") majPlot(false);
-        acc += dt;
-        if (acc >= 0.25) { acc = 0; surEvt("etat", etat()); }
-        requestAnimationFrame(boucle);
+        K.retour(ev("noter", info) || { ok: true, txt: "Mesure notée : λ = " + S.lambda + " nm." });
       }
       function etat() {
-        if (S.mode === "prisme") return { mode: "prisme", lampe: S.lampe, qualite: qualite(), banc: surBanc().map((o) => o.type), prisme: prismeOk(), ecran: ecranOk(), cible: cible(), dt: 0.25 };
+        if (S.mode === "prisme") return { mode: "prisme", lampe: S.lampe, qualite: qualite(), banc: surBanc(), prisme: prismeOk(), ecran: ecranOk(), cible: cibleLum(), dt: 0.25 };
         const src = sourceActive(), o = surSupport();
-        return { mode: "spectro", src, U: S.U, f: captage(), chauffe: S.chauffe, source: o ? o.type : null, alim: S.alim, dt: 0.25 };
+        return { mode: "spectro", src, U: S.U, f: captage(), chauffe: S.chauffe, source: o || null, alim: S.alim, dt: 0.25 };
       }
-      requestAnimationFrame(boucle);
-      return { charger, _etat: () => S, _noter: noter };
+      function creer() {
+        K = PAILLASSE.creer(el, { W, H: S.mode === "prisme" ? HP : HS, cls: "optique", titre: "Paillasse d'optique (salle dans le noir)",
+          repos: "Salle dans le noir. Touche un objet pour savoir à quoi il sert.",
+          surEvt: (t, d) => S ? surEvt(t, d) : null, place, cible, poser, bouton, scene,
+          nom: (k) => k === "fibre" ? "Fibre optique" : dim(k).nom,
+          role: (k) => k === "fibre" ? "L'extrémité de la fibre optique du spectromètre : la glisser devant la fenêtre de sortie de la source pour capter sa lumière." : dim(k).role,
+          haut: (k) => k === "fibre" ? 14 : dim(k).h, large: (k) => k === "fibre" ? 26 : dim(k).w,
+          objets: () => S ? S.objets.concat(S.mode === "spectro" ? ["fibre"] : []) : [],
+          dessin,
+          maj: (dt) => {
+            if (!S) return; S.t += dt;
+            if (S.alim && S.chauffe < 1) S.chauffe = Math.min(1, S.chauffe + dt / 2.5);
+            if (S.chaudJusqua > 0 && S.t > S.chaudJusqua) S.chaudJusqua = -1;
+            acc += dt; if (acc >= 0.25) { acc = 0; surEvt("etat", etat()); }
+          },
+          reset: () => { charger(M, opts); surEvt("reset", {}); } });
+      }
+      return { charger, _etat: () => S, _noter: noter, _poser: poser, _bouton: bouton };
     }
 
     return { banc, debutSpectre, pics, donnees, raiesDe, LASER, OBJ };
@@ -30928,21 +30997,10 @@ const QUESTIONS = [
         if (K) { K.pos = {}; K.sel = null; }
         commandes(); verifier(true); if (K) K.guide();
       }
-      // ---------- Commandes sous la scène (même présentation dans tous les TP) ----------
+      // ---------- Charte v2 (18/11) : plus aucune commande sous la paillasse, tout est dessiné sur les appareils ----------
       function commandes() {
-        const id = S.id, son = id[0] === "a";
-        let h = "";
-        if (son) h += `<div class="c-btns pl-curs"><span class="small">Curseur :</span>${["A", "B"].map((c) => `<button type="button" class="btn btn-ghost btn-sm${S.act === c ? " on" : ""}" data-c="${c}">${c}</button>`).join("")}<button type="button" class="btn btn-ghost btn-sm" data-d="-0.5" aria-label="Reculer beaucoup">◀◀</button><button type="button" class="btn btn-ghost btn-sm" data-d="-0.1" aria-label="Reculer">◀</button><button type="button" class="btn btn-ghost btn-sm" data-d="0.1" aria-label="Avancer">▶</button><button type="button" class="btn btn-ghost btn-sm" data-d="0.5" aria-label="Avancer beaucoup">▶▶</button></div>`;
-        if (id === "a1" || id === "a2") h += `<div class="c-btns"><button type="button" class="btn btn-ghost btn-sm" data-x="ecoute">♪ Écouter</button>${id === "a2" ? `<button type="button" class="btn btn-ghost btn-sm" data-x="limite">Je n'entends plus ce son</button>` : ""}</div>`;
-        if (id === "f1") h += `<div class="c-btns"><span class="small">Écran choisi : <strong data-nom>aucun</strong></span><button type="button" class="btn btn-ghost btn-sm" data-h="-5">▲ Monter le trou</button><button type="button" class="btn btn-ghost btn-sm" data-h="5">▼ Descendre</button></div>`;
-        if (id === "f2") h += `<div class="c-btns"><button type="button" class="btn btn-ghost btn-sm" data-x="courber">Courber la fibre</button></div>`;
-        if (id === "f3") h += `<div class="c-btns"><button type="button" class="btn btn-ghost btn-sm" data-x="effacer">Effacer le message reçu</button></div>`;
-        K.zCmd.innerHTML = h;
-        K.zCmd.querySelectorAll("[data-c]").forEach((b) => b.onclick = () => { S.act = b.dataset.c; K.zCmd.querySelectorAll("[data-c]").forEach((x) => x.classList.toggle("on", x === b)); });
-        K.zCmd.querySelectorAll("[data-d]").forEach((b) => b.onclick = () => { S.cur[S.act] = Math.max(0, Math.min(8, Math.round((S.cur[S.act] + +b.dataset.d) * 10) / 10)); });
-        K.zCmd.querySelectorAll("[data-h]").forEach((b) => b.onclick = () => monterTrou(+b.dataset.h));
-        K.zCmd.querySelectorAll("[data-x]").forEach((b) => b.onclick = () => action(b.dataset.x));
-        K.zHint.textContent = son ? "Glisser un objet à sa place, ou le toucher puis toucher sa place. Les curseurs se règlent avec ◀ ▶, ou en touchant l'écran de l'oscilloscope. Toucher NOTER pour garder la mesure."
+        K.zCmd.innerHTML = "";
+        K.zHint.textContent = S.id[0] === "a" ? "Glisser un objet à sa place, ou le toucher puis toucher sa place. Toucher l'écran de l'oscilloscope déplace le curseur le plus proche ; ◀ ▶ l'ajustent."
           : "Glisser un objet à sa place, ou le toucher puis toucher sa place. Toucher un objet seul affiche son rôle.";
       }
       // ---------- Gestes : cibles et règles de pose ----------
@@ -30973,12 +31031,11 @@ const QUESTIONS = [
         if (!(ATTENDU[c] || []).includes(k)) return K.refus(REFUS[c] || REFUS.s, k);
         const autre = ou(c);
         if (autre && autre !== k) return K.refus(`Cette place est déjà prise (${NOM[autre]}) : remets d'abord cet objet dans la boîte de matériel.`, k);
-        S.at[k] = c; if (/^e\d$/.test(k)) { S.actif = k; nomActif(); }
+        S.at[k] = c;
         if (k === "eus" || k === "hp") S.fi = 0;
         apres();
       }
       function apres() { S.mono = null; verifier(true); }
-      function nomActif() { const z = K.zCmd.querySelector("[data-nom]"); if (z) z.textContent = S.actif ? NOM[S.actif] : "aucun"; }
       // ---------- Boutons dessinés sur les appareils ----------
       function bouton(b, phase) {
         if (b === "appui") return appuyer(phase === "down");
@@ -30987,6 +31044,9 @@ const QUESTIONS = [
         if (b === "marche") { S.on = !S.on; if (S.on && signalSon()) jouerSon(); verifier(true); return; }
         if (b === "fp" || b === "fm") { if (at("eus") === "spk") return K.refus("Avec l'émetteur d'ultrasons, le GBF reste réglé sur 40 kHz (la fréquence de l'émetteur)."); const L = FREQS[id]; S.fi = Math.max(0, Math.min(L.length - 1, S.fi + (b === "fp" ? 1 : -1))); if (S.on && signalSon()) jouerSon(); return; }
         if (b === "noter") return noter();
+        if (b === "cm" || b === "cp") { S.cur[S.act] = Math.max(0, Math.min(8, Math.round((S.cur[S.act] + (b === "cp" ? 0.1 : -0.1)) * 10) / 10)); return; }
+        if (b === "ecoute" || b === "limite" || b === "courber" || b === "effacer") return action(b);
+        if (/^h[+-]e\d$/.test(b)) return monterTrou(b.slice(2), b[1] === "+" ? -5 : 5);
         if (b === "clac") {
           if (at("clq") !== "clq") return K.refus("Pose d'abord le claquoir au bout de la règle (côté 0).", "clq");
           if (cm(at("m1")) == null || cm(at("m2")) == null) return K.refus("Pose d'abord les deux micros sur la règle.");
@@ -31009,17 +31069,19 @@ const QUESTIONS = [
         if (x === "courber") { if (at("fibre") !== "F") return K.refus("Pose d'abord la fibre optique contre la sortie du laser du bas.", "fibre"); S.forme = (S.forme + 1) % 3; S.formes[S.forme] = true; K.info("La fibre est courbée autrement.", 2000); verifier(true); return; }
         if (x === "effacer") { S.lettre = ""; S.mot = ""; S.pulses = []; K.info("Message effacé.", 2000); }
       }
-      function monterTrou(dh) {
-        if (!S.actif || !/^s\d$/.test(at(S.actif) || "")) return K.refus("Touche d'abord un écran posé sur le banc.");
-        S.off[S.actif] = Math.max(-20, Math.min(20, S.off[S.actif] + dh)); verifier(true);
+      function monterTrou(k, dh) {
+        if (!/^s\d$/.test(at(k) || "")) return K.refus("Pose d'abord cet écran sur un support du banc.", k);
+        const v = Math.max(-20, Math.min(20, S.off[k] + dh));
+        if (v === S.off[k]) return K.info(dh < 0 ? "Le trou est déjà tout en haut." : "Le trou est déjà tout en bas.", 2000);
+        S.off[k] = v; verifier(true);
       }
       // toucher la scène : l'écran de l'oscilloscope place le curseur choisi
       function scene(p) {
-        if (S.id[0] === "a" && p.x >= OX && p.x <= OX + OW && p.y >= OY && p.y <= OY + OH) { S.cur[S.act] = Math.round((p.x - OX) / (OW / 8) * 10) / 10; return true; }
-        if (S.id === "f1") { const k = ["e1", "e2", "e3"].find((e) => /^s/.test(at(e)) && Math.abs(K.p(e).x - p.x) < 14 && p.y > 140 && p.y < 220); if (k) { S.actif = k; nomActif(); return true; } }
+        if (S.id[0] === "a" && p.x >= OX && p.x <= OX + OW && p.y >= OY && p.y <= OY + OH) { // le curseur le plus proche vient sous le doigt
+          const u = Math.round((p.x - OX) / (OW / 8) * 10) / 10; S.act = Math.abs(u - S.cur.A) <= Math.abs(u - S.cur.B) ? "A" : "B"; S.cur[S.act] = u; return true; }
         return false;
       }
-      function role(k) { if (/^e\d$/.test(k) && /^s/.test(at(k))) { S.actif = k; nomActif(); } return ROLE[k]; }
+      function role(k) { return ROLE[k]; }
 
       // ======================= Le son =======================
       const OX = 16, OY = 16, OW = 204, OH = 100;
@@ -31052,9 +31114,10 @@ const QUESTIONS = [
         traces().forEach((tr, i) => { let d = ""; for (let n = 0; n <= 240; n++) { const u = n / 30, y = tr.c - Math.max(-1.1, Math.min(1.1, tr.f(u))) * (S.id === "a1" || S.id === "a2" ? 40 : 21); d += (n ? "L" : "M") + (OX + u * dv).toFixed(1) + "," + y.toFixed(1); } s += `<path d="${d}" class="sg-trace${i ? " v2" : ""}"/>`; if (tr.v) s += `<text x="${OX + 4}" y="${tr.c - 12}" class="sg-voie${i ? " v2" : ""}">voie ${tr.v}</text>`; });
         ["A", "B"].forEach((c) => { const x = OX + S.cur[c] * dv; s += `<path d="M${x.toFixed(1)} ${OY}v${OH}" class="sg-curseur${c === "B" ? " b" : ""}${S.act === c ? " act" : ""}"/><text x="${x.toFixed(1)}" y="${OY + OH - 3}" text-anchor="middle" class="sg-ct${c === "B" ? " b" : ""}">${c}</text>`; });
         const dtm = Math.abs(S.cur.B - S.cur.A) * b, unite = b < 0.1 ? "µs" : "ms", val = b < 0.1 ? dtm * 1000 : dtm;
-        s += `<rect x="228" y="18" width="86" height="22" rx="3" class="b-lcd"/><text x="271" y="33.5" text-anchor="middle" class="b-lcd-t" style="font-size:10.5px">${b < 0.1 ? vg(b * 1000, 0) + " µs" : vg(b, b < 1 ? 1 : 0) + " ms"}/div</text>`;
-        s += `<rect x="228" y="46" width="86" height="22" rx="3" class="b-lcd"/><text x="271" y="61.5" text-anchor="middle" class="b-lcd-t" style="font-size:10.5px">Δt=${vg(val, unite === "µs" ? 0 : (b < 1 ? 2 : 1))} ${unite}</text>`;
-        s += `<g class="c-btn" data-b="noter"><rect x="246" y="76" width="50" height="22" rx="5"/><text x="271" y="91" text-anchor="middle">NOTER</text></g>`;
+        s += `<rect x="228" y="15" width="86" height="19" rx="3" class="b-lcd"/><text x="271" y="28.5" text-anchor="middle" class="b-lcd-t" style="font-size:10px">${b < 0.1 ? vg(b * 1000, 0) + " µs" : vg(b, b < 1 ? 1 : 0) + " ms"}/div</text>`;
+        s += `<rect x="228" y="37" width="86" height="19" rx="3" class="b-lcd"/><text x="271" y="50.5" text-anchor="middle" class="b-lcd-t" style="font-size:10px">Δt=${vg(val, unite === "µs" ? 0 : (b < 1 ? 2 : 1))} ${unite}</text>`;
+        s += `<text x="271" y="67" text-anchor="middle" class="sg-ct${S.act === "B" ? " b" : ""}" style="font-size:7px">curseur ${S.act}</text>` + K.btn("cm", 228, 70, 40, 22, "◀", 10) + K.btn("cp", 274, 70, 40, 22, "▶", 10);
+        s += K.btn("noter", 236, 98, 70, 24, "NOTER", 9);
         s += T(165, 145, "Oscilloscope", "b-nom");
         return s;
       }
@@ -31076,6 +31139,8 @@ const QUESTIONS = [
           s += `<g transform="translate(${SLOT.spk.x} ${SLOT.spk.y})">${M.support(!ou("spk"))}</g><g transform="translate(${SLOT.cap.x} ${SLOT.cap.y})">${M.support(!ou("cap"))}</g>`;
           if (ou("spk")) s += `<path d="M134 206C150 206 150 254 ${SLOT.spk.x - 14} 254" class="c-cable"/>`;
           if (ou("cap")) s += `<path d="M${SLOT.cap.x + 6} 232C300 232 300 150 270 130" class="c-cable"/>`;
+          s += K.btn("ecoute", 140, 268, 58, 20, "♪ ÉCOUTER", 7.5);
+          if (id === "a2") s += K.btn("limite", 206, 268, 108, 20, "JE N'ENTENDS PLUS", 7);
           const sg = signalSon();
           if (sg && S.on) s += ondesAir(SLOT.spk.x + 20, SLOT.cap.x - 8, SLOT.spk.y - 25, freq() > 20000 ? "sg-onde us" : "sg-onde");
           else if (S.on && ou("spk")) s += ondesAir(SLOT.spk.x + 20, SLOT.spk.x + 60, SLOT.spk.y - 25, freq() > 20000 ? "sg-onde us" : "sg-onde");
@@ -31136,7 +31201,7 @@ const QUESTIONS = [
         s += `<rect x="14" y="336" width="302" height="5" rx="2" class="c-plateau"/>` + T(165, 362, "Boîte de matériel", "b-nom");
         if (id === "f1") {
           s += `<rect x="46" y="214" width="252" height="6" rx="2" class="c-plateau"/>`;
-          ["s1", "s2", "s3"].forEach((x) => s += `<g transform="translate(${SLOT[x].x} ${SLOT[x].y})">${M.support(!ou(x))}</g>`);
+          ["s1", "s2", "s3"].forEach((x) => { s += `<g transform="translate(${SLOT[x].x} ${SLOT[x].y})">${M.support(!ou(x))}</g>`; const e = ou(x); if (e) s += K.btn("h-" + e, SLOT[x].x - 24, 231, 23, 20, "▲", 9) + K.btn("h+" + e, SLOT[x].x + 1, 231, 23, 20, "▼", 9); });
           s += `<g transform="translate(32 214)">${M.lampe(S.lampe)}</g><g class="c-btn" data-b="lampe"><rect x="12" y="226" width="44" height="17" rx="4"/><text x="34" y="238" text-anchor="middle" style="font-size:7px">${S.lampe ? "ÉTEINDRE" : "ALLUMER"}</text></g>` + T(34, 256, "Lampe");
           const fz = faisceauF1();
           if (fz.x != null) s += `<rect x="41" y="${LUMIERE_Y - 3}" width="${fz.x - 41}" height="6" rx="3" class="pl-faisceau"/>` + (fz.k ? `<circle cx="${fz.x}" cy="${LUMIERE_Y}" r="5" class="pl-tache"/>` : "");
@@ -31156,14 +31221,14 @@ const QUESTIONS = [
             else s += `<path d="M60 146H320" class="mt-laser sg-l"/><circle cx="320" cy="146" r="4" class="pl-tache r"/>`;
           }
           // fibre optique
-          if (at("fibre") === "F") { const P = cheminFibre(); s += `<path d="${chemin(P)}" class="sg-fibre"/><rect x="304" y="${P[30][1] - 14}" width="6" height="28" rx="1.5" class="pl-carton"/>` + T(250, 292, "Fibre optique") + T(307, P[30][1] + 26, "Écran");
+          if (at("fibre") === "F") { const P = cheminFibre(); s += K.btn("courber", 96, 276, 72, 20, "COURBER ↝", 7.5) + `<path d="${chemin(P)}" class="sg-fibre"/><rect x="304" y="${P[30][1] - 14}" width="6" height="28" rx="1.5" class="pl-carton"/>` + T(250, 292, "Fibre optique") + T(307, P[30][1] + 26, "Écran");
             if (S.laser && at("laser") === "B") { s += `<path d="${chemin(P)}" class="sg-lumfibre"/><circle cx="304" cy="${P[30][1]}" r="6" class="pl-tache r"/>`; if (!K.calme()) for (let i = 0; i < 3; i++) { const u = ((K.t * 0.7) + i / 3) % 1, k = Math.floor(u * 30), q = P[k], dy = ((Math.floor(u * 120) % 2) ? 2.2 : -2.2); s += `<circle cx="${q[0].toFixed(1)}" cy="${(q[1] + dy).toFixed(1)}" r="2.2" class="pl-tache r"/>`; } } }
           else if (S.laser && at("laser") === "B") s += `<path d="M60 246H320" class="mt-laser sg-l"/>`;
         }
         if (id === "f3") {
           const P = [[74, 166], [120, 150], [170, 172], [210, 140], [232, 132]];
           s += `<path d="M${P.map((p) => p.join(" ")).join("L")}" class="sg-fibre"/>` + T(186, 140, "Fibre optique");
-          s += `<rect x="232" y="104" width="88" height="56" rx="6" class="c-boitier"/><circle cx="236" cy="132" r="4" class="pl-capsule"/><rect x="242" y="110" width="72" height="20" rx="3" class="b-lcd"/><text x="278" y="124" text-anchor="middle" class="b-lcd-t" style="font-size:10px">${esc(S.lettre.replace(/\./g, "·").replace(/-/g, "—") || " ")}</text><rect x="242" y="134" width="72" height="20" rx="3" class="b-lcd"/><text x="278" y="148.5" text-anchor="middle" class="b-lcd-t" style="font-size:11px">${esc(S.mot || "…")}</text>` + T(276, 172, "Récepteur");
+          s += `<rect x="232" y="104" width="88" height="56" rx="6" class="c-boitier"/><circle cx="236" cy="132" r="4" class="pl-capsule"/><rect x="242" y="110" width="72" height="20" rx="3" class="b-lcd"/><text x="278" y="124" text-anchor="middle" class="b-lcd-t" style="font-size:10px">${esc(S.lettre.replace(/\./g, "·").replace(/-/g, "—") || " ")}</text><rect x="242" y="134" width="72" height="20" rx="3" class="b-lcd"/><text x="278" y="148.5" text-anchor="middle" class="b-lcd-t" style="font-size:11px">${esc(S.mot || "…")}</text>` + T(276, 172, "Récepteur") + K.btn("effacer", 246, 178, 64, 20, "EFFACER", 7.5);
           s += `<rect x="20" y="224" width="150" height="66" rx="8" class="sg-plaquette"/>` + T(95, 304, "Plaquette de montage");
           ["P", "I", "D"].forEach((x) => { if (!ou(x)) s += `<g transform="translate(${SLOT[x].x} ${SLOT[x].y})">${M.support(true)}</g>` + T(SLOT[x].x, SLOT[x].y + 12, { P: "pile", I: "bouton", D: "DEL" }[x], "pl-place-t"); });
           const ok = circuit();
@@ -31240,7 +31305,7 @@ const QUESTIONS = [
         if (id === "f2") {
           if (d.jet && !m.jet) { m.jet = true; garder(); c.cocher("jet"); return { ok: true, txt: "La lumière du laser reste dans le jet d'eau et suit sa courbe : elle est guidée !" }; }
           if (d.fibre && d.formes >= 1 && !m.fibre) { m.fibre = true; garder(); c.cocher("fibre"); return { ok: true, txt: "Même courbée, la fibre guide la lumière jusqu'à l'autre bout." }; }
-          if (d.fibre && !d.formes && !m.vuFibre) { m.vuFibre = true; return { ok: true, txt: "La lumière sort au bout de la fibre. Touche « Courber la fibre » sous la paillasse." }; }
+          if (d.fibre && !d.formes && !m.vuFibre) { m.vuFibre = true; return { ok: true, txt: "La lumière sort au bout de la fibre. Touche COURBER, sous la fibre." }; }
         }
         if (id === "f3" && d.circuit && !fait(c, "circuit")) { c.cocher("circuit"); return { ok: true, txt: "Le circuit est complet : appuie sur le bouton-poussoir, la DEL s'allume." }; }
         return null;
@@ -31506,7 +31571,18 @@ const QUESTIONS = [
       else if (o.id[0] === "m") { MASSE.avant($("o-avant"), o, ctxM()); L = MASSE.banc($("o-banc"), evenement); L.charger(MASSE.MONTAGES[o.id], MASSE.options(rep, sauver)); }
       else if (o.id[0] === "b") { MOUVTP.avant($("o-avant"), o, ctxM()); L = MOUVTP.banc($("o-banc"), evenement); L.charger(o.id, MOUVTP.options(rep, sauver)); window.__banc = L; } // 3ème, énergie et mouvement (08_mouvement.js)
       else { L = paillasse($("o-banc"), evenement); L.charger(MONTAGES[o.id]); }
+      // charte v2 (18/11) : les paillasses construites avant le kit reçoivent le même squelette (bandeau, Recommencer, pied)
+      if (!SG && !GT && o.id[0] !== "s") PAILLASSE.habiller($("o-banc"), { guide: guideStd,
+        reset: o.id[0] === "m" ? () => { L.charger(MASSE.MONTAGES[o.id], MASSE.options(rep, sauver)); evenement("reset", {}); }
+          : L2 || o.id[0] === "b" ? null : () => { L.charger(MONTAGES[o.id]); evenement("reset", {}); } });
+      window.__banc = L;
       extra(); questions(); retenir();
+    }
+    // première tâche non faite de l'objectif en cours (bandeau des étapes des paillasses)
+    function guideStd() {
+      const o = O[actif]; if (!o) return {};
+      const st = rep.obj[o.id], i = o.taches.findIndex((t) => !st.t[t.id]);
+      return i < 0 ? { fini: true, texte: "Toutes les manipulations sont faites : réponds aux questions sous la paillasse." } : { i: i + 1, n: o.taches.length, texte: o.taches[i].texte };
     }
     function carteObjectif() { const o = O[actif]; $("o-carte").innerHTML = htmlMission(o, actif, rep.obj[o.id], objFait(o)); }
     function extra() {
@@ -31609,6 +31685,8 @@ const QUESTIONS = [
       const id = O[actif].id, st = rep.obj[id];
       const duree = (k, cond) => { temps[k] = cond ? (temps[k] || 0) + (d.dt || 0) : 0; return temps[k]; };
       if (SG) return SIGTP.evenement(type, d, id, st, ctxM());
+      // bandeau des étapes des paillasses du kit v2 qui n'ont pas leur propre guide : la première tâche non faite
+      if (type === "guide" && !GT && !L2 && id[0] !== "m" && id[0] !== "b") return guideStd();
       if (id[0] === "w") return evenementW(type, d, id, st, duree);
       if (id[0] === "p") return evenementP(type, d, id, st, duree);
       if ("iur".indexOf(id[0]) >= 0) return evenement4(type, d, id, st, duree);
@@ -34864,7 +34942,8 @@ const QUESTIONS = [
         $("tp-zone").innerHTML = `<div class="panel mission" id="o-carte"></div><div class="stack" id="o-docs"></div><div id="o-banc"></div><div class="stack" id="o-extra"></div><div class="stack" id="o-quest"></div><div class="stack" id="o-retenir"></div>`;
         carte();
         $("o-docs").innerHTML = (o.docs || []).map((d) => `<div class="panel c-doc"><strong>${esc(d.titre)}</strong>${d.img && ILLUS[d.img] ? `<div class="c-illus">${ILLUS[d.img]}</div>` : ""}${d.lignes.map((l) => `<p>${esc(l)}</p>`).join("")}</div>`).join("");
-        if (o.banc) { essai = { points: [], eauAvant: null }; B = banc($("o-banc"), o.banc, { kind, tirage: T, evt: evenement }); window.__banc = B; }
+        if (o.banc) { essai = { points: [], eauAvant: null }; B = banc($("o-banc"), o.banc, { kind, tirage: T, evt: evenement }); window.__banc = B;
+          PAILLASSE.habiller($("o-banc"), { guide: () => { const st = rep.obj[o.id], i = o.taches.findIndex((t) => !st.t[t.id]); return i < 0 ? { fini: true, texte: "Toutes les manipulations sont faites : réponds aux questions sous la paillasse." } : { i: i + 1, n: o.taches.length, texte: o.taches[i].texte }; } }); }
         extra(); questions(); retenir();
       }
       function carte() { const o = O[actif]; $("o-carte").innerHTML = htmlMission(o, actif, rep.obj[o.id], objFait(o)); }
