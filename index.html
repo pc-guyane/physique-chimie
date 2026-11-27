@@ -274,6 +274,12 @@ textarea { min-height: 5rem; resize: vertical; }
 .calc-in { display: flex; gap: .5rem; align-items: center; }
 .calc-in input { max-width: 9rem; font-variant-numeric: tabular-nums; }
 .calc-in .u { font-weight: 700; }
+.calc-p10 { flex-wrap: wrap; }
+.calc-p10 > input { max-width: 6rem; }
+.calc-p10 .x10 { font-weight: 700; font-size: 1.1rem; }
+.calc-p10 .exp-z { display: inline-flex; gap: .25rem; align-items: center; transform: translateY(-.7em); }
+.calc-p10 .exp-in { width: 3.2rem; padding: .3rem .4rem; font-size: .95rem; text-align: center; }
+.calc-p10 .exp-sg { padding: .2rem .5rem; min-height: 0; }
 
 /* Cours */
 .cours { display: flex; flex-direction: column; gap: .85rem; }
@@ -3369,8 +3375,8 @@ const CRISTAL = (() => {
   function genMailles() {
     const L = hasard([0.2, 0.3, 0.5, 1, 2]), N = L * 1e-3 / 0.564e-9;
     const sci = (x) => { const e = Math.floor(Math.log10(x)), m = x / Math.pow(10, e); return m.toFixed(1).replace(".", ",") + " × 10" + String(e).replace(/\d/g, (d) => "⁰¹²³⁴⁵⁶⁷⁸⁹"[d]); };
-    return { texte: `Un grain de sel cubique a une arête de ${String(L).replace(".", ",")} mm. Une maille du cristal a une arête de 0,564 nm. Combien de mailles sont alignées le long d'une arête du grain ? (On peut écrire 8,9e5 pour 8,9 × 10⁵.)`,
-      rep: N, u: "mailles", tol: 0.05,
+    return { texte: `Un grain de sel cubique a une arête de ${String(L).replace(".", ",")} mm. Une maille du cristal a une arête de 0,564 nm. Combien de mailles sont alignées le long d'une arête du grain ? Écris le résultat en notation scientifique : le nombre dans la grande case, l'exposant de 10 dans la petite.`,
+      rep: N, u: "mailles", tol: 0.05, p10: true,
       corr: `On convertit en mètres : ${String(L).replace(".", ",")} mm = ${String(L).replace(".", ",")} × 10⁻³ m et 0,564 nm = 0,564 × 10⁻⁹ m. Nombre de mailles = {{${String(L).replace(".", ",")} × 10⁻³|0,564 × 10⁻⁹}} ≈ ${sci(N)}.`,
       phrase: `Environ ${sci(N)} mailles sont alignées le long d'une arête du grain.` };
   }
@@ -31966,7 +31972,7 @@ const QUESTIONS = [
   // la garde aussi un moment en cache. On compare donc la version de cette page avec le petit fichier version.json
   // publié en même temps : à l'ouverture et à chaque retour sur l'onglet (au plus une fois par minute).
   // Si une version plus récente est en ligne, un bandeau propose de mettre à jour. La progression (pseudo, points…) est conservée.
-  const VERSION_APPLI = "2026-11-25 22:15:05"; // remplacée par la date d'assemblage (assembler.py)
+  const VERSION_APPLI = "2026-11-26 23:48:50"; // remplacée par la date d'assemblage (assembler.py)
   let derniereVerif = 0;
   function verifierMaj() {
     if (!/^https?:$/.test(location.protocol) || VERSION_APPLI.indexOf("__") === 0) return; // fichier ouvert sur l'ordinateur : rien à vérifier
@@ -32622,21 +32628,46 @@ const QUESTIONS = [
     const v = q.repTxt || (typeof q.rep === "number" ? String(+q.rep.toFixed(4)).replace(".", ",").replace(/\B(?=(\d{3})+(?!\d))/g, " ") : q.rep);
     return `${/^[a-zà-ÿ]/.test(sujet) && sujet.length > 3 ? cap(sujet) : sujet} vaut ${v}${q.u ? " " + q.u : ""}.`;
   }
+  // Lecture d'un nombre tapé par l'élève (26/11) : virgule ou point, espaces, « 8,9e5 », « 8,9×10^5 », « 8,9 x 10⁵ »…
+  function lireNb(txt) {
+    const SUP = "⁰¹²³⁴⁵⁶⁷⁸⁹";
+    let t = String(txt || "").replace(/[\s\u00a0\u202f]/g, "").replace(/[−–]/g, "-")
+      .replace(/[⁻⁰¹²³⁴⁵⁶⁷⁸⁹]+/, (m) => "^" + [...m].map((c) => c === "⁻" ? "-" : SUP.indexOf(c)).join(""));
+    t = t.replace(/[×x*]?10\^(-?\d+)$/i, "e$1");          // 8,9×10^5 ou 8,9×10⁵ → 8,9e5
+    if (/^-?\d{1,3}([.,]\d{3}){2,}$/.test(t)) t = t.replace(/[.,]/g, ""); // 1.773.049
+    t = t.replace(",", ".");
+    return /^-?(\d+\.?\d*|\.\d+)(e-?\d+)?$/i.test(t) ? parseFloat(t) : parseFloat(String(txt).replace(/[\s\u00a0\u202f]/g, "").replace(",", ".")); // sinon : lecture d'avant (ex. « 65J »)
+  }
   function widgetCalcul(el, c, mode, onRep) {
     const q = genererCalcul(c, mode), id = "calc" + (++idCalc);
-    el.innerHTML = `${figureDe(q)}<p class="qtext">${esc(q.texte)}</p><label for="${id}" class="small">Ta réponse</label><div class="calc-in"><input type="text" id="${id}" inputmode="decimal" autocomplete="off"><span class="u">${esc(q.u)}</span></div>
+    // q.p10 : réponse en notation scientifique, saisie en deux cases (nombre × 10^exposant) : marche au clavier du téléphone
+    const champ = q.p10
+      ? `<div class="calc-in calc-p10"><input type="text" id="${id}" inputmode="decimal" autocomplete="off" aria-label="Nombre devant la puissance de 10" placeholder="1,8"><span class="x10">× 10</span><span class="exp-z"><button type="button" class="btn btn-ghost btn-sm exp-sg" aria-label="Changer le signe de l'exposant">±</button><input type="text" class="exp-in" inputmode="numeric" pattern="[0-9]*" autocomplete="off" aria-label="Exposant de la puissance de 10" placeholder="6"></span><span class="u">${esc(q.u)}</span></div>`
+      : `<div class="calc-in"><input type="text" id="${id}" inputmode="decimal" autocomplete="off"><span class="u">${esc(q.u)}</span></div>`;
+    el.innerHTML = `${figureDe(q)}<p class="qtext">${esc(q.texte)}</p><label for="${id}" class="small">Ta réponse</label>${champ}
       <button class="btn btn-primary btn-sm" data-ok>Vérifier</button><div class="fbz"></div>`;
-    const inp = el.querySelector("input"), b = el.querySelector("[data-ok]");
+    const inp = el.querySelector("#" + id), ex = el.querySelector(".exp-in"), b = el.querySelector("[data-ok]");
+    if (ex) {
+      let neg = false; const sg = el.querySelector(".exp-sg");
+      const maj = () => { ex.value = (neg ? "−" : "") + ex.value.replace(/[^0-9]/g, ""); };
+      sg.onclick = () => { neg = !neg; maj(); ex.focus(); };
+      ex.addEventListener("input", () => { if (/^[-−]/.test(ex.value)) neg = true; maj(); });
+    }
     const valider = () => {
-      const v = parseFloat(inp.value.replace(/\s| /g, "").replace(",", "."));
-      if (isNaN(v)) { el.querySelector(".fbz").innerHTML = `<p class="error">Écris un nombre, par exemple ${q.tol != null ? "6,5" : "65"}.</p>`; return; }
+      let v = lireNb(inp.value);
+      if (ex) {
+        const e = ex.value.replace(/[^0-9]/g, "");
+        if (!isNaN(v) && e !== "") v = v * Math.pow(10, (/^[-−]/.test(ex.value) ? -1 : 1) * +e);
+      }
+      if (isNaN(v)) { el.querySelector(".fbz").innerHTML = `<p class="error">${ex ? "Écris le nombre dans la première case (par exemple 1,8) et l'exposant dans la petite case (par exemple 6)." : `Écris un nombre, par exemple ${q.tol != null ? "6,5" : "65"}.`}</p>`; return; }
       const ok = q.tol != null ? Math.abs(v - q.rep) <= q.tol * Math.abs(q.rep) : Math.abs(v - q.rep) < 0.5;
-      inp.disabled = true; b.disabled = true;
+      inp.disabled = true; b.disabled = true; if (ex) { ex.disabled = true; el.querySelector(".exp-sg").disabled = true; }
       const ph = phraseReponse(q);
       el.querySelector(".fbz").innerHTML = `<div class="feedback ${ok ? "ok" : "ko"}"><strong>${ok ? "Bravo, c'est juste !" : "Ce n'est pas ça."}</strong><span>${esc(q.corr)}</span>${ph ? `<span><span class="phr">Phrase réponse :</span> ${esc(ph)}</span>` : ""}</div>`;
       onRep(ok, q);
     };
-    b.onclick = valider; inp.addEventListener("keydown", (e) => { if (e.key === "Enter") valider(); });
+    b.onclick = valider;
+    [inp, ex].forEach((x) => x && x.addEventListener("keydown", (e) => { if (e.key === "Enter") valider(); }));
   }
 
   // ======================= Jeux =======================
